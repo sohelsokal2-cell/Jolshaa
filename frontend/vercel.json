@@ -1,0 +1,6 @@
+{
+  "installCommand": "npm install && npm install socket.io-client",
+  "buildCommand": "npm run build",
+  "outputDirectory": "build",
+  "framework": "create-react-app"
+}
