@@ -185,6 +185,13 @@ exports.joinGroup = async (req, res) => {
     const group = await Group.findById(req.params.id);
     if (!group) return res.status(404).json({ message: 'Group not found' });
 
+    const User = require('../models/User');
+    const currentUser = await User.findById(req.user._id).select('restrictions');
+    const groupRestricted = currentUser.restrictions?.find(r => r.type === 'group_join' && (!r.expiresAt || r.expiresAt > new Date()));
+    if (groupRestricted) {
+      return res.status(403).json({ message: 'You are restricted from joining groups', restricted: true });
+    }
+
     const userId = req.user._id.toString();
     if (group.members.some(m => m.toString() === userId)) {
       return res.status(400).json({ message: 'Already a member' });

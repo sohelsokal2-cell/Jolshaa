@@ -19,6 +19,14 @@ const uploadToCloudinary = (fileBuffer, folder) => {
 
 exports.createPost = async (req, res) => {
   try {
+    const User = require('../models/User');
+    const currentUser = await User.findById(req.user._id).select('restrictions');
+    const now = new Date();
+    const postRestricted = currentUser.restrictions?.find(r => r.type === 'post' && (!r.expiresAt || r.expiresAt > now));
+    if (postRestricted) {
+      return res.status(403).json({ message: 'You are restricted from creating posts', restricted: true });
+    }
+
     const { text, feeling, taggedUsers, visibility, postedInType, postedInRefId } = req.body;
     const trimmedText = typeof text === 'string' ? text.trim() : '';
 

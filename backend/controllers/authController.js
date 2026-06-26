@@ -71,6 +71,10 @@ exports.login = async (req, res) => {
       return res.status(401).json({ message: 'Invalid email or password' });
     }
 
+    if (user.isBanned) {
+      return res.status(403).json({ message: 'Account banned', banned: true, bannedAt: user.bannedAt, bannedReason: user.bannedReason });
+    }
+
     if (user.isSuspended) {
       return res.status(403).json({ message: 'Account suspended', suspended: true, suspendedAt: user.suspendedAt, suspendedReason: user.suspendedReason });
     }
@@ -139,6 +143,18 @@ exports.getMe = async (req, res) => {
       work: user.work,
       location: user.location,
       isAdmin: user.isAdmin,
+      role: user.role,
+      isSuspended: user.isSuspended,
+      suspendedAt: user.suspendedAt,
+      suspendedReason: user.suspendedReason,
+      isBanned: user.isBanned,
+      bannedAt: user.bannedAt,
+      bannedReason: user.bannedReason,
+      isVerified: user.isVerified,
+      verificationRequested: user.verificationRequested,
+      isCreator: user.isCreator,
+      warnings: user.warnings,
+      restrictions: user.restrictions,
       createdAt: user.createdAt
     });
   } catch (error) {

@@ -9,12 +9,14 @@ const { performanceMonitor } = require('./services/performanceMonitor');
 const { errorHandler } = require('./services/errorMonitor');
 const { startBackgroundJobs } = require('./services/backgroundJobs');
 const { initRedis } = require('./services/cache');
+const { loadMaintenanceMode, maintenanceCheck } = require('./middleware/maintenance');
 
 dotenv.config();
 
 connectDB().then(() => {
   initRedis();
   startBackgroundJobs();
+  loadMaintenanceMode();
 });
 
 const app = express();
@@ -45,6 +47,7 @@ app.use(cors({
 app.use(express.json());
 app.use(generalLimiter);
 app.use(performanceMonitor);
+app.use(maintenanceCheck);
 
 app.use('/api/auth', authLimiter, require('./routes/auth'));
 app.use('/api/users', require('./routes/users'));

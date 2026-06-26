@@ -22,6 +22,13 @@ exports.sendMessage = async (req, res) => {
   try {
     const { conversationId, text, replyTo } = req.body;
 
+    const User = require('../models/User');
+    const currentUser = await User.findById(req.user._id).select('restrictions');
+    const msgRestricted = currentUser.restrictions?.find(r => r.type === 'message' && (!r.expiresAt || r.expiresAt > new Date()));
+    if (msgRestricted) {
+      return res.status(403).json({ message: 'You are restricted from sending messages', restricted: true });
+    }
+
     const conversation = await Conversation.findOne({
       _id: conversationId,
       participants: req.user._id,

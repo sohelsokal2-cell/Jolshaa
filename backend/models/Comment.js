@@ -20,7 +20,15 @@ const commentSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Comment',
     default: null
-  }
+  },
+  isFlagged: {
+    type: Boolean,
+    default: false
+  },
+  isHidden: {
+    type: Boolean,
+    default: false
+  },
 }, {
   timestamps: { createdAt: true, updatedAt: false }
 });

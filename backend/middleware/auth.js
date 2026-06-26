@@ -19,6 +19,10 @@ const protect = async (req, res, next) => {
       return res.status(401).json({ message: 'Not authorized, user not found' });
     }
 
+    if (req.user.isBanned) {
+      return res.status(403).json({ message: 'Account banned', banned: true, bannedAt: req.user.bannedAt, bannedReason: req.user.bannedReason });
+    }
+
     if (req.user.isSuspended) {
       return res.status(403).json({ message: 'Account suspended', suspended: true, suspendedAt: req.user.suspendedAt, suspendedReason: req.user.suspendedReason });
     }

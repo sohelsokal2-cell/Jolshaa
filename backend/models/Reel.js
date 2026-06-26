@@ -54,6 +54,18 @@ const reelSchema = new mongoose.Schema(
         trim: true,
       },
     ],
+    isFlagged: {
+      type: Boolean,
+      default: false,
+    },
+    flagReason: {
+      type: String,
+      default: '',
+    },
+    isHidden: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,

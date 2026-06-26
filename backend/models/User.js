@@ -69,6 +69,11 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
+  role: {
+    type: String,
+    enum: ['user', 'moderator', 'admin', 'superadmin'],
+    default: 'user'
+  },
   isSuspended: {
     type: Boolean,
     default: false
@@ -78,6 +83,38 @@ const userSchema = new mongoose.Schema({
     default: null
   },
   suspendedReason: {
+    type: String,
+    default: ''
+  },
+  isBanned: {
+    type: Boolean,
+    default: false
+  },
+  bannedAt: {
+    type: Date,
+    default: null
+  },
+  bannedReason: {
+    type: String,
+    default: ''
+  },
+  warnings: [{
+    message: { type: String, required: true },
+    issuedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    issuedAt: { type: Date, default: Date.now },
+    acknowledged: { type: Boolean, default: false }
+  }],
+  restrictions: [{
+    type: { type: String, enum: ['post', 'comment', 'message', 'friend_request', 'group_join'] },
+    expiresAt: { type: Date, default: null },
+    issuedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    issuedAt: { type: Date, default: Date.now }
+  }],
+  verificationRequested: {
+    type: Boolean,
+    default: false
+  },
+  verificationReason: {
     type: String,
     default: ''
   },
@@ -177,6 +214,28 @@ const userSchema = new mongoose.Schema({
   marketplaceEnabled: {
     type: Boolean,
     default: false
+  },
+  safetyScore: {
+    type: Number,
+    default: 100,
+    min: 0,
+    max: 100
+  },
+  reportsReceived: {
+    type: Number,
+    default: 0
+  },
+  reportsResolved: {
+    type: Number,
+    default: 0
+  },
+  isRepeatOffender: {
+    type: Boolean,
+    default: false
+  },
+  lastReportedAt: {
+    type: Date,
+    default: null
   },
   createdAt: {
     type: Date,

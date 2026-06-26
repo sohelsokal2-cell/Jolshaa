@@ -88,6 +88,32 @@ const postSchema = new mongoose.Schema({
     type: String,
     default: ''
   },
+  isFlagged: {
+    type: Boolean,
+    default: false
+  },
+  flagReason: {
+    type: String,
+    default: ''
+  },
+  isHidden: {
+    type: Boolean,
+    default: false
+  },
+  hiddenBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    default: null
+  },
+  hiddenAt: {
+    type: Date,
+    default: null
+  },
+  moderationStatus: {
+    type: String,
+    enum: ['none', 'pending_review', 'approved', 'flagged', 'removed'],
+    default: 'none'
+  },
 }, {
   timestamps: true
 });

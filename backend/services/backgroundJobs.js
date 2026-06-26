@@ -7,6 +7,7 @@ const { getIO } = require('../socket');
 const DataRetention = require('./dataRetention');
 const BackupService = require('./backup');
 const { processScheduledPosts } = require('../controllers/schedulerController');
+const { autoEscalateReports } = require('../controllers/safetyController');
 
 notificationQueue.process(async (data) => {
   try {
@@ -120,6 +121,30 @@ function startBackgroundJobs() {
       console.error('Scheduled posts processor failed:', err.message);
     }
   }, 60000);
+
+  // Clean up expired restrictions every hour
+  setInterval(async () => {
+    try {
+      const now = new Date();
+      await User.updateMany(
+        { 'restrictions.expiresAt': { $lte: now, $ne: null } },
+        { $pull: { restrictions: { expiresAt: { $lte: now, $ne: null } } } }
+      );
+      console.log('Expired restrictions cleaned up');
+    } catch (err) {
+      console.error('Restriction cleanup failed:', err.message);
+    }
+  }, 3600000);
+
+  // Auto-escalate old pending reports every 6 hours
+  setInterval(async () => {
+    try {
+      const escalated = await autoEscalateReports();
+      if (escalated > 0) console.log(`Auto-escalated ${escalated} reports`);
+    } catch (err) {
+      console.error('Auto-escalation failed:', err.message);
+    }
+  }, 6 * 3600000);
 
   console.log('Background jobs started');
 }

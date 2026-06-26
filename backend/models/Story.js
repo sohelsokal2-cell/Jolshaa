@@ -40,6 +40,14 @@ const storySchema = new mongoose.Schema(
         createdAt: { type: Date, default: Date.now },
       },
     ],
+    isFlagged: {
+      type: Boolean,
+      default: false,
+    },
+    isHidden: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,

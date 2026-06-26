@@ -9,6 +9,12 @@ exports.sendRequest = async (req, res) => {
     if (!userId) return res.status(400).json({ message: 'userId is required' });
     if (userId === req.user._id.toString()) return res.status(400).json({ message: 'Cannot add yourself' });
 
+    const currentUserForCheck = await User.findById(req.user._id).select('restrictions');
+    const frRestricted = currentUserForCheck.restrictions?.find(r => r.type === 'friend_request' && (!r.expiresAt || r.expiresAt > new Date()));
+    if (frRestricted) {
+      return res.status(403).json({ message: 'You are restricted from sending friend requests', restricted: true });
+    }
+
     const targetUser = await User.findById(userId).select('blockedUsers privacy friends');
     if (!targetUser) return res.status(404).json({ message: 'User not found' });
 

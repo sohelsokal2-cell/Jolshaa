@@ -11,6 +11,11 @@ exports.addComment = async (req, res) => {
 
     if (!text) return res.status(400).json({ message: 'Comment text is required' });
 
+    const commentRestricted = req.user.restrictions?.find(r => r.type === 'comment' && (!r.expiresAt || r.expiresAt > new Date()));
+    if (commentRestricted) {
+      return res.status(403).json({ message: 'You are restricted from commenting', restricted: true });
+    }
+
     // Check post exists
     const post = await Post.findById(req.params.id);
     if (!post) return res.status(404).json({ message: 'Post not found' });
