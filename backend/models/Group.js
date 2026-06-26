@@ -30,6 +30,10 @@ const groupSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
   }],
+  moderators: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  }],
   members: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
@@ -37,7 +41,16 @@ const groupSchema = new mongoose.Schema({
   pendingRequests: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
-  }]
+  }],
+  rules: [{
+    type: String,
+    maxlength: 200
+  }],
+  pinnedPost: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Post',
+    default: null
+  }
 }, {
   timestamps: true
 });

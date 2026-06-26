@@ -13,6 +13,10 @@ const {
   leaveGroup,
   removeMember,
   getMembers,
+  addModerator,
+  removeModerator,
+  pinPost,
+  updateRules,
   getGroupFeed,
   createGroupPost
 } = require('../controllers/groupController');
@@ -29,6 +33,10 @@ router.put('/:id/approve/:userId', approveRequest);
 router.put('/:id/leave', leaveGroup);
 router.delete('/:id/remove/:userId', removeMember);
 router.get('/:id/members', getMembers);
+router.put('/:id/moderator/:userId', addModerator);
+router.delete('/:id/moderator/:userId', removeModerator);
+router.put('/:id/pin/:postId', pinPost);
+router.put('/:id/rules', updateRules);
 router.get('/:id/feed', getGroupFeed);
 router.post('/:id/posts', upload.array('media', 5), createGroupPost);
 

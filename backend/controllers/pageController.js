@@ -97,18 +97,40 @@ exports.getPage = async (req, res) => {
   try {
     const pg = await Page.findById(req.params.id)
       .populate('creator', 'name profilePhoto')
-      .populate('admins', 'name profilePhoto');
+      .populate('admins', 'name profilePhoto')
+      .populate('featuredPost');
 
     if (!pg) return res.status(404).json({ message: 'Page not found' });
 
     const userId = req.user._id.toString();
+
+    let featuredPostData = null;
+    if (pg.featuredPost) {
+      featuredPostData = pg.featuredPost.toObject();
+      const [fReactions, fMyReaction, fComments] = await Promise.all([
+        Reaction.aggregate([
+          { $match: { targetType: 'Post', targetId: pg.featuredPost._id } },
+          { $group: { _id: null, count: { $sum: 1 } } }
+        ]),
+        Reaction.findOne({ targetType: 'Post', targetId: pg.featuredPost._id, user: req.user._id }),
+        Comment.countDocuments({ post: pg.featuredPost._id })
+      ]);
+      featuredPostData.reactions = {
+        count: fReactions[0]?.count || 0,
+        myReaction: fMyReaction?.type || null
+      };
+      featuredPostData.commentCount = fComments;
+      const author = await require('../models/User').findById(pg.featuredPost.author).select('name profilePhoto');
+      featuredPostData.author = author;
+    }
 
     res.json({
       ...pg.toObject(),
       followerCount: pg.followers.length,
       isFollowing: pg.followers.some(f => f._id.toString() === userId),
       isAdmin: pg.admins.some(a => a._id.toString() === userId),
-      isCreator: pg.creator._id.toString() === userId
+      isCreator: pg.creator._id.toString() === userId,
+      featuredPost: featuredPostData
     });
   } catch (error) {
     res.status(500).json({ message: 'Server error', error: error.message });
@@ -298,6 +320,80 @@ exports.createPagePost = async (req, res) => {
     await post.populate('author', 'name profilePhoto');
 
     res.status(201).json(post);
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
+exports.featurePost = async (req, res) => {
+  try {
+    const pg = await Page.findById(req.params.id);
+    if (!pg) return res.status(404).json({ message: 'Page not found' });
+
+    if (!pg.admins.some(a => a.toString() === req.user._id.toString())) {
+      return res.status(403).json({ message: 'Only admins can feature posts' });
+    }
+
+    const { postId } = req.params;
+    if (pg.featuredPost && pg.featuredPost.toString() === postId) {
+      pg.featuredPost = null;
+      await pg.save();
+      return res.json({ message: 'Post unfeatured', featuredPost: null });
+    }
+
+    pg.featuredPost = postId;
+    await pg.save();
+    res.json({ message: 'Post featured', featuredPost: postId });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
+exports.getPageInsights = async (req, res) => {
+  try {
+    const pg = await Page.findById(req.params.id);
+    if (!pg) return res.status(404).json({ message: 'Page not found' });
+
+    if (!pg.admins.some(a => a.toString() === req.user._id.toString())) {
+      return res.status(403).json({ message: 'Only admins can view insights' });
+    }
+
+    const posts = await Post.find({ 'postedIn.type': 'page', 'postedIn.refId': pg._id })
+      .select('createdAt');
+
+    const postIds = await Post.find({ 'postedIn.type': 'page', 'postedIn.refId': pg._id }).select('_id');
+
+    const reactions = await Reaction.aggregate([
+      { $match: { targetType: 'Post', targetId: { $in: postIds.map(p => p._id) } } },
+      { $group: { _id: '$targetId', count: { $sum: 1 } } }
+    ]);
+
+    const commentCounts = await Comment.aggregate([
+      { $match: { post: { $in: postIds.map(p => p._id) } } },
+      { $group: { _id: '$post', count: { $sum: 1 } } }
+    ]);
+
+    const totalReactions = reactions.reduce((sum, r) => sum + r.count, 0);
+    const totalComments = commentCounts.reduce((sum, c) => sum + c.count, 0);
+
+    const followerGrowth = [];
+    const now = new Date();
+    for (let i = 6; i >= 0; i--) {
+      const date = new Date(now);
+      date.setDate(date.getDate() - i);
+      const dayStr = date.toISOString().split('T')[0];
+      followerGrowth.push({ date: dayStr, count: pg.followers.length });
+    }
+
+    res.json({
+      totalFollowers: pg.followers.length,
+      totalPosts: posts.length,
+      totalReactions,
+      totalComments,
+      avgReactionsPerPost: posts.length > 0 ? (totalReactions / posts.length).toFixed(1) : 0,
+      avgCommentsPerPost: posts.length > 0 ? (totalComments / posts.length).toFixed(1) : 0,
+      followerGrowth
+    });
   } catch (error) {
     res.status(500).json({ message: 'Server error', error: error.message });
   }

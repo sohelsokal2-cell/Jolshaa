@@ -1,5 +1,6 @@
 const { Server } = require('socket.io');
 const jwt = require('jsonwebtoken');
+const Conversation = require('./models/Conversation');
 const Message = require('./models/Message');
 const Notification = require('./models/Notification');
 
@@ -9,7 +10,18 @@ const onlineUsers = new Map(); // userId -> Set<socketId>
 const initSocket = (httpServer) => {
   io = new Server(httpServer, {
     cors: {
-      origin: 'http://localhost:3000',
+      origin: (origin, callback) => {
+        const allowedOrigins = [
+          process.env.CLIENT_URL,
+          'http://localhost:3000',
+          'http://localhost:5173',
+        ].filter(Boolean).map(o => o.replace(/\/$/, ''));
+        if (!origin || allowedOrigins.includes(origin.replace(/\/$/, ''))) {
+          callback(null, true);
+        } else {
+          callback(new Error('Not allowed by CORS'));
+        }
+      },
       methods: ['GET', 'POST'],
       credentials: true
     }
@@ -45,8 +57,24 @@ const initSocket = (httpServer) => {
     // Join user's personal room for targeted notifications
     socket.join(`user:${userId}`);
 
+    const ensureConversationAccess = async (conversationId) => {
+      if (!conversationId) return false;
+
+      const conversation = await Conversation.findOne({
+        _id: conversationId,
+        participants: userId,
+      }).select('_id');
+
+      return Boolean(conversation);
+    };
+
     // --- Conversation events ---
-    socket.on('joinConversation', (conversationId) => {
+    socket.on('joinConversation', async (conversationId) => {
+      if (!(await ensureConversationAccess(conversationId))) {
+        socket.emit('error', { message: 'Not authorized' });
+        return;
+      }
+
       socket.join(`conversation:${conversationId}`);
     });
 
@@ -57,6 +85,11 @@ const initSocket = (httpServer) => {
     socket.on('sendMessage', async (data) => {
       try {
         const { conversationId, text, media } = data;
+
+        if (!(await ensureConversationAccess(conversationId))) {
+          socket.emit('error', { message: 'Not authorized' });
+          return;
+        }
 
         const message = await Message.create({
           conversation: conversationId,
@@ -79,7 +112,9 @@ const initSocket = (httpServer) => {
     });
 
     // --- Typing events ---
-    socket.on('typing', ({ conversationId, userName }) => {
+    socket.on('typing', async ({ conversationId, userName }) => {
+      if (!(await ensureConversationAccess(conversationId))) return;
+
       socket.to(`conversation:${conversationId}`).emit('typing', {
         conversationId,
         userId,
@@ -87,7 +122,9 @@ const initSocket = (httpServer) => {
       });
     });
 
-    socket.on('stopTyping', ({ conversationId }) => {
+    socket.on('stopTyping', async ({ conversationId }) => {
+      if (!(await ensureConversationAccess(conversationId))) return;
+
       socket.to(`conversation:${conversationId}`).emit('stopTyping', {
         conversationId,
         userId
@@ -115,6 +152,42 @@ const initSocket = (httpServer) => {
         io.to(`user:${recipientId}`).emit('newNotification', notification);
       } catch (err) {
         console.error('Failed to send notification:', err.message);
+      }
+    });
+
+    // --- Live comments for posts/reels ---
+    socket.on('joinPostRoom', (postId) => {
+      socket.join(`post:${postId}`);
+    });
+
+    socket.on('leavePostRoom', (postId) => {
+      socket.leave(`post:${postId}`);
+    });
+
+    socket.on('liveComment', async (data) => {
+      try {
+        const { postId, text } = data;
+        if (!postId || !text) return;
+
+        const Post = require('./models/Post');
+        const post = await Post.findById(postId);
+        if (!post) return;
+
+        const Comment = require('./models/Comment');
+        const comment = await Comment.create({
+          post: postId,
+          author: userId,
+          text,
+        });
+
+        await comment.populate('author', 'name profilePhoto');
+
+        io.to(`post:${postId}`).emit('newLiveComment', {
+          ...comment.toObject(),
+          postId,
+        });
+      } catch (err) {
+        socket.emit('error', { message: 'Failed to post comment' });
       }
     });
 

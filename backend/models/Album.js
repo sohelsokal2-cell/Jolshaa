@@ -18,6 +18,26 @@ const albumSchema = new mongoose.Schema(
         type: String,
       },
     ],
+    description: {
+      type: String,
+      default: '',
+      maxlength: 500,
+    },
+    visibility: {
+      type: String,
+      enum: ['public', 'friends', 'onlyme'],
+      default: 'friends',
+    },
+    sharedWith: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+      },
+    ],
+    isHighlight: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,

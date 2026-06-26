@@ -1,6 +1,7 @@
 const Post = require('../models/Post');
 const Reaction = require('../models/Reaction');
 const Comment = require('../models/Comment');
+const Notification = require('../models/Notification');
 const cloudinary = require('../config/cloudinary');
 
 const uploadToCloudinary = (fileBuffer, folder) => {
@@ -19,9 +20,29 @@ const uploadToCloudinary = (fileBuffer, folder) => {
 exports.createPost = async (req, res) => {
   try {
     const { text, feeling, taggedUsers, visibility, postedInType, postedInRefId } = req.body;
+    const trimmedText = typeof text === 'string' ? text.trim() : '';
 
-    if (!text && (!req.files || req.files.length === 0)) {
+    if (!trimmedText && (!req.files || req.files.length === 0)) {
       return res.status(400).json({ message: 'Post must have text or media' });
+    }
+
+    // Duplicate post detection: same text within last 5 minutes
+    if (trimmedText) {
+      const fiveMinAgo = new Date(Date.now() - 5 * 60 * 1000);
+      const duplicate = await Post.findOne({
+        author: req.user._id,
+        text: trimmedText,
+        createdAt: { $gte: fiveMinAgo }
+      });
+      if (duplicate) {
+        return res.status(409).json({ message: 'Duplicate post detected. Please wait before posting the same content again.' });
+      }
+    }
+
+    // Spam check: more than 3 links
+    const linkCount = (trimmedText.match(/https?:\/\//g) || []).length;
+    if (linkCount > 3) {
+      return res.status(400).json({ message: 'Posts with more than 3 links are not allowed' });
     }
 
     let media = [];
@@ -34,22 +55,50 @@ exports.createPost = async (req, res) => {
 
     const tagged = taggedUsers ? JSON.parse(taggedUsers) : [];
 
+    // Limit tagged users to 20
+    if (tagged.length > 20) {
+      return res.status(400).json({ message: 'Cannot tag more than 20 users' });
+    }
+
     const postedIn = {
       type: postedInType || 'profile',
       refId: postedInRefId || null
     };
 
+    const hashtags = trimmedText
+      ? [...new Set((trimmedText.match(/#(\w+)/g) || []).map((t) => t.slice(1).toLowerCase()))]
+      : [];
+
     const post = await Post.create({
       author: req.user._id,
-      text: text || '',
+      text: trimmedText,
       media,
       feeling: feeling || null,
       taggedUsers: tagged,
       visibility: visibility || 'public',
-      postedIn
+      postedIn,
+      hashtags,
     });
 
     await post.populate('author', 'name profilePhoto');
+
+    // Notify tagged users
+    if (tagged.length > 0) {
+      const { getIO } = require('../socket');
+      for (const taggedUserId of tagged) {
+        if (taggedUserId.toString() === req.user._id.toString()) continue;
+        const notification = await Notification.create({
+          recipient: taggedUserId,
+          sender: req.user._id,
+          type: 'tag',
+          relatedPost: post._id
+        });
+        getIO().to(`user:${taggedUserId}`).emit('newNotification', {
+          ...notification.toObject(),
+          sender: { _id: req.user._id, name: req.user.name, profilePhoto: req.user.profilePhoto }
+        });
+      }
+    }
 
     res.status(201).json(post);
   } catch (error) {
@@ -61,37 +110,11 @@ exports.getFeed = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
-    const skip = (page - 1) * limit;
 
-    // Get user's groups and followed pages
-    const Group = require('../models/Group');
-    const Page = require('../models/Page');
+    const FeedRanker = require('../services/feedRanker');
+    const rankedResult = await FeedRanker.getRankedFeed(req.user._id, page, limit);
 
-    const userGroups = await Group.find({ members: req.user._id }).select('_id');
-    const userPages = await Page.find({ followers: req.user._id }).select('_id');
-
-    const groupIds = userGroups.map(g => g._id);
-    const pageIds = userPages.map(p => p._id);
-
-    const feedQuery = {
-      $or: [
-        { author: req.user._id },
-        { visibility: 'public' },
-        { 'postedIn.type': 'group', 'postedIn.refId': { $in: groupIds } },
-        { 'postedIn.type': 'page', 'postedIn.refId': { $in: pageIds } }
-      ]
-    };
-
-    const posts = await Post.find(feedQuery)
-      .sort({ createdAt: -1 })
-      .skip(skip)
-      .limit(limit)
-      .populate('author', 'name profilePhoto')
-      .populate('taggedUsers', 'name profilePhoto');
-
-    const total = await Post.countDocuments(feedQuery);
-
-    const postIds = posts.map(p => p._id);
+    const postIds = rankedResult.posts.map(p => p._id);
 
     const reactions = await Reaction.aggregate([
       { $match: { targetType: 'Post', targetId: { $in: postIds } } },
@@ -124,8 +147,8 @@ exports.getFeed = async (req, res) => {
       commentMap[c._id.toString()] = c.count;
     });
 
-    const postsWithMeta = posts.map(post => ({
-      ...post.toObject(),
+    const postsWithMeta = rankedResult.posts.map(post => ({
+      ...post,
       reactions: reactionMap[post._id.toString()] || { count: 0, myReaction: null },
       commentCount: commentMap[post._id.toString()] || 0
     }));
@@ -133,8 +156,8 @@ exports.getFeed = async (req, res) => {
     res.json({
       posts: postsWithMeta,
       page,
-      totalPages: Math.ceil(total / limit),
-      total
+      totalPages: rankedResult.totalPages,
+      hasMore: rankedResult.hasMore
     });
   } catch (error) {
     res.status(500).json({ message: 'Server error', error: error.message });
@@ -217,8 +240,220 @@ exports.reactToPost = async (req, res) => {
       type
     });
 
+    // Notify post author (skip self)
+    if (post.author.toString() !== req.user._id.toString()) {
+      const notification = await Notification.create({
+        recipient: post.author,
+        sender: req.user._id,
+        type: 'reaction',
+        relatedPost: post._id
+      });
+      const { getIO } = require('../socket');
+      getIO().to(`user:${post.author}`).emit('newNotification', {
+        ...notification.toObject(),
+        sender: { _id: req.user._id, name: req.user.name, profilePhoto: req.user.profilePhoto }
+      });
+    }
+
     res.json({ message: 'Reaction added', myReaction: type });
   } catch (error) {
     res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
+exports.sharePost = async (req, res) => {
+  try {
+    const originalPost = await Post.findById(req.params.id);
+    if (!originalPost) return res.status(404).json({ message: 'Post not found' });
+
+    const { text } = req.body;
+    const trimmedText = typeof text === 'string' ? text.trim() : '';
+
+    const post = await Post.create({
+      author: req.user._id,
+      text: trimmedText,
+      visibility: 'public',
+      sharedPost: originalPost._id
+    });
+
+    await post.populate('author', 'name profilePhoto');
+    await post.populate({
+      path: 'sharedPost',
+      populate: { path: 'author', select: 'name profilePhoto' }
+    });
+
+    // Notify original post author (skip self)
+    if (originalPost.author.toString() !== req.user._id.toString()) {
+      const notification = await Notification.create({
+        recipient: originalPost.author,
+        sender: req.user._id,
+        type: 'reaction',
+        relatedPost: originalPost._id
+      });
+      const { getIO } = require('../socket');
+      getIO().to(`user:${originalPost.author}`).emit('newNotification', {
+        ...notification.toObject(),
+        sender: { _id: req.user._id, name: req.user.name, profilePhoto: req.user.profilePhoto }
+      });
+    }
+
+    res.status(201).json(post);
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
+exports.toggleSavePost = async (req, res) => {
+  try {
+    const User = require('../models/User');
+    const user = await User.findById(req.user._id);
+    const postId = req.params.id;
+
+    const index = user.savedPosts.findIndex((id) => id.toString() === postId.toString());
+    if (index === -1) {
+      user.savedPosts.push(postId);
+    } else {
+      user.savedPosts.splice(index, 1);
+    }
+    await user.save();
+
+    res.json({ isSaved: index === -1, savedCount: user.savedPosts.length });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+exports.getSavedPosts = async (req, res) => {
+  try {
+    const User = require('../models/User');
+    const user = await User.findById(req.params.userId)
+      .populate({
+        path: 'savedPosts',
+        populate: { path: 'author', select: 'name profilePhoto' },
+      });
+
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    res.json({ posts: user.savedPosts });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+exports.getMemories = async (req, res) => {
+  try {
+    const today = new Date();
+    const day = today.getDate();
+    const month = today.getMonth() + 1;
+
+    const memories = await Post.aggregate([
+      {
+        $match: {
+          author: req.user._id,
+          $expr: {
+            $and: [
+              { $eq: [{ $dayOfMonth: '$createdAt' }, day] },
+              { $eq: [{ $month: '$createdAt' }, month] },
+            ],
+          },
+        },
+      },
+      { $sort: { createdAt: -1 } },
+      { $limit: 50 },
+    ]);
+
+    await Post.populate(memories, { path: 'author', select: 'name profilePhoto' });
+
+    res.json({ posts: memories });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+exports.getTrendingPosts = async (req, res) => {
+  try {
+    const twentyFourHoursAgo = new Date(Date.now() - 86400000);
+
+    const posts = await Post.aggregate([
+      { $match: { createdAt: { $gte: twentyFourHoursAgo }, visibility: 'public' } },
+      {
+        $lookup: {
+          from: 'reactions',
+          localField: '_id',
+          foreignField: 'targetId',
+          as: 'reactionsArr',
+          pipeline: [{ $match: { targetType: 'Post' } }],
+        },
+      },
+      {
+        $lookup: {
+          from: 'comments',
+          localField: '_id',
+          foreignField: 'post',
+          as: 'commentsArr',
+        },
+      },
+      {
+        $addFields: {
+          score: {
+            $add: [
+              { $size: '$reactionsArr' },
+              { $multiply: [{ $size: '$commentsArr' }, 2] },
+            ],
+          },
+        },
+      },
+      { $sort: { score: -1 } },
+      { $limit: 30 },
+    ]);
+
+    await Post.populate(posts, [
+      { path: 'author', select: 'name profilePhoto' },
+    ]);
+
+    res.json({ posts });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+exports.getTrendingHashtags = async (req, res) => {
+  try {
+    const twentyFourHoursAgo = new Date(Date.now() - 86400000);
+
+    const hashtags = await Post.aggregate([
+      { $match: { createdAt: { $gte: twentyFourHoursAgo } } },
+      { $unwind: '$hashtags' },
+      { $group: { _id: '$hashtags', count: { $sum: 1 } } },
+      { $sort: { count: -1 } },
+      { $limit: 20 },
+    ]);
+
+    res.json({ hashtags });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+exports.getPublicPost = async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.id)
+      .populate('author', 'name profilePhoto')
+      .populate('sharedPost');
+
+    if (!post) return res.status(404).json({ message: 'Post not found' });
+    if (post.visibility !== 'public') {
+      return res.status(403).json({ message: 'Post is not public' });
+    }
+
+    res.json({
+      post: {
+        ...post.toObject(),
+        likeCount: post.reactions?.length || 0,
+        commentCount: post.comments?.length || 0,
+      },
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
   }
 };

@@ -1,162 +1,165 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import API from '../api/axios';
 
-const StoryViewer = ({ feed, initialIndex, onClose, onStoryViewed }) => {
-  const [currentGroupIndex, setCurrentGroupIndex] = useState(initialIndex);
+const StoryViewer = ({ stories, initialIndex, onClose }) => {
+  const [currentIndex, setCurrentIndex] = useState(initialIndex);
   const [currentStoryIndex, setCurrentStoryIndex] = useState(0);
   const [progress, setProgress] = useState(0);
+  const [replyText, setReplyText] = useState('');
+  const [showReply, setShowReply] = useState(false);
+  const [showReactions, setShowReactions] = useState(false);
+  const [showViewers, setShowViewers] = useState(false);
 
-  const currentGroup = feed[currentGroupIndex];
-  const currentStory = currentGroup?.stories[currentStoryIndex];
+  const authorStories = stories[currentIndex];
+  const story = authorStories?.stories[currentStoryIndex];
 
-  const goToNext = useCallback(() => {
-    if (!currentGroup) return;
+  useEffect(() => {
+    setProgress(0);
+    const interval = setInterval(() => {
+      setProgress((prev) => {
+        if (prev >= 100) {
+          goNext();
+          return 0;
+        }
+        return prev + 2;
+      });
+    }, 100);
 
-    if (currentStoryIndex < currentGroup.stories.length - 1) {
+    if (story?._id) {
+      API.put(`/stories/${story._id}/view`).catch(() => {});
+    }
+
+    return () => clearInterval(interval);
+  }, [currentIndex, currentStoryIndex, story?._id]);
+
+  const goNext = () => {
+    if (currentStoryIndex < authorStories.stories.length - 1) {
       setCurrentStoryIndex((prev) => prev + 1);
       setProgress(0);
-    } else if (currentGroupIndex < feed.length - 1) {
-      setCurrentGroupIndex((prev) => prev + 1);
+    } else if (currentIndex < stories.length - 1) {
+      setCurrentIndex((prev) => prev + 1);
       setCurrentStoryIndex(0);
       setProgress(0);
     } else {
       onClose();
     }
-  }, [currentGroupIndex, currentStoryIndex, currentGroup, feed.length, onClose]);
+  };
 
-  const goToPrev = useCallback(() => {
+  const goPrev = () => {
     if (currentStoryIndex > 0) {
       setCurrentStoryIndex((prev) => prev - 1);
       setProgress(0);
-    } else if (currentGroupIndex > 0) {
-      setCurrentGroupIndex((prev) => prev - 1);
-      const prevGroup = feed[currentGroupIndex - 1];
-      setCurrentStoryIndex(prevGroup.stories.length - 1);
+    } else if (currentIndex > 0) {
+      setCurrentIndex((prev) => prev - 1);
+      const prevAuthorStories = stories[currentIndex - 1];
+      setCurrentStoryIndex(prevAuthorStories.stories.length - 1);
       setProgress(0);
     }
-  }, [currentGroupIndex, currentStoryIndex, feed]);
+  };
 
-  // Mark story as viewed
-  useEffect(() => {
-    if (currentStory && !currentStory.hasViewed) {
-      API.put(`/stories/${currentStory._id}/view`).catch(() => {});
-      onStoryViewed(currentStory._id, currentGroup.author._id);
-    }
-  }, [currentStory, currentGroup, onStoryViewed]);
+  const handleReact = async (emoji) => {
+    if (!story?._id) return;
+    try {
+      await API.post(`/stories/${story._id}/react`, { emoji });
+      setShowReactions(false);
+    } catch (err) {}
+  };
 
-  // Auto-advance timer
-  useEffect(() => {
-    if (!currentStory) return;
+  const handleReply = async () => {
+    if (!replyText.trim() || !story?._id) return;
+    try {
+      await API.post(`/stories/${story._id}/reply`, { text: replyText });
+      setReplyText('');
+      setShowReply(false);
+    } catch (err) {}
+  };
 
-    const duration = currentStory.mediaType === 'video' ? 10000 : 5000;
-    const interval = 50;
-    let elapsed = 0;
-
-    const timer = setInterval(() => {
-      elapsed += interval;
-      setProgress((elapsed / duration) * 100);
-      if (elapsed >= duration) {
-        clearInterval(timer);
-        goToNext();
-      }
-    }, interval);
-
-    return () => clearInterval(timer);
-  }, [currentStory, goToNext]);
-
-  // Keyboard navigation
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (e.key === 'ArrowRight') goToNext();
-      if (e.key === 'ArrowLeft') goToPrev();
-      if (e.key === 'Escape') onClose();
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [goToNext, goToPrev, onClose]);
-
-  if (!currentGroup || !currentStory) return null;
+  if (!story) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-95 z-50 flex items-center justify-center">
-      {/* Close button */}
-      <button
-        onClick={onClose}
-        className="absolute top-4 right-4 text-white text-3xl z-50 hover:text-gray-300"
-      >
-        &times;
-      </button>
+    <div className="fixed inset-0 bg-black z-[70] flex items-center justify-center">
+      <button onClick={onClose} className="absolute top-4 right-4 text-white text-3xl z-50">&times;</button>
 
-      {/* Progress bars */}
-      <div className="absolute top-0 left-0 right-0 flex gap-1 p-2 z-50">
-        {currentGroup.stories.map((story, idx) => (
-          <div key={story._id} className="flex-1 h-1 bg-gray-600 rounded-full overflow-hidden">
-            <div
-              className="h-full bg-white rounded-full transition-all duration-100"
-              style={{
-                width:
-                  idx < currentStoryIndex
-                    ? '100%'
-                    : idx === currentStoryIndex
-                    ? `${progress}%`
-                    : '0%',
-              }}
-            />
-          </div>
-        ))}
-      </div>
+      <button onClick={goPrev} className="absolute left-4 text-white text-4xl z-50 hover:text-gray-300">&#8249;</button>
+      <button onClick={goNext} className="absolute right-12 text-white text-4xl z-50 hover:text-gray-300">&#8250;</button>
 
-      {/* Author info */}
-      <div className="absolute top-6 left-4 flex items-center gap-3 z-50">
-        <img
-          src={currentGroup.author.profilePhoto || 'https://res.cloudinary.com/demo/image/upload/v1556418119/default-avatar.png'}
-          alt={currentGroup.author.name}
-          className="w-10 h-10 rounded-full object-cover border-2 border-white"
-        />
-        <div>
-          <p className="text-white font-semibold text-sm">{currentGroup.author.name}</p>
-          <p className="text-gray-400 text-xs">
-            {new Date(currentStory.createdAt).toLocaleTimeString([], {
-              hour: '2-digit',
-              minute: '2-digit',
-            })}
-          </p>
+      <div className="relative w-full max-w-md h-[90vh] bg-black rounded-lg overflow-hidden">
+        {/* Progress bars */}
+        <div className="absolute top-0 left-0 right-0 flex gap-1 p-2 z-50">
+          {authorStories.stories.map((_, i) => (
+            <div key={i} className="flex-1 h-0.5 bg-gray-600 rounded">
+              <div
+                className="h-full bg-white rounded transition-all"
+                style={{
+                  width: i < currentStoryIndex ? '100%' : i === currentStoryIndex ? `${progress}%` : '0%',
+                }}
+              />
+            </div>
+          ))}
         </div>
-        {currentStory.viewCount > 0 && (
-          <span className="text-gray-400 text-xs ml-2">
-            {currentStory.viewCount} view{currentStory.viewCount !== 1 ? 's' : ''}
-          </span>
-        )}
-      </div>
 
-      {/* Navigation areas */}
-      <button
-        onClick={goToPrev}
-        className="absolute left-0 top-0 bottom-0 w-1/3 z-40 cursor-pointer"
-        aria-label="Previous story"
-      />
-      <button
-        onClick={goToNext}
-        className="absolute right-0 top-0 bottom-0 w-2/3 z-40 cursor-pointer"
-        aria-label="Next story"
-      />
+        {/* Author info */}
+        <div className="absolute top-4 left-0 right-0 flex items-center gap-2 px-4 z-50">
+          <img src={authorStories.author.profilePhoto} alt="" className="w-8 h-8 rounded-full object-cover" />
+          <span className="text-white text-sm font-medium">{authorStories.author.name}</span>
+          <span className="text-gray-400 text-xs">{new Date(story.createdAt).toLocaleTimeString()}</span>
+        </div>
 
-      {/* Story media */}
-      <div className="max-w-lg w-full h-full flex items-center justify-center p-4">
-        {currentStory.mediaType === 'video' ? (
-          <video
-            src={currentStory.media}
-            className="max-h-full max-w-full object-contain rounded-lg"
-            autoPlay
-            muted
-            playsInline
-          />
+        {/* Story content */}
+        {story.mediaType === 'video' ? (
+          <video src={story.media} className="w-full h-full object-contain" autoPlay muted loop />
         ) : (
-          <img
-            src={currentStory.media}
-            alt="Story"
-            className="max-h-full max-w-full object-contain rounded-lg"
-          />
+          <img src={story.media} alt="" className="w-full h-full object-contain" />
+        )}
+
+        {/* Reaction bar */}
+        <div className="absolute bottom-4 left-0 right-0 flex items-center justify-center gap-4 z-50">
+          <div className="relative">
+            <button
+              onClick={() => setShowReactions(!showReactions)}
+              className="text-2xl"
+            >
+              😊
+            </button>
+            {showReactions && (
+              <div className="absolute bottom-10 left-1/2 -translate-x-1/2 bg-gray-900 rounded-full px-3 py-2 flex gap-3">
+                {['❤️', '😂', '😮', '😢', '😡', '👍'].map((emoji) => (
+                  <button key={emoji} onClick={() => handleReact(emoji)} className="text-xl hover:scale-125 transition-transform">
+                    {emoji}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+          <button onClick={() => setShowReply(!showReply)} className="text-white text-sm">Reply</button>
+          <button onClick={() => setShowViewers(!showViewers)} className="text-white text-sm">
+            {story.viewCount || 0} views
+          </button>
+        </div>
+
+        {/* Reply input */}
+        {showReply && (
+          <div className="absolute bottom-0 left-0 right-0 p-4 bg-black bg-opacity-50 z-50">
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={replyText}
+                onChange={(e) => setReplyText(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleReply()}
+                placeholder="Reply to story..."
+                className="flex-1 bg-transparent border border-gray-500 rounded-full px-4 py-2 text-white text-sm focus:outline-none"
+              />
+              <button onClick={handleReply} className="text-blue-400 font-medium text-sm">Send</button>
+            </div>
+          </div>
+        )}
+
+        {/* Viewers list */}
+        {showViewers && (
+          <div className="absolute bottom-0 left-0 right-0 bg-gray-900 rounded-t-xl p-4 z-50 max-h-[40vh] overflow-y-auto">
+            <h3 className="text-white font-semibold mb-3">Viewed by {story.viewCount || 0}</h3>
+            <p className="text-gray-400 text-sm">Viewer list will appear here</p>
+          </div>
         )}
       </div>
     </div>

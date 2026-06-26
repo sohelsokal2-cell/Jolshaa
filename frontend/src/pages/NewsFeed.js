@@ -9,6 +9,7 @@ import NotificationBell from '../components/NotificationBell';
 import SearchBar from '../components/SearchBar';
 import DarkModeToggle from '../components/DarkModeToggle';
 import Toast from '../components/Toast';
+import SuggestedPeople from '../components/SuggestedPeople';
 
 const NewsFeed = () => {
   const { user, logout } = useAuth();
@@ -17,11 +18,14 @@ const NewsFeed = () => {
   const [totalPages, setTotalPages] = useState(0);
   const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const loadingRef = useRef(false);
   const observerRef = useRef(null);
   const loadMoreRef = useRef(null);
 
   const fetchPosts = useCallback(async (pageNum) => {
-    if (loading) return;
+    if (loadingRef.current) return;
+    loadingRef.current = true;
     setLoading(true);
     try {
       const res = await API.get(`/posts/feed?page=${pageNum}&limit=10`);
@@ -31,17 +35,20 @@ const NewsFeed = () => {
         setPosts(prev => [...prev, ...res.data.posts]);
       }
       setTotalPages(res.data.totalPages);
+      setError(null);
     } catch (err) {
-      console.error('Failed to fetch posts');
+      console.error('Failed to fetch posts', err);
+      setError('Failed to load posts. Please try again.');
     } finally {
+      loadingRef.current = false;
       setLoading(false);
       setInitialLoading(false);
     }
-  }, [loading]);
+  }, []);
 
   useEffect(() => {
     fetchPosts(1);
-  }, []);
+  }, [fetchPosts]);
 
   // Infinite scroll observer
   useEffect(() => {
@@ -49,7 +56,7 @@ const NewsFeed = () => {
 
     observerRef.current = new IntersectionObserver(
       (entries) => {
-        if (entries[0].isIntersecting && page < totalPages && !loading) {
+        if (entries[0].isIntersecting && !loadingRef.current) {
           setPage(prev => prev + 1);
         }
       },
@@ -63,7 +70,7 @@ const NewsFeed = () => {
     return () => {
       if (observerRef.current) observerRef.current.disconnect();
     };
-  }, [page, totalPages, loading]);
+  }, []);
 
   useEffect(() => {
     if (page > 1) fetchPosts(page);
@@ -87,8 +94,17 @@ const NewsFeed = () => {
             <SearchBar />
           </div>
           <div className="flex items-center gap-4">
+            <Link to="/trending" className="text-sm text-gray-600 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400">Trending</Link>
+            <Link to="/topics" className="text-sm text-gray-600 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400">Topics</Link>
+            <Link to="/reels" className="text-sm text-gray-600 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400">Reels</Link>
+            <Link to="/marketplace" className="text-sm text-gray-600 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400">Shop</Link>
             <Link to="/groups" className="text-sm text-gray-600 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400">Groups</Link>
             <Link to="/pages" className="text-sm text-gray-600 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400">Pages</Link>
+            <Link to="/events" className="text-sm text-gray-600 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400">Events</Link>
+            <Link to="/friends" className="text-sm text-gray-600 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400">Friends</Link>
+            <Link to="/saved" className="text-sm text-gray-600 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400">Saved</Link>
+            <Link to="/memories" className="text-sm text-gray-600 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400">Memories</Link>
+            <Link to="/creator" className="text-sm text-gray-600 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400">Creator</Link>
             <Link to="/messages" className="text-sm text-gray-600 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400">Messages</Link>
             <NotificationBell />
             <DarkModeToggle />
@@ -106,6 +122,13 @@ const NewsFeed = () => {
       <div className="max-w-xl mx-auto mt-4 px-4">
         <StoriesBar />
         <CreatePostBox onPostCreated={handlePostCreated} />
+        <SuggestedPeople />
+
+        {error && (
+          <div className="text-center py-4 text-red-500 text-sm mb-4">
+            {error}
+          </div>
+        )}
 
         {initialLoading ? (
           <div className="text-center py-8 text-gray-500">Loading posts...</div>

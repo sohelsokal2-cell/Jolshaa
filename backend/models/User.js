@@ -50,6 +50,21 @@ const userSchema = new mongoose.Schema({
     enum: ['male', 'female', 'other', 'prefer not to say'],
     default: 'prefer not to say'
   },
+  education: {
+    type: String,
+    default: '',
+    maxlength: 200
+  },
+  work: {
+    type: String,
+    default: '',
+    maxlength: 200
+  },
+  location: {
+    type: String,
+    default: '',
+    maxlength: 200
+  },
   isAdmin: {
     type: Boolean,
     default: false
@@ -62,7 +77,15 @@ const userSchema = new mongoose.Schema({
     type: Date,
     default: null
   },
+  suspendedReason: {
+    type: String,
+    default: ''
+  },
   blockedUsers: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  }],
+  friends: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
   }],
@@ -81,7 +104,79 @@ const userSchema = new mongoose.Schema({
       type: String,
       enum: ['everyone', 'friends', 'onlyme'],
       default: 'everyone'
+    },
+    commentPrivacy: {
+      type: String,
+      enum: ['everyone', 'friends', 'none'],
+      default: 'everyone'
+    },
+    storyVisibility: {
+      type: String,
+      enum: ['public', 'friends', 'custom'],
+      default: 'friends'
+    },
+    messagePrivacy: {
+      type: String,
+      enum: ['everyone', 'friends', 'none'],
+      default: 'everyone'
     }
+  },
+  storyHiddenFrom: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  }],
+  loginHistory: [{
+    ip: { type: String, default: '' },
+    userAgent: { type: String, default: '' },
+    timestamp: { type: Date, default: Date.now },
+    success: { type: Boolean, default: true }
+  }],
+  sessions: [{
+    token: { type: String, required: true },
+    ip: { type: String, default: '' },
+    userAgent: { type: String, default: '' },
+    lastActive: { type: Date, default: Date.now },
+    createdAt: { type: Date, default: Date.now }
+  }],
+  savedPosts: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Post'
+  }],
+  followers: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  }],
+  following: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  }],
+  isCreator: {
+    type: Boolean,
+    default: false
+  },
+  isVerified: {
+    type: Boolean,
+    default: false
+  },
+  creatorCategory: {
+    type: String,
+    default: ''
+  },
+  subscriptionPrice: {
+    type: Number,
+    default: 0
+  },
+  subscribers: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  }],
+  tipsEnabled: {
+    type: Boolean,
+    default: false
+  },
+  marketplaceEnabled: {
+    type: Boolean,
+    default: false
   },
   createdAt: {
     type: Date,

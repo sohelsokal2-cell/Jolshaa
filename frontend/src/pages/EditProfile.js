@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import API from '../api/axios';
@@ -9,6 +9,9 @@ const EditProfile = () => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
+  const [uploading, setUploading] = useState(null);
+  const profileInputRef = useRef(null);
+  const coverInputRef = useRef(null);
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
@@ -16,7 +19,10 @@ const EditProfile = () => {
     profilePhoto: '',
     coverPhoto: '',
     gender: 'prefer not to say',
-    dateOfBirth: ''
+    dateOfBirth: '',
+    education: '',
+    work: '',
+    location: ''
   });
 
   useEffect(() => {
@@ -28,7 +34,10 @@ const EditProfile = () => {
         profilePhoto: user.profilePhoto || '',
         coverPhoto: user.coverPhoto || '',
         gender: user.gender || 'prefer not to say',
-        dateOfBirth: user.dateOfBirth ? user.dateOfBirth.split('T')[0] : ''
+        dateOfBirth: user.dateOfBirth ? user.dateOfBirth.split('T')[0] : '',
+        education: user.education || '',
+        work: user.work || '',
+        location: user.location || ''
       });
     }
   }, [user]);
@@ -37,6 +46,32 @@ const EditProfile = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
     setError('');
     setSuccess('');
+  };
+
+  const handlePhotoUpload = async (e, type) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    if (file.size > 5 * 1024 * 1024) {
+      setError('File size must be under 5MB');
+      return;
+    }
+
+    setUploading(type);
+    setError('');
+    try {
+      const fd = new FormData();
+      fd.append('media', file);
+      const res = await API.post('/posts', fd, {
+        params: { text: ' ', postedInType: 'profile' },
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+      const url = res.data.media[0];
+      setFormData(prev => ({ ...prev, [type === 'profile' ? 'profilePhoto' : 'coverPhoto']: url }));
+    } catch (err) {
+      setError('Upload failed. Try again.');
+    } finally {
+      setUploading(null);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -61,12 +96,10 @@ const EditProfile = () => {
     <div className="min-h-screen bg-gray-100">
       <nav className="bg-white shadow-md px-6 py-3 flex justify-between items-center">
         <h1 className="text-xl font-bold text-blue-600">Jolshaa</h1>
-        <button
-          onClick={() => navigate('/feed')}
-          className="text-sm text-gray-600 hover:underline"
-        >
-          Back to Feed
-        </button>
+        <div className="flex items-center gap-4">
+          <button onClick={() => navigate('/security')} className="text-sm text-gray-600 hover:underline">Security</button>
+          <button onClick={() => navigate('/feed')} className="text-sm text-gray-600 hover:underline">Back to Feed</button>
+        </div>
       </nav>
 
       <div className="max-w-lg mx-auto mt-8 px-4">
@@ -77,6 +110,60 @@ const EditProfile = () => {
           {success && <div className="bg-green-100 text-green-700 px-4 py-2 rounded mb-4 text-sm">{success}</div>}
 
           <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Profile Photo</label>
+              <div className="flex items-center gap-4">
+                <img
+                  src={formData.profilePhoto || 'https://res.cloudinary.com/demo/image/upload/v1556418119/default-avatar.png'}
+                  alt="Profile"
+                  className="w-16 h-16 rounded-full object-cover"
+                />
+                <div>
+                  <input
+                    type="file"
+                    ref={profileInputRef}
+                    accept="image/*"
+                    onChange={(e) => handlePhotoUpload(e, 'profile')}
+                    className="hidden"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => profileInputRef.current.click()}
+                    disabled={uploading === 'profile'}
+                    className="text-sm text-blue-600 hover:underline disabled:opacity-50"
+                  >
+                    {uploading === 'profile' ? 'Uploading...' : 'Change Photo'}
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Cover Photo</label>
+              <div className="relative">
+                <div className="h-32 bg-gradient-to-r from-blue-400 to-blue-600 rounded-lg overflow-hidden">
+                  {formData.coverPhoto && (
+                    <img src={formData.coverPhoto} alt="Cover" className="w-full h-full object-cover" />
+                  )}
+                </div>
+                <input
+                  type="file"
+                  ref={coverInputRef}
+                  accept="image/*"
+                  onChange={(e) => handlePhotoUpload(e, 'cover')}
+                  className="hidden"
+                />
+                <button
+                  type="button"
+                  onClick={() => coverInputRef.current.click()}
+                  disabled={uploading === 'cover'}
+                  className="absolute bottom-2 right-2 bg-white text-sm px-3 py-1 rounded shadow hover:bg-gray-50 disabled:opacity-50"
+                >
+                  {uploading === 'cover' ? 'Uploading...' : 'Change Cover'}
+                </button>
+              </div>
+            </div>
+
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
               <input
@@ -113,23 +200,37 @@ const EditProfile = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Profile Photo URL</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Work</label>
               <input
                 type="text"
-                name="profilePhoto"
-                value={formData.profilePhoto}
+                name="work"
+                value={formData.work}
                 onChange={handleChange}
+                placeholder="e.g. Software Engineer at Google"
                 className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Cover Photo URL</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Education</label>
               <input
                 type="text"
-                name="coverPhoto"
-                value={formData.coverPhoto}
+                name="education"
+                value={formData.education}
                 onChange={handleChange}
+                placeholder="e.g. MIT, Computer Science"
+                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Location</label>
+              <input
+                type="text"
+                name="location"
+                value={formData.location}
+                onChange={handleChange}
+                placeholder="e.g. Dhaka, Bangladesh"
                 className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
@@ -162,7 +263,7 @@ const EditProfile = () => {
 
             <button
               type="submit"
-              disabled={loading}
+              disabled={loading || uploading}
               className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50 transition"
             >
               {loading ? 'Saving...' : 'Save Changes'}

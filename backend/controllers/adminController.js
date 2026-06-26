@@ -2,6 +2,11 @@ const User = require('../models/User');
 const Post = require('../models/Post');
 const Report = require('../models/Report');
 const Comment = require('../models/Comment');
+const Reaction = require('../models/Reaction');
+const Notification = require('../models/Notification');
+const Story = require('../models/Story');
+const Group = require('../models/Group');
+const Page = require('../models/Page');
 
 exports.getUsers = async (req, res) => {
   try {
@@ -9,14 +14,15 @@ exports.getUsers = async (req, res) => {
     const query = {};
 
     if (q) {
+      const escaped = q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
       query.$or = [
-        { name: { $regex: q, $options: 'i' } },
-        { email: { $regex: q, $options: 'i' } },
+        { name: { $regex: escaped, $options: 'i' } },
+        { email: { $regex: escaped, $options: 'i' } },
       ];
     }
 
     const users = await User.find(query)
-      .select('name email profilePhoto isAdmin isSuspended createdAt')
+      .select('name email profilePhoto isAdmin isSuspended suspendedAt createdAt')
       .sort({ createdAt: -1 })
       .skip((page - 1) * limit)
       .limit(parseInt(limit));
@@ -37,6 +43,7 @@ exports.getUsers = async (req, res) => {
 
 exports.suspendUser = async (req, res) => {
   try {
+    const { reason } = req.body;
     const user = await User.findById(req.params.id);
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
@@ -48,6 +55,7 @@ exports.suspendUser = async (req, res) => {
 
     user.isSuspended = !user.isSuspended;
     user.suspendedAt = user.isSuspended ? new Date() : null;
+    user.suspendedReason = user.isSuspended ? (reason || '') : '';
     await user.save();
 
     res.json({
@@ -57,6 +65,8 @@ exports.suspendUser = async (req, res) => {
         name: user.name,
         email: user.email,
         isSuspended: user.isSuspended,
+        suspendedAt: user.suspendedAt,
+        suspendedReason: user.suspendedReason,
       },
     });
   } catch (error) {
@@ -78,12 +88,64 @@ exports.deleteUser = async (req, res) => {
 
     await Post.deleteMany({ author: user._id });
     await Comment.deleteMany({ author: user._id });
+    await Reaction.deleteMany({ user: user._id });
+    await Notification.deleteMany({ $or: [{ recipient: user._id }, { sender: user._id }] });
+    await Story.deleteMany({ author: user._id });
     await Report.deleteMany({ reporter: user._id });
     await user.deleteOne();
 
     res.json({ message: 'User deleted' });
   } catch (error) {
     console.error('Delete user error:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+exports.removePost = async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.id);
+    if (!post) return res.status(404).json({ message: 'Post not found' });
+
+    await Post.findByIdAndDelete(req.params.id);
+    await Comment.deleteMany({ post: req.params.id });
+    await Reaction.deleteMany({ targetType: 'Post', targetId: req.params.id });
+    await Report.deleteMany({ targetType: 'post', targetId: req.params.id });
+
+    res.json({ message: 'Post removed' });
+  } catch (error) {
+    console.error('Remove post error:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+exports.removeComment = async (req, res) => {
+  try {
+    const comment = await Comment.findById(req.params.id);
+    if (!comment) return res.status(404).json({ message: 'Comment not found' });
+
+    await Comment.deleteMany({ parentComment: req.params.id });
+    await Comment.findByIdAndDelete(req.params.id);
+    await Reaction.deleteMany({ targetType: 'Comment', targetId: req.params.id });
+    await Report.deleteMany({ targetType: 'comment', targetId: req.params.id });
+
+    res.json({ message: 'Comment removed' });
+  } catch (error) {
+    console.error('Remove comment error:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+exports.removeStory = async (req, res) => {
+  try {
+    const story = await Story.findById(req.params.id);
+    if (!story) return res.status(404).json({ message: 'Story not found' });
+
+    await story.deleteOne();
+    await Report.deleteMany({ targetType: 'story', targetId: req.params.id });
+
+    res.json({ message: 'Story removed' });
+  } catch (error) {
+    console.error('Remove story error:', error);
     res.status(500).json({ message: 'Server error' });
   }
 };

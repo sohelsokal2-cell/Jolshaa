@@ -1,6 +1,7 @@
 const Conversation = require('../models/Conversation');
 const Message = require('../models/Message');
 const User = require('../models/User');
+const { hasId } = require('../utils/id');
 
 exports.getConversations = async (req, res) => {
   try {
@@ -41,6 +42,21 @@ exports.createConversation = async (req, res) => {
     } else if (participantId) {
       // Direct conversation
       participants = [req.user._id, participantId];
+
+      // Check block status
+      const currentUser = await User.findById(req.user._id).select('blockedUsers');
+      if (hasId(currentUser.blockedUsers, participantId)) {
+        return res.status(403).json({ message: 'You have blocked this user' });
+      }
+      const targetUser = await User.findById(participantId).select('blockedUsers privacy');
+      if (targetUser && hasId(targetUser.blockedUsers, req.user._id)) {
+        return res.status(403).json({ message: 'User not found' });
+      }
+
+      // Check message privacy
+      if (targetUser && targetUser.privacy && targetUser.privacy.messagePrivacy === 'none') {
+        return res.status(403).json({ message: 'This user does not accept messages' });
+      }
 
       // Check if direct conversation already exists
       const existing = await Conversation.findOne({
@@ -97,6 +113,15 @@ exports.getMessages = async (req, res) => {
     const limit = parseInt(req.query.limit) || 50;
     const skip = (page - 1) * limit;
     const before = req.query.before; // cursor-based pagination
+
+    const conversation = await Conversation.findOne({
+      _id: req.params.id,
+      participants: req.user._id,
+    }).select('_id');
+
+    if (!conversation) {
+      return res.status(403).json({ message: 'Not authorized' });
+    }
 
     const query = { conversation: req.params.id };
     if (before) {

@@ -14,7 +14,14 @@ const PageCard = ({ page }) => {
             <img src={page.profilePhoto} alt="" className="w-12 h-12 rounded-full object-cover border-2 border-white -mt-8 relative" />
           )}
           <div>
-            <h3 className="font-semibold text-lg truncate">{page.name}</h3>
+            <h3 className="font-semibold text-lg truncate flex items-center gap-1">
+              {page.name}
+              {page.isVerified && (
+                <span className="inline-flex items-center justify-center w-4 h-4 bg-blue-500 text-white rounded-full text-[10px] flex-shrink-0">
+                  <svg className="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" /></svg>
+                </span>
+              )}
+            </h3>
             <p className="text-xs text-gray-500">{page.category}</p>
           </div>
         </div>

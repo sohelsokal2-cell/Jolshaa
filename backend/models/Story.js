@@ -22,6 +22,24 @@ const storySchema = new mongoose.Schema(
         ref: 'User',
       },
     ],
+    visibility: {
+      type: String,
+      enum: ['public', 'friends', 'custom'],
+      default: 'friends'
+    },
+    reactions: [
+      {
+        user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+        emoji: { type: String, required: true },
+      },
+    ],
+    replies: [
+      {
+        user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+        text: { type: String, required: true, maxlength: 500 },
+        createdAt: { type: Date, default: Date.now },
+      },
+    ],
   },
   {
     timestamps: true,

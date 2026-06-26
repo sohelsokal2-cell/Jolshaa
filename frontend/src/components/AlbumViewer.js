@@ -1,9 +1,17 @@
 import { useState, useRef } from 'react';
 import API from '../api/axios';
+import { useAuth } from '../context/AuthContext';
+import ShareModal from './ShareModal';
 
 const AlbumViewer = ({ album, onClose, isOwner, onPhotosUpdated }) => {
+  const { user } = useAuth();
   const [currentPhotoIndex, setCurrentPhotoIndex] = useState(-1);
   const [showUpload, setShowUpload] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
+  const [showShareModal, setShowShareModal] = useState(false);
+  const [settingsTitle, setSettingsTitle] = useState(album.title);
+  const [settingsDescription, setSettingsDescription] = useState(album.description || '');
+  const [settingsVisibility, setSettingsVisibility] = useState(album.visibility || 'friends');
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef(null);
 
@@ -45,6 +53,31 @@ const AlbumViewer = ({ album, onClose, isOwner, onPhotosUpdated }) => {
     }
   };
 
+  const handleSaveSettings = async () => {
+    try {
+      const res = await API.put(`/albums/${album._id}`, {
+        title: settingsTitle,
+        description: settingsDescription,
+        visibility: settingsVisibility,
+      });
+      onPhotosUpdated(res.data.album);
+      setShowSettings(false);
+    } catch (err) {
+      console.error('Failed to update album');
+    }
+  };
+
+  const handleToggleHighlight = async () => {
+    try {
+      const res = await API.put(`/albums/${album._id}`, {
+        isHighlight: !album.isHighlight,
+      });
+      onPhotosUpdated(res.data.album);
+    } catch (err) {
+      console.error('Failed to toggle highlight');
+    }
+  };
+
   const openLightbox = (index) => {
     setCurrentPhotoIndex(index);
   };
@@ -77,12 +110,26 @@ const AlbumViewer = ({ album, onClose, isOwner, onPhotosUpdated }) => {
             <div className="flex items-center gap-2">
               {isOwner && (
                 <button
+                  onClick={() => setShowSettings(!showSettings)}
+                  className="text-sm text-gray-600 hover:text-gray-700 font-medium"
+                >
+                  Settings
+                </button>
+              )}
+              {isOwner && (
+                <button
                   onClick={() => setShowUpload(!showUpload)}
                   className="text-sm text-blue-600 hover:text-blue-700 font-medium"
                 >
                   {showUpload ? 'Cancel' : '+ Add Photos'}
                 </button>
               )}
+              <button
+                onClick={() => setShowShareModal(true)}
+                className="text-sm text-green-600 hover:text-green-700 font-medium"
+              >
+                Share
+              </button>
               <button
                 onClick={onClose}
                 className="text-gray-500 hover:text-gray-700 text-xl ml-2"
@@ -111,6 +158,58 @@ const AlbumViewer = ({ album, onClose, isOwner, onPhotosUpdated }) => {
                 onChange={handleUpload}
                 className="hidden"
               />
+            </div>
+          )}
+
+          {showSettings && isOwner && (
+            <div className="p-4 border-b bg-gray-50 space-y-3">
+              <input
+                type="text"
+                value={settingsTitle}
+                onChange={(e) => setSettingsTitle(e.target.value)}
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Album title"
+              />
+              <textarea
+                value={settingsDescription}
+                onChange={(e) => setSettingsDescription(e.target.value)}
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Description (optional)"
+                rows={2}
+              />
+              <select
+                value={settingsVisibility}
+                onChange={(e) => setSettingsVisibility(e.target.value)}
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="public">Public</option>
+                <option value="friends">Friends</option>
+                <option value="onlyme">Only Me</option>
+              </select>
+              <button
+                onClick={handleToggleHighlight}
+                className={`text-sm px-3 py-1.5 rounded-lg font-medium ${
+                  album.isHighlight
+                    ? 'bg-purple-600 text-white hover:bg-purple-700'
+                    : 'bg-purple-100 text-purple-700 hover:bg-purple-200'
+                }`}
+              >
+                {album.isHighlight ? '★ Story Highlight' : '☆ Add to Highlights'}
+              </button>
+              <div className="flex gap-2">
+                <button
+                  onClick={handleSaveSettings}
+                  className="flex-1 bg-blue-600 text-white py-2 rounded-lg text-sm font-medium hover:bg-blue-700"
+                >
+                  Save
+                </button>
+                <button
+                  onClick={() => setShowSettings(false)}
+                  className="px-4 bg-gray-200 text-gray-700 py-2 rounded-lg text-sm font-medium hover:bg-gray-300"
+                >
+                  Cancel
+                </button>
+              </div>
             </div>
           )}
 
@@ -189,6 +288,13 @@ const AlbumViewer = ({ album, onClose, isOwner, onPhotosUpdated }) => {
             {currentPhotoIndex + 1} / {album.photos.length}
           </div>
         </div>
+      )}
+      {showShareModal && (
+        <ShareModal
+          onClose={() => setShowShareModal(false)}
+          shareType="album"
+          shareId={album._id}
+        />
       )}
     </>
   );

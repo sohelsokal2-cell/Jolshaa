@@ -36,7 +36,16 @@ const pageSchema = new mongoose.Schema({
   followers: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
-  }]
+  }],
+  isVerified: {
+    type: Boolean,
+    default: false
+  },
+  featuredPost: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Post',
+    default: null
+  }
 }, {
   timestamps: true
 });

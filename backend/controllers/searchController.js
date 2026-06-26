@@ -2,6 +2,8 @@ const User = require('../models/User');
 const Post = require('../models/Post');
 const Group = require('../models/Group');
 const Page = require('../models/Page');
+const FriendRequest = require('../models/FriendRequest');
+const { hasId } = require('../utils/id');
 
 exports.search = async (req, res) => {
   try {
@@ -14,13 +16,53 @@ exports.search = async (req, res) => {
     const results = {};
 
     const searchUsers = async () => {
-      return User.find(
-        { $text: { $search: query }, _id: { $ne: req.user._id } },
+      const currentUser = await User.findById(req.user._id).select('friends blockedUsers');
+      const blockedIds = (currentUser.blockedUsers || []).map(id => id.toString());
+
+      // Find users who blocked the current user
+      const blockers = await User.find({ blockedUsers: req.user._id }).select('_id');
+      const blockerIds = blockers.map(u => u._id.toString());
+
+      const excludeIds = [...new Set([...blockedIds, ...blockerIds, req.user._id.toString()])];
+
+      const users = await User.find(
+        { $text: { $search: query }, _id: { $nin: excludeIds } },
         { score: { $meta: 'textScore' } }
       )
-        .select('name profilePhoto bio')
+        .select('name profilePhoto bio friends')
         .sort({ score: { $meta: 'textScore' } })
         .limit(20);
+
+      return Promise.all(users.map(async (u) => {
+        const isFriend = hasId(currentUser.friends, u._id);
+        let friendStatus = 'none';
+        let friendRequestId = null;
+
+        if (isFriend) {
+          friendStatus = 'friends';
+        } else {
+          const outgoing = await FriendRequest.findOne({ from: req.user._id, to: u._id, status: 'pending' });
+          if (outgoing) {
+            friendStatus = 'pending_sent';
+            friendRequestId = outgoing._id;
+          } else {
+            const incoming = await FriendRequest.findOne({ from: u._id, to: req.user._id, status: 'pending' });
+            if (incoming) {
+              friendStatus = 'pending_received';
+              friendRequestId = incoming._id;
+            }
+          }
+        }
+
+        return {
+          _id: u._id,
+          name: u.name,
+          profilePhoto: u.profilePhoto,
+          bio: u.bio,
+          friendStatus,
+          friendRequestId
+        };
+      }));
     };
 
     const searchPosts = async () => {

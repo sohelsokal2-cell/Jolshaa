@@ -3,21 +3,13 @@ import { useAuth } from '../context/AuthContext';
 import API from '../api/axios';
 import ReportModal from './ReportModal';
 
-const REACTIONS = [
-  { type: 'like', emoji: '👍' },
-  { type: 'love', emoji: '❤️' },
-  { type: 'haha', emoji: '😂' },
-  { type: 'wow', emoji: '😮' },
-  { type: 'sad', emoji: '😢' },
-  { type: 'angry', emoji: '😡' }
-];
-
 const Comment = ({ comment, onDelete }) => {
   const { user } = useAuth();
   const [showReplies, setShowReplies] = useState(false);
   const [replyText, setReplyText] = useState('');
   const [replying, setReplying] = useState(false);
   const [showReport, setShowReport] = useState(false);
+  const [reactions, setReactions] = useState(comment.reactions || { count: 0, myReaction: null });
 
   const handleReply = async () => {
     if (!replyText.trim()) return;
@@ -36,6 +28,19 @@ const Comment = ({ comment, onDelete }) => {
     }
   };
 
+  const handleReact = async () => {
+    try {
+      const res = await API.post(`/posts/comments/${comment._id}/react`, { type: 'like' });
+      if (res.data.myReaction) {
+        setReactions({ count: reactions.myReaction ? reactions.count : reactions.count + 1, myReaction: res.data.myReaction });
+      } else {
+        setReactions({ count: Math.max(0, reactions.count - 1), myReaction: null });
+      }
+    } catch (err) {
+      console.error('Failed to react');
+    }
+  };
+
   return (
     <div className="ml-4 mt-2">
       <div className="flex items-start gap-2">
@@ -50,7 +55,13 @@ const Comment = ({ comment, onDelete }) => {
             <p className="text-sm text-gray-700">{comment.text}</p>
           </div>
           <div className="flex items-center gap-3 mt-1 text-xs text-gray-500">
-            <button className="hover:text-blue-600">Like</button>
+            <button
+              onClick={handleReact}
+              className={`font-medium hover:text-blue-600 ${reactions.myReaction ? 'text-blue-600' : ''}`}
+            >
+              {reactions.myReaction ? 'Liked' : 'Like'}
+              {reactions.count > 0 && ` (${reactions.count})`}
+            </button>
             <button
               onClick={() => setShowReplies(!showReplies)}
               className="hover:text-blue-600"

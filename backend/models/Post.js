@@ -8,7 +8,7 @@ const postSchema = new mongoose.Schema({
   },
   text: {
     type: String,
-    required: [true, 'Post text is required'],
+    default: '',
     maxlength: 5000
   },
   media: [{
@@ -42,7 +42,52 @@ const postSchema = new mongoose.Schema({
   isEdited: {
     type: Boolean,
     default: false
-  }
+  },
+  sharedPost: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Post',
+    default: null
+  },
+  isPinned: {
+    type: Boolean,
+    default: false
+  },
+  isAnnouncement: {
+    type: Boolean,
+    default: false
+  },
+  hashtags: [{
+    type: String,
+    lowercase: true,
+    trim: true,
+  }],
+  analytics: {
+    reach: { type: Number, default: 0 },
+    impressions: { type: Number, default: 0 },
+    engagement: { type: Number, default: 0 },
+    clicks: { type: Number, default: 0 },
+    shares: { type: Number, default: 0 },
+  },
+  isBoosted: {
+    type: Boolean,
+    default: false
+  },
+  boostEndsAt: {
+    type: Date,
+    default: null
+  },
+  isSponsored: {
+    type: Boolean,
+    default: false
+  },
+  sponsorName: {
+    type: String,
+    default: ''
+  },
+  sponsorUrl: {
+    type: String,
+    default: ''
+  },
 }, {
   timestamps: true
 });
@@ -51,5 +96,6 @@ postSchema.index({ author: 1, createdAt: -1 });
 postSchema.index({ visibility: 1, createdAt: -1 });
 postSchema.index({ 'postedIn.type': 1, 'postedIn.refId': 1, createdAt: -1 });
 postSchema.index({ text: 'text' });
+postSchema.index({ hashtags: 1 });
 
 module.exports = mongoose.model('Post', postSchema);

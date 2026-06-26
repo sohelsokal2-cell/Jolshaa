@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import API from '../api/axios';
 
-const ReportModal = ({ targetType, targetId, onClose }) => {
+const ReportModal = ({ targetType, targetId, userId, onClose }) => {
   const [reason, setReason] = useState('');
   const [description, setDescription] = useState('');
+  const [blockUser, setBlockUser] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState('');
@@ -35,6 +36,11 @@ const ReportModal = ({ targetType, targetId, onClose }) => {
         reason,
         description,
       });
+
+      if (blockUser && userId) {
+        await API.post('/users/block', { userId });
+      }
+
       setSubmitted(true);
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to submit report');
@@ -48,12 +54,7 @@ const ReportModal = ({ targetType, targetId, onClose }) => {
       <div className="bg-white rounded-xl max-w-md w-full overflow-hidden">
         <div className="flex items-center justify-between p-4 border-b">
           <h3 className="font-semibold text-gray-800">Report</h3>
-          <button
-            onClick={onClose}
-            className="text-gray-500 hover:text-gray-700 text-xl"
-          >
-            &times;
-          </button>
+          <button onClick={onClose} className="text-gray-500 hover:text-gray-700 text-xl">&times;</button>
         </div>
 
         <div className="p-4">
@@ -65,9 +66,8 @@ const ReportModal = ({ targetType, targetId, onClose }) => {
                 </svg>
               </div>
               <p className="text-gray-800 font-medium">Report Submitted</p>
-              <p className="text-gray-500 text-sm mt-1">
-                Thank you for helping keep our community safe.
-              </p>
+              <p className="text-gray-500 text-sm mt-1">Thank you for helping keep our community safe.</p>
+              {blockUser && <p className="text-gray-500 text-sm mt-1">User has been blocked.</p>}
               <button
                 onClick={onClose}
                 className="mt-4 px-6 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700"
@@ -77,9 +77,7 @@ const ReportModal = ({ targetType, targetId, onClose }) => {
             </div>
           ) : (
             <>
-              <p className="text-gray-600 text-sm mb-4">
-                Why are you reporting this {targetType}?
-              </p>
+              <p className="text-gray-600 text-sm mb-4">Why are you reporting this {targetType}?</p>
 
               <div className="space-y-2 mb-4">
                 {reasons.map((r) => (
@@ -113,9 +111,19 @@ const ReportModal = ({ targetType, targetId, onClose }) => {
                 maxLength={500}
               />
 
-              {error && (
-                <p className="text-red-500 text-sm mt-2">{error}</p>
+              {userId && (
+                <label className="flex items-center gap-2 mt-3 p-3 bg-gray-50 rounded-lg cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={blockUser}
+                    onChange={(e) => setBlockUser(e.target.checked)}
+                    className="text-blue-600 focus:ring-blue-500 rounded"
+                  />
+                  <span className="text-sm text-gray-700">Also block this user</span>
+                </label>
               )}
+
+              {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
 
               <div className="flex gap-3 mt-4">
                 <button

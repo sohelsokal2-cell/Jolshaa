@@ -5,6 +5,7 @@ const CreateStory = ({ onClose, onStoryCreated }) => {
   const [file, setFile] = useState(null);
   const [preview, setPreview] = useState(null);
   const [mediaType, setMediaType] = useState('image');
+  const [visibility, setVisibility] = useState('friends');
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState('');
   const fileInputRef = useRef(null);
@@ -44,6 +45,7 @@ const CreateStory = ({ onClose, onStoryCreated }) => {
 
       const res = await API.post('/stories', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
+        params: { visibility },
       });
 
       onStoryCreated(res.data.story);
@@ -124,6 +126,21 @@ const CreateStory = ({ onClose, onStoryCreated }) => {
 
           {error && (
             <p className="text-red-500 text-sm mt-2">{error}</p>
+          )}
+
+          {preview && (
+            <div className="mt-3">
+              <label className="block text-sm font-medium text-gray-700 mb-1">Who can see this story</label>
+              <select
+                value={visibility}
+                onChange={(e) => setVisibility(e.target.value)}
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="public">Public</option>
+                <option value="friends">Friends Only</option>
+                <option value="onlyme">Only Me</option>
+              </select>
+            </div>
           )}
         </div>
 

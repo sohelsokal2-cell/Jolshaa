@@ -10,7 +10,9 @@ const {
   deletePage,
   followPage,
   getPageFeed,
-  createPagePost
+  createPagePost,
+  featurePost,
+  getPageInsights
 } = require('../controllers/pageController');
 
 router.use(protect);
@@ -28,6 +30,8 @@ router.put('/:id', upload.fields([
 router.delete('/:id', deletePage);
 router.put('/:id/follow', followPage);
 router.get('/:id/feed', getPageFeed);
+router.put('/:id/feature/:postId', featurePost);
+router.get('/:id/insights', getPageInsights);
 router.post('/:id/posts', upload.array('media', 5), createPagePost);
 
 module.exports = router;

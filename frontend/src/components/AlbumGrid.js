@@ -9,10 +9,13 @@ const AlbumGrid = ({ userId }) => {
   const [loading, setLoading] = useState(true);
   const [showCreate, setShowCreate] = useState(false);
   const [newAlbumTitle, setNewAlbumTitle] = useState('');
+  const [newAlbumDescription, setNewAlbumDescription] = useState('');
+  const [newAlbumVisibility, setNewAlbumVisibility] = useState('friends');
+  const [newAlbumHighlight, setNewAlbumHighlight] = useState(false);
   const [creating, setCreating] = useState(false);
   const [selectedAlbum, setSelectedAlbum] = useState(null);
 
-  const isOwnProfile = user._id === userId;
+  const isOwnProfile = user.id === userId;
 
   useEffect(() => {
     fetchAlbums();
@@ -34,9 +37,18 @@ const AlbumGrid = ({ userId }) => {
 
     setCreating(true);
     try {
-      const res = await API.post('/albums', { title: newAlbumTitle.trim() });
+      const formData = new FormData();
+      formData.append('title', newAlbumTitle.trim());
+      formData.append('description', newAlbumDescription.trim());
+      formData.append('visibility', newAlbumVisibility);
+      formData.append('isHighlight', newAlbumHighlight);
+
+      const res = await API.post('/albums', formData);
       setAlbums((prev) => [res.data.album, ...prev]);
       setNewAlbumTitle('');
+      setNewAlbumDescription('');
+      setNewAlbumVisibility('friends');
+      setNewAlbumHighlight(false);
       setShowCreate(false);
     } catch (err) {
       console.error('Failed to create album');
@@ -86,22 +98,55 @@ const AlbumGrid = ({ userId }) => {
       </div>
 
       {showCreate && (
-        <div className="bg-white rounded-lg shadow-sm p-4 mb-4">
+        <div className="bg-white rounded-lg shadow-sm p-4 mb-4 space-y-3">
           <input
             type="text"
             placeholder="Album title..."
             value={newAlbumTitle}
             onChange={(e) => setNewAlbumTitle(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleCreateAlbum()}
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 mb-3"
+            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
-          <button
-            onClick={handleCreateAlbum}
-            disabled={!newAlbumTitle.trim() || creating}
-            className="w-full bg-blue-600 text-white py-2 rounded-lg text-sm font-medium hover:bg-blue-700 disabled:opacity-50"
+          <textarea
+            placeholder="Description (optional)"
+            value={newAlbumDescription}
+            onChange={(e) => setNewAlbumDescription(e.target.value)}
+            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+            rows={2}
+          />
+          <select
+            value={newAlbumVisibility}
+            onChange={(e) => setNewAlbumVisibility(e.target.value)}
+            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
-            {creating ? 'Creating...' : 'Create Album'}
-          </button>
+            <option value="public">Public</option>
+            <option value="friends">Friends</option>
+            <option value="onlyme">Only Me</option>
+          </select>
+          <label className="flex items-center gap-2 text-sm text-gray-700">
+            <input
+              type="checkbox"
+              checked={newAlbumHighlight}
+              onChange={(e) => setNewAlbumHighlight(e.target.checked)}
+              className="rounded"
+            />
+            Add to Story Highlights
+          </label>
+          <div className="flex gap-2">
+            <button
+              onClick={handleCreateAlbum}
+              disabled={!newAlbumTitle.trim() || creating}
+              className="flex-1 bg-blue-600 text-white py-2 rounded-lg text-sm font-medium hover:bg-blue-700 disabled:opacity-50"
+            >
+              {creating ? 'Creating...' : 'Create Album'}
+            </button>
+            <button
+              onClick={() => setShowCreate(false)}
+              className="px-4 bg-gray-200 text-gray-700 py-2 rounded-lg text-sm font-medium hover:bg-gray-300"
+            >
+              Cancel
+            </button>
+          </div>
         </div>
       )}
 
@@ -164,12 +209,20 @@ const AlbumGrid = ({ userId }) => {
                 )}
               </div>
               <div className="p-3">
-                <h4 className="font-medium text-gray-800 text-sm truncate">
-                  {album.title}
-                </h4>
-                <p className="text-gray-500 text-xs">
-                  {album.photos.length} photo{album.photos.length !== 1 ? 's' : ''}
-                </p>
+                <div className="flex items-center gap-2">
+                  <h4 className="font-medium text-gray-800 text-sm truncate">
+                    {album.title}
+                  </h4>
+                  {album.isHighlight && (
+                    <span className="px-1.5 py-0.5 bg-purple-100 text-purple-700 text-[10px] rounded-full font-medium">Highlight</span>
+                  )}
+                </div>
+                <div className="flex items-center gap-2 mt-1">
+                  <p className="text-gray-500 text-xs">
+                    {album.photos.length} photo{album.photos.length !== 1 ? 's' : ''}
+                  </p>
+                  <span className="text-[10px] text-gray-400 capitalize">{album.visibility}</span>
+                </div>
               </div>
             </div>
           ))}

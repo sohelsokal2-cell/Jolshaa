@@ -1,9 +1,11 @@
 import { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useSocket } from '../context/SocketContext';
 import API from '../api/axios';
 
 const NotificationBell = () => {
   const { socket } = useSocket();
+  const navigate = useNavigate();
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
@@ -70,14 +72,54 @@ const NotificationBell = () => {
     }
   };
 
+  const handleNotificationClick = async (notif) => {
+    if (!notif.isRead) {
+      await markAsRead(notif._id);
+    }
+    setIsOpen(false);
+
+    switch (notif.type) {
+      case 'comment':
+      case 'reaction':
+      case 'tag':
+      case 'share':
+        if (notif.relatedPost?._id) {
+          navigate('/feed');
+        }
+        break;
+      case 'message':
+        navigate('/messages');
+        break;
+      case 'friend_request':
+        navigate('/friends');
+        break;
+      case 'friend_accept':
+        navigate('/profile');
+        break;
+      case 'group_invite':
+        navigate('/groups');
+        break;
+      case 'event_invite':
+      case 'event_rsvp':
+        navigate('/events');
+        break;
+      default:
+        break;
+    }
+  };
+
   const getNotificationText = (notif) => {
     switch (notif.type) {
       case 'friend_request': return 'sent you a friend request';
+      case 'friend_accept': return 'accepted your friend request';
       case 'comment': return 'commented on your post';
       case 'reaction': return 'reacted to your post';
       case 'tag': return 'tagged you in a post';
       case 'message': return 'sent you a message';
       case 'group_invite': return 'added you to a group';
+      case 'share': return 'shared your post';
+      case 'event_invite': return 'invited you to an event';
+      case 'event_rsvp': return 'is going to an event you created';
       default: return 'sent you a notification';
     }
   };
@@ -119,7 +161,7 @@ const NotificationBell = () => {
               notifications.map(notif => (
                 <button
                   key={notif._id}
-                  onClick={() => markAsRead(notif._id)}
+                  onClick={() => handleNotificationClick(notif)}
                   className={`w-full flex items-start gap-3 p-3 hover:bg-gray-50 transition text-left ${
                     !notif.isRead ? 'bg-blue-50' : ''
                   }`}

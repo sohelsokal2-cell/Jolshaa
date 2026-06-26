@@ -16,7 +16,7 @@ const uploadToCloudinary = (buffer, folder) => {
 
 exports.createAlbum = async (req, res) => {
   try {
-    const { title } = req.body;
+    const { title, description, visibility, isHighlight } = req.body;
     if (!title) {
       return res.status(400).json({ message: 'Album title is required' });
     }
@@ -24,6 +24,9 @@ exports.createAlbum = async (req, res) => {
     const album = await Album.create({
       owner: req.user._id,
       title,
+      description: description || '',
+      visibility: visibility || 'friends',
+      isHighlight: isHighlight === 'true',
       photos: [],
     });
 
@@ -38,7 +41,14 @@ exports.createAlbum = async (req, res) => {
 
 exports.getUserAlbums = async (req, res) => {
   try {
-    const albums = await Album.find({ owner: req.params.userId })
+    const isOwn = req.params.userId === req.user._id.toString();
+
+    const query = { owner: req.params.userId };
+    if (!isOwn) {
+      query.$or = [{ visibility: 'public' }, { visibility: 'friends' }];
+    }
+
+    const albums = await Album.find(query)
       .populate('owner', 'name profilePhoto')
       .sort({ createdAt: -1 });
 
@@ -57,6 +67,11 @@ exports.getAlbum = async (req, res) => {
     );
     if (!album) {
       return res.status(404).json({ message: 'Album not found' });
+    }
+
+    const isOwner = album.owner._id.toString() === req.user._id.toString();
+    if (!isOwner && album.visibility === 'onlyme') {
+      return res.status(403).json({ message: 'Album not available' });
     }
 
     res.json({ album });
@@ -138,6 +153,66 @@ exports.removePhoto = async (req, res) => {
     res.json({ album });
   } catch (error) {
     console.error('Remove photo error:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+exports.updateAlbum = async (req, res) => {
+  try {
+    const album = await Album.findById(req.params.id);
+    if (!album) return res.status(404).json({ message: 'Album not found' });
+    if (album.owner.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ message: 'Not authorized' });
+    }
+
+    const { title, description, visibility } = req.body;
+    if (title !== undefined) album.title = title;
+    if (description !== undefined) album.description = description;
+    if (visibility !== undefined) album.visibility = visibility;
+
+    await album.save();
+    await album.populate('owner', 'name profilePhoto');
+
+    res.json({ album });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+exports.shareAlbum = async (req, res) => {
+  try {
+    const album = await Album.findById(req.params.id);
+    if (!album) return res.status(404).json({ message: 'Album not found' });
+    if (album.owner.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ message: 'Not authorized' });
+    }
+
+    const { userIds } = req.body;
+    if (!userIds || !Array.isArray(userIds)) {
+      return res.status(400).json({ message: 'userIds array is required' });
+    }
+
+    album.sharedWith = [...new Set([...album.sharedWith.map(id => id.toString()), ...userIds])];
+    await album.save();
+
+    res.json({ message: 'Album shared', sharedWith: album.sharedWith });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+exports.getHighlights = async (req, res) => {
+  try {
+    const albums = await Album.find({
+      owner: req.params.userId,
+      isHighlight: true,
+      photos: { $exists: true, $ne: [] }
+    })
+      .populate('owner', 'name profilePhoto')
+      .sort({ createdAt: -1 });
+
+    res.json({ albums });
+  } catch (error) {
     res.status(500).json({ message: 'Server error' });
   }
 };

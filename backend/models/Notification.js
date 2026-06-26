@@ -13,7 +13,7 @@ const notificationSchema = new mongoose.Schema({
   },
   type: {
     type: String,
-    enum: ['friend_request', 'comment', 'reaction', 'tag', 'message', 'group_invite'],
+    enum: ['friend_request', 'friend_accept', 'comment', 'reaction', 'tag', 'message', 'group_invite', 'share', 'event_invite', 'event_rsvp', 'tip', 'subscription'],
     required: true
   },
   relatedPost: {
@@ -29,6 +29,11 @@ const notificationSchema = new mongoose.Schema({
   relatedConversation: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Conversation',
+    default: null
+  },
+  relatedEvent: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Event',
     default: null
   },
   isRead: {

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import API from '../api/axios';
+import FriendButton from '../components/FriendButton';
 
 const SearchResults = () => {
   const { user, logout } = useAuth();
@@ -54,6 +55,7 @@ const SearchResults = () => {
           <div className="flex items-center gap-4">
             <Link to="/groups" className="text-sm text-gray-600 hover:text-blue-600">Groups</Link>
             <Link to="/pages" className="text-sm text-gray-600 hover:text-blue-600">Pages</Link>
+            <Link to="/friends" className="text-sm text-gray-600 hover:text-blue-600">Friends</Link>
             <Link to="/messages" className="text-sm text-gray-600 hover:text-blue-600">Messages</Link>
             <Link to="/profile" className="text-sm text-gray-600 hover:text-blue-600">
               {user.name?.split(' ')[0]}
@@ -104,23 +106,30 @@ const SearchResults = () => {
                 <h3 className="font-semibold text-gray-800 mb-3">Users</h3>
                 <div className="space-y-3">
                   {filteredResults.users.map((u) => (
-                    <Link
-                      key={u._id}
-                      to={`/profile/${u._id}`}
-                      className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50"
-                    >
-                      <img
-                        src={u.profilePhoto || 'https://res.cloudinary.com/demo/image/upload/v1556418119/default-avatar.png'}
-                        alt=""
-                        className="w-12 h-12 rounded-full object-cover"
-                      />
-                      <div>
-                        <p className="font-medium text-gray-800">{u.name}</p>
+                    <div key={u._id} className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50">
+                      <Link to={`/profile/${u._id}`}>
+                        <img
+                          src={u.profilePhoto || 'https://res.cloudinary.com/demo/image/upload/v1556418119/default-avatar.png'}
+                          alt=""
+                          className="w-12 h-12 rounded-full object-cover"
+                        />
+                      </Link>
+                      <div className="flex-1 min-w-0">
+                        <Link to={`/profile/${u._id}`} className="font-medium text-gray-800 hover:underline">
+                          {u.name}
+                        </Link>
                         {u.bio && (
                           <p className="text-gray-500 text-sm truncate">{u.bio}</p>
                         )}
                       </div>
-                    </Link>
+                      {u._id !== user.id && (
+                        <FriendButton
+                          userId={u._id}
+                          initialStatus={u.friendStatus || 'none'}
+                          initialRequestId={u.friendRequestId}
+                        />
+                      )}
+                    </div>
                   ))}
                 </div>
               </div>
@@ -196,7 +205,14 @@ const SearchResults = () => {
                         </span>
                       </div>
                       <div>
-                        <p className="font-medium text-gray-800">{page.name}</p>
+                        <p className="font-medium text-gray-800 flex items-center gap-1">
+                          {page.name}
+                          {page.isVerified && (
+                            <span className="inline-flex items-center justify-center w-4 h-4 bg-blue-500 text-white rounded-full text-[10px]">
+                              <svg className="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" /></svg>
+                            </span>
+                          )}
+                        </p>
                         <p className="text-gray-500 text-sm">
                           {page.category} · {page.followers?.length || 0} followers
                         </p>
