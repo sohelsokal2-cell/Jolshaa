@@ -15,8 +15,23 @@ const server = http.createServer(app);
 // Initialize Socket.io
 initSocket(server);
 
+const CLIENT_URL = (process.env.CLIENT_URL || 'http://localhost:3000').replace(/\/$/, '');
+
+const allowedOrigins = [
+  CLIENT_URL,
+  'https://jolshaa.vercel.app',
+  'http://localhost:3000',
+  'http://localhost:5173',
+].filter(Boolean).map(o => o.replace(/\/$/, ''));
+
 app.use(cors({
-  origin: process.env.CLIENT_URL || 'http://localhost:3000',
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin.replace(/\/$/, ''))) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true
 }));
 app.use(express.json());
