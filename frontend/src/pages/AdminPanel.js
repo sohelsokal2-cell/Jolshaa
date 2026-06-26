@@ -2,9 +2,10 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import API from '../api/axios';
+import Layout from '../components/layout/Layout';
 
 const AdminPanel = () => {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const [activeTab, setActiveTab] = useState('stats');
   const [stats, setStats] = useState(null);
   const [users, setUsers] = useState([]);
@@ -126,13 +127,15 @@ const AdminPanel = () => {
 
   if (!user?.isAdmin) {
     return (
-      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-        <div className="text-center">
-          <h2 className="text-2xl font-bold text-gray-800 mb-2">Access Denied</h2>
-          <p className="text-gray-500">You don't have admin privileges.</p>
-          <Link to="/feed" className="text-blue-600 hover:underline mt-4 block">Go to Feed</Link>
+      <Layout>
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <div className="text-center">
+            <h2 className="text-2xl font-bold text-gray-800 mb-2">Access Denied</h2>
+            <p className="text-gray-500">You don't have admin privileges.</p>
+            <Link to="/feed" className="text-blue-600 hover:underline mt-4 block">Go to Feed</Link>
+          </div>
         </div>
-      </div>
+      </Layout>
     );
   }
 
@@ -143,17 +146,7 @@ const AdminPanel = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      <nav className="bg-white shadow-md px-6 py-3 sticky top-0 z-40">
-        <div className="max-w-4xl mx-auto flex justify-between items-center">
-          <Link to="/feed" className="text-xl font-bold text-blue-600">Jolshaa Admin</Link>
-          <div className="flex items-center gap-4">
-            <Link to="/feed" className="text-sm text-gray-600 hover:text-blue-600">Back to App</Link>
-            <button onClick={logout} className="text-sm text-red-600 hover:underline">Logout</button>
-          </div>
-        </div>
-      </nav>
-
+    <Layout>
       <div className="max-w-4xl mx-auto mt-4 px-4 pb-8">
         <div className="flex gap-2 mb-4">
           {tabs.map((tab) => (
@@ -330,7 +323,7 @@ const AdminPanel = () => {
           </>
         )}
       </div>
-    </div>
+    </Layout>
   );
 };
 

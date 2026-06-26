@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import Button from '../components/ui/Button';
+import Input from '../components/ui/Input';
 
 const Signup = () => {
   const [formData, setFormData] = useState({ name: '', email: '', password: '', confirmPassword: '' });
@@ -17,16 +19,9 @@ const Signup = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const { name, email, password, confirmPassword } = formData;
-
-    if (!name || !email || !password) {
-      return setError('All fields are required');
-    }
-    if (password.length < 6) {
-      return setError('Password must be at least 6 characters');
-    }
-    if (password !== confirmPassword) {
-      return setError('Passwords do not match');
-    }
+    if (!name || !email || !password) return setError('All fields are required');
+    if (password.length < 6) return setError('Password must be at least 6 characters');
+    if (password !== confirmPassword) return setError('Passwords do not match');
 
     setLoading(true);
     try {
@@ -40,58 +35,74 @@ const Signup = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4">
-      <div className="max-w-md w-full bg-white rounded-lg shadow-md p-8">
-        <h1 className="text-3xl font-bold text-center text-blue-600 mb-8">Jolshaa</h1>
-        <h2 className="text-xl font-semibold text-center mb-6">Create Account</h2>
+    <div className="min-h-screen bg-neutral-100 dark:bg-neutral-900 flex items-center justify-center px-4">
+      <div className="w-full max-w-md space-y-8">
+        <div className="text-center">
+          <div className="w-16 h-16 bg-primary-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <span className="text-white font-bold text-3xl">J</span>
+          </div>
+          <h1 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">Create Account</h1>
+          <p className="text-sm text-neutral-500 mt-1">Join Jolshaa today</p>
+        </div>
 
-        {error && <div className="bg-red-100 text-red-700 px-4 py-2 rounded mb-4 text-sm">{error}</div>}
+        <div className="bg-white dark:bg-neutral-800 rounded-2xl shadow-card p-6 space-y-5">
+          {error && (
+            <div className="bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 px-4 py-3 rounded-xl text-sm flex items-center gap-2">
+              <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+              {error}
+            </div>
+          )}
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <input
-            type="text"
-            name="name"
-            placeholder="Full Name"
-            value={formData.name}
-            onChange={handleChange}
-            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          <input
-            type="email"
-            name="email"
-            placeholder="Email"
-            value={formData.email}
-            onChange={handleChange}
-            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          <input
-            type="password"
-            name="password"
-            placeholder="Password (min 6 characters)"
-            value={formData.password}
-            onChange={handleChange}
-            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          <input
-            type="password"
-            name="confirmPassword"
-            placeholder="Confirm Password"
-            value={formData.confirmPassword}
-            onChange={handleChange}
-            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50 transition"
-          >
-            {loading ? 'Signing up...' : 'Sign Up'}
-          </button>
-        </form>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <Input
+              type="text"
+              name="name"
+              placeholder="Full name"
+              value={formData.name}
+              onChange={handleChange}
+              icon={
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+              }
+            />
+            <Input
+              type="email"
+              name="email"
+              placeholder="Email address"
+              value={formData.email}
+              onChange={handleChange}
+              icon={
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" /></svg>
+              }
+            />
+            <Input
+              type="password"
+              name="password"
+              placeholder="Password (min 6 characters)"
+              value={formData.password}
+              onChange={handleChange}
+              icon={
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
+              }
+            />
+            <Input
+              type="password"
+              name="confirmPassword"
+              placeholder="Confirm password"
+              value={formData.confirmPassword}
+              onChange={handleChange}
+              icon={
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+              }
+            />
+            <Button type="submit" fullWidth loading={loading} size="lg">
+              Sign Up
+            </Button>
+          </form>
+        </div>
 
-        <p className="text-center mt-6 text-sm text-gray-600">
+        <p className="text-center text-sm text-neutral-500">
           Already have an account?{' '}
-          <Link to="/login" className="text-blue-600 hover:underline">Log in</Link>
+          <Link to="/login" className="text-primary-600 hover:text-primary-700 font-medium">Log in</Link>
         </p>
       </div>
     </div>

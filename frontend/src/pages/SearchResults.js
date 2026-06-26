@@ -3,9 +3,10 @@ import { useSearchParams, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import API from '../api/axios';
 import FriendButton from '../components/FriendButton';
+import Layout from '../components/layout/Layout';
 
 const SearchResults = () => {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const [searchParams] = useSearchParams();
   const query = searchParams.get('q') || '';
   const [activeTab, setActiveTab] = useState('all');
@@ -48,23 +49,7 @@ const SearchResults = () => {
   );
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      <nav className="bg-white shadow-md px-6 py-3 sticky top-0 z-40">
-        <div className="max-w-2xl mx-auto flex justify-between items-center">
-          <Link to="/feed" className="text-xl font-bold text-blue-600">Jolshaa</Link>
-          <div className="flex items-center gap-4">
-            <Link to="/groups" className="text-sm text-gray-600 hover:text-blue-600">Groups</Link>
-            <Link to="/pages" className="text-sm text-gray-600 hover:text-blue-600">Pages</Link>
-            <Link to="/friends" className="text-sm text-gray-600 hover:text-blue-600">Friends</Link>
-            <Link to="/messages" className="text-sm text-gray-600 hover:text-blue-600">Messages</Link>
-            <Link to="/profile" className="text-sm text-gray-600 hover:text-blue-600">
-              {user.name?.split(' ')[0]}
-            </Link>
-            <button onClick={logout} className="text-sm text-red-600 hover:underline">Logout</button>
-          </div>
-        </div>
-      </nav>
-
+    <Layout>
       <div className="max-w-2xl mx-auto mt-4 px-4">
         <div className="bg-white rounded-lg shadow-sm p-4 mb-4">
           <h2 className="text-lg font-semibold text-gray-800 mb-1">
@@ -225,7 +210,7 @@ const SearchResults = () => {
           </div>
         )}
       </div>
-    </div>
+    </Layout>
   );
 };
 

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import API from '../api/axios';
 import PostCard from '../components/PostCard';
+import Layout from '../components/layout/Layout';
 
 const HashtagPage = () => {
   const { name } = useParams();
@@ -37,7 +38,8 @@ const HashtagPage = () => {
   }
 
   return (
-    <div className="max-w-2xl mx-auto p-4">
+    <Layout>
+      <div className="max-w-2xl mx-auto p-4">
       <div className="mb-6">
         <h1 className="text-3xl font-bold text-blue-600">#{name}</h1>
         {hashtag && (
@@ -58,6 +60,7 @@ const HashtagPage = () => {
         </div>
       )}
     </div>
+    </Layout>
   );
 };
 

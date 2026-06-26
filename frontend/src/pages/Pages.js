@@ -1,10 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
 import API from '../api/axios';
 import PageCard from '../components/PageCard';
-import NotificationBell from '../components/NotificationBell';
 import Toast from '../components/Toast';
+import Layout from '../components/layout/Layout';
 
 const CATEGORIES = [
   'Business', 'Entertainment', 'Health', 'Education', 'Technology',
@@ -12,7 +11,6 @@ const CATEGORIES = [
 ];
 
 const Pages = () => {
-  const { user, logout } = useAuth();
   const [pages, setPages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -46,18 +44,7 @@ const Pages = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      <nav className="bg-white shadow-md px-6 py-3 sticky top-0 z-40">
-        <div className="max-w-4xl mx-auto flex justify-between items-center">
-          <Link to="/feed" className="text-xl font-bold text-blue-600">Jolshaa</Link>
-          <div className="flex items-center gap-4">
-            <Link to="/groups" className="text-sm text-gray-600 hover:text-blue-600">Groups</Link>
-            <NotificationBell />
-            <button onClick={logout} className="text-sm text-red-600 hover:underline">Logout</button>
-          </div>
-        </div>
-      </nav>
-
+    <Layout>
       <div className="max-w-4xl mx-auto mt-6 px-4">
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-2xl font-bold">Pages</h1>
@@ -133,7 +120,7 @@ const Pages = () => {
       </div>
 
       <Toast />
-    </div>
+    </Layout>
   );
 };
 

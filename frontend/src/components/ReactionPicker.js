@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 
 const REACTIONS = [
   { type: 'like', emoji: '👍', label: 'Like' },
@@ -11,16 +11,21 @@ const REACTIONS = [
 
 const ReactionPicker = ({ currentReaction, onReact }) => {
   const [showPicker, setShowPicker] = useState(false);
-  const [hoverTimeout, setHoverTimeout] = useState(null);
+  const timeoutRef = useRef(null);
+  const containerRef = useRef(null);
+
+  useEffect(() => {
+    return () => clearTimeout(timeoutRef.current);
+  }, []);
 
   const handleMouseEnter = () => {
-    clearTimeout(hoverTimeout);
-    setHoverTimeout(setTimeout(() => setShowPicker(true), 500));
+    clearTimeout(timeoutRef.current);
+    timeoutRef.current = setTimeout(() => setShowPicker(true), 400);
   };
 
   const handleMouseLeave = () => {
-    clearTimeout(hoverTimeout);
-    setHoverTimeout(setTimeout(() => setShowPicker(false), 300));
+    clearTimeout(timeoutRef.current);
+    timeoutRef.current = setTimeout(() => setShowPicker(false), 200);
   };
 
   const handleReaction = (type) => {
@@ -32,20 +37,21 @@ const ReactionPicker = ({ currentReaction, onReact }) => {
 
   return (
     <div
+      ref={containerRef}
       className="relative inline-block"
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
       <button
         onClick={() => handleReaction(currentReaction || 'like')}
-        className={`flex items-center gap-1 px-3 py-1 rounded-full text-sm transition ${
+        className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium transition-colors ${
           currentReaction
-            ? 'bg-blue-100 text-blue-600 font-medium'
-            : 'hover:bg-gray-100 text-gray-500'
+            ? 'text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-900/20'
+            : 'text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700'
         }`}
       >
         {currentEmoji ? (
-          <span className="text-base">{currentEmoji.emoji}</span>
+          <span className="text-base leading-none">{currentEmoji.emoji}</span>
         ) : (
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5" />
@@ -55,13 +61,13 @@ const ReactionPicker = ({ currentReaction, onReact }) => {
       </button>
 
       {showPicker && (
-        <div className="absolute bottom-full left-0 mb-2 bg-white rounded-full shadow-lg border px-2 py-1 flex gap-1 z-50">
+        <div className="absolute bottom-full left-0 mb-2 bg-white dark:bg-neutral-800 rounded-full shadow-dropdown border border-neutral-100 dark:border-neutral-700 px-2 py-1.5 flex gap-0.5 z-50 animate-scale-in">
           {REACTIONS.map(reaction => (
             <button
               key={reaction.type}
               onClick={() => handleReaction(reaction.type)}
-              className={`text-2xl hover:scale-125 transition-transform p-1 rounded-full ${
-                currentReaction === reaction.type ? 'bg-blue-50' : ''
+              className={`text-xl hover:scale-125 active:scale-95 transition-all p-1.5 rounded-full ${
+                currentReaction === reaction.type ? 'bg-primary-50 dark:bg-primary-900/20' : 'hover:bg-neutral-100 dark:hover:bg-neutral-700'
               }`}
               title={reaction.label}
             >

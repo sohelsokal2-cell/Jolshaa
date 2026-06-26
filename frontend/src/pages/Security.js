@@ -1,10 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
 import API from '../api/axios';
+import Layout from '../components/layout/Layout';
 
 const Security = () => {
-  const { user, logout } = useAuth();
   const [activeTab, setActiveTab] = useState('password');
   const [passwords, setPasswords] = useState({ current: '', newPass: '', confirm: '' });
   const [passwordLoading, setPasswordLoading] = useState(false);
@@ -101,16 +100,7 @@ const Security = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      <nav className="bg-white shadow-md px-6 py-3 flex justify-between items-center">
-        <Link to="/feed" className="text-xl font-bold text-blue-600">Jolshaa</Link>
-        <div className="flex items-center gap-4">
-          <Link to="/edit-profile" className="text-sm text-blue-600 hover:underline">Edit Profile</Link>
-          <Link to="/privacy" className="text-sm text-blue-600 hover:underline">Privacy</Link>
-          <button onClick={logout} className="text-sm text-red-600 hover:underline">Logout</button>
-        </div>
-      </nav>
-
+    <Layout>
       <div className="max-w-xl mx-auto mt-8 px-4 pb-8">
         <h1 className="text-xl font-bold text-gray-800 mb-4">Security & Account</h1>
 
@@ -239,7 +229,7 @@ const Security = () => {
           </div>
         )}
       </div>
-    </div>
+    </Layout>
   );
 };
 

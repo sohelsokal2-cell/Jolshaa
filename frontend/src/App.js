@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { SocketProvider } from './context/SocketContext';
 import { DarkModeProvider } from './context/DarkModeContext';
+import { ToastProvider } from './components/ui/Toast';
 import ProtectedRoute from './components/ProtectedRoute';
 import Signup from './pages/Signup';
 import Login from './pages/Login';
@@ -87,7 +88,9 @@ function App() {
     <DarkModeProvider>
       <AuthProvider>
         <SocketProvider>
-          <AppContent />
+          <ToastProvider>
+            <AppContent />
+          </ToastProvider>
         </SocketProvider>
       </AuthProvider>
     </DarkModeProvider>

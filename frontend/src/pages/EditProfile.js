@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import API from '../api/axios';
+import Layout from '../components/layout/Layout';
 
 const EditProfile = () => {
   const { user, updateUser } = useAuth();
@@ -93,15 +94,7 @@ const EditProfile = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      <nav className="bg-white shadow-md px-6 py-3 flex justify-between items-center">
-        <h1 className="text-xl font-bold text-blue-600">Jolshaa</h1>
-        <div className="flex items-center gap-4">
-          <button onClick={() => navigate('/security')} className="text-sm text-gray-600 hover:underline">Security</button>
-          <button onClick={() => navigate('/feed')} className="text-sm text-gray-600 hover:underline">Back to Feed</button>
-        </div>
-      </nav>
-
+    <Layout showSidebar={false}>
       <div className="max-w-lg mx-auto mt-8 px-4">
         <div className="bg-white rounded-lg shadow-md p-6">
           <h2 className="text-xl font-semibold mb-6">Edit Profile</h2>
@@ -271,7 +264,7 @@ const EditProfile = () => {
           </form>
         </div>
       </div>
-    </div>
+    </Layout>
   );
 };
 

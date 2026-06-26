@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import API from '../api/axios';
 import PostCard from '../components/PostCard';
+import Layout from '../components/layout/Layout';
 
 const MemoriesPage = () => {
   const [memories, setMemories] = useState([]);
@@ -22,7 +23,8 @@ const MemoriesPage = () => {
   };
 
   return (
-    <div className="max-w-2xl mx-auto p-4">
+    <Layout>
+      <div className="max-w-2xl mx-auto p-4">
       <h1 className="text-2xl font-bold mb-2">On This Day</h1>
       <p className="text-gray-500 text-sm mb-4">Your posts from this day in previous years</p>
 
@@ -54,6 +56,7 @@ const MemoriesPage = () => {
         </div>
       )}
     </div>
+    </Layout>
   );
 };
 

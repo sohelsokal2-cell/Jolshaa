@@ -18,11 +18,11 @@ const SearchBar = () => {
         type="text"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        placeholder="Search..."
-        className="w-full bg-gray-100 rounded-full px-4 py-2 pl-10 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white"
+        placeholder="Search Jolshaa"
+        className="w-full bg-neutral-100 dark:bg-neutral-700 rounded-full px-4 py-2 pl-10 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/30 focus:bg-white dark:focus:bg-neutral-600 transition-all text-neutral-900 dark:text-neutral-100 placeholder-neutral-400"
       />
       <svg
-        className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"
+        className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400"
         fill="none"
         stroke="currentColor"
         viewBox="0 0 24 24"

@@ -2,9 +2,10 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import API from '../api/axios';
+import Layout from '../components/layout/Layout';
 
 const FriendRequests = () => {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const [incoming, setIncoming] = useState([]);
   const [outgoing, setOutgoing] = useState([]);
   const [friends, setFriends] = useState([]);
@@ -84,17 +85,7 @@ const FriendRequests = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      <nav className="bg-white shadow-md px-6 py-3 sticky top-0 z-40">
-        <div className="max-w-2xl mx-auto flex justify-between items-center">
-          <Link to="/feed" className="text-xl font-bold text-blue-600">Jolshaa</Link>
-          <div className="flex items-center gap-4">
-            <Link to="/feed" className="text-sm text-gray-600 hover:text-blue-600">Feed</Link>
-            <button onClick={logout} className="text-sm text-red-600 hover:underline">Logout</button>
-          </div>
-        </div>
-      </nav>
-
+    <Layout>
       <div className="max-w-2xl mx-auto mt-4 px-4 pb-8">
         <div className="bg-white rounded-lg shadow-sm p-4 mb-4">
           <h1 className="text-xl font-bold text-gray-800">Friends</h1>
@@ -250,7 +241,7 @@ const FriendRequests = () => {
           </>
         )}
       </div>
-    </div>
+    </Layout>
   );
 };
 

@@ -1,10 +1,8 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
 import API from '../api/axios';
+import Layout from '../components/layout/Layout';
 
 const PrivacySettings = () => {
-  const { user, logout } = useAuth();
   const [privacy, setPrivacy] = useState({
     postVisibility: 'public',
     friendRequests: 'everyone',
@@ -84,32 +82,14 @@ const PrivacySettings = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-100">
-        <nav className="bg-white shadow-md px-6 py-3 sticky top-0 z-40">
-          <div className="max-w-2xl mx-auto flex justify-between items-center">
-            <Link to="/feed" className="text-xl font-bold text-blue-600">Jolshaa</Link>
-          </div>
-        </nav>
+      <Layout>
         <div className="max-w-2xl mx-auto mt-4 px-4 text-center py-8 text-gray-500">Loading...</div>
-      </div>
+      </Layout>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      <nav className="bg-white shadow-md px-6 py-3 sticky top-0 z-40">
-        <div className="max-w-2xl mx-auto flex justify-between items-center">
-          <Link to="/feed" className="text-xl font-bold text-blue-600">Jolshaa</Link>
-          <div className="flex items-center gap-4">
-            <Link to="/security" className="text-sm text-gray-600 hover:text-blue-600">Security</Link>
-            <Link to="/profile" className="text-sm text-gray-600 hover:text-blue-600">
-              {user.name?.split(' ')[0]}
-            </Link>
-            <button onClick={logout} className="text-sm text-red-600 hover:underline">Logout</button>
-          </div>
-        </div>
-      </nav>
-
+    <Layout>
       <div className="max-w-2xl mx-auto mt-4 px-4 pb-8">
         <div className="bg-white rounded-lg shadow-sm p-6">
           <h2 className="text-xl font-bold text-gray-800 mb-6">Privacy Settings</h2>
@@ -283,7 +263,7 @@ const PrivacySettings = () => {
           )}
         </div>
       </div>
-    </div>
+    </Layout>
   );
 };
 

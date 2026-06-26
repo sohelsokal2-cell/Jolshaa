@@ -1,10 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import API from '../api/axios';
-import { useAuth } from '../context/AuthContext';
+import Layout from '../components/layout/Layout';
 
 const MarketplacePage = () => {
-  const { user } = useAuth();
   const [listings, setListings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [category, setCategory] = useState('');
@@ -69,7 +68,8 @@ const MarketplacePage = () => {
   ];
 
   return (
-    <div className="max-w-4xl mx-auto p-4">
+    <Layout>
+      <div className="max-w-4xl mx-auto p-4">
       <div className="flex items-center justify-between mb-4">
         <h1 className="text-2xl font-bold">Marketplace</h1>
         <button
@@ -214,6 +214,7 @@ const MarketplacePage = () => {
         </div>
       )}
     </div>
+    </Layout>
   );
 };
 

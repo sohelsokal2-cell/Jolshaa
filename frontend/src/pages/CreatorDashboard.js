@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import API from '../api/axios';
+import Layout from '../components/layout/Layout';
 
 const CreatorDashboard = () => {
   const { user } = useAuth();
@@ -46,7 +47,8 @@ const CreatorDashboard = () => {
   }
 
   return (
-    <div className="max-w-4xl mx-auto p-4">
+    <Layout>
+      <div className="max-w-4xl mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">Creator Dashboard</h1>
 
       <div className="flex gap-4 border-b mb-6">
@@ -144,6 +146,7 @@ const CreatorDashboard = () => {
         </div>
       )}
     </div>
+    </Layout>
   );
 };
 

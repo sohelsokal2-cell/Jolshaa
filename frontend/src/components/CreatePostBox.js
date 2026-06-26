@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
 import API from '../api/axios';
+import Avatar from './ui/Avatar';
 
 const CreatePostBox = ({ onPostCreated, postedInType, postedInRefId }) => {
   const { user } = useAuth();
@@ -70,56 +71,48 @@ const CreatePostBox = ({ onPostCreated, postedInType, postedInRefId }) => {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-4 mb-4">
+    <div className="bg-white dark:bg-neutral-800 rounded-xl shadow-card p-4 mb-4">
       <div className="flex items-start gap-3">
-        <img
-          src={user.profilePhoto || 'https://res.cloudinary.com/demo/image/upload/v1556418119/default-avatar.png'}
-          alt={user.name}
-          className="w-10 h-10 rounded-full object-cover"
-        />
-        <input
-          type="text"
-          placeholder={`What's on your mind, ${user.name?.split(' ')[0]}?`}
+        <Avatar src={user.profilePhoto} alt={user.name} size="md" />
+        <button
           onClick={() => setExpanded(true)}
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-          className="flex-1 bg-gray-100 rounded-full px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
-          readOnly={!expanded}
-        />
+          className="flex-1 bg-neutral-100 dark:bg-neutral-700 rounded-full px-4 py-2.5 text-sm text-neutral-500 dark:text-neutral-400 text-left hover:bg-neutral-200 dark:hover:bg-neutral-600 transition-colors"
+        >
+          What's on your mind, {user.name?.split(' ')[0]}?
+        </button>
       </div>
 
       {expanded && (
-        <div className="mt-3">
+        <div className="mt-3 space-y-3">
+          <textarea
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            placeholder="What's on your mind?"
+            className="w-full bg-transparent text-sm text-neutral-900 dark:text-neutral-100 placeholder-neutral-400 focus:outline-none resize-none min-h-[80px]"
+            autoFocus
+          />
+
           {error && (
-            <div className="bg-red-100 text-red-700 px-3 py-1 rounded text-sm mb-2">{error}</div>
+            <div className="bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 px-3 py-2 rounded-lg text-xs">{error}</div>
           )}
 
           {previews.length > 0 && (
-            <div className="flex gap-2 mb-3 overflow-x-auto">
+            <div className="flex gap-2 overflow-x-auto pb-2">
               {previews.map((preview, i) => (
                 <div key={i} className="relative flex-shrink-0">
-                  <img src={preview} alt="" className="h-20 w-20 object-cover rounded" />
+                  <img src={preview} alt="" className="h-20 w-20 object-cover rounded-lg" />
                   <button
                     onClick={() => removeFile(i)}
-                    className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-5 h-5 text-xs flex items-center justify-center"
+                    className="absolute -top-1.5 -right-1.5 bg-red-500 text-white rounded-full w-5 h-5 text-xs flex items-center justify-center hover:bg-red-600 transition-colors"
                   >
-                    x
+                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
                   </button>
                 </div>
               ))}
             </div>
           )}
 
-          <div className="flex items-center gap-3 text-sm text-gray-500 mb-3">
-            <span
-              onClick={() => fileInputRef.current.click()}
-              className="flex items-center gap-1 cursor-pointer hover:text-blue-600"
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-              </svg>
-              Photo/Video
-            </span>
+          <div className="flex items-center gap-2 flex-wrap">
             <input
               ref={fileInputRef}
               type="file"
@@ -128,31 +121,53 @@ const CreatePostBox = ({ onPostCreated, postedInType, postedInRefId }) => {
               onChange={handleFileChange}
               className="hidden"
             />
+            <button
+              onClick={() => fileInputRef.current.click()}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors"
+            >
+              <svg className="w-4 h-4 text-accent-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+              Photo/Video
+            </button>
             <input
               type="text"
-              placeholder="Feeling/activity..."
+              placeholder="Feeling..."
               value={feeling}
               onChange={(e) => setFeeling(e.target.value)}
-              className="border-b focus:outline-none focus:border-blue-500 text-sm"
+              className="px-3 py-1.5 rounded-lg text-xs bg-neutral-100 dark:bg-neutral-700 focus:outline-none focus:ring-2 focus:ring-primary-500/30 text-neutral-700 dark:text-neutral-200 w-32"
             />
             <select
               value={visibility}
               onChange={(e) => setVisibility(e.target.value)}
-              className="border rounded px-2 py-1 text-sm focus:outline-none"
+              className="px-3 py-1.5 rounded-lg text-xs bg-neutral-100 dark:bg-neutral-700 text-neutral-700 dark:text-neutral-200 focus:outline-none focus:ring-2 focus:ring-primary-500/30"
             >
-              <option value="public">Public</option>
-              <option value="friends">Friends</option>
-              <option value="onlyme">Only Me</option>
+              <option value="public">🌍 Public</option>
+              <option value="friends">👥 Friends</option>
+              <option value="onlyme">🔒 Only Me</option>
             </select>
           </div>
 
-          <button
-            onClick={handleSubmit}
-            disabled={loading || (!text.trim() && files.length === 0)}
-            className="w-full bg-blue-600 text-white py-2 rounded-lg text-sm font-medium hover:bg-blue-700 disabled:opacity-50 transition"
-          >
-            {loading ? 'Posting...' : 'Post'}
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => { setExpanded(false); setText(''); setFiles([]); setPreviews([]); setError(''); }}
+              className="px-4 py-2 rounded-lg text-sm font-medium text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleSubmit}
+              disabled={loading || (!text.trim() && files.length === 0)}
+              className="flex-1 bg-primary-600 text-white py-2 rounded-lg text-sm font-medium hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
+            >
+              {loading ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  Posting...
+                </>
+              ) : 'Post'}
+            </button>
+          </div>
         </div>
       )}
     </div>

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import API from '../api/axios';
 import PostCard from '../components/PostCard';
+import Layout from '../components/layout/Layout';
 
 const SavedPostsPage = () => {
   const { user } = useAuth();
@@ -24,7 +25,8 @@ const SavedPostsPage = () => {
   };
 
   return (
-    <div className="max-w-2xl mx-auto p-4">
+    <Layout>
+      <div className="max-w-2xl mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">Saved Posts</h1>
 
       {loading ? (
@@ -48,6 +50,7 @@ const SavedPostsPage = () => {
         </div>
       )}
     </div>
+    </Layout>
   );
 };
 

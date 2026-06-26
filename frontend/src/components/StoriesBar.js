@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import API from '../api/axios';
+import Avatar from './ui/Avatar';
 import StoryViewer from './StoryViewer';
 import CreateStory from './CreateStory';
 
@@ -34,10 +35,6 @@ const StoriesBar = () => {
     setViewerOpen(true);
   };
 
-  const handleCreateStory = () => {
-    setCreateOpen(true);
-  };
-
   const handleStoryCreated = (newStory) => {
     setMyStories((prev) => [newStory, ...prev]);
     setCreateOpen(false);
@@ -45,12 +42,12 @@ const StoriesBar = () => {
 
   if (loading) {
     return (
-      <div className="bg-white rounded-lg shadow-sm p-4 mb-4">
-        <div className="flex gap-4 overflow-x-auto">
-          {[1, 2, 3].map((i) => (
+      <div className="bg-white dark:bg-neutral-800 rounded-xl shadow-card p-4 mb-4">
+        <div className="flex gap-4 overflow-x-auto scrollbar-hide">
+          {[1, 2, 3, 4, 5].map((i) => (
             <div key={i} className="flex-shrink-0 text-center">
-              <div className="w-16 h-16 rounded-full bg-gray-200 animate-pulse" />
-              <div className="w-12 h-3 bg-gray-200 rounded mt-1 mx-auto animate-pulse" />
+              <div className="w-16 h-16 rounded-full skeleton" />
+              <div className="w-10 h-2.5 skeleton mt-1.5 mx-auto rounded" />
             </div>
           ))}
         </div>
@@ -60,24 +57,20 @@ const StoriesBar = () => {
 
   return (
     <>
-      <div className="bg-white rounded-lg shadow-sm p-4 mb-4">
-        <div className="flex gap-4 overflow-x-auto pb-2">
+      <div className="bg-white dark:bg-neutral-800 rounded-xl shadow-card p-4 mb-4">
+        <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-1">
           {/* Your Story */}
           <button
-            onClick={handleCreateStory}
+            onClick={() => setCreateOpen(true)}
             className="flex-shrink-0 text-center group"
           >
             <div className="relative w-16 h-16">
-              <img
-                src={user.profilePhoto || 'https://res.cloudinary.com/demo/image/upload/v1556418119/default-avatar.png'}
-                alt={user.name}
-                className="w-16 h-16 rounded-full object-cover border-2 border-gray-200 group-hover:border-blue-500 transition-colors"
-              />
-              <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-blue-600 rounded-full border-2 border-white flex items-center justify-center">
-                <span className="text-white text-lg font-bold leading-none">+</span>
+              <Avatar src={user.profilePhoto} alt={user.name} size="lg" className="ring-2 ring-neutral-200 dark:ring-neutral-600 group-hover:ring-primary-500 transition-all" />
+              <div className="absolute -bottom-0.5 -right-0.5 w-5 h-5 bg-primary-600 rounded-full border-2 border-white dark:border-neutral-800 flex items-center justify-center">
+                <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" /></svg>
               </div>
             </div>
-            <span className="text-xs text-gray-600 mt-1 block truncate w-16">
+            <span className="text-2xs text-neutral-600 dark:text-neutral-400 mt-1 block truncate w-16">
               Your Story
             </span>
           </button>
@@ -92,17 +85,17 @@ const StoriesBar = () => {
               <div
                 className={`w-16 h-16 rounded-full p-0.5 ${
                   group.stories.some((s) => !s.hasViewed)
-                    ? 'bg-gradient-to-br from-blue-500 to-purple-500'
-                    : 'bg-gray-300'
+                    ? 'bg-gradient-to-br from-primary-500 to-accent-500'
+                    : 'bg-neutral-300 dark:bg-neutral-600'
                 }`}
               >
                 <img
                   src={group.author.profilePhoto || 'https://res.cloudinary.com/demo/image/upload/v1556418119/default-avatar.png'}
                   alt={group.author.name}
-                  className="w-full h-full rounded-full object-cover border-2 border-white"
+                  className="w-full h-full rounded-full object-cover border-2 border-white dark:border-neutral-800"
                 />
               </div>
-              <span className="text-xs text-gray-600 mt-1 block truncate w-16">
+              <span className="text-2xs text-neutral-600 dark:text-neutral-400 mt-1 block truncate w-16">
                 {group.author.name?.split(' ')[0]}
               </span>
             </button>

@@ -2,17 +2,14 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import API from '../api/axios';
+import Layout from '../components/layout/Layout';
 import StoriesBar from '../components/StoriesBar';
 import CreatePostBox from '../components/CreatePostBox';
 import PostCard from '../components/PostCard';
-import NotificationBell from '../components/NotificationBell';
-import SearchBar from '../components/SearchBar';
-import DarkModeToggle from '../components/DarkModeToggle';
-import Toast from '../components/Toast';
-import SuggestedPeople from '../components/SuggestedPeople';
+import { PostSkeleton } from '../components/ui/Skeleton';
 
 const NewsFeed = () => {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const [posts, setPosts] = useState([]);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
@@ -50,7 +47,6 @@ const NewsFeed = () => {
     fetchPosts(1);
   }, [fetchPosts]);
 
-  // Infinite scroll observer
   useEffect(() => {
     if (observerRef.current) observerRef.current.disconnect();
 
@@ -85,79 +81,61 @@ const NewsFeed = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
-      {/* Navbar */}
-      <nav className="bg-white dark:bg-gray-800 shadow-md px-6 py-3 sticky top-0 z-40">
-        <div className="max-w-2xl mx-auto flex justify-between items-center">
-          <Link to="/feed" className="text-xl font-bold text-blue-600">Jolshaa</Link>
-          <div className="flex-1 mx-4 max-w-xs">
-            <SearchBar />
-          </div>
-          <div className="flex items-center gap-4">
-            <Link to="/trending" className="text-sm text-gray-600 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400">Trending</Link>
-            <Link to="/topics" className="text-sm text-gray-600 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400">Topics</Link>
-            <Link to="/reels" className="text-sm text-gray-600 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400">Reels</Link>
-            <Link to="/marketplace" className="text-sm text-gray-600 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400">Shop</Link>
-            <Link to="/groups" className="text-sm text-gray-600 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400">Groups</Link>
-            <Link to="/pages" className="text-sm text-gray-600 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400">Pages</Link>
-            <Link to="/events" className="text-sm text-gray-600 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400">Events</Link>
-            <Link to="/friends" className="text-sm text-gray-600 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400">Friends</Link>
-            <Link to="/saved" className="text-sm text-gray-600 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400">Saved</Link>
-            <Link to="/memories" className="text-sm text-gray-600 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400">Memories</Link>
-            <Link to="/creator" className="text-sm text-gray-600 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400">Creator</Link>
-            <Link to="/messages" className="text-sm text-gray-600 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400">Messages</Link>
-            <NotificationBell />
-            <DarkModeToggle />
-            <Link to="/profile" className="text-sm text-gray-600 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400">
-              {user.name?.split(' ')[0]}
-            </Link>
-            <button onClick={logout} className="text-sm text-red-600 hover:underline">
-              Logout
-            </button>
-          </div>
+    <Layout>
+      <StoriesBar />
+      <CreatePostBox onPostCreated={handlePostCreated} />
+
+      {error && (
+        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-4 mb-4 text-center">
+          <p className="text-red-600 dark:text-red-400 text-sm">{error}</p>
+          <button onClick={() => { setError(null); fetchPosts(1); }} className="text-xs text-red-700 dark:text-red-300 font-medium mt-1 hover:underline">
+            Try again
+          </button>
         </div>
-      </nav>
+      )}
 
-      {/* Main content */}
-      <div className="max-w-xl mx-auto mt-4 px-4">
-        <StoriesBar />
-        <CreatePostBox onPostCreated={handlePostCreated} />
-        <SuggestedPeople />
-
-        {error && (
-          <div className="text-center py-4 text-red-500 text-sm mb-4">
-            {error}
+      {initialLoading ? (
+        <div className="space-y-4">
+          {[...Array(3)].map((_, i) => <PostSkeleton key={i} />)}
+        </div>
+      ) : posts.length === 0 ? (
+        <div className="text-center py-12">
+          <div className="w-16 h-16 bg-neutral-200 dark:bg-neutral-700 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg className="w-8 h-8 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+            </svg>
           </div>
-        )}
-
-        {initialLoading ? (
-          <div className="text-center py-8 text-gray-500">Loading posts...</div>
-        ) : posts.length === 0 ? (
-          <div className="text-center py-8 text-gray-500">
-            No posts yet. Be the first to post!
-          </div>
-        ) : (
-          <>
+          <h3 className="text-lg font-semibold text-neutral-900 dark:text-neutral-100 mb-1">No posts yet</h3>
+          <p className="text-sm text-neutral-500 mb-4">Be the first to share something with your friends!</p>
+          <Link to="/feed" className="inline-flex items-center gap-2 bg-primary-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-primary-700 transition-colors">
+            Create your first post
+          </Link>
+        </div>
+      ) : (
+        <>
+          <div className="space-y-4">
             {posts.map(post => (
               <PostCard key={post._id} post={post} onDelete={handleDeletePost} />
             ))}
+          </div>
 
-            {/* Infinite scroll trigger */}
-            <div ref={loadMoreRef} className="h-10" />
+          <div ref={loadMoreRef} className="h-10" />
 
-            {loading && (
-              <div className="text-center py-4 text-gray-500 text-sm">Loading more posts...</div>
-            )}
+          {loading && (
+            <div className="flex justify-center py-4">
+              <div className="flex items-center gap-2 text-sm text-neutral-500">
+                <div className="w-4 h-4 border-2 border-primary-600 border-t-transparent rounded-full animate-spin" />
+                Loading more...
+              </div>
+            </div>
+          )}
 
-            {page >= totalPages && posts.length > 0 && (
-              <div className="text-center py-4 text-gray-400 text-sm">You're all caught up!</div>
-            )}
-          </>
-        )}
-      </div>
-
-      <Toast />
-    </div>
+          {page >= totalPages && posts.length > 0 && (
+            <div className="text-center py-6 text-neutral-400 text-sm">You're all caught up!</div>
+          )}
+        </>
+      )}
+    </Layout>
   );
 };
 
