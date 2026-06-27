@@ -25,9 +25,13 @@ const postSchema = new mongoose.Schema({
   }],
   visibility: {
     type: String,
-    enum: ['public', 'friends', 'onlyme'],
+    enum: ['public', 'friends', 'close_friends', 'custom', 'onlyme'],
     default: 'public'
   },
+  customAudiences: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  }],
   postedIn: {
     type: {
       type: String,
@@ -113,6 +117,19 @@ const postSchema = new mongoose.Schema({
     type: String,
     enum: ['none', 'pending_review', 'approved', 'flagged', 'removed'],
     default: 'none'
+  },
+  status: {
+    type: String,
+    enum: ['draft', 'published', 'scheduled', 'archived'],
+    default: 'draft'
+  },
+  scheduledAt: {
+    type: Date,
+    default: null
+  },
+  isPublished: {
+    type: Boolean,
+    default: false
   },
 }, {
   timestamps: true

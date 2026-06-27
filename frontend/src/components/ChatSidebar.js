@@ -133,7 +133,7 @@ const ChatSidebar = ({ activeConversation, onSelectConversation, className = '' 
               >
                 <div className="relative flex-shrink-0">
                   <img
-                    src={getConversationPhoto(conv) || 'https://res.cloudinary.com/demo/image/upload/v1556418119/default-avatar.png'}
+                    src={getConversationPhoto(conv) || 'https://ui-avatars.com/api/?name=U&background=494454&color=dae2fd&size=128'}
                     alt="" className="w-12 h-12 rounded-full object-cover"
                   />
                   {isOnline(conv) && (

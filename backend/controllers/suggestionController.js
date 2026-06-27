@@ -4,6 +4,27 @@ const Page = require('../models/Page');
 const Post = require('../models/Post');
 const FriendRequest = require('../models/FriendRequest');
 
+exports.getSuggestedUsers = async (req, res) => {
+  try {
+    const limit = parseInt(req.query.limit) || 5;
+    const currentUser = await User.findById(req.user._id)
+      .select('friends blockedUsers');
+    const friendIds = (currentUser.friends || []).map(id => id.toString());
+    const blockedIds = (currentUser.blockedUsers || []).map(id => id.toString());
+    const excludeIds = [...friendIds, ...blockedIds, req.user._id.toString()];
+
+    const people = await User.find({
+      _id: { $nin: excludeIds },
+    })
+      .select('name profilePhoto mutualFriends')
+      .limit(limit);
+
+    res.json({ people });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
 exports.getSuggestedGroups = async (req, res) => {
   try {
     const user = await User.findById(req.user._id).select('groups');

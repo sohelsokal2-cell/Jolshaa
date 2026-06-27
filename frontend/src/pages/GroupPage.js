@@ -309,7 +309,7 @@ const GroupPage = () => {
                   <div className="grid grid-cols-2 gap-2">
                     {group.moderators.map(mod => (
                       <Link key={mod._id} to={`/profile/${mod._id}`} className="flex items-center gap-2 p-2 rounded hover:bg-gray-50">
-                        <img src={mod.profilePhoto || 'https://res.cloudinary.com/demo/image/upload/v1556418119/default-avatar.png'} alt="" className="w-8 h-8 rounded-full object-cover" />
+                        <img src={mod.profilePhoto || 'https://ui-avatars.com/api/?name=U&background=494454&color=dae2fd&size=128'} alt="" className="w-8 h-8 rounded-full object-cover" />
                         <span className="text-sm font-medium">{mod.name}</span>
                       </Link>
                     ))}
@@ -322,7 +322,7 @@ const GroupPage = () => {
                 {group.members?.map(member => (
                   <div key={member._id} className="flex items-center gap-3 p-2 rounded hover:bg-gray-50">
                     <img
-                      src={member.profilePhoto || 'https://res.cloudinary.com/demo/image/upload/v1556418119/default-avatar.png'}
+                      src={member.profilePhoto || 'https://ui-avatars.com/api/?name=U&background=494454&color=dae2fd&size=128'}
                       alt=""
                       className="w-10 h-10 rounded-full object-cover"
                     />
@@ -356,7 +356,7 @@ const GroupPage = () => {
                       {pendingUsers.map(request => (
                         <div key={request._id} className="flex items-center justify-between p-2 border rounded">
                           <div className="flex items-center gap-3">
-                            <img src={request.profilePhoto || 'https://res.cloudinary.com/demo/image/upload/v1556418119/default-avatar.png'} alt="" className="w-10 h-10 rounded-full object-cover" />
+                            <img src={request.profilePhoto || 'https://ui-avatars.com/api/?name=U&background=494454&color=dae2fd&size=128'} alt="" className="w-10 h-10 rounded-full object-cover" />
                             <span className="font-medium text-sm">{request.name}</span>
                           </div>
                           <div className="flex gap-2">
@@ -381,7 +381,7 @@ const GroupPage = () => {
                       return (
                         <div key={member._id} className="flex items-center justify-between p-2 border rounded">
                           <div className="flex items-center gap-3">
-                            <img src={member.profilePhoto || 'https://res.cloudinary.com/demo/image/upload/v1556418119/default-avatar.png'} alt="" className="w-8 h-8 rounded-full object-cover" />
+                            <img src={member.profilePhoto || 'https://ui-avatars.com/api/?name=U&background=494454&color=dae2fd&size=128'} alt="" className="w-8 h-8 rounded-full object-cover" />
                             <span className="text-sm">{member.name}</span>
                           </div>
                           <button

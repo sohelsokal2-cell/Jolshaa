@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { protect } = require('../middleware/auth');
 const {
+  getSuggestedUsers,
   getSuggestedGroups,
   getSuggestedPages,
   getSuggestedPosts,
@@ -9,6 +10,7 @@ const {
 
 router.use(protect);
 
+router.get('/', getSuggestedUsers);
 router.get('/groups', getSuggestedGroups);
 router.get('/pages', getSuggestedPages);
 router.get('/posts', getSuggestedPosts);

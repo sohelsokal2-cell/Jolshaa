@@ -124,3 +124,60 @@ exports.search = async (req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
 };
+
+exports.advancedSearch = async (req, res) => {
+  try {
+    const { q, type, startDate, endDate, hashtag, author, page = 1, limit = 20 } = req.query;
+
+    let results = { users: [], posts: [], hashtags: [] };
+
+    if (type === 'users' || !type) {
+      const userQuery = {};
+      if (q) {
+        userQuery.$or = [
+          { username: { $regex: q, $options: 'i' } },
+          { name: { $regex: q, $options: 'i' } }
+        ];
+      }
+      results.users = await User.find(userQuery)
+        .select('name username profilePhoto bio followersCount')
+        .skip((page - 1) * limit)
+        .limit(parseInt(limit));
+    }
+
+    if (type === 'posts' || !type) {
+      const postQuery = {};
+      if (q) postQuery.text = { $regex: q, $options: 'i' };
+      if (hashtag) postQuery.hashtags = hashtag;
+      if (author) postQuery.author = author;
+      if (startDate || endDate) {
+        postQuery.createdAt = {};
+        if (startDate) postQuery.createdAt.$gte = new Date(startDate);
+        if (endDate) postQuery.createdAt.$lte = new Date(endDate);
+      }
+      postQuery.status = 'published';
+      postQuery.visibility = 'public';
+
+      results.posts = await Post.find(postQuery)
+        .populate('author', 'username name profilePhoto')
+        .sort({ createdAt: -1 })
+        .skip((page - 1) * limit)
+        .limit(parseInt(limit));
+    }
+
+    if (type === 'hashtags' || !type) {
+      const hashtagResults = await Post.aggregate([
+        { $unwind: '$hashtags' },
+        ...(q ? [{ $match: { hashtags: { $regex: q, $options: 'i' } } }] : []),
+        { $group: { _id: '$hashtags', count: { $sum: 1 } } },
+        { $sort: { count: -1 } },
+        { $limit: parseInt(limit) }
+      ]);
+      results.hashtags = hashtagResults;
+    }
+
+    res.json({ results, page: parseInt(page), limit: parseInt(limit) });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+};

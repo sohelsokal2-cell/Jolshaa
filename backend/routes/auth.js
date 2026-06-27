@@ -10,7 +10,12 @@ const {
   revokeSession,
   revokeAllSessions,
   getLoginHistory,
-  deleteAccount
+  deleteAccount,
+  forgotPassword,
+  resetPassword,
+  getTrustedDevices,
+  trustDevice,
+  removeTrustedDevice
 } = require('../controllers/authController');
 const { protect } = require('../middleware/auth');
 
@@ -24,5 +29,10 @@ router.delete('/sessions/:id', protect, revokeSession);
 router.delete('/sessions', protect, revokeAllSessions);
 router.get('/login-history', protect, getLoginHistory);
 router.delete('/account', protect, deleteAccount);
+router.post('/forgot-password', forgotPassword);
+router.post('/reset-password', resetPassword);
+router.get('/trusted-devices', getTrustedDevices);
+router.post('/trusted-devices', trustDevice);
+router.delete('/trusted-devices/:deviceId', removeTrustedDevice);
 
 module.exports = router;

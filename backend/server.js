@@ -78,9 +78,11 @@ app.use('/api/admin', require('./routes/admin'));
 app.use('/api/share', require('./routes/share'));
 app.use('/api/system', require('./routes/system'));
 app.use('/api/scheduler', require('./routes/scheduler'));
+app.use('/api/privacy', require('./routes/privacy'));
 app.use('/api/hashtags', require('./routes/hashtagLocation'));
 app.use('/api/topics', require('./routes/topics'));
 app.use('/api/ai', require('./routes/ai'));
+app.use('/api/notification-preferences', require('./routes/notificationPreferences'));
 
 app.use(errorHandler);
 

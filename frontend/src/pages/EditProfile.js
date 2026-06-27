@@ -107,7 +107,7 @@ const EditProfile = () => {
               <label className="block text-sm font-medium text-gray-700 mb-1">Profile Photo</label>
               <div className="flex items-center gap-4">
                 <img
-                  src={formData.profilePhoto || 'https://res.cloudinary.com/demo/image/upload/v1556418119/default-avatar.png'}
+                  src={formData.profilePhoto || 'https://ui-avatars.com/api/?name=U&background=494454&color=dae2fd&size=128'}
                   alt="Profile"
                   className="w-16 h-16 rounded-full object-cover"
                 />

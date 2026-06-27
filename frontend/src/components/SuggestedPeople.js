@@ -39,7 +39,7 @@ const SuggestedPeople = () => {
           <div key={person._id} className="flex items-center gap-3">
             <Link to={`/profile/${person._id}`}>
               <img
-                src={person.profilePhoto || 'https://res.cloudinary.com/demo/image/upload/v1556418119/default-avatar.png'}
+                src={person.profilePhoto || 'https://ui-avatars.com/api/?name=U&background=494454&color=dae2fd&size=128'}
                 alt=""
                 className="w-10 h-10 rounded-full object-cover"
               />

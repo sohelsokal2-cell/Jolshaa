@@ -287,3 +287,94 @@ exports.deleteAccount = async (req, res) => {
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
+
+exports.forgotPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email) return res.status(400).json({ message: 'Email is required' });
+
+    const user = await User.findOne({ email: email.toLowerCase() });
+    if (!user) return res.json({ message: 'If an account exists with this email, a reset link has been sent.' });
+
+    const crypto = require('crypto');
+    const token = crypto.randomBytes(32).toString('hex');
+    const expiresAt = new Date(Date.now() + 3600000); // 1 hour
+
+    user.passwordResetToken = token;
+    user.passwordResetExpires = expiresAt;
+    await user.save();
+
+    res.json({ message: 'If an account exists with this email, a reset link has been sent.', token });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+exports.resetPassword = async (req, res) => {
+  try {
+    const { token, newPassword } = req.body;
+    if (!token || !newPassword) return res.status(400).json({ message: 'Token and new password are required' });
+    if (newPassword.length < 6) return res.status(400).json({ message: 'Password must be at least 6 characters' });
+
+    const user = await User.findOne({
+      passwordResetToken: token,
+      passwordResetExpires: { $gt: new Date() }
+    }).select('+password');
+
+    if (!user) return res.status(400).json({ message: 'Invalid or expired reset token' });
+
+    user.password = newPassword;
+    user.passwordResetToken = undefined;
+    user.passwordResetExpires = undefined;
+    await user.save();
+
+    res.json({ message: 'Password reset successful' });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+exports.getTrustedDevices = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+    res.json({ devices: user.trustedDevices || [] });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+exports.trustDevice = async (req, res) => {
+  try {
+    const { fingerprint, label } = req.body;
+    if (!fingerprint) return res.status(400).json({ message: 'Device fingerprint required' });
+
+    const user = await User.findById(req.user._id);
+    const existing = user.trustedDevices.find(d => d.fingerprint === fingerprint);
+    if (existing) {
+      existing.lastUsedAt = new Date();
+      if (label) existing.label = label;
+    } else {
+      user.trustedDevices.push({
+        fingerprint,
+        label: label || req.headers['user-agent'] || 'Unknown device',
+        ip: req.ip,
+        userAgent: req.headers['user-agent'] || ''
+      });
+    }
+    await user.save();
+    res.json({ message: 'Device trusted', devices: user.trustedDevices });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+exports.removeTrustedDevice = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+    user.trustedDevices = user.trustedDevices.filter(d => d._id.toString() !== req.params.deviceId);
+    await user.save();
+    res.json({ message: 'Device removed', devices: user.trustedDevices });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+};

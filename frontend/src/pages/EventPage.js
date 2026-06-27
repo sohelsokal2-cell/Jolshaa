@@ -218,7 +218,7 @@ const EventPage = () => {
                   <div className="flex flex-wrap gap-2">
                     {event.attendees?.filter(a => a.status === 'going').map(a => (
                       <Link key={a.user._id} to={`/profile/${a.user._id}`} className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-50">
-                        <img src={a.user.profilePhoto || 'https://res.cloudinary.com/demo/image/upload/v1556418119/default-avatar.png'} alt="" className="w-8 h-8 rounded-full object-cover" />
+                        <img src={a.user.profilePhoto || 'https://ui-avatars.com/api/?name=U&background=494454&color=dae2fd&size=128'} alt="" className="w-8 h-8 rounded-full object-cover" />
                         <span className="text-sm">{a.user.name}</span>
                       </Link>
                     ))}
@@ -230,7 +230,7 @@ const EventPage = () => {
                     <div className="flex flex-wrap gap-2">
                       {event.attendees?.filter(a => a.status === 'maybe').map(a => (
                         <Link key={a.user._id} to={`/profile/${a.user._id}`} className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-50">
-                          <img src={a.user.profilePhoto || 'https://res.cloudinary.com/demo/image/upload/v1556418119/default-avatar.png'} alt="" className="w-8 h-8 rounded-full object-cover" />
+                          <img src={a.user.profilePhoto || 'https://ui-avatars.com/api/?name=U&background=494454&color=dae2fd&size=128'} alt="" className="w-8 h-8 rounded-full object-cover" />
                           <span className="text-sm">{a.user.name}</span>
                         </Link>
                       ))}

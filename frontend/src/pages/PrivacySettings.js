@@ -205,7 +205,7 @@ const PrivacySettings = () => {
                 <div key={u._id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                   <div className="flex items-center gap-3">
                     <img
-                      src={u.profilePhoto || 'https://res.cloudinary.com/demo/image/upload/v1556418119/default-avatar.png'}
+                      src={u.profilePhoto || 'https://ui-avatars.com/api/?name=U&background=494454&color=dae2fd&size=128'}
                       alt=""
                       className="w-10 h-10 rounded-full object-cover"
                     />

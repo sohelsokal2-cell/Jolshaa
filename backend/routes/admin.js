@@ -75,10 +75,10 @@ const adminOnly = async (req, res, next) => {
 // Role-based permission middleware
 const requireRole = (...roles) => {
   return (req, res, next) => {
-    if (!roles.includes(req.user.role)) {
-      return res.status(403).json({ message: 'Insufficient permissions' });
+    if (req.user.isAdmin || roles.includes(req.user.role)) {
+      return next();
     }
-    next();
+    return res.status(403).json({ message: 'Insufficient permissions' });
   };
 };
 

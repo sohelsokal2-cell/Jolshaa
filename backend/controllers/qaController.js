@@ -26,7 +26,7 @@ exports.getQA = async (req, res) => {
     const qa = await QA.findOne({ post: req.params.postId })
       .populate('answers.user', 'name profilePhoto');
 
-    if (!qa) return res.status(404).json({ message: 'Q&A not found' });
+    if (!qa) return res.json({ qa: null });
 
     const answers = qa.answers.map((ans) => ({
       _id: ans._id,

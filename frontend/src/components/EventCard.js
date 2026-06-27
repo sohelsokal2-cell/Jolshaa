@@ -51,7 +51,7 @@ const EventCard = ({ event }) => {
         </div>
         <div className="flex items-center gap-2 mt-2">
           <img
-            src={event.creator?.profilePhoto || 'https://res.cloudinary.com/demo/image/upload/v1556418119/default-avatar.png'}
+            src={event.creator?.profilePhoto || 'https://ui-avatars.com/api/?name=U&background=494454&color=dae2fd&size=128'}
             alt=""
             className="w-5 h-5 rounded-full object-cover"
           />

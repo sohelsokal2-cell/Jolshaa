@@ -14,6 +14,7 @@ const {
   getMemories,
   getTrendingPosts,
   getTrendingHashtags,
+  schedulePost,
 } = require('../controllers/postController');
 const {
   addComment,
@@ -37,5 +38,6 @@ router.post('/:id/share', sharePost);
 router.put('/:id/save', toggleSavePost);
 router.post('/:id/comments', addComment);
 router.get('/:id/comments', getComments);
+router.put('/:id/schedule', schedulePost);
 
 module.exports = router;

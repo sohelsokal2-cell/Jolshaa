@@ -45,7 +45,7 @@ const Comment = ({ comment, onDelete }) => {
     <div className="ml-4 mt-2">
       <div className="flex items-start gap-2">
         <img
-          src={comment.author?.profilePhoto || 'https://res.cloudinary.com/demo/image/upload/v1556418119/default-avatar.png'}
+          src={comment.author?.profilePhoto || 'https://ui-avatars.com/api/?name=U&background=494454&color=dae2fd&size=128'}
           alt=""
           className="w-8 h-8 rounded-full object-cover"
         />
@@ -119,7 +119,7 @@ const Comment = ({ comment, onDelete }) => {
               {showReplies && comment.replies.map(reply => (
                 <div key={reply._id} className="flex items-start gap-2 mt-2 ml-4">
                   <img
-                    src={reply.author?.profilePhoto || 'https://res.cloudinary.com/demo/image/upload/v1556418119/default-avatar.png'}
+                    src={reply.author?.profilePhoto || 'https://ui-avatars.com/api/?name=U&background=494454&color=dae2fd&size=128'}
                     alt=""
                     className="w-6 h-6 rounded-full object-cover"
                   />
@@ -236,7 +236,7 @@ const CommentSection = ({ postId, commentCount }) => {
 
       <div className="flex items-center gap-2 mt-3">
         <img
-          src={user.profilePhoto || 'https://res.cloudinary.com/demo/image/upload/v1556418119/default-avatar.png'}
+          src={user.profilePhoto || 'https://ui-avatars.com/api/?name=U&background=494454&color=dae2fd&size=128'}
           alt=""
           className="w-8 h-8 rounded-full object-cover"
         />

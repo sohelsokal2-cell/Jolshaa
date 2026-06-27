@@ -443,6 +443,33 @@ exports.getTrendingHashtags = async (req, res) => {
   }
 };
 
+exports.schedulePost = async (req, res) => {
+  try {
+    const { scheduledAt, visibility, content, media } = req.body;
+    if (!scheduledAt) return res.status(400).json({ message: 'Scheduled time is required' });
+
+    const scheduleDate = new Date(scheduledAt);
+    if (scheduleDate <= new Date()) return res.status(400).json({ message: 'Scheduled time must be in the future' });
+
+    const post = await Post.findById(req.params.id);
+    if (!post) return res.status(404).json({ message: 'Post not found' });
+    if (post.author.toString() !== req.user._id.toString()) return res.status(403).json({ message: 'Not authorized' });
+
+    if (content) post.text = content;
+    if (visibility) post.visibility = visibility;
+    if (media) post.media = media;
+
+    post.scheduledAt = scheduleDate;
+    post.status = 'scheduled';
+    post.isPublished = false;
+
+    await post.save();
+    res.json({ post, message: 'Post scheduled successfully' });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
 exports.getPublicPost = async (req, res) => {
   try {
     const post = await Post.findById(req.params.id)

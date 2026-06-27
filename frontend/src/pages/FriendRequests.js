@@ -123,7 +123,7 @@ const FriendRequests = () => {
                     <div key={request._id} className="bg-white rounded-lg shadow-sm p-4 flex items-center gap-4">
                       <Link to={`/profile/${request.from?._id}`}>
                         <img
-                          src={request.from?.profilePhoto || 'https://res.cloudinary.com/demo/image/upload/v1556418119/default-avatar.png'}
+                          src={request.from?.profilePhoto || 'https://ui-avatars.com/api/?name=U&background=494454&color=dae2fd&size=128'}
                           alt=""
                           className="w-14 h-14 rounded-full object-cover"
                         />
@@ -168,7 +168,7 @@ const FriendRequests = () => {
                     <div key={request._id} className="bg-white rounded-lg shadow-sm p-4 flex items-center gap-4">
                       <Link to={`/profile/${request.to?._id}`}>
                         <img
-                          src={request.to?.profilePhoto || 'https://res.cloudinary.com/demo/image/upload/v1556418119/default-avatar.png'}
+                          src={request.to?.profilePhoto || 'https://ui-avatars.com/api/?name=U&background=494454&color=dae2fd&size=128'}
                           alt=""
                           className="w-14 h-14 rounded-full object-cover"
                         />
@@ -213,7 +213,7 @@ const FriendRequests = () => {
                       <div key={friend._id} className="bg-white rounded-lg shadow-sm p-4 flex items-center gap-4">
                         <Link to={`/profile/${friend._id}`}>
                           <img
-                            src={friend.profilePhoto || 'https://res.cloudinary.com/demo/image/upload/v1556418119/default-avatar.png'}
+                            src={friend.profilePhoto || 'https://ui-avatars.com/api/?name=U&background=494454&color=dae2fd&size=128'}
                             alt=""
                             className="w-12 h-12 rounded-full object-cover"
                           />

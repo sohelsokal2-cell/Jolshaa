@@ -41,7 +41,7 @@ const SuggestedContent = () => {
                 className="flex items-center gap-3 hover:bg-gray-50 p-2 rounded-lg transition"
               >
                 <img
-                  src={group.coverPhoto || 'https://res.cloudinary.com/demo/image/upload/v1556418119/default-avatar.png'}
+                  src={group.coverPhoto || 'https://ui-avatars.com/api/?name=U&background=494454&color=dae2fd&size=128'}
                   alt=""
                   className="w-10 h-10 rounded-lg object-cover"
                 />
@@ -66,7 +66,7 @@ const SuggestedContent = () => {
                 className="flex items-center gap-3 hover:bg-gray-50 p-2 rounded-lg transition"
               >
                 <img
-                  src={page.profilePhoto || 'https://res.cloudinary.com/demo/image/upload/v1556418119/default-avatar.png'}
+                  src={page.profilePhoto || 'https://ui-avatars.com/api/?name=U&background=494454&color=dae2fd&size=128'}
                   alt=""
                   className="w-10 h-10 rounded-lg object-cover"
                 />

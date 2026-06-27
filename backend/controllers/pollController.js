@@ -34,7 +34,7 @@ exports.getPoll = async (req, res) => {
     const poll = await Poll.findOne({ post: req.params.postId })
       .populate('options.voters', 'name profilePhoto');
 
-    if (!poll) return res.status(404).json({ message: 'Poll not found' });
+    if (!poll) return res.json({ poll: null });
 
     const isExpired = poll.expiresAt && new Date() > poll.expiresAt;
     const totalVotes = poll.options.reduce((sum, opt) => sum + opt.voters.length, 0);

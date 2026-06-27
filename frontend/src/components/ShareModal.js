@@ -47,7 +47,7 @@ const ShareModal = ({ post, onClose, shareType, shareId }) => {
             <div className="bg-gray-50 rounded-lg p-3 mb-4">
               <div className="flex items-center gap-2 mb-2">
                 <img
-                  src={post.author?.profilePhoto || 'https://res.cloudinary.com/demo/image/upload/v1556418119/default-avatar.png'}
+                  src={post.author?.profilePhoto || 'https://ui-avatars.com/api/?name=U&background=494454&color=dae2fd&size=128'}
                   alt=""
                   className="w-8 h-8 rounded-full object-cover"
                 />

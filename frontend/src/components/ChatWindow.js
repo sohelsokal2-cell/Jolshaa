@@ -157,7 +157,7 @@ const ChatWindow = ({ conversation, onBack }) => {
           </button>
         )}
         <img
-          src={(conversation.isGroup ? conversation.groupPhoto : getOtherParticipant()?.profilePhoto) || 'https://res.cloudinary.com/demo/image/upload/v1556418119/default-avatar.png'}
+          src={(conversation.isGroup ? conversation.groupPhoto : getOtherParticipant()?.profilePhoto) || 'https://ui-avatars.com/api/?name=U&background=494454&color=dae2fd&size=128'}
           alt="" className="w-10 h-10 rounded-full object-cover"
         />
         <div>
@@ -189,7 +189,7 @@ const ChatWindow = ({ conversation, onBack }) => {
                   {!isOwn && (
                     <div className="flex items-center gap-2 mb-1">
                       <img
-                        src={msg.sender.profilePhoto || 'https://res.cloudinary.com/demo/image/upload/v1556418119/default-avatar.png'}
+                        src={msg.sender.profilePhoto || 'https://ui-avatars.com/api/?name=U&background=494454&color=dae2fd&size=128'}
                         alt="" className="w-6 h-6 rounded-full object-cover"
                       />
                       <span className="text-xs text-gray-500">{msg.sender.name}</span>

@@ -30,7 +30,7 @@ const userSchema = new mongoose.Schema({
   },
   profilePhoto: {
     type: String,
-    default: 'https://res.cloudinary.com/demo/image/upload/v1556418119/default-avatar.png'
+    default: 'https://ui-avatars.com/api/?name=U&background=494454&color=dae2fd&size=128'
   },
   coverPhoto: {
     type: String,
@@ -162,6 +162,26 @@ const userSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
   }],
+  closeFriends: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  }],
+  mutedUsers: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  }],
+  restrictedUsers: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  }],
+  trustedDevices: [{
+    fingerprint: { type: String, required: true },
+    userAgent: { type: String, default: '' },
+    ip: { type: String, default: '' },
+    label: { type: String, default: '' },
+    lastUsedAt: { type: Date, default: Date.now },
+    createdAt: { type: Date, default: Date.now }
+  }],
   loginHistory: [{
     ip: { type: String, default: '' },
     userAgent: { type: String, default: '' },
@@ -236,6 +256,16 @@ const userSchema = new mongoose.Schema({
   lastReportedAt: {
     type: Date,
     default: null
+  },
+  passwordResetToken: {
+    type: String,
+    default: null,
+    select: false
+  },
+  passwordResetExpires: {
+    type: Date,
+    default: null,
+    select: false
   },
   createdAt: {
     type: Date,

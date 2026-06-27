@@ -5,25 +5,61 @@ const { hasId } = require('../utils/id');
 
 exports.getConversations = async (req, res) => {
   try {
-    const conversations = await Conversation.find({
-      participants: req.user._id
-    })
+    const userId = req.user._id;
+
+    // Fetch conversations
+    const conversations = await Conversation.find({ participants: userId })
       .populate('participants', 'name profilePhoto')
       .sort({ updatedAt: -1 });
 
-    // Attach last message to each conversation
-    const conversationsWithLast = await Promise.all(
-      conversations.map(async (conv) => {
-        const lastMessage = await Message.findOne({ conversation: conv._id })
-          .sort({ createdAt: -1 })
-          .populate('sender', 'name');
+    const conversationIds = conversations.map((c) => c._id);
 
-        return {
-          ...conv.toObject(),
-          lastMessage: lastMessage || null
-        };
-      })
+    if (conversationIds.length === 0) return res.json([]);
+
+    // One-pass aggregation: last message per conversation
+    const lastMessages = await Message.aggregate([
+      { $match: { conversation: { $in: conversationIds } } },
+      { $sort: { createdAt: -1 } },
+      {
+        $group: {
+          _id: '$conversation',
+          lastMessage: { $first: '$$ROOT' },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          conversationId: '$_id',
+          lastMessage: 1,
+        },
+      },
+    ]);
+
+    const lastByConversation = new Map(
+      lastMessages.map((x) => [x.conversationId.toString(), x.lastMessage])
     );
+
+    // Populate sender for lastMessage in batch
+    const lastMessageIds = lastMessages
+      .map((x) => x.lastMessage?._id)
+      .filter(Boolean);
+
+    const lastMessageDocs = await Message.find({ _id: { $in: lastMessageIds } })
+      .populate('sender', 'name');
+
+    const lastDocById = new Map(
+      lastMessageDocs.map((m) => [m._id.toString(), m])
+    );
+
+    const conversationsWithLast = conversations.map((conv) => {
+      const rawLast = lastByConversation.get(conv._id.toString()) || null;
+      const lastMessage = rawLast ? lastDocById.get(rawLast._id.toString()) || rawLast : null;
+
+      return {
+        ...conv.toObject(),
+        lastMessage: lastMessage || null,
+      };
+    });
 
     res.json(conversationsWithLast);
   } catch (error) {
@@ -111,7 +147,6 @@ exports.getMessages = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 50;
-    const skip = (page - 1) * limit;
     const before = req.query.before; // cursor-based pagination
 
     const conversation = await Conversation.findOne({
@@ -128,18 +163,26 @@ exports.getMessages = async (req, res) => {
       query.createdAt = { $lt: new Date(before) };
     }
 
-    const messages = await Message.find(query)
+    const cursorOnly = Boolean(before);
+
+    let messagesQuery = Message.find(query)
       .sort({ createdAt: -1 })
-      .skip(skip)
       .limit(limit)
       .populate('sender', 'name profilePhoto')
       .populate('readBy', 'name');
 
+    if (!cursorOnly) {
+      const skip = (page - 1) * limit;
+      messagesQuery = messagesQuery.skip(skip);
+    }
+
+    const messages = await messagesQuery;
+
     const total = await Message.countDocuments({ conversation: req.params.id });
 
     res.json({
-      messages: messages.reverse(), // Return in chronological order
-      page,
+      messages: messages.reverse(), // chronological
+      page: cursorOnly ? 1 : page,
       totalPages: Math.ceil(total / limit),
       total
     });

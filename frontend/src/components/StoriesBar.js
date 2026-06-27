@@ -90,7 +90,7 @@ const StoriesBar = () => {
                 }`}
               >
                 <img
-                  src={group.author.profilePhoto || 'https://res.cloudinary.com/demo/image/upload/v1556418119/default-avatar.png'}
+                  src={group.author.profilePhoto || 'https://ui-avatars.com/api/?name=U&background=494454&color=dae2fd&size=128'}
                   alt={group.author.name}
                   className="w-full h-full rounded-full object-cover border-2 border-white dark:border-neutral-800"
                 />

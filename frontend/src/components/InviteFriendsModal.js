@@ -95,7 +95,7 @@ const InviteFriendsModal = ({ eventId, onClose }) => {
                         className="text-blue-600 focus:ring-blue-500 rounded"
                       />
                       <img
-                        src={friend.profilePhoto || 'https://res.cloudinary.com/demo/image/upload/v1556418119/default-avatar.png'}
+                        src={friend.profilePhoto || 'https://ui-avatars.com/api/?name=U&background=494454&color=dae2fd&size=128'}
                         alt=""
                         className="w-8 h-8 rounded-full object-cover"
                       />

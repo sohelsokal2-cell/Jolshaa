@@ -1,13 +1,57 @@
 const { Server } = require('socket.io');
 const jwt = require('jsonwebtoken');
+
 const Conversation = require('./models/Conversation');
 const Message = require('./models/Message');
 const Notification = require('./models/Notification');
+const User = require('./models/User');
 
 let io;
 const onlineUsers = new Map(); // userId -> Set<socketId>
 
+const SOCKET_RATE_LIMIT = {
+  typing: { windowMs: 10_000, max: 20 },
+  sendMessage: { windowMs: 10_000, max: 10 },
+  sendNotification: { windowMs: 10_000, max: 20 },
+  liveComment: { windowMs: 60_000, max: 5 },
+};
+
+const makeRateLimiter = () => {
+  // key: `${userId}:${action}` => { count, windowStart }
+  const state = new Map();
+  return (userId, action) => {
+    const rule = SOCKET_RATE_LIMIT[action];
+    if (!rule) return { allowed: true };
+
+    const key = `${userId}:${action}`;
+    const now = Date.now();
+    const existing = state.get(key);
+
+    if (!existing || now - existing.windowStart > rule.windowMs) {
+      state.set(key, { count: 1, windowStart: now });
+      return { allowed: true };
+    }
+
+    if (existing.count >= rule.max) {
+      return {
+        allowed: false,
+        retryAfterMs: rule.windowMs - (now - existing.windowStart),
+      };
+    }
+
+    existing.count += 1;
+    state.set(key, existing);
+    return { allowed: true };
+  };
+};
+
+const sendSocketError = (socket, message) => {
+  socket.emit('error', { message });
+};
+
 const initSocket = (httpServer) => {
+  const rateLimiter = makeRateLimiter();
+
   io = new Server(httpServer, {
     cors: {
       origin: (origin, callback) => {
@@ -15,7 +59,10 @@ const initSocket = (httpServer) => {
           process.env.CLIENT_URL,
           'http://localhost:3000',
           'http://localhost:5173',
-        ].filter(Boolean).map(o => o.replace(/\/$/, ''));
+        ]
+          .filter(Boolean)
+          .map((o) => o.replace(/\/$/, ''));
+
         if (!origin || allowedOrigins.includes(origin.replace(/\/$/, ''))) {
           callback(null, true);
         } else {
@@ -23,13 +70,13 @@ const initSocket = (httpServer) => {
         }
       },
       methods: ['GET', 'POST'],
-      credentials: true
-    }
+      credentials: true,
+    },
   });
 
   // Auth middleware
   io.use((socket, next) => {
-    const token = socket.handshake.auth.token;
+    const token = socket.handshake.auth?.token;
     if (!token) return next(new Error('Authentication required'));
 
     try {
@@ -41,40 +88,90 @@ const initSocket = (httpServer) => {
     }
   });
 
-  io.on('connection', (socket) => {
-    const userId = socket.userId;
-    console.log(`User connected: ${userId}`);
+  const ensureConversationAccess = async (conversationId, userId) => {
+    if (!conversationId) return false;
 
-    // Track online user
-    if (!onlineUsers.has(userId)) {
-      onlineUsers.set(userId, new Set());
+    const conversation = await Conversation.findOne({
+      _id: conversationId,
+      participants: userId,
+    }).select('_id');
+
+    return Boolean(conversation);
+  };
+
+  // Parity checks for socket liveComment:
+  // - comment restriction
+  // - block checks
+  // - post privacy / commentPrivacy checks
+  const ensureCanLiveComment = async (reqUser, postId, text) => {
+    if (!postId || !text || typeof text !== 'string' || text.trim().length === 0) {
+      return { ok: false, message: 'Invalid comment' };
     }
-    onlineUsers.get(userId).add(socket.id);
 
-    // Broadcast user online status
-    io.emit('userOnline', userId);
+    const currentUser = reqUser;
 
-    // Join user's personal room for targeted notifications
-    socket.join(`user:${userId}`);
+    const commentRestricted = currentUser?.restrictions?.find(
+      (r) => r.type === 'comment' && (!r.expiresAt || r.expiresAt > new Date())
+    );
+    if (commentRestricted) {
+      return { ok: false, message: 'You are restricted from commenting' };
+    }
 
-    const ensureConversationAccess = async (conversationId) => {
-      if (!conversationId) return false;
+    const Post = require('./models/Post');
+    const post = await Post.findById(postId).select('author privacy');
+    if (!post) return { ok: false, message: 'Post not found' };
 
-      const conversation = await Conversation.findOne({
-        _id: conversationId,
-        participants: userId,
-      }).select('_id');
+    // If post author != current user => enforce block/privacy
+    if (post.author.toString() !== currentUser._id.toString()) {
+      const postAuthor = await User.findById(post.author).select('blockedUsers privacy');
+      const commenter = await User.findById(currentUser._id).select('blockedUsers');
 
-      return Boolean(conversation);
-    };
-
-    // --- Conversation events ---
-    socket.on('joinConversation', async (conversationId) => {
-      if (!(await ensureConversationAccess(conversationId))) {
-        socket.emit('error', { message: 'Not authorized' });
-        return;
+      if (postAuthor && postAuthor.blockedUsers?.some((id) => id.toString() === currentUser._id.toString())) {
+        return { ok: false, message: 'You are blocked by this user' };
       }
 
+      if (commenter && commenter.blockedUsers?.some((id) => id.toString() === post.author.toString())) {
+        return { ok: false, message: 'You have blocked this user' };
+      }
+
+      if (postAuthor?.privacy?.commentPrivacy === 'none') {
+        return { ok: false, message: 'Comments are disabled on this post' };
+      }
+    }
+
+    return { ok: true };
+  };
+
+  io.on('connection', async (socket) => {
+    const userId = socket.userId;
+
+    // Enforce banned/suspended
+    try {
+      const freshUser = await User.findById(userId).select(
+        'isBanned isSuspended bannedAt bannedReason suspendedAt suspendedReason restrictions'
+      );
+      if (!freshUser) return socket.disconnect(true);
+      if (freshUser.isBanned) return socket.disconnect(true);
+      if (freshUser.isSuspended) return socket.disconnect(true);
+
+      socket.user = freshUser;
+    } catch (e) {
+      return socket.disconnect(true);
+    }
+
+    console.log(`User connected: ${userId}`);
+
+    if (!onlineUsers.has(userId)) onlineUsers.set(userId, new Set());
+    onlineUsers.get(userId).add(socket.id);
+
+    io.emit('userOnline', userId);
+
+    socket.join(`user:${userId}`);
+
+    socket.on('joinConversation', async (conversationId) => {
+      if (!(await ensureConversationAccess(conversationId, userId))) {
+        return sendSocketError(socket, 'Not authorized');
+      }
       socket.join(`conversation:${conversationId}`);
     });
 
@@ -83,101 +180,115 @@ const initSocket = (httpServer) => {
     });
 
     socket.on('sendMessage', async (data) => {
+      const { conversationId, text, media } = data || {};
+      const rl = rateLimiter(userId, 'sendMessage');
+      if (!rl.allowed) return sendSocketError(socket, 'Too many messages, slow down');
+
+      if (!(await ensureConversationAccess(conversationId, userId))) {
+        return sendSocketError(socket, 'Not authorized');
+      }
+
       try {
-        const { conversationId, text, media } = data;
-
-        if (!(await ensureConversationAccess(conversationId))) {
-          socket.emit('error', { message: 'Not authorized' });
-          return;
-        }
-
         const message = await Message.create({
           conversation: conversationId,
           sender: userId,
           text: text || '',
           media: media || null,
-          readBy: [userId]
+          readBy: [userId],
         });
 
         await message.populate('sender', 'name profilePhoto');
 
-        // Emit to conversation room
         io.to(`conversation:${conversationId}`).emit('newMessage', {
           ...message.toObject(),
-          conversationId
+          conversationId,
         });
       } catch (err) {
-        socket.emit('error', { message: 'Failed to send message' });
+        sendSocketError(socket, 'Failed to send message');
       }
     });
 
-    // --- Typing events ---
-    socket.on('typing', async ({ conversationId, userName }) => {
-      if (!(await ensureConversationAccess(conversationId))) return;
+    socket.on('typing', async ({ conversationId, userName } = {}) => {
+      const rl = rateLimiter(userId, 'typing');
+      if (!rl.allowed) return;
+
+      if (!(await ensureConversationAccess(conversationId, userId))) return;
 
       socket.to(`conversation:${conversationId}`).emit('typing', {
         conversationId,
         userId,
-        userName
+        userName,
       });
     });
 
-    socket.on('stopTyping', async ({ conversationId }) => {
-      if (!(await ensureConversationAccess(conversationId))) return;
-
+    socket.on('stopTyping', async ({ conversationId } = {}) => {
+      if (!(await ensureConversationAccess(conversationId, userId))) return;
       socket.to(`conversation:${conversationId}`).emit('stopTyping', {
         conversationId,
-        userId
+        userId,
       });
     });
 
-    // --- Notification events ---
     socket.on('sendNotification', async (data) => {
-      try {
-        const { recipientId, type, relatedPost, relatedComment, relatedConversation } = data;
+      const rl = rateLimiter(userId, 'sendNotification');
+      if (!rl.allowed) return sendSocketError(socket, 'Too many notifications, slow down');
 
-        if (recipientId === userId) return; // Don't notify self
+      try {
+        const {
+          recipientId,
+          type,
+          relatedPost,
+          relatedComment,
+          relatedConversation,
+        } = data || {};
+
+        if (!recipientId) return;
+        if (recipientId === userId) return;
+
+        const allowedTypes = ['comment', 'like', 'message', 'notification', 'follow', 'reply', 'system'];
+        const safeType = allowedTypes.includes(type) ? type : 'notification';
 
         const notification = await Notification.create({
           recipient: recipientId,
           sender: userId,
-          type,
+          type: safeType,
           relatedPost: relatedPost || null,
           relatedComment: relatedComment || null,
-          relatedConversation: relatedConversation || null
+          relatedConversation: relatedConversation || null,
         });
 
         await notification.populate('sender', 'name profilePhoto');
-
         io.to(`user:${recipientId}`).emit('newNotification', notification);
       } catch (err) {
-        console.error('Failed to send notification:', err.message);
+        // avoid console spam: still standardize payload
+        sendSocketError(socket, 'Failed to send notification');
       }
     });
 
-    // --- Live comments for posts/reels ---
     socket.on('joinPostRoom', (postId) => {
+      if (!postId) return;
       socket.join(`post:${postId}`);
     });
 
     socket.on('leavePostRoom', (postId) => {
+      if (!postId) return;
       socket.leave(`post:${postId}`);
     });
 
     socket.on('liveComment', async (data) => {
-      try {
-        const { postId, text } = data;
-        if (!postId || !text) return;
+      const rl = rateLimiter(userId, 'liveComment');
+      if (!rl.allowed) return sendSocketError(socket, 'Too many comments, slow down');
 
-        const Post = require('./models/Post');
-        const post = await Post.findById(postId);
-        if (!post) return;
+      try {
+        const { postId, text } = data || {};
+        const can = await ensureCanLiveComment(socket.user, postId, text);
+        if (!can.ok) return sendSocketError(socket, can.message);
 
         const Comment = require('./models/Comment');
         const comment = await Comment.create({
           post: postId,
           author: userId,
-          text,
+          text: String(text).trim(),
         });
 
         await comment.populate('author', 'name profilePhoto');
@@ -187,21 +298,20 @@ const initSocket = (httpServer) => {
           postId,
         });
       } catch (err) {
-        socket.emit('error', { message: 'Failed to post comment' });
+        sendSocketError(socket, 'Failed to post comment');
       }
     });
 
-    // --- Disconnect ---
     socket.on('disconnect', () => {
       console.log(`User disconnected: ${userId}`);
 
       const userSockets = onlineUsers.get(userId);
-      if (userSockets) {
-        userSockets.delete(socket.id);
-        if (userSockets.size === 0) {
-          onlineUsers.delete(userId);
-          io.emit('userOffline', userId);
-        }
+      if (!userSockets) return;
+
+      userSockets.delete(socket.id);
+      if (userSockets.size === 0) {
+        onlineUsers.delete(userId);
+        io.emit('userOffline', userId);
       }
     });
   });
@@ -214,14 +324,10 @@ const getIO = () => {
   return io;
 };
 
-const isUserOnline = (userId) => {
-  return onlineUsers.has(userId);
-};
+const isUserOnline = (userId) => onlineUsers.has(userId);
 
 const emitToUser = (userId, event, data) => {
-  if (io) {
-    io.to(`user:${userId}`).emit(event, data);
-  }
+  if (io) io.to(`user:${userId}`).emit(event, data);
 };
 
 module.exports = { initSocket, getIO, onlineUsers, isUserOnline, emitToUser };
