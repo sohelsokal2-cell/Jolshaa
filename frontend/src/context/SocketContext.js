@@ -27,7 +27,13 @@ export const SocketProvider = ({ children }) => {
     const socketUrl = (process.env.REACT_APP_API_URL || 'http://localhost:5000/api').replace('/api', '');
     const newSocket = io(socketUrl, {
       auth: { token },
-      transports: ['websocket', 'polling']
+      transports: ['polling', 'websocket'],
+      upgrade: true,
+      reconnection: true,
+      reconnectionAttempts: 10,
+      reconnectionDelay: 1000,
+      reconnectionDelayMax: 10000,
+      timeout: 20000,
     });
 
     newSocket.on('connect', () => {
@@ -47,7 +53,7 @@ export const SocketProvider = ({ children }) => {
     });
 
     newSocket.on('connect_error', (err) => {
-      console.error('Socket connection error:', err.message);
+      console.warn('Socket connection error (non-critical):', err.message);
     });
 
     socketRef.current = newSocket;
