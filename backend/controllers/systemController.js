@@ -15,6 +15,7 @@ const { ErrorMonitor } = require('../services/errorMonitor');
 const { queue } = require('../services/queue');
 const { cacheGet, cacheSet, cacheDel, cacheDelPattern, isRedisAvailable, CACHE_KEYS } = require('../services/cache');
 const { setMaintenanceMode } = require('../middleware/maintenance');
+const { getCronJobsStatus, triggerCronJob, toggleCronJob } = require('../services/backgroundJobs');
 
 const logAction = async (admin, action, details = {}) => {
   try {
@@ -296,6 +297,9 @@ exports.toggleQueue = async (req, res) => {
       queue.stop();
     } else {
       queue.isRunning = true;
+      for (const queueName of queue.queues.keys()) {
+        queue.processQueue(queueName);
+      }
     }
     await logAction(req.user._id, 'system.jobs.toggle', { running: queue.isRunning });
     res.json({ isRunning: queue.isRunning });
@@ -404,6 +408,45 @@ exports.getDbOverview = async (req, res) => {
       dbStats,
       collections: stats,
     });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+// --- Cron / Scheduler Jobs ---
+exports.getCronJobs = async (req, res) => {
+  try {
+    const jobs = getCronJobsStatus();
+    res.json({ jobs });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+exports.triggerCronJob = async (req, res) => {
+  try {
+    const { name } = req.params;
+    const triggered = triggerCronJob(name);
+    if (!triggered) {
+      return res.status(404).json({ message: 'Job not found' });
+    }
+    await logAction(req.user._id, 'system.cron.trigger', { job: name });
+    res.json({ message: `Job "${name}" triggered` });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+exports.toggleCronJob = async (req, res) => {
+  try {
+    const { name } = req.params;
+    const { enabled } = req.body;
+    const toggled = toggleCronJob(name, enabled);
+    if (!toggled) {
+      return res.status(404).json({ message: 'Job not found' });
+    }
+    await logAction(req.user._id, 'system.cron.toggle', { job: name, enabled });
+    res.json({ name, enabled });
   } catch (error) {
     res.status(500).json({ message: 'Server error' });
   }

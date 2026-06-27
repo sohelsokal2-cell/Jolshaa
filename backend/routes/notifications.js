@@ -12,7 +12,7 @@ router.use(protect);
 
 router.get('/', getNotifications);
 router.get('/unread-count', getUnreadCount);
-router.put('/:id/read', markAsRead);
 router.put('/read-all', markAllAsRead);
+router.put('/:id/read', markAsRead);
 
 module.exports = router;

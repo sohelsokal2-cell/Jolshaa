@@ -5,7 +5,8 @@ const DarkModeContext = createContext(null);
 export const DarkModeProvider = ({ children }) => {
   const [isDark, setIsDark] = useState(() => {
     const saved = localStorage.getItem('darkMode');
-    return saved ? JSON.parse(saved) : false;
+    // Aetheric Social is dark-first — default to dark mode
+    return saved ? JSON.parse(saved) : true;
   });
 
   useEffect(() => {

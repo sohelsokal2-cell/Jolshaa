@@ -142,10 +142,11 @@ exports.escalateReport = async (req, res) => {
     const report = await Report.findById(req.params.id);
     if (!report) return res.status(404).json({ message: 'Report not found' });
 
+    const previousLevel = report.escalationLevel;
     const newLevel = toLevel || Math.min(report.escalationLevel + 1, 3);
     report.escalationHistory.push({
       escalatedBy: req.user._id,
-      fromLevel: report.escalationLevel,
+      fromLevel: previousLevel,
       toLevel: newLevel,
       reason: reason || ''
     });
@@ -155,7 +156,7 @@ exports.escalateReport = async (req, res) => {
     else if (newLevel >= 1) report.priority = 'high';
     await report.save();
 
-    await logAction(req.user._id, 'report.escalate', 'Report', report._id, '', { fromLevel: report.escalationLevel, toLevel: newLevel, reason });
+    await logAction(req.user._id, 'report.escalate', 'Report', report._id, '', { fromLevel: previousLevel, toLevel: newLevel, reason });
     res.json({ report });
   } catch (error) {
     res.status(500).json({ message: 'Server error' });

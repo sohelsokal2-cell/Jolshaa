@@ -72,12 +72,12 @@ const ReelsFeed = () => {
     <div
       ref={containerRef}
       onScroll={handleScroll}
-      className="h-[calc(100vh-64px)] overflow-y-scroll snap-y snap-mandatory"
+      className="h-[calc(100dvh-56px)] lg:h-[calc(100vh-56px)] overflow-y-scroll snap-y snap-mandatory"
     >
       {reels.map((reel, index) => (
         <div
           key={reel._id}
-          className="h-[calc(100vh-64px)] snap-start flex items-center justify-center bg-black relative"
+          className="h-[calc(100dvh-56px)] lg:h-[calc(100vh-56px)] snap-start flex items-center justify-center bg-black relative"
         >
           <div className="relative w-full max-w-md h-full">
             <video
@@ -112,7 +112,7 @@ const ReelsFeed = () => {
             </div>
 
             {/* Action buttons */}
-            <div className="absolute bottom-4 right-4 flex flex-col items-center gap-5">
+            <div className="absolute bottom-20 lg:bottom-4 right-4 flex flex-col items-center gap-5">
               <button onClick={() => toggleLike(reel._id)} className="flex flex-col items-center">
                 <span className="text-2xl">{reel.isLiked ? '❤️' : '🤍'}</span>
                 <span className="text-white text-xs">{reel.likeCount}</span>

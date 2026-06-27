@@ -24,12 +24,12 @@ import Events from './pages/Events';
 import EventPage from './pages/EventPage';
 import CreateEvent from './pages/CreateEvent';
 import AdminPanel from './pages/AdminPanel';
+import NotificationsPage from './pages/NotificationsPage';
 import TrendingPage from './pages/TrendingPage';
 import MemoriesPage from './pages/MemoriesPage';
 import SavedPostsPage from './pages/SavedPostsPage';
 import ReelsFeed from './components/ReelsFeed';
 import CreateReel from './components/CreateReel';
-import StoryViewer from './components/StoryViewer';
 import CreatorDashboard from './pages/CreatorDashboard';
 import MarketplacePage from './pages/MarketplacePage';
 import ListingDetail from './pages/ListingDetail';
@@ -50,6 +50,7 @@ const AppContent = () => {
         <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
         <Route path="/feed" element={<ProtectedRoute><NewsFeed /></ProtectedRoute>} />
         <Route path="/messages" element={<ProtectedRoute><Messages /></ProtectedRoute>} />
+        <Route path="/messages/:id" element={<ProtectedRoute><Messages /></ProtectedRoute>} />
         <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
         <Route path="/profile/:id" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
         <Route path="/edit-profile" element={<ProtectedRoute><EditProfile /></ProtectedRoute>} />
@@ -66,11 +67,13 @@ const AppContent = () => {
         <Route path="/events/:id" element={<ProtectedRoute><EventPage /></ProtectedRoute>} />
         <Route path="/privacy" element={<ProtectedRoute><PrivacySettings /></ProtectedRoute>} />
         <Route path="/security" element={<ProtectedRoute><Security /></ProtectedRoute>} />
+        <Route path="/notifications" element={<ProtectedRoute><NotificationsPage /></ProtectedRoute>} />
         <Route path="/admin" element={<ProtectedRoute><AdminPanel /></ProtectedRoute>} />
         <Route path="/trending" element={<ProtectedRoute><TrendingPage /></ProtectedRoute>} />
         <Route path="/memories" element={<ProtectedRoute><MemoriesPage /></ProtectedRoute>} />
         <Route path="/saved" element={<ProtectedRoute><SavedPostsPage /></ProtectedRoute>} />
         <Route path="/reels" element={<ProtectedRoute><ReelsFeed /></ProtectedRoute>} />
+        <Route path="/reels/:id" element={<ProtectedRoute><ReelsFeed /></ProtectedRoute>} />
         <Route path="/reels/create" element={<ProtectedRoute><CreateReel /></ProtectedRoute>} />
         <Route path="/creator" element={<ProtectedRoute><CreatorDashboard /></ProtectedRoute>} />
         <Route path="/marketplace" element={<ProtectedRoute><MarketplacePage /></ProtectedRoute>} />

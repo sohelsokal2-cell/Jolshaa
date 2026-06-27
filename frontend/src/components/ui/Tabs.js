@@ -2,12 +2,12 @@ import { useState } from 'react';
 
 const Tabs = ({ tabs, activeTab, onChange, className = '' }) => {
   return (
-    <div className={`flex border-b border-neutral-200 dark:border-neutral-700 ${className}`}>
+    <div className={`flex overflow-x-auto border-b border-neutral-200 dark:border-neutral-700 scrollbar-hide ${className}`}>
       {tabs.map((tab) => (
         <button
           key={tab.key}
           onClick={() => onChange(tab.key)}
-          className={`flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${
+          className={`flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors whitespace-nowrap flex-shrink-0 ${
             activeTab === tab.key
               ? 'border-primary-600 text-primary-600 dark:border-primary-400 dark:text-primary-400'
               : 'border-transparent text-neutral-500 hover:text-neutral-700 hover:border-neutral-300 dark:text-neutral-400 dark:hover:text-neutral-200'

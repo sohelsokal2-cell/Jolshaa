@@ -207,7 +207,7 @@ const PostCard = ({ post, onDelete }) => {
         ) : (
           <>
             {post.text && (
-              <p className="text-sm text-neutral-900 dark:text-neutral-100 whitespace-pre-wrap leading-relaxed">{post.text}</p>
+              <p className="text-sm text-neutral-900 dark:text-neutral-100 whitespace-pre-wrap leading-relaxed line-clamp-4">{post.text}</p>
             )}
 
             {sharedPost && (

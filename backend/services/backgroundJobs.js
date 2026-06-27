@@ -9,6 +9,93 @@ const BackupService = require('./backup');
 const { processScheduledPosts } = require('../controllers/schedulerController');
 const { autoEscalateReports } = require('../controllers/safetyController');
 
+// --- Cron Job Tracker ---
+const cronJobs = new Map();
+
+function trackCronJob(name, intervalMs, handler) {
+  const job = {
+    name,
+    intervalMs,
+    lastRun: null,
+    nextRun: null,
+    runCount: 0,
+    failCount: 0,
+    lastError: null,
+    lastDuration: null,
+    enabled: true,
+    timerId: null,
+  };
+
+  const wrappedHandler = async () => {
+    const start = Date.now();
+    job.lastRun = new Date();
+    job.nextRun = new Date(Date.now() + job.intervalMs);
+    job.runCount += 1;
+    try {
+      await handler();
+      job.lastDuration = Date.now() - start;
+      job.lastError = null;
+    } catch (err) {
+      job.failCount += 1;
+      job.lastError = err.message;
+      job.lastDuration = Date.now() - start;
+    }
+  };
+
+  job.handler = wrappedHandler;
+  job.timerId = setInterval(wrappedHandler, intervalMs);
+  job.nextRun = new Date(Date.now() + intervalMs);
+  cronJobs.set(name, job);
+}
+
+function getCronJobsStatus() {
+  const jobs = [];
+  for (const [name, job] of cronJobs) {
+    jobs.push({
+      name,
+      intervalMs: job.intervalMs,
+      intervalLabel: formatInterval(job.intervalMs),
+      lastRun: job.lastRun,
+      nextRun: job.nextRun,
+      runCount: job.runCount,
+      failCount: job.failCount,
+      lastError: job.lastError,
+      lastDuration: job.lastDuration,
+      enabled: job.enabled,
+    });
+  }
+  return jobs;
+}
+
+function formatInterval(ms) {
+  if (ms <= 60000) return `${ms / 1000}s`;
+  if (ms <= 3600000) return `${ms / 60000}m`;
+  if (ms <= 86400000) return `${ms / 3600000}h`;
+  return `${ms / 86400000}d`;
+}
+
+function triggerCronJob(name) {
+  const job = cronJobs.get(name);
+  if (job && job.handler) {
+    job.handler();
+    return true;
+  }
+  return false;
+}
+
+function toggleCronJob(name, enabled) {
+  const job = cronJobs.get(name);
+  if (!job) return false;
+  job.enabled = enabled;
+  if (enabled) {
+    job.timerId = setInterval(job.handler, job.intervalMs);
+  } else {
+    clearInterval(job.timerId);
+    job.timerId = null;
+  }
+  return true;
+}
+
 notificationQueue.process(async (data) => {
   try {
     const { recipientId, senderId, type, relatedPost, relatedComment, relatedConversation } = data;
@@ -84,69 +171,52 @@ cleanupQueue.process(async (data) => {
 });
 
 function startBackgroundJobs() {
-  setInterval(() => {
+  trackCronJob('expired_stories_cleanup', 3600000, async () => {
     cleanupQueue.add({ type: 'expired_stories' });
-  }, 3600000);
+  });
 
-  setInterval(() => {
+  trackCronJob('old_notifications_cleanup', 86400000, async () => {
     cleanupQueue.add({ type: 'old_notifications' });
-  }, 86400000);
+  });
 
-  setInterval(() => {
+  trackCronJob('old_sessions_cleanup', 86400000, async () => {
     cleanupQueue.add({ type: 'old_sessions' });
-  }, 86400000);
+  });
 
-  setInterval(async () => {
-    try {
-      await DataRetention.runAllPolicies();
-      console.log('Data retention enforced');
-    } catch (err) {
-      console.error('Data retention failed:', err.message);
-    }
-  }, 24 * 3600000);
+  trackCronJob('data_retention', 24 * 3600000, async () => {
+    await DataRetention.runAllPolicies();
+    console.log('Data retention enforced');
+  });
 
-  setInterval(async () => {
-    try {
-      await BackupService.createBackup('weekly');
-      console.log('Weekly backup created');
-    } catch (err) {
-      console.error('Backup failed:', err.message);
-    }
-  }, 7 * 24 * 3600000);
+  trackCronJob('weekly_backup', 7 * 24 * 3600000, async () => {
+    await BackupService.createBackup('weekly');
+    console.log('Weekly backup created');
+  });
 
-  setInterval(async () => {
-    try {
-      await processScheduledPosts();
-    } catch (err) {
-      console.error('Scheduled posts processor failed:', err.message);
-    }
-  }, 60000);
+  trackCronJob('scheduled_posts_processor', 60000, async () => {
+    await processScheduledPosts();
+  });
 
-  // Clean up expired restrictions every hour
-  setInterval(async () => {
-    try {
-      const now = new Date();
-      await User.updateMany(
-        { 'restrictions.expiresAt': { $lte: now, $ne: null } },
-        { $pull: { restrictions: { expiresAt: { $lte: now, $ne: null } } } }
-      );
-      console.log('Expired restrictions cleaned up');
-    } catch (err) {
-      console.error('Restriction cleanup failed:', err.message);
-    }
-  }, 3600000);
+  trackCronJob('expired_restrictions_cleanup', 3600000, async () => {
+    const now = new Date();
+    await User.updateMany(
+      { 'restrictions.expiresAt': { $lte: now, $ne: null } },
+      { $pull: { restrictions: { expiresAt: { $lte: now, $ne: null } } } }
+    );
+    console.log('Expired restrictions cleaned up');
+  });
 
-  // Auto-escalate old pending reports every 6 hours
-  setInterval(async () => {
-    try {
-      const escalated = await autoEscalateReports();
-      if (escalated > 0) console.log(`Auto-escalated ${escalated} reports`);
-    } catch (err) {
-      console.error('Auto-escalation failed:', err.message);
-    }
-  }, 6 * 3600000);
+  trackCronJob('auto_escalate_reports', 6 * 3600000, async () => {
+    const escalated = await autoEscalateReports();
+    if (escalated > 0) console.log(`Auto-escalated ${escalated} reports`);
+  });
 
   console.log('Background jobs started');
 }
 
-module.exports = { startBackgroundJobs };
+module.exports = {
+  startBackgroundJobs,
+  getCronJobsStatus,
+  triggerCronJob,
+  toggleCronJob,
+};
