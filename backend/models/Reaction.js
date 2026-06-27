@@ -8,7 +8,7 @@ const reactionSchema = new mongoose.Schema({
   },
   targetType: {
     type: String,
-    enum: ['Post', 'Comment'],
+    enum: ['Post', 'Comment', 'Story', 'Note'],
     required: true
   },
   targetId: {
@@ -18,7 +18,7 @@ const reactionSchema = new mongoose.Schema({
   },
   type: {
     type: String,
-    enum: ['like', 'love', 'haha', 'wow', 'sad', 'angry'],
+    enum: ['like', 'love', 'haha', 'wow', 'sad', 'angry', 'fire', 'clap', 'think', 'care'],
     required: true
   }
 });

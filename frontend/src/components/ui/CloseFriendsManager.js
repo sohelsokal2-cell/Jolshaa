@@ -1,24 +1,28 @@
 import React, { useState, useEffect } from 'react';
-import { api } from '../../services/api';
+import API from '../../api/axios';
+import { useAuth } from '../../context/AuthContext';
 
 export default function CloseFriendsManager({ dark, onClose }) {
+  const { user } = useAuth();
   const [friends, setFriends] = useState([]);
   const [closeFriends, setCloseFriends] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
 
   useEffect(() => {
-    loadData();
-  }, []);
+    if (user?.id) {
+      loadData();
+    }
+  }, [user]);
 
   const loadData = async () => {
     try {
       const [friendsRes, closeFriendsRes] = await Promise.all([
-        api.get('/friends/list'),
-        api.get('/privacy/close-friends')
+        API.get(`/friends/${user.id}`),
+        API.get('/privacy/close-friends')
       ]);
       setFriends(friendsRes.data.friends || []);
-      setCloseFriends((closeFriendsRes.data.closeFriends || []).map(f => f._id));
+      setCloseFriends((closeFriendsRes.data.closeFriends || []).map(f => f._id || f));
     } catch (err) {
       console.error(err);
     } finally {
@@ -29,10 +33,10 @@ export default function CloseFriendsManager({ dark, onClose }) {
   const toggleCloseFriend = async (userId) => {
     try {
       if (closeFriends.includes(userId)) {
-        await api.delete(`/privacy/close-friends/${userId}`);
+        await API.delete(`/privacy/close-friends/${userId}`);
         setCloseFriends(closeFriends.filter(id => id !== userId));
       } else {
-        await api.post('/privacy/close-friends', { userId });
+        await API.post('/privacy/close-friends', { userId });
         setCloseFriends([...closeFriends, userId]);
       }
     } catch (err) {

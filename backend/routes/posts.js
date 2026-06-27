@@ -15,6 +15,9 @@ const {
   getTrendingPosts,
   getTrendingHashtags,
   schedulePost,
+  inviteCollaborator,
+  acceptCollaboration,
+  removeCollaborator,
 } = require('../controllers/postController');
 const {
   addComment,
@@ -39,5 +42,8 @@ router.put('/:id/save', toggleSavePost);
 router.post('/:id/comments', addComment);
 router.get('/:id/comments', getComments);
 router.put('/:id/schedule', schedulePost);
+router.post('/:id/collaborators', inviteCollaborator);
+router.put('/:id/collaborators/accept', acceptCollaboration);
+router.delete('/:id/collaborators/:userId', removeCollaborator);
 
 module.exports = router;

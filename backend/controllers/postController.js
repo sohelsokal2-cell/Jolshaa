@@ -27,7 +27,7 @@ exports.createPost = async (req, res) => {
       return res.status(403).json({ message: 'You are restricted from creating posts', restricted: true });
     }
 
-    const { text, feeling, taggedUsers, visibility, postedInType, postedInRefId } = req.body;
+    const { text, feeling, taggedUsers, visibility, postedInType, postedInRefId, contentWarning, communityLabel, footnotes } = req.body;
     const trimmedText = typeof text === 'string' ? text.trim() : '';
 
     if (!trimmedText && (!req.files || req.files.length === 0)) {
@@ -55,10 +55,17 @@ exports.createPost = async (req, res) => {
 
     let media = [];
     if (req.files && req.files.length > 0) {
+      const altTexts = req.body.altTexts ? JSON.parse(req.body.altTexts) : [];
+      const captions = req.body.mediaCaptions ? JSON.parse(req.body.mediaCaptions) : [];
       const uploadPromises = req.files.map(file =>
         uploadToCloudinary(file.buffer, 'jolshaa/posts')
       );
-      media = await Promise.all(uploadPromises);
+      const urls = await Promise.all(uploadPromises);
+      media = urls.map((url, i) => ({
+        url,
+        altText: altTexts[i] || '',
+        caption: captions[i] || '',
+      }));
     }
 
     const tagged = taggedUsers ? JSON.parse(taggedUsers) : [];
@@ -86,6 +93,9 @@ exports.createPost = async (req, res) => {
       visibility: visibility || 'public',
       postedIn,
       hashtags,
+      contentWarning: contentWarning || 'none',
+      communityLabel: communityLabel || '',
+      footnotes: footnotes || '',
     });
 
     await post.populate('author', 'name profilePhoto');
@@ -213,10 +223,91 @@ exports.deletePost = async (req, res) => {
   }
 };
 
+exports.inviteCollaborator = async (req, res) => {
+  try {
+    const { userId, role } = req.body;
+    const post = await Post.findById(req.params.id);
+    if (!post) return res.status(404).json({ message: 'Post not found' });
+    if (post.author.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ message: 'Only the author can invite collaborators' });
+    }
+
+    const alreadyInvited = post.collaborators.some(
+      c => c.user.toString() === userId
+    );
+    if (alreadyInvited) {
+      return res.status(400).json({ message: 'User already invited' });
+    }
+
+    post.collaborators.push({
+      user: userId,
+      role: role || 'editor',
+      invitedAt: new Date(),
+    });
+    await post.save();
+
+    const Notification = require('../models/Notification');
+    const notification = await Notification.create({
+      recipient: userId,
+      sender: req.user._id,
+      type: 'collaboration_invite',
+      relatedPost: post._id,
+    });
+
+    const { getIO } = require('../socket');
+    getIO().to(`user:${userId}`).emit('newNotification', {
+      ...notification.toObject(),
+      sender: { _id: req.user._id, name: req.user.name, profilePhoto: req.user.profilePhoto }
+    });
+
+    res.json({ message: 'Collaborator invited' });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
+exports.acceptCollaboration = async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.id);
+    if (!post) return res.status(404).json({ message: 'Post not found' });
+
+    const collab = post.collaborators.find(
+      c => c.user.toString() === req.user._id.toString()
+    );
+    if (!collab) return res.status(403).json({ message: 'Not invited' });
+
+    collab.acceptedAt = new Date();
+    await post.save();
+
+    res.json({ message: 'Collaboration accepted' });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
+exports.removeCollaborator = async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.id);
+    if (!post) return res.status(404).json({ message: 'Post not found' });
+    if (post.author.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ message: 'Only the author can remove collaborators' });
+    }
+
+    post.collaborators = post.collaborators.filter(
+      c => c.user.toString() !== req.params.userId
+    );
+    await post.save();
+
+    res.json({ message: 'Collaborator removed' });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
 exports.reactToPost = async (req, res) => {
   try {
     const { type } = req.body;
-    const validTypes = ['like', 'love', 'haha', 'wow', 'sad', 'angry'];
+    const validTypes = ['like', 'love', 'haha', 'wow', 'sad', 'angry', 'fire', 'clap', 'think', 'care'];
 
     if (!validTypes.includes(type)) {
       return res.status(400).json({ message: 'Invalid reaction type' });

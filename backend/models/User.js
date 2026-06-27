@@ -207,13 +207,23 @@ const userSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
   }],
-  isCreator: {
-    type: Boolean,
-    default: false
-  },
+  friends: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  }],
+  closeFriends: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  }],
   isVerified: {
     type: Boolean,
     default: false
+  },
+  creatorSettings: {
+    tipsEnabled: { type: Boolean, default: false },
+    subscriptionPrice: { type: Number, default: 0 },
+    subscriptionInterval: { type: String, enum: ['monthly', 'yearly'], default: 'monthly' },
+    featuredContent: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Post' }]
   },
   creatorCategory: {
     type: String,
@@ -267,6 +277,32 @@ const userSchema = new mongoose.Schema({
     default: null,
     select: false
   },
+  safety: {
+    isMinor: { type: Boolean, default: false },
+    parentalControlEnabled: { type: Boolean, default: false },
+    parentalEmail: { type: String, default: '' },
+    loginAlerts: { type: Boolean, default: true },
+    twoFactorEnabled: { type: Boolean, default: false },
+    contentFilterLevel: { type: String, enum: ['off', 'moderate', 'strict'], default: 'moderate' },
+    restrictedDMs: { type: Boolean, default: false },
+  },
+  sessions: [{
+    token: { type: String },
+    ip: { type: String },
+    userAgent: { type: String },
+    location: { type: String, default: '' },
+    device: { type: String, default: '' },
+    lastActive: { type: Date, default: Date.now },
+    createdAt: { type: Date, default: Date.now },
+    isActive: { type: Boolean, default: true }
+  }],
+  loginHistory: [{
+    ip: { type: String },
+    userAgent: { type: String },
+    location: { type: String, default: '' },
+    success: { type: Boolean, default: true },
+    timestamp: { type: Date, default: Date.now }
+  }],
   createdAt: {
     type: Date,
     default: Date.now

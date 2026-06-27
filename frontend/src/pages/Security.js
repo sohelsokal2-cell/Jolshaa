@@ -15,9 +15,19 @@ const Security = () => {
   const [loginHistory, setLoginHistory] = useState([]);
   const [historyLoading, setHistoryLoading] = useState(false);
 
+  const [safety, setSafety] = useState({
+    loginAlerts: true,
+    twoFactorEnabled: false,
+    contentFilterLevel: 'moderate',
+    restrictedDMs: false,
+  });
+  const [safetyLoading, setSafetyLoading] = useState(false);
+  const [safetyMsg, setSafetyMsg] = useState('');
+
   useEffect(() => {
     if (activeTab === 'sessions') fetchSessions();
     else if (activeTab === 'login-history') fetchLoginHistory();
+    else if (activeTab === 'safety') fetchSafety();
   }, [activeTab]);
 
   const fetchSessions = async () => {
@@ -36,7 +46,7 @@ const Security = () => {
     setHistoryLoading(true);
     try {
       const res = await API.get('/auth/login-history');
-      setLoginHistory(res.data.loginHistory);
+      setLoginHistory(res.data.history || []);
     } catch (err) {
       console.error('Failed to fetch login history');
     } finally {
@@ -93,10 +103,39 @@ const Security = () => {
     }
   };
 
+  const fetchSafety = async () => {
+    setSafetyLoading(true);
+    try {
+      const res = await API.get('/auth/safety');
+      if (res.data.safety) setSafety(res.data.safety);
+    } catch (err) {
+      console.error('Failed to fetch safety settings');
+    } finally {
+      setSafetyLoading(false);
+    }
+  };
+
+  const handleSafetyUpdate = async (field, value) => {
+    setSafetyLoading(true);
+    setSafetyMsg('');
+    try {
+      const updated = { ...safety, [field]: value };
+      await API.put('/auth/safety', updated);
+      setSafety(updated);
+      setSafetyMsg('Settings saved');
+      setTimeout(() => setSafetyMsg(''), 3000);
+    } catch (err) {
+      setSafetyMsg('Failed to save settings');
+    } finally {
+      setSafetyLoading(false);
+    }
+  };
+
   const tabs = [
     { key: 'password', label: 'Password' },
     { key: 'sessions', label: 'Active Sessions' },
     { key: 'login-history', label: 'Login History' },
+    { key: 'safety', label: 'Safety' },
   ];
 
   return (
@@ -226,6 +265,71 @@ const Security = () => {
                 ))}
               </div>
             )}
+          </div>
+        )}
+
+        {/* Safety Settings */}
+        {activeTab === 'safety' && (
+          <div className="card rounded-lg shadow-sm p-6">
+            <h2 className="font-semibold text-on-surface mb-4">Safety & Privacy</h2>
+            {safetyMsg && (
+              <p className={`text-sm mb-3 ${safetyMsg.includes('saved') ? 'text-green-600' : 'text-red-500'}`}>
+                {safetyMsg}
+              </p>
+            )}
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-on-surface-variant">Login Alerts</p>
+                  <p className="text-xs text-on-surface-variant">Get notified of new logins from unknown devices</p>
+                </div>
+                <button
+                  onClick={() => handleSafetyUpdate('loginAlerts', !safety.loginAlerts)}
+                  className={`w-10 h-6 rounded-full transition-colors relative ${safety.loginAlerts ? 'bg-primary-600' : 'bg-neutral-300'}`}
+                >
+                  <span className={`absolute top-0.5 w-5 h-5 bg-white rounded-full transition-transform shadow ${safety.loginAlerts ? 'left-4.5' : 'left-0.5'}`} />
+                </button>
+              </div>
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-on-surface-variant">Two-Factor Authentication</p>
+                  <p className="text-xs text-on-surface-variant">Add an extra layer of security to your account</p>
+                </div>
+                <button
+                  onClick={() => handleSafetyUpdate('twoFactorEnabled', !safety.twoFactorEnabled)}
+                  className={`w-10 h-6 rounded-full transition-colors relative ${safety.twoFactorEnabled ? 'bg-primary-600' : 'bg-neutral-300'}`}
+                >
+                  <span className={`absolute top-0.5 w-5 h-5 bg-white rounded-full transition-transform shadow ${safety.twoFactorEnabled ? 'left-4.5' : 'left-0.5'}`} />
+                </button>
+              </div>
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-on-surface-variant">Content Filter</p>
+                  <p className="text-xs text-on-surface-variant">Filter potentially sensitive content</p>
+                </div>
+                <select
+                  value={safety.contentFilterLevel}
+                  onChange={(e) => handleSafetyUpdate('contentFilterLevel', e.target.value)}
+                  className="input px-3 py-1.5 rounded-lg text-sm"
+                >
+                  <option value="off">Off</option>
+                  <option value="moderate">Moderate</option>
+                  <option value="strict">Strict</option>
+                </select>
+              </div>
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-on-surface-variant">Restrict DMs</p>
+                  <p className="text-xs text-on-surface-variant">Only allow friends to send you messages</p>
+                </div>
+                <button
+                  onClick={() => handleSafetyUpdate('restrictedDMs', !safety.restrictedDMs)}
+                  className={`w-10 h-6 rounded-full transition-colors relative ${safety.restrictedDMs ? 'bg-primary-600' : 'bg-neutral-300'}`}
+                >
+                  <span className={`absolute top-0.5 w-5 h-5 bg-white rounded-full transition-transform shadow ${safety.restrictedDMs ? 'left-4.5' : 'left-0.5'}`} />
+                </button>
+              </div>
+            </div>
           </div>
         )}
       </div>

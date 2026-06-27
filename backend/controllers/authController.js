@@ -248,6 +248,31 @@ exports.getLoginHistory = async (req, res) => {
   }
 };
 
+exports.getSafety = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id).select('safety');
+    res.json({ safety: user.safety || {} });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
+exports.updateSafety = async (req, res) => {
+  try {
+    const { loginAlerts, twoFactorEnabled, contentFilterLevel, restrictedDMs } = req.body;
+    const update = {};
+    if (loginAlerts !== undefined) update['safety.loginAlerts'] = loginAlerts;
+    if (twoFactorEnabled !== undefined) update['safety.twoFactorEnabled'] = twoFactorEnabled;
+    if (contentFilterLevel !== undefined) update['safety.contentFilterLevel'] = contentFilterLevel;
+    if (restrictedDMs !== undefined) update['safety.restrictedDMs'] = restrictedDMs;
+
+    const user = await User.findByIdAndUpdate(req.user._id, update, { new: true }).select('safety');
+    res.json({ safety: user.safety });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
 exports.deleteAccount = async (req, res) => {
   try {
     const { password } = req.body;

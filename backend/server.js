@@ -83,6 +83,9 @@ app.use('/api/hashtags', require('./routes/hashtagLocation'));
 app.use('/api/topics', require('./routes/topics'));
 app.use('/api/ai', require('./routes/ai'));
 app.use('/api/notification-preferences', require('./routes/notificationPreferences'));
+app.use('/api/story-archives', require('./routes/storyArchives'));
+app.use('/api/saved-folders', require('./routes/savedFolders'));
+app.use('/api/notes', require('./routes/notes'));
 
 app.use(errorHandler);
 

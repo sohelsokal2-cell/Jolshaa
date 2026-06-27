@@ -9,10 +9,12 @@ const postSchema = new mongoose.Schema({
   text: {
     type: String,
     default: '',
-    maxlength: 5000
+    maxlength: 10000
   },
   media: [{
-    type: String
+    url: { type: String },
+    altText: { type: String, default: '' },
+    caption: { type: String, default: '' },
   }],
   feeling: {
     type: String,
@@ -52,6 +54,12 @@ const postSchema = new mongoose.Schema({
     ref: 'Post',
     default: null
   },
+  collaborators: [{
+    user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    role: { type: String, enum: ['editor', 'viewer'], default: 'editor' },
+    invitedAt: { type: Date, default: Date.now },
+    acceptedAt: { type: Date, default: null },
+  }],
   isPinned: {
     type: Boolean,
     default: false
@@ -130,6 +138,25 @@ const postSchema = new mongoose.Schema({
   isPublished: {
     type: Boolean,
     default: false
+  },
+  contentWarning: {
+    type: String,
+    enum: ['none', 'violence', 'nudity', 'drugs', 'language', 'spoiler', 'sensitive'],
+    default: 'none'
+  },
+  communityLabel: {
+    type: String,
+    default: ''
+  },
+  footnotes: {
+    type: String,
+    default: '',
+    maxlength: 2000
+  },
+  pinnedComment: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Comment',
+    default: null
   },
 }, {
   timestamps: true

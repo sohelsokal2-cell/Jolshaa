@@ -12,6 +12,7 @@ const FriendRequests = () => {
   const [activeTab, setActiveTab] = useState('requests');
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
+  const [error, setError] = useState('');
 
   useEffect(() => {
     fetchData();
@@ -36,6 +37,7 @@ const FriendRequests = () => {
 
   const handleAccept = async (requestId) => {
     try {
+      setError('');
       await API.put(`/friends/${requestId}/accept`);
       const request = incoming.find(r => r._id === requestId);
       setIncoming(prev => prev.filter(r => r._id !== requestId));
@@ -43,34 +45,37 @@ const FriendRequests = () => {
         setFriends(prev => [request.from, ...prev]);
       }
     } catch (err) {
-      console.error('Failed to accept');
+      setError(err.response?.data?.message || 'Failed to accept request');
     }
   };
 
   const handleReject = async (requestId) => {
     try {
+      setError('');
       await API.put(`/friends/${requestId}/reject`);
       setIncoming(prev => prev.filter(r => r._id !== requestId));
     } catch (err) {
-      console.error('Failed to reject');
+      setError(err.response?.data?.message || 'Failed to reject request');
     }
   };
 
   const handleCancelRequest = async (requestId) => {
     try {
+      setError('');
       await API.put(`/friends/${requestId}/reject`);
       setOutgoing(prev => prev.filter(r => r._id !== requestId));
     } catch (err) {
-      console.error('Failed to cancel');
+      setError(err.response?.data?.message || 'Failed to cancel request');
     }
   };
 
   const handleUnfriend = async (userId) => {
     try {
+      setError('');
       await API.delete(`/friends/${userId}`);
       setFriends(prev => prev.filter(f => f._id !== userId));
     } catch (err) {
-      console.error('Failed to unfriend');
+      setError(err.response?.data?.message || 'Failed to unfriend');
     }
   };
 
@@ -106,6 +111,12 @@ const FriendRequests = () => {
             </button>
           ))}
         </div>
+
+        {error && (
+          <div className="bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 px-4 py-2 rounded-lg text-sm mb-4">
+            {error}
+          </div>
+        )}
 
         {loading ? (
           <div className="text-center py-8 text-on-surface-variant">Loading...</div>

@@ -62,6 +62,25 @@ exports.addComment = async (req, res) => {
       });
     }
 
+    // Notify parent comment author (skip self and post author if same)
+    if (parentComment) {
+      const parentCommentDoc = await Comment.findById(parentComment);
+      if (parentCommentDoc && parentCommentDoc.author.toString() !== req.user._id.toString() && parentCommentDoc.author.toString() !== post.author.toString()) {
+        const replyNotification = await Notification.create({
+          recipient: parentCommentDoc.author,
+          sender: req.user._id,
+          type: 'comment_reply',
+          relatedPost: post._id,
+          relatedComment: comment._id
+        });
+        const { getIO } = require('../socket');
+        getIO().to(`user:${parentCommentDoc.author}`).emit('newNotification', {
+          ...replyNotification.toObject(),
+          sender: { _id: req.user._id, name: req.user.name, profilePhoto: req.user.profilePhoto }
+        });
+      }
+    }
+
     res.status(201).json(comment);
   } catch (error) {
     res.status(500).json({ message: 'Server error', error: error.message });
@@ -193,6 +212,52 @@ exports.reactToComment = async (req, res) => {
     });
 
     res.json({ message: 'Reaction added', myReaction: type });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
+exports.pinComment = async (req, res) => {
+  try {
+    const comment = await Comment.findById(req.params.id);
+    if (!comment) return res.status(404).json({ message: 'Comment not found' });
+
+    const post = await Post.findById(comment.post);
+    if (!post) return res.status(404).json({ message: 'Post not found' });
+    if (post.author.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ message: 'Only post author can pin comments' });
+    }
+
+    if (comment.isPinned) {
+      comment.isPinned = false;
+      await comment.save();
+      return res.json({ isPinned: false, message: 'Comment unpinned' });
+    }
+
+    await Comment.updateMany({ post: comment.post, isPinned: true }, { isPinned: false });
+    comment.isPinned = true;
+    await comment.save();
+
+    res.json({ isPinned: true, message: 'Comment pinned' });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
+exports.likeComment = async (req, res) => {
+  try {
+    const comment = await Comment.findById(req.params.id);
+    if (!comment) return res.status(404).json({ message: 'Comment not found' });
+
+    const index = comment.likes.findIndex(id => id.toString() === req.user._id.toString());
+    if (index === -1) {
+      comment.likes.push(req.user._id);
+    } else {
+      comment.likes.splice(index, 1);
+    }
+    await comment.save();
+
+    res.json({ liked: index === -1, likeCount: comment.likes.length });
   } catch (error) {
     res.status(500).json({ message: 'Server error', error: error.message });
   }

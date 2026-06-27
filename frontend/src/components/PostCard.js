@@ -11,6 +11,7 @@ import SaveButton from './SaveButton';
 import Poll from './Poll';
 import QAPost from './QAPost';
 import BoostPostModal from './BoostPostModal';
+import MediaCarousel from './MediaCarousel';
 
 const PostCard = ({ post, onDelete }) => {
   const { user } = useAuth();
@@ -25,6 +26,7 @@ const PostCard = ({ post, onDelete }) => {
   const [showReport, setShowReport] = useState(false);
   const [showShare, setShowShare] = useState(false);
   const [showBoost, setShowBoost] = useState(false);
+  const [contentRevealed, setContentRevealed] = useState(!post.contentWarning || post.contentWarning === 'none');
   const menuRef = useRef(null);
 
   useEffect(() => {
@@ -87,19 +89,7 @@ const PostCard = ({ post, onDelete }) => {
 
   const renderMedia = (media) => {
     if (!media || media.length === 0) return null;
-    return (
-      <div className={`${media.length === 1 ? '' : 'grid grid-cols-2 gap-0.5'}`}>
-        {media.map((url, i) => (
-          <div key={i} className="relative">
-            {url.includes('.mp4') || url.includes('.webm') ? (
-              <video src={url} controls className="w-full object-cover max-h-[500px] bg-black" />
-            ) : (
-              <img src={url} alt="" className="w-full object-cover max-h-[500px]" />
-            )}
-          </div>
-        ))}
-      </div>
-    );
+    return <MediaCarousel media={media} />;
   };
 
   return (
@@ -115,6 +105,11 @@ const PostCard = ({ post, onDelete }) => {
               <Link to={`/profile/${post.author?._id}`} className="font-semibold text-sm text-neutral-900 dark:text-neutral-100 hover:underline">
                 {post.author?.name}
               </Link>
+              {post.collaborators?.length > 0 && (
+                <span className="text-xs text-neutral-500">
+                  with {post.collaborators.map(c => c.user?.name).filter(Boolean).join(', ')}
+                </span>
+              )}
               <div className="flex items-center gap-1.5 text-xs text-neutral-500">
                 <span>{timeAgo(post.createdAt)}</span>
                 {isEdited && <span>· edited</span>}
@@ -169,6 +164,20 @@ const PostCard = ({ post, onDelete }) => {
           </div>
         </div>
 
+        {post.communityLabel && (
+          <div className="ml-[52px] mt-1">
+            <span className="text-xs bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 px-2 py-0.5 rounded-full font-medium">
+              🏷️ {post.communityLabel}
+            </span>
+          </div>
+        )}
+        {post.contentWarning && post.contentWarning !== 'none' && (
+          <div className="ml-[52px] mt-1">
+            <span className="text-xs bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 px-2 py-0.5 rounded-full font-medium">
+              ⚠️ {post.contentWarning.charAt(0).toUpperCase() + post.contentWarning.slice(1)} content
+            </span>
+          </div>
+        )}
         {post.feeling && (
           <p className="text-sm text-neutral-500 mt-1 ml-[52px]">
             is feeling <span className="font-medium text-neutral-700 dark:text-neutral-300">{post.feeling}</span>
@@ -227,17 +236,7 @@ const PostCard = ({ post, onDelete }) => {
                   {sharedPost.text && <p className="text-sm text-neutral-700 dark:text-neutral-300">{sharedPost.text}</p>}
                 </div>
                 {sharedPost.media?.length > 0 && (
-                  <div className={`${sharedPost.media.length === 1 ? '' : 'grid grid-cols-2 gap-0.5'}`}>
-                    {sharedPost.media.map((url, i) => (
-                      <div key={i}>
-                        {url.includes('.mp4') || url.includes('.webm') ? (
-                          <video src={url} controls className="w-full max-h-64 object-cover" />
-                        ) : (
-                          <img src={url} alt="" className="w-full max-h-64 object-cover" />
-                        )}
-                      </div>
-                    ))}
-                  </div>
+                  <MediaCarousel media={sharedPost.media} />
                 )}
               </div>
             )}
@@ -246,7 +245,27 @@ const PostCard = ({ post, onDelete }) => {
       </div>
 
       {/* Media */}
-      {!sharedPost && renderMedia(post.media)}
+      {!sharedPost && post.media && post.media.length > 0 && (
+        <div className="relative">
+          <div className={!contentRevealed ? '' : ''}>
+            {renderMedia(post.media)}
+          </div>
+          {!contentRevealed && post.contentWarning && post.contentWarning !== 'none' && (
+            <div className="absolute inset-0 bg-black/60 backdrop-blur-md flex flex-col items-center justify-center z-10">
+              <span className="text-4xl mb-2">⚠️</span>
+              <p className="text-white font-medium text-sm mb-1">
+                {post.contentWarning.charAt(0).toUpperCase() + post.contentWarning.slice(1)} content
+              </p>
+              <button
+                onClick={() => setContentRevealed(true)}
+                className="px-4 py-1.5 bg-white/20 hover:bg-white/30 text-white text-sm rounded-full font-medium transition-colors"
+              >
+                Show anyway
+              </button>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Poll */}
       <div className="px-4">
@@ -258,6 +277,15 @@ const PostCard = ({ post, onDelete }) => {
         <QAPost postId={post._id} isOwner={isOwner} />
       </div>
 
+      {/* Footnotes */}
+      {post.footnotes && (
+        <div className="px-4 py-2 border-t border-neutral-100 dark:border-neutral-700">
+          <p className="text-xs text-neutral-500 dark:text-neutral-400 italic">
+            📝 {post.footnotes}
+          </p>
+        </div>
+      )}
+
       {/* Reaction & Comment counts */}
       {(reactions.count > 0 || commentCount > 0) && (
         <div className="px-4 py-2 flex items-center justify-between text-xs text-neutral-500">
@@ -265,7 +293,7 @@ const PostCard = ({ post, onDelete }) => {
             {reactions.count > 0 && (
               <>
                 <span className="flex items-center justify-center w-5 h-5 bg-primary-100 dark:bg-primary-900/30 rounded-full text-[10px]">
-                  {reactions.myReaction === 'love' ? '❤️' : reactions.myReaction === 'haha' ? '😂' : reactions.myReaction === 'wow' ? '😮' : reactions.myReaction === 'sad' ? '😢' : reactions.myReaction === 'angry' ? '😠' : '👍'}
+                  {reactions.myReaction === 'love' ? '❤️' : reactions.myReaction === 'haha' ? '😂' : reactions.myReaction === 'wow' ? '😮' : reactions.myReaction === 'sad' ? '😢' : reactions.myReaction === 'angry' ? '😡' : reactions.myReaction === 'fire' ? '🔥' : reactions.myReaction === 'clap' ? '👏' : reactions.myReaction === 'think' ? '🤔' : reactions.myReaction === 'care' ? '🤗' : '👍'}
                 </span>
                 <span>{reactions.count}</span>
               </>

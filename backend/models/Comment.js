@@ -21,6 +21,14 @@ const commentSchema = new mongoose.Schema({
     ref: 'Comment',
     default: null
   },
+  isPinned: {
+    type: Boolean,
+    default: false
+  },
+  likes: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+  }],
   isFlagged: {
     type: Boolean,
     default: false

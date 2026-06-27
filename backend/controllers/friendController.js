@@ -111,7 +111,7 @@ exports.rejectRequest = async (req, res) => {
   try {
     const request = await FriendRequest.findById(req.params.id);
     if (!request) return res.status(404).json({ message: 'Request not found' });
-    if (request.to.toString() !== req.user._id.toString()) {
+    if (request.from.toString() !== req.user._id.toString() && request.to.toString() !== req.user._id.toString()) {
       return res.status(403).json({ message: 'Not authorized' });
     }
     if (request.status !== 'pending') return res.status(400).json({ message: 'Request already handled' });
@@ -148,7 +148,8 @@ exports.unfriend = async (req, res) => {
 
 exports.getFriends = async (req, res) => {
   try {
-    const user = await User.findById(req.user._id)
+    const userId = req.params.userId || req.user._id;
+    const user = await User.findById(userId)
       .select('friends')
       .populate('friends', 'name profilePhoto bio');
     res.json({ friends: user.friends });

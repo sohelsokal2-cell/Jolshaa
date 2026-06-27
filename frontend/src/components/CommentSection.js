@@ -3,7 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import API from '../api/axios';
 import ReportModal from './ReportModal';
 
-const Comment = ({ comment, onDelete }) => {
+const Comment = ({ comment, onDelete, isPinned, onPin }) => {
   const { user } = useAuth();
   const [showReplies, setShowReplies] = useState(false);
   const [replyText, setReplyText] = useState('');
@@ -28,21 +28,26 @@ const Comment = ({ comment, onDelete }) => {
     }
   };
 
-  const handleReact = async () => {
+  const handleLike = async () => {
     try {
-      const res = await API.post(`/posts/comments/${comment._id}/react`, { type: 'like' });
-      if (res.data.myReaction) {
-        setReactions({ count: reactions.myReaction ? reactions.count : reactions.count + 1, myReaction: res.data.myReaction });
+      const res = await API.post(`/comments/${comment._id}/like`);
+      if (res.data.liked) {
+        setReactions({ count: reactions.count + 1, myReaction: 'like' });
       } else {
         setReactions({ count: Math.max(0, reactions.count - 1), myReaction: null });
       }
     } catch (err) {
-      console.error('Failed to react');
+      console.error('Failed to like comment');
     }
   };
 
+  const isOwner = user?.id === comment.author?._id;
+
   return (
-    <div className="ml-4 mt-2">
+    <div className={`ml-4 mt-2 ${isPinned ? 'bg-primary-50 dark:bg-primary-900/20 rounded-lg p-2 -ml-2 -mr-2' : ''}`}>
+      {isPinned && (
+        <span className="text-xs font-medium text-primary-600 dark:text-primary-400 mb-1 block">📌 Pinned</span>
+      )}
       <div className="flex items-start gap-2">
         <img
           src={comment.author?.profilePhoto || 'https://ui-avatars.com/api/?name=U&background=494454&color=dae2fd&size=128'}
@@ -56,10 +61,10 @@ const Comment = ({ comment, onDelete }) => {
           </div>
           <div className="flex items-center gap-3 mt-1 text-xs text-on-surface-variant">
             <button
-              onClick={handleReact}
+              onClick={handleLike}
               className={`font-medium hover:text-primary-400 ${reactions.myReaction ? 'text-primary-400' : ''}`}
             >
-              {reactions.myReaction ? 'Liked' : 'Like'}
+              {reactions.myReaction ? '❤️' : 'Like'}
               {reactions.count > 0 && ` (${reactions.count})`}
             </button>
             <button
@@ -68,20 +73,16 @@ const Comment = ({ comment, onDelete }) => {
             >
               Reply
             </button>
-            {user?.id === comment.author?._id ? (
-              <button
-                onClick={() => onDelete(comment._id)}
-                className="hover:text-red-600"
-              >
-                Delete
-              </button>
-            ) : (
-              <button
-                onClick={() => setShowReport(true)}
-                className="hover:text-red-600"
-              >
-                Report
-              </button>
+            {isOwner && (
+              <>
+                <button onClick={() => onPin(comment._id)} className="hover:text-primary-400">
+                  {isPinned ? 'Unpin' : 'Pin'}
+                </button>
+                <button onClick={() => onDelete(comment._id)} className="hover:text-red-600">Delete</button>
+              </>
+            )}
+            {!isOwner && (
+              <button onClick={() => setShowReport(true)} className="hover:text-red-600">Report</button>
             )}
             <span>{new Date(comment.createdAt).toLocaleDateString()}</span>
           </div>
@@ -202,6 +203,23 @@ const CommentSection = ({ postId, commentCount }) => {
     }
   };
 
+  const handlePinComment = async (commentId) => {
+    try {
+      const res = await API.post(`/comments/${commentId}/pin`);
+      setComments(comments.map(c =>
+        c._id === commentId ? { ...c, isPinned: res.data.isPinned } : c
+      ));
+    } catch (err) {
+      console.error('Failed to pin comment');
+    }
+  };
+
+  const sortedComments = [...comments].sort((a, b) => {
+    if (a.isPinned && !b.isPinned) return -1;
+    if (!a.isPinned && b.isPinned) return 1;
+    return new Date(a.createdAt) - new Date(b.createdAt);
+  });
+
   return (
     <div className="border-t border-white/10 pt-3">
       {!loaded && (
@@ -215,11 +233,13 @@ const CommentSection = ({ postId, commentCount }) => {
 
       {loaded && (
         <>
-          {comments.map(comment => (
+          {sortedComments.map(comment => (
             <Comment
               key={comment._id}
               comment={comment}
               onDelete={handleDeleteComment}
+              isPinned={comment.isPinned}
+              onPin={handlePinComment}
             />
           ))}
 

@@ -105,7 +105,7 @@ const StoriesBar = () => {
 
       {viewerOpen && (
         <StoryViewer
-          feed={feed}
+          stories={feed}
           initialIndex={viewerIndex}
           onClose={() => setViewerOpen(false)}
           onStoryViewed={(storyId, authorId) => {

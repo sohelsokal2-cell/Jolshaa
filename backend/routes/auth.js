@@ -10,6 +10,8 @@ const {
   revokeSession,
   revokeAllSessions,
   getLoginHistory,
+  getSafety,
+  updateSafety,
   deleteAccount,
   forgotPassword,
   resetPassword,
@@ -28,6 +30,8 @@ router.get('/sessions', protect, getSessions);
 router.delete('/sessions/:id', protect, revokeSession);
 router.delete('/sessions', protect, revokeAllSessions);
 router.get('/login-history', protect, getLoginHistory);
+router.get('/safety', protect, getSafety);
+router.put('/safety', protect, updateSafety);
 router.delete('/account', protect, deleteAccount);
 router.post('/forgot-password', forgotPassword);
 router.post('/reset-password', resetPassword);

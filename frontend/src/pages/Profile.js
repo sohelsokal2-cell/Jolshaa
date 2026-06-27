@@ -100,11 +100,14 @@ const Profile = () => {
   };
 
   const handleFriendStatusChange = (newStatus) => {
-    setProfileUser(prev => ({
-      ...prev,
-      friendStatus: newStatus,
-      friendCount: newStatus === 'friends' ? (prev.friendCount || 0) + 1 : Math.max(0, (prev.friendCount || 0) - 1)
-    }));
+    setProfileUser(prev => {
+      const wasFriends = prev.friendStatus === 'friends';
+      const isFriends = newStatus === 'friends';
+      let friendCount = prev.friendCount || 0;
+      if (!wasFriends && isFriends) friendCount += 1;
+      else if (wasFriends && !isFriends) friendCount = Math.max(0, friendCount - 1);
+      return { ...prev, friendStatus: newStatus, friendCount };
+    });
   };
 
   if (loading || !profileUser) {

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import API from '../api/axios';
 import Layout from '../components/layout/Layout';
+import CloseFriendsManager from '../components/ui/CloseFriendsManager';
 
 const PrivacySettings = () => {
   const [privacy, setPrivacy] = useState({
@@ -16,6 +17,7 @@ const PrivacySettings = () => {
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState('');
   const [showDeleteAccount, setShowDeleteAccount] = useState(false);
+  const [showCloseFriendsModal, setShowCloseFriendsModal] = useState(false);
   const [deletePassword, setDeletePassword] = useState('');
   const [deleting, setDeleting] = useState(false);
 
@@ -89,6 +91,7 @@ const PrivacySettings = () => {
   }
 
   return (
+    <>
     <Layout>
       <div className="max-w-2xl mx-auto mt-4 px-4 pb-8">
         <div className="card rounded-lg shadow-sm p-6">
@@ -194,8 +197,22 @@ const PrivacySettings = () => {
           </button>
         </div>
 
-        {/* Blocked Users */}
-        <div className="card rounded-lg shadow-sm p-6 mt-4">
+          {/* Close Friends */}
+          <div className="mb-6">
+            <label className="block text-sm font-medium text-on-surface-variant mb-2">Close Friends</label>
+            <button
+              onClick={() => setShowCloseFriendsModal(true)}
+              className="w-full bg-neutral-100 dark:bg-neutral-700 text-neutral-700 dark:text-neutral-200 py-2 rounded-lg text-sm font-medium hover:bg-neutral-200 dark:hover:bg-neutral-600 transition-colors flex items-center justify-center gap-2"
+            >
+              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M10 9a4 4 0 100 8 4 4 0 000-8zm-7 9a7 7 0 1114 0 7 7 0 01-14 0z" />
+              </svg>
+              Manage Close Friends
+            </button>
+          </div>
+
+          {/* Blocked Users */}
+          <div className="card rounded-lg shadow-sm p-6 mt-4">
           <h3 className="text-lg font-semibold text-on-surface mb-4">Blocked Users</h3>
           {blockedUsers.length === 0 ? (
             <p className="text-on-surface-variant text-sm">You haven't blocked anyone</p>
@@ -264,6 +281,13 @@ const PrivacySettings = () => {
         </div>
       </div>
     </Layout>
+    {showCloseFriendsModal && (
+      <CloseFriendsManager 
+        dark={true}
+        onClose={() => setShowCloseFriendsModal(false)} 
+      />
+    )}
+  </>
   );
 };
 

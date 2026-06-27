@@ -8,8 +8,12 @@ const CreatePostBox = ({ onPostCreated, postedInType, postedInRefId }) => {
   const [text, setText] = useState('');
   const [feeling, setFeeling] = useState('');
   const [visibility, setVisibility] = useState('public');
+  const [contentWarning, setContentWarning] = useState('none');
+  const [communityLabel, setCommunityLabel] = useState('');
+  const [footnotes, setFootnotes] = useState('');
   const [files, setFiles] = useState([]);
   const [previews, setPreviews] = useState([]);
+  const [altTexts, setAltTexts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [expanded, setExpanded] = useState(false);
@@ -29,6 +33,7 @@ const CreatePostBox = ({ onPostCreated, postedInType, postedInRefId }) => {
     setFiles(selected);
     const previewUrls = selected.map(file => URL.createObjectURL(file));
     setPreviews(previewUrls);
+    setAltTexts(selected.map(() => ''));
     setError('');
   };
 
@@ -36,8 +41,10 @@ const CreatePostBox = ({ onPostCreated, postedInType, postedInRefId }) => {
     URL.revokeObjectURL(previews[index]);
     const newFiles = files.filter((_, i) => i !== index);
     const newPreviews = previews.filter((_, i) => i !== index);
+    const newAltTexts = altTexts.filter((_, i) => i !== index);
     setFiles(newFiles);
     setPreviews(newPreviews);
+    setAltTexts(newAltTexts);
   };
 
   const handleSubmit = async (e) => {
@@ -54,9 +61,15 @@ const CreatePostBox = ({ onPostCreated, postedInType, postedInRefId }) => {
       formData.append('text', text);
       formData.append('visibility', visibility);
       if (feeling) formData.append('feeling', feeling);
+      if (contentWarning && contentWarning !== 'none') formData.append('contentWarning', contentWarning);
+      if (communityLabel) formData.append('communityLabel', communityLabel);
+      if (footnotes) formData.append('footnotes', footnotes);
       if (postedInType) formData.append('postedInType', postedInType);
       if (postedInRefId) formData.append('postedInRefId', postedInRefId);
       files.forEach(file => formData.append('media', file));
+      if (altTexts.some(a => a.trim())) {
+        formData.append('altTexts', JSON.stringify(altTexts));
+      }
 
       const res = await API.post('/posts', formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
@@ -65,6 +78,9 @@ const CreatePostBox = ({ onPostCreated, postedInType, postedInRefId }) => {
       setText('');
       setFeeling('');
       setVisibility('public');
+      setContentWarning('none');
+      setCommunityLabel('');
+      setFootnotes('');
       setFiles([]);
       setPreviews([]);
       setExpanded(false);
@@ -103,18 +119,42 @@ const CreatePostBox = ({ onPostCreated, postedInType, postedInRefId }) => {
           )}
 
           {previews.length > 0 && (
-            <div className="flex gap-2 overflow-x-auto pb-2">
-              {previews.map((preview, i) => (
-                <div key={i} className="relative flex-shrink-0">
-                  <img src={preview} alt="" className="h-20 w-20 object-cover rounded-lg" />
-                  <button
-                    onClick={() => removeFile(i)}
-                    className="absolute -top-1.5 -right-1.5 bg-red-500 text-white rounded-full w-5 h-5 text-xs flex items-center justify-center hover:bg-red-600 transition-colors"
-                  >
-                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
-                  </button>
+            <div className="space-y-2">
+              <div className="flex gap-2 overflow-x-auto pb-2">
+                {previews.map((preview, i) => (
+                  <div key={i} className="relative flex-shrink-0">
+                    {files[i]?.type?.startsWith('video/') ? (
+                      <video src={preview} className="h-20 w-20 object-cover rounded-lg" />
+                    ) : (
+                      <img src={preview} alt="" className="h-20 w-20 object-cover rounded-lg" />
+                    )}
+                    <button
+                      onClick={() => removeFile(i)}
+                      className="absolute -top-1.5 -right-1.5 bg-red-500 text-white rounded-full w-5 h-5 text-xs flex items-center justify-center hover:bg-red-600 transition-colors"
+                    >
+                      <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+                    </button>
+                  </div>
+                ))}
+              </div>
+              {previews.length > 0 && (
+                <div className="space-y-1">
+                  {previews.map((_, i) => (
+                    <input
+                      key={i}
+                      type="text"
+                      value={altTexts[i] || ''}
+                      onChange={(e) => {
+                        const newAltTexts = [...altTexts];
+                        newAltTexts[i] = e.target.value;
+                        setAltTexts(newAltTexts);
+                      }}
+                      placeholder={`Alt text for image ${i + 1} (accessibility)`}
+                      className="w-full text-xs border border-neutral-200 dark:border-neutral-600 rounded-lg px-2 py-1.5 bg-neutral-50 dark:bg-neutral-700 text-neutral-700 dark:text-neutral-200 focus:outline-none focus:ring-1 focus:ring-primary-500"
+                    />
+                  ))}
                 </div>
-              ))}
+              )}
             </div>
           )}
 
@@ -152,6 +192,35 @@ const CreatePostBox = ({ onPostCreated, postedInType, postedInRefId }) => {
               <option value="friends">👥 Friends</option>
               <option value="onlyme">🔒 Only Me</option>
             </select>
+            <select
+              value={contentWarning}
+              onChange={(e) => setContentWarning(e.target.value)}
+              className="px-3 py-1.5 rounded-lg text-xs bg-neutral-100 dark:bg-neutral-700 text-neutral-700 dark:text-neutral-200 focus:outline-none focus:ring-2 focus:ring-primary-500/30"
+            >
+              <option value="none">No Warning</option>
+              <option value="violence">⚠️ Violence</option>
+              <option value="nudity">⚠️ Nudity</option>
+              <option value="drugs">⚠️ Drugs</option>
+              <option value="language">⚠️ Language</option>
+              <option value="spoiler">⚠️ Spoiler</option>
+              <option value="sensitive">⚠️ Sensitive</option>
+            </select>
+            <input
+              type="text"
+              placeholder="Community label..."
+              value={communityLabel}
+              onChange={(e) => setCommunityLabel(e.target.value)}
+              className="px-3 py-1.5 rounded-lg text-xs bg-neutral-100 dark:bg-neutral-700 focus:outline-none focus:ring-2 focus:ring-primary-500/30 text-neutral-700 dark:text-neutral-200 w-32"
+            />
+          </div>
+          <div className="mt-2">
+            <input
+              type="text"
+              placeholder="Footnotes (optional)..."
+              value={footnotes}
+              onChange={(e) => setFootnotes(e.target.value)}
+              className="w-full px-3 py-1.5 rounded-lg text-xs bg-neutral-100 dark:bg-neutral-700 focus:outline-none focus:ring-2 focus:ring-primary-500/30 text-neutral-700 dark:text-neutral-200"
+            />
           </div>
 
           <div className="flex items-center gap-2">

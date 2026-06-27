@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
+import { useAuth } from '../context/AuthContext';
 import API from '../api/axios';
 
-const StoryViewer = ({ stories, initialIndex, onClose }) => {
+const StoryViewer = ({ stories, initialIndex, onClose, onStoryViewed }) => {
+  const { user } = useAuth();
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
   const [currentStoryIndex, setCurrentStoryIndex] = useState(0);
   const [progress, setProgress] = useState(0);
@@ -71,7 +73,19 @@ const StoryViewer = ({ stories, initialIndex, onClose }) => {
       await API.post(`/stories/${story._id}/reply`, { text: replyText });
       setReplyText('');
       setShowReply(false);
-    } catch (err) {}
+    } catch (err) {
+      console.error('Failed to reply to story');
+    }
+  };
+
+  const handleArchive = async () => {
+    if (!story?._id) return;
+    try {
+      await API.post(`/story-archives/archive/${story._id}`);
+      alert('Story archived!');
+    } catch (err) {
+      alert('Failed to archive story');
+    }
   };
 
   if (!story) return null;
@@ -132,6 +146,9 @@ const StoryViewer = ({ stories, initialIndex, onClose }) => {
             )}
           </div>
           <button onClick={() => setShowReply(!showReply)} className="text-white text-sm">Reply</button>
+          {story.author?._id === user?.id && (
+            <button onClick={handleArchive} className="text-white text-sm">Archive</button>
+          )}
           <button onClick={() => setShowViewers(!showViewers)} className="text-white text-sm">
             {story.viewCount || 0} views
           </button>

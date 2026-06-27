@@ -35,6 +35,9 @@ import MarketplacePage from './pages/MarketplacePage';
 import ListingDetail from './pages/ListingDetail';
 import HashtagPage from './pages/HashtagPage';
 import TopicFeedPage from './pages/TopicFeedPage';
+import CreatePost from './pages/CreatePost';
+import NotesPage from './pages/NotesPage';
+import NoteDetail from './pages/NoteDetail';
 
 const PublicRoute = ({ children }) => {
   const { user, loading } = useAuth();
@@ -80,6 +83,9 @@ const AppContent = () => {
         <Route path="/marketplace/:id" element={<ProtectedRoute><ListingDetail /></ProtectedRoute>} />
         <Route path="/hashtag/:name" element={<ProtectedRoute><HashtagPage /></ProtectedRoute>} />
         <Route path="/topics" element={<ProtectedRoute><TopicFeedPage /></ProtectedRoute>} />
+        <Route path="/create" element={<ProtectedRoute><CreatePost /></ProtectedRoute>} />
+        <Route path="/notes" element={<ProtectedRoute><NotesPage /></ProtectedRoute>} />
+        <Route path="/notes/:id" element={<ProtectedRoute><NoteDetail /></ProtectedRoute>} />
         <Route path="*" element={<Navigate to="/feed" replace />} />
       </Routes>
     </Router>

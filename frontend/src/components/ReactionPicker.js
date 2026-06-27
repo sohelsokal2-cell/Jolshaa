@@ -6,7 +6,11 @@ const REACTIONS = [
   { type: 'haha', emoji: '😂', label: 'Haha' },
   { type: 'wow', emoji: '😮', label: 'Wow' },
   { type: 'sad', emoji: '😢', label: 'Sad' },
-  { type: 'angry', emoji: '😡', label: 'Angry' }
+  { type: 'angry', emoji: '😡', label: 'Angry' },
+  { type: 'fire', emoji: '🔥', label: 'Fire' },
+  { type: 'clap', emoji: '👏', label: 'Clap' },
+  { type: 'think', emoji: '🤔', label: 'Think' },
+  { type: 'care', emoji: '🤗', label: 'Care' },
 ];
 
 const ReactionPicker = ({ currentReaction, onReact }) => {
