@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import API from '../api/axios';
+import Layout from '../components/layout/Layout';
 import InviteFriendsModal from '../components/InviteFriendsModal';
 
 const EventPage = () => {
@@ -53,30 +54,22 @@ const EventPage = () => {
     }
   };
 
-  if (loading) return <div className="min-h-screen bg-gray-100 flex items-center justify-center text-gray-500">Loading...</div>;
-  if (!event) return <div className="min-h-screen bg-gray-100 flex items-center justify-center text-gray-500">Event not found</div>;
+  if (loading) return <Layout><div className="flex items-center justify-center min-h-[60vh] text-on-surface-variant">Loading...</div></Layout>;
+  if (!event) return <Layout><div className="flex items-center justify-center min-h-[60vh] text-on-surface-variant">Event not found</div></Layout>;
 
   const startDate = new Date(event.startDate);
   const endDate = event.endDate ? new Date(event.endDate) : null;
   const isPast = startDate < new Date();
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      <nav className="bg-white shadow-md px-6 py-3 flex justify-between items-center">
-        <Link to="/feed" className="text-xl font-bold text-blue-600">Jolshaa</Link>
-        <div className="flex items-center gap-4">
-          <Link to="/events" className="text-sm text-gray-600 hover:text-blue-600">Events</Link>
-          <button onClick={logout} className="text-sm text-red-600 hover:underline">Logout</button>
-        </div>
-      </nav>
-
+    <Layout>
       <div className="max-w-2xl mx-auto mt-4 px-4 pb-8">
         {/* Cover */}
-        <div className="bg-white rounded-lg shadow-sm overflow-hidden mb-4">
+        <div className="card overflow-hidden mb-4">
           {event.coverPhoto ? (
-            <img src={event.coverPhoto} alt="" className="w-full h-64 object-cover" />
+            <img src={event.coverPhoto} alt={event.title} className="w-full h-64 object-cover" />
           ) : (
-            <div className="w-full h-64 bg-gradient-to-r from-purple-400 to-blue-500 flex items-center justify-center">
+            <div className="w-full h-64 bg-gradient-to-r from-primary-500 to-primary-700 flex items-center justify-center">
               <svg className="w-16 h-16 text-white opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
               </svg>
@@ -85,19 +78,19 @@ const EventPage = () => {
         </div>
 
         {/* Info */}
-        <div className="bg-white rounded-lg shadow-sm p-6 mb-4">
+        <div className="card p-6 mb-4">
           <div className="flex items-start justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-gray-800">{event.title}</h1>
+              <h1 className="text-2xl font-bold text-on-surface">{event.title}</h1>
               <div className="flex items-center gap-2 mt-1">
                 <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${
-                  event.visibility === 'public' ? 'bg-green-100 text-green-700' :
-                  event.visibility === 'friends' ? 'bg-blue-100 text-blue-700' :
-                  'bg-purple-100 text-purple-700'
+                  event.visibility === 'public' ? 'bg-accent-500/15 text-accent-400' :
+                  event.visibility === 'friends' ? 'bg-primary-500/15 text-primary-400' :
+                  'bg-primary-500/15 text-primary-400'
                 }`}>
                   {event.visibility === 'invite_only' ? 'Invite Only' : event.visibility}
                 </span>
-                {isPast && <span className="text-xs text-gray-400">Past Event</span>}
+                {isPast && <span className="text-xs text-on-surface-variant/60">Past Event</span>}
               </div>
             </div>
             {event.isCreator && (
@@ -105,9 +98,9 @@ const EventPage = () => {
             )}
           </div>
 
-          <div className="mt-4 space-y-2 text-sm text-gray-600">
+          <div className="mt-4 space-y-2 text-sm text-on-surface-variant">
             <div className="flex items-center gap-2">
-              <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-5 h-5 text-on-surface-variant/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
               </svg>
               <span>
@@ -121,7 +114,7 @@ const EventPage = () => {
             </div>
             {event.location && (
               <div className="flex items-center gap-2">
-                <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 text-on-surface-variant/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                 </svg>
@@ -129,7 +122,7 @@ const EventPage = () => {
               </div>
             )}
             <div className="flex items-center gap-2">
-              <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-5 h-5 text-on-surface-variant/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
               </svg>
               <span>Created by {event.creator?.name}</span>
@@ -143,8 +136,8 @@ const EventPage = () => {
                 onClick={() => handleRsvp('going')}
                 className={`flex-1 py-2 rounded-lg text-sm font-medium transition ${
                   event.myStatus === 'going'
-                    ? 'bg-green-600 text-white'
-                    : 'bg-green-100 text-green-700 hover:bg-green-200'
+                    ? 'bg-accent-600 text-white'
+                    : 'bg-accent-500/15 text-accent-400 hover:bg-accent-500/25'
                 }`}
               >
                 Going
@@ -153,8 +146,8 @@ const EventPage = () => {
                 onClick={() => handleRsvp('maybe')}
                 className={`flex-1 py-2 rounded-lg text-sm font-medium transition ${
                   event.myStatus === 'maybe'
-                    ? 'bg-yellow-500 text-white'
-                    : 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200'
+                    ? 'bg-amber-500 text-white'
+                    : 'bg-amber-500/15 text-amber-400 hover:bg-amber-500/25'
                 }`}
               >
                 Maybe
@@ -163,8 +156,8 @@ const EventPage = () => {
                 onClick={() => handleRsvp('not_going')}
                 className={`flex-1 py-2 rounded-lg text-sm font-medium transition ${
                   event.myStatus === 'not_going'
-                    ? 'bg-gray-500 text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    ? 'bg-neutral-600 text-white'
+                    : 'bg-white/5 text-on-surface-variant hover:bg-white/10'
                 }`}
               >
                 Not Going
@@ -175,7 +168,7 @@ const EventPage = () => {
           {event.isCreator && (
             <button
               onClick={() => setShowInvite(true)}
-              className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700"
+              className="mt-4 px-4 py-2 btn-primary rounded-lg text-sm font-medium"
             >
               Invite Friends
             </button>
@@ -183,16 +176,16 @@ const EventPage = () => {
         </div>
 
         {/* Tabs */}
-        <div className="bg-white rounded-lg shadow-sm">
-          <div className="flex border-b">
+        <div className="card">
+          <div className="flex border-b border-white/10">
             {['details', 'attendees'].map(tab => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
                 className={`flex-1 py-3 text-center font-medium text-sm capitalize ${
                   activeTab === tab
-                    ? 'text-blue-600 border-b-2 border-blue-600'
-                    : 'text-gray-500 hover:text-gray-700'
+                    ? 'text-primary-400 border-b-2 border-primary-500'
+                    : 'text-on-surface-variant hover:text-on-surface'
                 }`}
               >
                 {tab}
@@ -204,9 +197,9 @@ const EventPage = () => {
             {activeTab === 'details' && (
               <div>
                 {event.description ? (
-                  <p className="text-gray-700 whitespace-pre-wrap">{event.description}</p>
+                  <p className="text-on-surface-variant whitespace-pre-wrap">{event.description}</p>
                 ) : (
-                  <p className="text-gray-400">No description</p>
+                  <p className="text-on-surface-variant/60">No description</p>
                 )}
               </div>
             )}
@@ -214,11 +207,11 @@ const EventPage = () => {
             {activeTab === 'attendees' && (
               <div className="space-y-4">
                 <div>
-                  <h4 className="font-medium text-gray-800 mb-2">Going ({event.attendeeCount || 0})</h4>
+                  <h4 className="font-medium text-on-surface mb-2">Going ({event.attendeeCount || 0})</h4>
                   <div className="flex flex-wrap gap-2">
                     {event.attendees?.filter(a => a.status === 'going').map(a => (
-                      <Link key={a.user._id} to={`/profile/${a.user._id}`} className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-50">
-                        <img src={a.user.profilePhoto || 'https://ui-avatars.com/api/?name=U&background=494454&color=dae2fd&size=128'} alt="" className="w-8 h-8 rounded-full object-cover" />
+                      <Link key={a.user._id} to={`/profile/${a.user._id}`} className="flex items-center gap-2 p-2 rounded-lg hover:bg-white/5">
+                        <img src={a.user.profilePhoto || 'https://ui-avatars.com/api/?name=U&background=494454&color=dae2fd&size=128'} alt={a.user.name} className="w-8 h-8 rounded-full object-cover" />
                         <span className="text-sm">{a.user.name}</span>
                       </Link>
                     ))}
@@ -226,11 +219,11 @@ const EventPage = () => {
                 </div>
                 {event.maybeCount > 0 && (
                   <div>
-                    <h4 className="font-medium text-gray-800 mb-2">Maybe ({event.maybeCount})</h4>
+                    <h4 className="font-medium text-on-surface mb-2">Maybe ({event.maybeCount})</h4>
                     <div className="flex flex-wrap gap-2">
                       {event.attendees?.filter(a => a.status === 'maybe').map(a => (
-                        <Link key={a.user._id} to={`/profile/${a.user._id}`} className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-50">
-                          <img src={a.user.profilePhoto || 'https://ui-avatars.com/api/?name=U&background=494454&color=dae2fd&size=128'} alt="" className="w-8 h-8 rounded-full object-cover" />
+                        <Link key={a.user._id} to={`/profile/${a.user._id}`} className="flex items-center gap-2 p-2 rounded-lg hover:bg-white/5">
+                          <img src={a.user.profilePhoto || 'https://ui-avatars.com/api/?name=U&background=494454&color=dae2fd&size=128'} alt={a.user.name} className="w-8 h-8 rounded-full object-cover" />
                           <span className="text-sm">{a.user.name}</span>
                         </Link>
                       ))}
@@ -244,7 +237,7 @@ const EventPage = () => {
       </div>
 
       {showInvite && <InviteFriendsModal eventId={id} onClose={() => setShowInvite(false)} />}
-    </div>
+    </Layout>
   );
 };
 

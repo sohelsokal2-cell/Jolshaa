@@ -33,9 +33,9 @@ const TrendingPage = () => {
       <div className="max-w-2xl mx-auto p-4">
         <div className="space-y-4">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="bg-white rounded-lg shadow-sm p-4 animate-pulse">
-              <div className="h-4 bg-gray-200 rounded w-1/3 mb-3" />
-              <div className="h-20 bg-gray-200 rounded" />
+            <div key={i} className="bg-surface rounded-lg shadow-sm p-4 animate-pulse">
+              <div className="h-4 bg-surface-high rounded w-1/3 mb-3" />
+              <div className="h-20 bg-surface-high rounded" />
             </div>
           ))}
         </div>
@@ -46,14 +46,14 @@ const TrendingPage = () => {
   return (
     <Layout>
       <div className="max-w-2xl mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Trending</h1>
+      <h1 className="text-2xl font-bold mb-4 text-on-surface">Trending</h1>
 
       {/* Tabs */}
       <div className="flex gap-4 border-b mb-4">
         <button
           onClick={() => setTab('posts')}
           className={`pb-2 px-1 font-medium text-sm border-b-2 ${
-            tab === 'posts' ? 'border-blue-600 text-blue-600' : 'text-gray-500'
+            tab === 'posts' ? 'border-primary-500 text-primary-400' : 'text-on-surface-variant'
           }`}
         >
           Trending Posts
@@ -61,7 +61,7 @@ const TrendingPage = () => {
         <button
           onClick={() => setTab('hashtags')}
           className={`pb-2 px-1 font-medium text-sm border-b-2 ${
-            tab === 'hashtags' ? 'border-blue-600 text-blue-600' : 'text-gray-500'
+            tab === 'hashtags' ? 'border-primary-500 text-primary-400' : 'text-on-surface-variant'
           }`}
         >
           Trending Hashtags
@@ -71,7 +71,7 @@ const TrendingPage = () => {
       {tab === 'posts' && (
         <div className="space-y-4">
           {trendingPosts.length === 0 ? (
-            <p className="text-gray-500 text-center py-8">No trending posts yet</p>
+            <p className="text-on-surface-variant text-center py-8">No trending posts yet</p>
           ) : (
             trendingPosts.map((post) => <PostCard key={post._id} post={post} />)
           )}
@@ -81,15 +81,15 @@ const TrendingPage = () => {
       {tab === 'hashtags' && (
         <div className="grid grid-cols-2 gap-3">
           {hashtags.length === 0 ? (
-            <p className="text-gray-500 text-center py-8 col-span-2">No trending hashtags yet</p>
+            <p className="text-on-surface-variant text-center py-8 col-span-2">No trending hashtags yet</p>
           ) : (
             hashtags.map((tag) => (
               <div
                 key={tag._id}
-                className="bg-white rounded-lg shadow-sm p-4 hover:shadow-md transition-shadow"
+                className="bg-surface rounded-lg shadow-sm p-4 hover:shadow-md transition-shadow"
               >
-                <p className="font-semibold text-blue-600">#{tag._id}</p>
-                <p className="text-sm text-gray-500">{tag.count} posts</p>
+                <p className="font-semibold text-primary-400">#{tag._id}</p>
+                <p className="text-sm text-on-surface-variant">{tag.count} posts</p>
               </div>
             ))
           )}

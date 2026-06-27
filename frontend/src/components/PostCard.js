@@ -19,6 +19,8 @@ const PostCard = ({ post, onDelete }) => {
   const [showComments, setShowComments] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editText, setEditText] = useState(post.text);
+  const [displayText, setDisplayText] = useState(post.text);
+  const [isEdited, setIsEdited] = useState(post.isEdited);
   const [showMenu, setShowMenu] = useState(false);
   const [showReport, setShowReport] = useState(false);
   const [showShare, setShowShare] = useState(false);
@@ -52,8 +54,8 @@ const PostCard = ({ post, onDelete }) => {
     if (!editText.trim()) return;
     try {
       const res = await API.put(`/posts/${post._id}`, { text: editText });
-      post.text = res.data.text;
-      post.isEdited = true;
+      setDisplayText(res.data.text);
+      setIsEdited(true);
       setIsEditing(false);
     } catch (err) {
       console.error('Failed to edit post');
@@ -115,7 +117,7 @@ const PostCard = ({ post, onDelete }) => {
               </Link>
               <div className="flex items-center gap-1.5 text-xs text-neutral-500">
                 <span>{timeAgo(post.createdAt)}</span>
-                {post.isEdited && <span>· edited</span>}
+                {isEdited && <span>· edited</span>}
                 {sharedPost && <span>· shared</span>}
                 {post.visibility === 'onlyme' && (
                   <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zM12 17c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zM9 8V6c0-1.66 1.34-3 3-3s3 1.34 3 3v2H9z" /></svg>
@@ -201,13 +203,13 @@ const PostCard = ({ post, onDelete }) => {
             />
             <div className="flex gap-2">
               <button onClick={handleEdit} className="px-4 py-1.5 bg-primary-600 text-white rounded-lg text-sm font-medium hover:bg-primary-700 transition-colors">Save</button>
-              <button onClick={() => { setIsEditing(false); setEditText(post.text); }} className="px-4 py-1.5 bg-neutral-200 dark:bg-neutral-700 text-neutral-700 dark:text-neutral-200 rounded-lg text-sm font-medium hover:bg-neutral-300 dark:hover:bg-neutral-600 transition-colors">Cancel</button>
+              <button onClick={() => { setIsEditing(false); setEditText(displayText); }} className="px-4 py-1.5 bg-neutral-200 dark:bg-neutral-700 text-neutral-700 dark:text-neutral-200 rounded-lg text-sm font-medium hover:bg-neutral-300 dark:hover:bg-neutral-600 transition-colors">Cancel</button>
             </div>
           </div>
         ) : (
           <>
-            {post.text && (
-              <p className="text-sm text-neutral-900 dark:text-neutral-100 whitespace-pre-wrap leading-relaxed line-clamp-4">{post.text}</p>
+            {displayText && (
+              <p className="text-sm text-neutral-900 dark:text-neutral-100 whitespace-pre-wrap leading-relaxed line-clamp-4">{displayText}</p>
             )}
 
             {sharedPost && (

@@ -30,8 +30,8 @@ const HashtagPage = () => {
     return (
       <div className="max-w-2xl mx-auto p-4">
         <div className="animate-pulse space-y-4">
-          <div className="h-8 bg-gray-200 rounded w-1/3" />
-          <div className="h-40 bg-gray-200 rounded" />
+          <div className="h-8 bg-white/10 rounded w-1/3" />
+          <div className="h-40 bg-white/10 rounded" />
         </div>
       </div>
     );
@@ -41,14 +41,14 @@ const HashtagPage = () => {
     <Layout>
       <div className="max-w-2xl mx-auto p-4">
       <div className="mb-6">
-        <h1 className="text-3xl font-bold text-blue-600">#{name}</h1>
+        <h1 className="text-3xl font-bold text-primary-400">#{name}</h1>
         {hashtag && (
-          <p className="text-gray-500 mt-1">{hashtag.postCount} posts</p>
+          <p className="text-on-surface-variant mt-1">{hashtag.postCount} posts</p>
         )}
       </div>
 
       {posts.length === 0 ? (
-        <div className="text-center py-12 text-gray-500">
+        <div className="text-center py-12 text-on-surface-variant">
           <p className="text-4xl mb-4">#</p>
           <p>No posts with this hashtag yet</p>
         </div>

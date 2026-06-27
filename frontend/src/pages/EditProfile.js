@@ -96,15 +96,15 @@ const EditProfile = () => {
   return (
     <Layout showSidebar={false}>
       <div className="max-w-lg mx-auto mt-8 px-4">
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-xl font-semibold mb-6">Edit Profile</h2>
+        <div className="card rounded-lg p-6">
+          <h2 className="text-xl font-semibold mb-6 text-on-surface">Edit Profile</h2>
 
-          {error && <div className="bg-red-100 text-red-700 px-4 py-2 rounded mb-4 text-sm">{error}</div>}
-          {success && <div className="bg-green-100 text-green-700 px-4 py-2 rounded mb-4 text-sm">{success}</div>}
+          {error && <div className="bg-red-500/15 text-red-400 border border-red-500/25 px-4 py-2 rounded mb-4 text-sm">{error}</div>}
+          {success && <div className="bg-accent-500/15 text-accent-400 border border-accent-500/25 px-4 py-2 rounded mb-4 text-sm">{success}</div>}
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Profile Photo</label>
+              <label className="block text-sm font-medium text-on-surface-variant mb-1">Profile Photo</label>
               <div className="flex items-center gap-4">
                 <img
                   src={formData.profilePhoto || 'https://ui-avatars.com/api/?name=U&background=494454&color=dae2fd&size=128'}
@@ -123,7 +123,7 @@ const EditProfile = () => {
                     type="button"
                     onClick={() => profileInputRef.current.click()}
                     disabled={uploading === 'profile'}
-                    className="text-sm text-blue-600 hover:underline disabled:opacity-50"
+                    className="text-sm text-primary-400 hover:underline disabled:opacity-50"
                   >
                     {uploading === 'profile' ? 'Uploading...' : 'Change Photo'}
                   </button>
@@ -132,9 +132,9 @@ const EditProfile = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Cover Photo</label>
+              <label className="block text-sm font-medium text-on-surface-variant mb-1">Cover Photo</label>
               <div className="relative">
-                <div className="h-32 bg-gradient-to-r from-blue-400 to-blue-600 rounded-lg overflow-hidden">
+                <div className="h-32 bg-gradient-to-r from-primary-600 to-primary-800 rounded-lg overflow-hidden">
                   {formData.coverPhoto && (
                     <img src={formData.coverPhoto} alt="Cover" className="w-full h-full object-cover" />
                   )}
@@ -150,7 +150,7 @@ const EditProfile = () => {
                   type="button"
                   onClick={() => coverInputRef.current.click()}
                   disabled={uploading === 'cover'}
-                  className="absolute bottom-2 right-2 bg-white text-sm px-3 py-1 rounded shadow hover:bg-gray-50 disabled:opacity-50"
+                  className="absolute bottom-2 right-2 card text-sm px-3 py-1 rounded shadow hover:bg-surface-variant/20 disabled:opacity-50"
                 >
                   {uploading === 'cover' ? 'Uploading...' : 'Change Cover'}
                 </button>
@@ -158,83 +158,83 @@ const EditProfile = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
+              <label className="block text-sm font-medium text-on-surface-variant mb-1">Name</label>
               <input
                 type="text"
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
-                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="input"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
+              <label className="block text-sm font-medium text-on-surface-variant mb-1">Phone</label>
               <input
                 type="text"
                 name="phone"
                 value={formData.phone}
                 onChange={handleChange}
-                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="input"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Bio</label>
+              <label className="block text-sm font-medium text-on-surface-variant mb-1">Bio</label>
               <textarea
                 name="bio"
                 value={formData.bio}
                 onChange={handleChange}
                 maxLength={200}
                 rows={3}
-                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="input"
               />
-              <p className="text-xs text-gray-400 mt-1">{formData.bio.length}/200</p>
+              <p className="text-xs text-on-surface-variant/60 mt-1">{formData.bio.length}/200</p>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Work</label>
+              <label className="block text-sm font-medium text-on-surface-variant mb-1">Work</label>
               <input
                 type="text"
                 name="work"
                 value={formData.work}
                 onChange={handleChange}
                 placeholder="e.g. Software Engineer at Google"
-                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="input"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Education</label>
+              <label className="block text-sm font-medium text-on-surface-variant mb-1">Education</label>
               <input
                 type="text"
                 name="education"
                 value={formData.education}
                 onChange={handleChange}
                 placeholder="e.g. MIT, Computer Science"
-                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="input"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Location</label>
+              <label className="block text-sm font-medium text-on-surface-variant mb-1">Location</label>
               <input
                 type="text"
                 name="location"
                 value={formData.location}
                 onChange={handleChange}
                 placeholder="e.g. Dhaka, Bangladesh"
-                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="input"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Gender</label>
+              <label className="block text-sm font-medium text-on-surface-variant mb-1">Gender</label>
               <select
                 name="gender"
                 value={formData.gender}
                 onChange={handleChange}
-                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="input"
               >
                 <option value="male">Male</option>
                 <option value="female">Female</option>
@@ -244,20 +244,20 @@ const EditProfile = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Date of Birth</label>
+              <label className="block text-sm font-medium text-on-surface-variant mb-1">Date of Birth</label>
               <input
                 type="date"
                 name="dateOfBirth"
                 value={formData.dateOfBirth}
                 onChange={handleChange}
-                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="input"
               />
             </div>
 
             <button
               type="submit"
               disabled={loading || uploading}
-              className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50 transition"
+              className="btn-primary w-full disabled:opacity-50"
             >
               {loading ? 'Saving...' : 'Save Changes'}
             </button>

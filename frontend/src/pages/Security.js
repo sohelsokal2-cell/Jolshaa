@@ -102,7 +102,7 @@ const Security = () => {
   return (
     <Layout>
       <div className="max-w-xl mx-auto mt-8 px-4 pb-8">
-        <h1 className="text-xl font-bold text-gray-800 mb-4">Security & Account</h1>
+        <h1 className="text-xl font-bold text-on-surface mb-4">Security & Account</h1>
 
         <div className="flex gap-2 mb-4">
           {tabs.map((tab) => (
@@ -111,8 +111,8 @@ const Security = () => {
               onClick={() => setActiveTab(tab.key)}
               className={`px-4 py-2 rounded-lg text-sm font-medium ${
                 activeTab === tab.key
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-white text-gray-600 hover:bg-gray-100'
+                  ? 'bg-primary-600 text-white'
+                  : 'card text-on-surface-variant hover:bg-surface-high'
               }`}
             >
               {tab.label}
@@ -122,29 +122,29 @@ const Security = () => {
 
         {/* Password Change */}
         {activeTab === 'password' && (
-          <div className="bg-white rounded-lg shadow-sm p-6">
-            <h2 className="font-semibold text-gray-800 mb-4">Change Password</h2>
+          <div className="card rounded-lg shadow-sm p-6">
+            <h2 className="font-semibold text-on-surface mb-4">Change Password</h2>
             <div className="space-y-3">
               <input
                 type="password"
                 placeholder="Current password"
                 value={passwords.current}
                 onChange={(e) => setPasswords({ ...passwords, current: e.target.value })}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="input w-full rounded-lg px-3 py-2 text-sm"
               />
               <input
                 type="password"
                 placeholder="New password"
                 value={passwords.newPass}
                 onChange={(e) => setPasswords({ ...passwords, newPass: e.target.value })}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="input w-full rounded-lg px-3 py-2 text-sm"
               />
               <input
                 type="password"
                 placeholder="Confirm new password"
                 value={passwords.confirm}
                 onChange={(e) => setPasswords({ ...passwords, confirm: e.target.value })}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="input w-full rounded-lg px-3 py-2 text-sm"
               />
               {passwordMsg && (
                 <p className={`text-sm ${passwordMsg.includes('success') ? 'text-green-600' : 'text-red-500'}`}>
@@ -154,7 +154,7 @@ const Security = () => {
               <button
                 onClick={handleChangePassword}
                 disabled={passwordLoading}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 disabled:opacity-50"
+                className="px-4 py-2 bg-primary-600 text-white rounded-lg text-sm font-medium hover:bg-primary-700 disabled:opacity-50"
               >
                 {passwordLoading ? 'Changing...' : 'Change Password'}
               </button>
@@ -164,9 +164,9 @@ const Security = () => {
 
         {/* Sessions */}
         {activeTab === 'sessions' && (
-          <div className="bg-white rounded-lg shadow-sm p-6">
+          <div className="card rounded-lg shadow-sm p-6">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="font-semibold text-gray-800">Active Sessions</h2>
+              <h2 className="font-semibold text-on-surface">Active Sessions</h2>
               {sessions.length > 1 && (
                 <button onClick={handleRevokeAll} className="text-xs text-red-600 hover:underline">
                   Revoke all other sessions
@@ -174,16 +174,16 @@ const Security = () => {
               )}
             </div>
             {sessionsLoading ? (
-              <p className="text-gray-500 text-sm">Loading...</p>
+              <p className="text-on-surface-variant text-sm">Loading...</p>
             ) : sessions.length === 0 ? (
-              <p className="text-gray-500 text-sm">No active sessions</p>
+              <p className="text-on-surface-variant text-sm">No active sessions</p>
             ) : (
               <div className="space-y-3">
                 {sessions.map((session) => (
-                  <div key={session._id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                  <div key={session._id} className="flex items-center justify-between p-3 bg-surface-high/50 rounded-lg">
                     <div>
-                      <p className="text-sm font-medium text-gray-700">{session.userAgent || 'Unknown device'}</p>
-                      <p className="text-xs text-gray-500">
+                      <p className="text-sm font-medium text-on-surface-variant">{session.userAgent || 'Unknown device'}</p>
+                      <p className="text-xs text-on-surface-variant">
                         {session.ip || 'Unknown IP'} &middot; Last active: {new Date(session.lastActive).toLocaleString()}
                       </p>
                     </div>
@@ -207,21 +207,21 @@ const Security = () => {
 
         {/* Login History */}
         {activeTab === 'login-history' && (
-          <div className="bg-white rounded-lg shadow-sm p-6">
-            <h2 className="font-semibold text-gray-800 mb-4">Login History</h2>
+          <div className="card rounded-lg shadow-sm p-6">
+            <h2 className="font-semibold text-on-surface mb-4">Login History</h2>
             {historyLoading ? (
-              <p className="text-gray-500 text-sm">Loading...</p>
+              <p className="text-on-surface-variant text-sm">Loading...</p>
             ) : loginHistory.length === 0 ? (
-              <p className="text-gray-500 text-sm">No login history</p>
+              <p className="text-on-surface-variant text-sm">No login history</p>
             ) : (
               <div className="space-y-2">
                 {loginHistory.map((entry, i) => (
-                  <div key={i} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg text-sm">
+                  <div key={i} className="flex items-center justify-between p-3 bg-surface-high/50 rounded-lg text-sm">
                     <div>
-                      <p className="font-medium text-gray-700">{entry.ip || 'Unknown IP'}</p>
-                      <p className="text-xs text-gray-500">{entry.userAgent || 'Unknown device'}</p>
+                      <p className="font-medium text-on-surface-variant">{entry.ip || 'Unknown IP'}</p>
+                      <p className="text-xs text-on-surface-variant">{entry.userAgent || 'Unknown device'}</p>
                     </div>
-                    <span className="text-xs text-gray-500">{new Date(entry.timestamp).toLocaleString()}</span>
+                    <span className="text-xs text-on-surface-variant">{new Date(entry.timestamp).toLocaleString()}</span>
                   </div>
                 ))}
               </div>

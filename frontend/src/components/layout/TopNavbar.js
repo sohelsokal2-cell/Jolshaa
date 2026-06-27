@@ -71,26 +71,11 @@ const TopNavbar = () => {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search Jolshaa…"
-              className="w-60 lg:w-72 rounded-full px-4 py-2 pl-10 text-sm transition-all duration-200 focus:outline-none"
-              style={{
-                background: 'rgba(255,255,255,0.05)',
-                border: '1px solid rgba(255,255,255,0.08)',
-                color: '#dae2fd',
-              }}
-              onFocus={(e) => {
-                e.target.style.background = 'rgba(255,255,255,0.08)';
-                e.target.style.borderColor = 'rgba(139,92,246,0.4)';
-                e.target.style.boxShadow = '0 0 0 3px rgba(139,92,246,0.1)';
-              }}
-              onBlur={(e) => {
-                e.target.style.background = 'rgba(255,255,255,0.05)';
-                e.target.style.borderColor = 'rgba(255,255,255,0.08)';
-                e.target.style.boxShadow = 'none';
-              }}
+              className="input w-60 lg:w-72 rounded-full px-4 py-2 pl-10 text-sm transition-all duration-200 focus:outline-none bg-white/5 border border-white/10 text-on-surface focus:bg-white/8 focus:border-violet-500/40 focus:ring-3 focus:ring-violet-500/10"
+              aria-label="Search"
             />
             <svg
-              className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4"
-              style={{ color: '#958ea0' }}
+              className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-on-surface-variant"
               fill="none" stroke="currentColor" viewBox="0 0 24 24"
             >
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -100,10 +85,9 @@ const TopNavbar = () => {
           {/* Mobile search toggle */}
           <button
             onClick={() => setShowMobileSearch(!showMobileSearch)}
-            className="md:hidden p-2 rounded-full transition-colors"
-            style={{ color: '#cbc3d7' }}
-            onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.06)'}
-            onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+            className="md:hidden p-2 rounded-full transition-colors text-on-surface-variant hover:bg-white/5"
+            aria-label="Toggle search"
+            aria-expanded={showMobileSearch}
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -118,17 +102,9 @@ const TopNavbar = () => {
           {/* Dark mode toggle */}
           <button
             onClick={toggleDark}
-            className="p-2 rounded-full transition-all duration-200"
-            style={{ color: '#cbc3d7' }}
+            className="p-2 rounded-full transition-all duration-200 text-on-surface-variant hover:bg-white/5 hover:text-violet-300"
             title={isDark ? 'Light mode' : 'Dark mode'}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.background = 'rgba(255,255,255,0.06)';
-              e.currentTarget.style.color = '#d0bcff';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.background = 'transparent';
-              e.currentTarget.style.color = '#cbc3d7';
-            }}
+            aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
           >
             {isDark ? (
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -145,19 +121,16 @@ const TopNavbar = () => {
           <div className="relative" ref={profileMenuRef}>
             <button
               onClick={() => setShowProfileMenu(!showProfileMenu)}
-              className="flex items-center gap-2 p-1.5 rounded-full transition-all duration-200"
-              onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.06)'}
-              onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+              className="flex items-center gap-2 p-1.5 rounded-full transition-all duration-200 hover:bg-white/5"
+              aria-expanded={showProfileMenu}
+              aria-haspopup="true"
+              aria-label="Profile menu"
             >
-              <div style={{ outline: '2px solid rgba(139,92,246,0.5)', outlineOffset: '2px', borderRadius: '9999px' }}>
+              <div className="outline outline-2 outline-violet-500/50 outline-offset-2 rounded-full">
                 <Avatar src={user?.profilePhoto} alt={user?.name} size="sm" />
               </div>
               <svg
-                className="w-4 h-4 hidden sm:block transition-transform duration-200"
-                style={{
-                  color: '#958ea0',
-                  transform: showProfileMenu ? 'rotate(180deg)' : 'rotate(0deg)',
-                }}
+                className={`w-4 h-4 hidden sm:block transition-transform duration-200 text-on-surface-variant ${showProfileMenu ? 'rotate-180' : ''}`}
                 fill="none" stroke="currentColor" viewBox="0 0 24 24"
               >
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
@@ -166,24 +139,17 @@ const TopNavbar = () => {
 
             {showProfileMenu && (
               <div
-                className="absolute right-0 mt-2 w-64 rounded-2xl z-50 py-2 animate-scale-in"
-                style={{
-                  background: 'rgba(17, 24, 45, 0.97)',
-                  border: '1px solid rgba(255,255,255,0.1)',
-                  backdropFilter: 'blur(40px)',
-                  WebkitBackdropFilter: 'blur(40px)',
-                  boxShadow: '0 8px 32px rgba(0,0,0,0.7), 0 0 0 1px rgba(139,92,246,0.1)',
-                }}
+                className="dropdown absolute right-0 mt-2 w-64 rounded-2xl z-50 py-2 animate-scale-in bg-surface border border-white/10 backdrop-blur-xl shadow-2xl shadow-black/70 ring-1 ring-violet-500/10"
               >
                 {/* Profile header */}
-                <div className="px-4 py-3 mb-1" style={{ borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
+                <div className="px-4 py-3 mb-1 border-b border-white/7">
                   <div className="flex items-center gap-3">
-                    <div style={{ outline: '2px solid #8b5cf6', outlineOffset: '2px', borderRadius: '9999px', boxShadow: '0 0 10px rgba(139,92,246,0.4)' }}>
+                    <div className="outline outline-2 outline-violet-500 outline-offset-2 rounded-full shadow-lg shadow-violet-500/40">
                       <Avatar src={user?.profilePhoto} alt={user?.name} size="lg" />
                     </div>
                     <div>
-                      <p className="font-semibold text-sm" style={{ color: '#dae2fd' }}>{user?.name}</p>
-                      <p className="text-xs" style={{ color: '#958ea0' }}>See your profile</p>
+                      <p className="font-semibold text-sm text-on-surface">{user?.name}</p>
+                      <p className="text-xs text-on-surface-variant">See your profile</p>
                     </div>
                   </div>
                 </div>
@@ -208,12 +174,9 @@ const TopNavbar = () => {
                       key={item.to}
                       to={item.to}
                       onClick={() => setShowProfileMenu(false)}
-                      className="flex items-center gap-3 px-4 py-2.5 text-sm transition-colors"
-                      style={{ color: '#cbc3d7' }}
-                      onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(139,92,246,0.1)'; e.currentTarget.style.color = '#dae2fd'; }}
-                      onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#cbc3d7'; }}
+                      className="dropdown-item flex items-center gap-3 px-4 py-2.5 text-sm transition-colors text-on-surface-variant hover:bg-violet-500/10 hover:text-on-surface"
                     >
-                      <svg className="w-5 h-5" style={{ color: '#7c3aed' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-5 h-5 text-violet-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         {item.icon}
                       </svg>
                       {item.label}
@@ -224,12 +187,9 @@ const TopNavbar = () => {
                     <Link
                       to="/admin"
                       onClick={() => setShowProfileMenu(false)}
-                      className="flex items-center gap-3 px-4 py-2.5 text-sm transition-colors"
-                      style={{ color: '#cbc3d7' }}
-                      onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(139,92,246,0.1)'; e.currentTarget.style.color = '#dae2fd'; }}
-                      onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#cbc3d7'; }}
+                      className="dropdown-item flex items-center gap-3 px-4 py-2.5 text-sm transition-colors text-on-surface-variant hover:bg-violet-500/10 hover:text-on-surface"
                     >
-                      <svg className="w-5 h-5" style={{ color: '#7c3aed' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-5 h-5 text-violet-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                       </svg>
                       Admin panel
@@ -238,13 +198,10 @@ const TopNavbar = () => {
                 </div>
 
                 {/* Logout */}
-                <div style={{ borderTop: '1px solid rgba(255,255,255,0.07)', paddingTop: '4px' }}>
+                <div className="border-t border-white/7 pt-1">
                   <button
                     onClick={() => { logout(); setShowProfileMenu(false); }}
-                    className="flex items-center gap-3 px-4 py-2.5 text-sm transition-colors w-full"
-                    style={{ color: '#fca5a5' }}
-                    onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(239,68,68,0.1)'}
-                    onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+                    className="flex items-center gap-3 px-4 py-2.5 text-sm transition-colors w-full text-red-400 hover:bg-red-500/10"
                   >
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
@@ -261,12 +218,7 @@ const TopNavbar = () => {
       {/* Mobile search bar */}
       {showMobileSearch && (
         <div
-          className="md:hidden absolute top-full left-0 right-0 p-3 animate-slide-down"
-          style={{
-            background: 'rgba(11,19,38,0.95)',
-            borderBottom: '1px solid rgba(255,255,255,0.07)',
-            backdropFilter: 'blur(24px)',
-          }}
+          className="md:hidden absolute top-full left-0 right-0 p-3 animate-slide-down bg-surface border-b border-white/10 backdrop-blur-xl"
         >
           <form onSubmit={handleSearch} className="relative">
             <input
@@ -275,14 +227,10 @@ const TopNavbar = () => {
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search Jolshaa…"
               autoFocus
-              className="w-full rounded-full px-4 py-2.5 pl-10 text-sm focus:outline-none"
-              style={{
-                background: 'rgba(255,255,255,0.06)',
-                border: '1px solid rgba(255,255,255,0.1)',
-                color: '#dae2fd',
-              }}
+              className="input w-full rounded-full px-4 py-2.5 pl-10 text-sm focus:outline-none bg-white/6 border border-white/10 text-on-surface"
+              aria-label="Search"
             />
-            <svg className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: '#958ea0' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-on-surface-variant" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
           </form>

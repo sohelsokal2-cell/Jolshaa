@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import API from '../api/axios';
 import Avatar from './ui/Avatar';
@@ -15,12 +15,17 @@ const CreatePostBox = ({ onPostCreated, postedInType, postedInRefId }) => {
   const [expanded, setExpanded] = useState(false);
   const fileInputRef = useRef(null);
 
+  useEffect(() => {
+    return () => { previews.forEach(url => URL.revokeObjectURL(url)); };
+  }, [previews]);
+
   const handleFileChange = (e) => {
     const selected = Array.from(e.target.files);
     if (selected.length > 5) {
       setError('Maximum 5 files allowed');
       return;
     }
+    previews.forEach(url => URL.revokeObjectURL(url));
     setFiles(selected);
     const previewUrls = selected.map(file => URL.createObjectURL(file));
     setPreviews(previewUrls);
@@ -28,6 +33,7 @@ const CreatePostBox = ({ onPostCreated, postedInType, postedInRefId }) => {
   };
 
   const removeFile = (index) => {
+    URL.revokeObjectURL(previews[index]);
     const newFiles = files.filter((_, i) => i !== index);
     const newPreviews = previews.filter((_, i) => i !== index);
     setFiles(newFiles);

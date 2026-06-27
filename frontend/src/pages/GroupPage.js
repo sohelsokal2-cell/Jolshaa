@@ -4,8 +4,8 @@ import { useAuth } from '../context/AuthContext';
 import API from '../api/axios';
 import PostCard from '../components/PostCard';
 import CreatePostBox from '../components/CreatePostBox';
-import NotificationBell from '../components/NotificationBell';
-import Toast from '../components/Toast';
+import Layout from '../components/layout/Layout';
+import Toast from '../components/ui/Toast';
 
 const GroupPage = () => {
   const { id } = useParams();
@@ -148,104 +148,97 @@ const GroupPage = () => {
     setPosts(posts.filter(p => p._id !== postId));
   };
 
-  if (!group) return <div className="text-center py-8 text-gray-500">Loading...</div>;
+  if (!group) return (
+    <Layout>
+      <div className="text-center py-8 text-on-surface-variant">Loading...</div>
+    </Layout>
+  );
 
   const canModerate = group.isAdmin || group.isModerator;
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      <nav className="bg-white shadow-md px-6 py-3 sticky top-0 z-40">
-        <div className="max-w-4xl mx-auto flex justify-between items-center">
-          <Link to="/feed" className="text-xl font-bold text-blue-600">Jolshaa</Link>
-          <div className="flex items-center gap-4">
-            <Link to="/groups" className="text-sm text-gray-600 hover:text-blue-600">Groups</Link>
-            <NotificationBell />
-            <button onClick={logout} className="text-sm text-red-600 hover:underline">Logout</button>
-          </div>
-        </div>
-      </nav>
-
+    <Layout>
       {/* Cover Photo */}
-      <div className="h-64 bg-gradient-to-r from-blue-400 to-blue-600 relative">
+      <div className="h-48 sm:h-64 bg-gradient-to-r from-primary-600 to-primary-800 relative">
         {group.coverPhoto && (
-          <img src={group.coverPhoto} alt="" className="w-full h-full object-cover" />
+          <img src={group.coverPhoto} alt={group.name} className="w-full h-full object-cover" />
         )}
       </div>
 
       <div className="max-w-4xl mx-auto px-4">
         {/* Group Info */}
-        <div className="bg-white rounded-lg shadow-md p-6 -mt-16 relative z-10">
+        <div className="card p-6 -mt-16 relative z-10">
           <div className="flex items-start justify-between">
             <div>
-              <h1 className="text-2xl font-bold">{group.name}</h1>
-              <p className="text-gray-500 mt-1">
+              <h1 className="text-2xl font-bold text-on-surface">{group.name}</h1>
+              <p className="text-on-surface-variant mt-1">
                 {group.memberCount} members · {group.privacy === 'public' ? 'Public' : 'Private'} Group
-                {group.isModerator && !group.isAdmin && <span className="ml-2 text-blue-600 font-medium">Moderator</span>}
+                {group.isModerator && !group.isAdmin && <span className="ml-2 text-primary-400 font-medium">Moderator</span>}
               </p>
             </div>
             <div className="flex gap-2">
               {!group.isMember ? (
-                <button onClick={handleJoin} className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
+                <button onClick={handleJoin} className="btn-primary">
                   {group.hasPendingRequest ? 'Request Pending' : 'Join Group'}
                 </button>
               ) : !group.isCreator ? (
-                <button onClick={handleLeave} className="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300">
+                <button onClick={handleLeave} className="btn-ghost">
                   Leave Group
                 </button>
               ) : null}
             </div>
           </div>
-          {group.description && <p className="text-gray-600 mt-3">{group.description}</p>}
+          {group.description && <p className="text-on-surface-variant mt-3">{group.description}</p>}
 
           {/* Rules */}
           {group.rules && group.rules.length > 0 && !editingRules && (
-            <div className="mt-4 p-3 bg-gray-50 rounded-lg">
+            <div className="mt-4 p-3 bg-surface-high/50 rounded-lg">
               <div className="flex items-center justify-between mb-2">
-                <h4 className="font-medium text-sm text-gray-700">Group Rules</h4>
+                <h4 className="font-medium text-sm text-on-surface">Group Rules</h4>
                 {group.isAdmin && (
-                  <button onClick={() => setEditingRules(true)} className="text-xs text-blue-600 hover:underline">Edit</button>
+                  <button onClick={() => setEditingRules(true)} className="text-xs text-primary-400 hover:underline">Edit</button>
                 )}
               </div>
               <ol className="list-decimal list-inside space-y-1">
                 {group.rules.map((rule, i) => (
-                  <li key={i} className="text-sm text-gray-600">{rule}</li>
+                  <li key={i} className="text-sm text-on-surface-variant">{rule}</li>
                 ))}
               </ol>
             </div>
           )}
 
           {group.isAdmin && editingRules && (
-            <div className="mt-4 p-3 bg-gray-50 rounded-lg">
-              <h4 className="font-medium text-sm text-gray-700 mb-2">Edit Rules (one per line)</h4>
+            <div className="mt-4 p-3 bg-surface-high/50 rounded-lg">
+              <h4 className="font-medium text-sm text-on-surface mb-2">Edit Rules (one per line)</h4>
               <textarea
                 value={rulesText}
                 onChange={(e) => setRulesText(e.target.value)}
                 rows={5}
-                className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="input"
                 placeholder="Be respectful&#10;No spam&#10;No self-promotion"
               />
               <div className="flex gap-2 mt-2">
-                <button onClick={handleSaveRules} className="px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700">Save</button>
-                <button onClick={() => setEditingRules(false)} className="px-3 py-1 bg-gray-200 text-gray-700 rounded text-sm hover:bg-gray-300">Cancel</button>
+                <button onClick={handleSaveRules} className="btn-primary btn-sm">Save</button>
+                <button onClick={() => setEditingRules(false)} className="btn-ghost btn-sm">Cancel</button>
               </div>
             </div>
           )}
 
           {group.isAdmin && !editingRules && (!group.rules || group.rules.length === 0) && (
-            <button onClick={() => setEditingRules(true)} className="mt-3 text-sm text-blue-600 hover:underline">
+            <button onClick={() => setEditingRules(true)} className="mt-3 text-sm text-primary-400 hover:underline">
               + Add Group Rules
             </button>
           )}
         </div>
 
         {/* Tabs */}
-        <div className="flex gap-4 mt-4 border-b bg-white rounded-t-lg px-4">
+        <div className="flex gap-4 mt-4 border-b border-white/10 bg-surface rounded-t-lg px-4">
           {['posts', 'members'].map(tab => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`py-3 text-sm font-medium border-b-2 capitalize ${
-                activeTab === tab ? 'border-blue-600 text-blue-600' : 'border-transparent text-gray-500'
+              className={`py-3 text-sm font-medium border-b-2 capitalize transition-colors ${
+                activeTab === tab ? 'border-primary-500 text-primary-400' : 'border-transparent text-on-surface-variant hover:text-on-surface'
               }`}
             >
               {tab}
@@ -254,8 +247,8 @@ const GroupPage = () => {
           {canModerate && (
             <button
               onClick={() => setActiveTab('admin')}
-              className={`py-3 text-sm font-medium border-b-2 ${
-                activeTab === 'admin' ? 'border-blue-600 text-blue-600' : 'border-transparent text-gray-500'
+              className={`py-3 text-sm font-medium border-b-2 transition-colors ${
+                activeTab === 'admin' ? 'border-primary-500 text-primary-400' : 'border-transparent text-on-surface-variant hover:text-on-surface'
               }`}
             >
               Admin {group.isAdmin && `(${pendingUsers.length})`}
@@ -270,7 +263,7 @@ const GroupPage = () => {
               {/* Pinned Post */}
               {group.pinnedPost && (
                 <div className="mb-4">
-                  <div className="flex items-center gap-1 text-sm text-blue-600 font-medium mb-1">
+                  <div className="flex items-center gap-1 text-sm text-primary-400 font-medium mb-1">
                     <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
                       <path d="M16 12V4h1V2H7v2h1v8l-2 2v2h5.2v6h1.6v-6H18v-2l-2-2z" />
                     </svg>
@@ -289,9 +282,9 @@ const GroupPage = () => {
               )}
 
               {loading ? (
-                <div className="text-center py-8 text-gray-500">Loading posts...</div>
+                <div className="text-center py-8 text-on-surface-variant">Loading posts...</div>
               ) : posts.length === 0 ? (
-                <div className="text-center py-8 text-gray-500">No posts yet</div>
+                <div className="text-center py-8 text-on-surface-variant">No posts yet</div>
               ) : (
                 posts.map(post => (
                   <PostCard key={post._id} post={post} onDelete={handleDeletePost} />
@@ -301,39 +294,39 @@ const GroupPage = () => {
           )}
 
           {activeTab === 'members' && (
-            <div className="bg-white rounded-lg shadow-md p-4">
+            <div className="card p-4">
               {/* Moderators */}
               {group.moderators && group.moderators.length > 0 && (
                 <div className="mb-4">
-                  <h3 className="font-semibold mb-2 text-sm text-gray-700">Moderators</h3>
+                  <h3 className="font-semibold mb-2 text-sm text-on-surface">Moderators</h3>
                   <div className="grid grid-cols-2 gap-2">
                     {group.moderators.map(mod => (
-                      <Link key={mod._id} to={`/profile/${mod._id}`} className="flex items-center gap-2 p-2 rounded hover:bg-gray-50">
-                        <img src={mod.profilePhoto || 'https://ui-avatars.com/api/?name=U&background=494454&color=dae2fd&size=128'} alt="" className="w-8 h-8 rounded-full object-cover" />
-                        <span className="text-sm font-medium">{mod.name}</span>
+                      <Link key={mod._id} to={`/profile/${mod._id}`} className="flex items-center gap-2 p-2 rounded-lg hover:bg-white/5 transition-colors">
+                        <img src={mod.profilePhoto || 'https://ui-avatars.com/api/?name=U&background=494454&color=dae2fd&size=128'} alt={mod.name} className="w-8 h-8 rounded-full object-cover" />
+                        <span className="text-sm font-medium text-on-surface">{mod.name}</span>
                       </Link>
                     ))}
                   </div>
                 </div>
               )}
 
-              <h3 className="font-semibold mb-3">All Members ({group.memberCount})</h3>
-              <div className="grid grid-cols-2 gap-3">
+              <h3 className="font-semibold mb-3 text-on-surface">All Members ({group.memberCount})</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {group.members?.map(member => (
-                  <div key={member._id} className="flex items-center gap-3 p-2 rounded hover:bg-gray-50">
+                  <div key={member._id} className="flex items-center gap-3 p-2 rounded-lg hover:bg-white/5 transition-colors">
                     <img
                       src={member.profilePhoto || 'https://ui-avatars.com/api/?name=U&background=494454&color=dae2fd&size=128'}
-                      alt=""
+                      alt={member.name}
                       className="w-10 h-10 rounded-full object-cover"
                     />
                     <div className="flex-1 min-w-0">
-                      <p className="font-medium text-sm truncate">{member.name}</p>
+                      <p className="font-medium text-sm text-on-surface truncate">{member.name}</p>
                       <div className="flex gap-1">
                         {group.admins?.some(a => a._id === member._id) && (
-                          <span className="text-xs text-purple-600">Admin</span>
+                          <span className="text-xs text-primary-400">Admin</span>
                         )}
                         {group.moderators?.some(m => m._id === member._id) && (
-                          <span className="text-xs text-blue-600">Mod</span>
+                          <span className="text-xs text-primary-300">Mod</span>
                         )}
                       </div>
                     </div>
@@ -347,21 +340,21 @@ const GroupPage = () => {
             <div className="space-y-4">
               {/* Pending Requests (admin only) */}
               {group.isAdmin && (
-                <div className="bg-white rounded-lg shadow-md p-4">
-                  <h3 className="font-semibold mb-3">Pending Requests ({pendingUsers.length})</h3>
+                <div className="card p-4">
+                  <h3 className="font-semibold mb-3 text-on-surface">Pending Requests ({pendingUsers.length})</h3>
                   {pendingUsers.length === 0 ? (
-                    <p className="text-gray-500 text-sm">No pending requests</p>
+                    <p className="text-on-surface-variant text-sm">No pending requests</p>
                   ) : (
                     <div className="space-y-3">
                       {pendingUsers.map(request => (
-                        <div key={request._id} className="flex items-center justify-between p-2 border rounded">
+                        <div key={request._id} className="flex items-center justify-between p-2 border border-white/10 rounded-lg">
                           <div className="flex items-center gap-3">
-                            <img src={request.profilePhoto || 'https://ui-avatars.com/api/?name=U&background=494454&color=dae2fd&size=128'} alt="" className="w-10 h-10 rounded-full object-cover" />
-                            <span className="font-medium text-sm">{request.name}</span>
+                            <img src={request.profilePhoto || 'https://ui-avatars.com/api/?name=U&background=494454&color=dae2fd&size=128'} alt={request.name} className="w-10 h-10 rounded-full object-cover" />
+                            <span className="font-medium text-sm text-on-surface">{request.name}</span>
                           </div>
                           <div className="flex gap-2">
-                            <button onClick={() => handleApprove(request._id)} className="bg-green-600 text-white px-3 py-1 rounded text-sm hover:bg-green-700">Approve</button>
-                            <button onClick={() => handleRemoveMember(request._id)} className="bg-red-600 text-white px-3 py-1 rounded text-sm hover:bg-red-700">Reject</button>
+                            <button onClick={() => handleApprove(request._id)} className="btn-sm px-3 py-1 bg-accent-600 text-white rounded-lg text-sm hover:bg-accent-700 transition-colors">Approve</button>
+                            <button onClick={() => handleRemoveMember(request._id)} className="btn-sm px-3 py-1 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700 transition-colors">Reject</button>
                           </div>
                         </div>
                       ))}
@@ -372,21 +365,21 @@ const GroupPage = () => {
 
               {/* Manage Moderators (admin only) */}
               {group.isAdmin && (
-                <div className="bg-white rounded-lg shadow-md p-4">
-                  <h3 className="font-semibold mb-3">Manage Moderators</h3>
-                  <p className="text-sm text-gray-500 mb-3">Moderators can approve requests, pin posts, and create announcements.</p>
+                <div className="card p-4">
+                  <h3 className="font-semibold mb-3 text-on-surface">Manage Moderators</h3>
+                  <p className="text-sm text-on-surface-variant mb-3">Moderators can approve requests, pin posts, and create announcements.</p>
                   <div className="space-y-2">
                     {group.members?.filter(m => !group.admins?.some(a => a._id === m._id)).map(member => {
-                      const isMod = group.moderators?.some(m => m._id === member._id);
+                      const isMod = group.moderators?.some(mod => mod._id === member._id);
                       return (
-                        <div key={member._id} className="flex items-center justify-between p-2 border rounded">
+                        <div key={member._id} className="flex items-center justify-between p-2 border border-white/10 rounded-lg">
                           <div className="flex items-center gap-3">
-                            <img src={member.profilePhoto || 'https://ui-avatars.com/api/?name=U&background=494454&color=dae2fd&size=128'} alt="" className="w-8 h-8 rounded-full object-cover" />
-                            <span className="text-sm">{member.name}</span>
+                            <img src={member.profilePhoto || 'https://ui-avatars.com/api/?name=U&background=494454&color=dae2fd&size=128'} alt={member.name} className="w-8 h-8 rounded-full object-cover" />
+                            <span className="text-sm text-on-surface">{member.name}</span>
                           </div>
                           <button
                             onClick={() => isMod ? handleRemoveModerator(member._id) : handleAddModerator(member._id)}
-                            className={`text-xs px-3 py-1 rounded ${isMod ? 'bg-red-100 text-red-700 hover:bg-red-200' : 'bg-blue-100 text-blue-700 hover:bg-blue-200'}`}
+                            className={`text-xs px-3 py-1 rounded-lg transition-colors ${isMod ? 'bg-red-500/15 text-red-400 hover:bg-red-500/25' : 'bg-primary-500/15 text-primary-400 hover:bg-primary-500/25'}`}
                           >
                             {isMod ? 'Remove Mod' : 'Make Mod'}
                           </button>
@@ -399,9 +392,9 @@ const GroupPage = () => {
 
               {/* Pin Post */}
               {group.pinnedPost && (
-                <div className="bg-white rounded-lg shadow-md p-4">
-                  <h3 className="font-semibold mb-2">Pinned Post</h3>
-                  <button onClick={() => handlePinPost(group.pinnedPost._id)} className="text-sm text-red-600 hover:underline">
+                <div className="card p-4">
+                  <h3 className="font-semibold mb-2 text-on-surface">Pinned Post</h3>
+                  <button onClick={() => handlePinPost(group.pinnedPost._id)} className="text-sm text-red-400 hover:underline">
                     Unpin Post
                   </button>
                 </div>
@@ -412,7 +405,7 @@ const GroupPage = () => {
       </div>
 
       <Toast />
-    </div>
+    </Layout>
   );
 };
 

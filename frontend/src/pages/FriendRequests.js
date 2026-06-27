@@ -87,8 +87,8 @@ const FriendRequests = () => {
   return (
     <Layout>
       <div className="max-w-2xl mx-auto mt-4 px-4 pb-8">
-        <div className="bg-white rounded-lg shadow-sm p-4 mb-4">
-          <h1 className="text-xl font-bold text-gray-800">Friends</h1>
+        <div className="card rounded-lg shadow-sm p-4 mb-4">
+          <h1 className="text-xl font-bold text-on-surface">Friends</h1>
         </div>
 
         <div className="flex gap-2 mb-4">
@@ -98,8 +98,8 @@ const FriendRequests = () => {
               onClick={() => setActiveTab(tab.key)}
               className={`px-4 py-2 rounded-lg text-sm font-medium ${
                 activeTab === tab.key
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-white text-gray-600 hover:bg-gray-100'
+                  ? 'btn-primary'
+                  : 'card text-on-surface-variant hover:bg-surface-high'
               }`}
             >
               {tab.label}
@@ -108,44 +108,44 @@ const FriendRequests = () => {
         </div>
 
         {loading ? (
-          <div className="text-center py-8 text-gray-500">Loading...</div>
+          <div className="text-center py-8 text-on-surface-variant">Loading...</div>
         ) : (
           <>
             {/* Incoming Requests */}
             {activeTab === 'requests' && (
               <div className="space-y-3">
                 {incoming.length === 0 ? (
-                  <div className="bg-white rounded-lg shadow-sm p-6 text-center text-gray-500 text-sm">
+                  <div className="card rounded-lg shadow-sm p-6 text-center text-on-surface-variant text-sm">
                     No pending friend requests
                   </div>
                 ) : (
                   incoming.map((request) => (
-                    <div key={request._id} className="bg-white rounded-lg shadow-sm p-4 flex items-center gap-4">
+                    <div key={request._id} className="card rounded-lg shadow-sm p-4 flex items-center gap-4">
                       <Link to={`/profile/${request.from?._id}`}>
                         <img
                           src={request.from?.profilePhoto || 'https://ui-avatars.com/api/?name=U&background=494454&color=dae2fd&size=128'}
-                          alt=""
+                          alt={request.from?.name || 'User avatar'}
                           className="w-14 h-14 rounded-full object-cover"
                         />
                       </Link>
                       <div className="flex-1">
-                        <Link to={`/profile/${request.from?._id}`} className="font-semibold text-gray-800 hover:underline">
+                        <Link to={`/profile/${request.from?._id}`} className="font-semibold text-on-surface hover:underline">
                           {request.from?.name}
                         </Link>
                         {request.from?.bio && (
-                          <p className="text-gray-500 text-sm truncate">{request.from.bio}</p>
+                          <p className="text-on-surface-variant text-sm truncate">{request.from.bio}</p>
                         )}
                       </div>
                       <div className="flex gap-2">
                         <button
                           onClick={() => handleAccept(request._id)}
-                          className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700"
+                          className="px-4 py-2 bg-primary-600 text-white rounded-lg text-sm font-medium hover:bg-primary-700"
                         >
                           Accept
                         </button>
                         <button
                           onClick={() => handleReject(request._id)}
-                          className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-300"
+                          className="px-4 py-2 bg-surface-high text-on-surface-variant rounded-lg text-sm font-medium hover:bg-surface-highest"
                         >
                           Reject
                         </button>
@@ -160,28 +160,28 @@ const FriendRequests = () => {
             {activeTab === 'sent' && (
               <div className="space-y-3">
                 {outgoing.length === 0 ? (
-                  <div className="bg-white rounded-lg shadow-sm p-6 text-center text-gray-500 text-sm">
+                  <div className="card rounded-lg shadow-sm p-6 text-center text-on-surface-variant text-sm">
                     No outgoing friend requests
                   </div>
                 ) : (
-                  outgoing.map((request) => (
-                    <div key={request._id} className="bg-white rounded-lg shadow-sm p-4 flex items-center gap-4">
+                    outgoing.map((request) => (
+                    <div key={request._id} className="card rounded-lg shadow-sm p-4 flex items-center gap-4">
                       <Link to={`/profile/${request.to?._id}`}>
                         <img
                           src={request.to?.profilePhoto || 'https://ui-avatars.com/api/?name=U&background=494454&color=dae2fd&size=128'}
-                          alt=""
+                          alt={request.to?.name || 'User avatar'}
                           className="w-14 h-14 rounded-full object-cover"
                         />
                       </Link>
                       <div className="flex-1">
-                        <Link to={`/profile/${request.to?._id}`} className="font-semibold text-gray-800 hover:underline">
+                        <Link to={`/profile/${request.to?._id}`} className="font-semibold text-on-surface hover:underline">
                           {request.to?.name}
                         </Link>
-                        <p className="text-gray-500 text-xs">Request pending</p>
+                        <p className="text-on-surface-variant text-xs">Request pending</p>
                       </div>
                       <button
                         onClick={() => handleCancelRequest(request._id)}
-                        className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-300"
+                        className="px-4 py-2 bg-surface-high text-on-surface-variant rounded-lg text-sm font-medium hover:bg-surface-highest"
                       >
                         Cancel
                       </button>
@@ -200,35 +200,35 @@ const FriendRequests = () => {
                     placeholder="Search friends..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full card border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 text-on-surface"
                   />
                 </div>
                 <div className="space-y-3">
                   {filteredFriends.length === 0 ? (
-                    <div className="bg-white rounded-lg shadow-sm p-6 text-center text-gray-500 text-sm">
+                    <div className="card rounded-lg shadow-sm p-6 text-center text-on-surface-variant text-sm">
                       {friends.length === 0 ? 'No friends yet' : 'No friends match your search'}
                     </div>
                   ) : (
-                    filteredFriends.map((friend) => (
-                      <div key={friend._id} className="bg-white rounded-lg shadow-sm p-4 flex items-center gap-4">
+                      filteredFriends.map((friend) => (
+                      <div key={friend._id} className="card rounded-lg shadow-sm p-4 flex items-center gap-4">
                         <Link to={`/profile/${friend._id}`}>
                           <img
                             src={friend.profilePhoto || 'https://ui-avatars.com/api/?name=U&background=494454&color=dae2fd&size=128'}
-                            alt=""
+                            alt={friend.name || 'Friend avatar'}
                             className="w-12 h-12 rounded-full object-cover"
                           />
                         </Link>
                         <div className="flex-1">
-                          <Link to={`/profile/${friend._id}`} className="font-semibold text-gray-800 hover:underline">
+                          <Link to={`/profile/${friend._id}`} className="font-semibold text-on-surface hover:underline">
                             {friend.name}
                           </Link>
                           {friend.bio && (
-                            <p className="text-gray-500 text-sm truncate">{friend.bio}</p>
+                            <p className="text-on-surface-variant text-sm truncate">{friend.bio}</p>
                           )}
                         </div>
                         <button
                           onClick={() => handleUnfriend(friend._id)}
-                          className="text-sm text-red-600 hover:underline"
+                          className="text-sm text-red-500 hover:underline"
                         >
                           Unfriend
                         </button>

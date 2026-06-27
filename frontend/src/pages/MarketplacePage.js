@@ -71,10 +71,10 @@ const MarketplacePage = () => {
     <Layout>
       <div className="max-w-4xl mx-auto p-4">
       <div className="flex items-center justify-between mb-4">
-        <h1 className="text-2xl font-bold">Marketplace</h1>
+        <h1 className="text-2xl font-bold text-on-surface">Marketplace</h1>
         <button
           onClick={() => setShowCreate(!showCreate)}
-          className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700"
+          className="bg-primary-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-primary-700"
         >
           {showCreate ? 'Cancel' : '+ Sell Item'}
         </button>
@@ -88,12 +88,12 @@ const MarketplacePage = () => {
           onChange={(e) => setSearch(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && fetchListings()}
           placeholder="Search..."
-          className="flex-1 border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="input flex-1"
         />
         <select
           value={category}
           onChange={(e) => setCategory(e.target.value)}
-          className="border rounded-lg px-3 py-2 text-sm"
+          className="input"
         >
           {categories.map((c) => (
             <option key={c.value} value={c.value}>{c.label}</option>
@@ -103,19 +103,19 @@ const MarketplacePage = () => {
 
       {/* Create Form */}
       {showCreate && (
-        <div className="bg-white rounded-lg shadow-sm p-4 mb-4 space-y-3">
+        <div className="card rounded-lg shadow-sm p-4 mb-4 space-y-3">
           <input
             type="text"
             value={formData.title}
             onChange={(e) => setFormData({ ...formData, title: e.target.value })}
             placeholder="Item title"
-            className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="input w-full"
           />
           <textarea
             value={formData.description}
             onChange={(e) => setFormData({ ...formData, description: e.target.value })}
             placeholder="Description"
-            className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+            className="input w-full resize-none"
             rows={3}
           />
           <div className="grid grid-cols-3 gap-3">
@@ -124,12 +124,12 @@ const MarketplacePage = () => {
               value={formData.price}
               onChange={(e) => setFormData({ ...formData, price: e.target.value })}
               placeholder="Price"
-              className="border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="input"
             />
             <select
               value={formData.category}
               onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-              className="border rounded-lg px-3 py-2 text-sm"
+              className="input"
             >
               {categories.slice(1).map((c) => (
                 <option key={c.value} value={c.value}>{c.label}</option>
@@ -138,7 +138,7 @@ const MarketplacePage = () => {
             <select
               value={formData.condition}
               onChange={(e) => setFormData({ ...formData, condition: e.target.value })}
-              className="border rounded-lg px-3 py-2 text-sm"
+              className="input"
             >
               <option value="new">New</option>
               <option value="like_new">Like New</option>
@@ -152,19 +152,19 @@ const MarketplacePage = () => {
             value={formData.location}
             onChange={(e) => setFormData({ ...formData, location: e.target.value })}
             placeholder="Location"
-            className="w-full border rounded-lg px-3 py-2 text-sm"
+            className="input w-full"
           />
           <input
             type="file"
             accept="image/*"
             multiple
             onChange={(e) => setImages(Array.from(e.target.files))}
-            className="text-sm"
+            className="text-sm text-on-surface-variant"
           />
           <button
             onClick={handleCreate}
             disabled={creating || !formData.title || !formData.price}
-            className="w-full bg-blue-600 text-white py-2 rounded-lg text-sm font-medium hover:bg-blue-700 disabled:opacity-50"
+            className="w-full bg-primary-600 text-white py-2 rounded-lg text-sm font-medium hover:bg-primary-700 disabled:opacity-50"
           >
             {creating ? 'Creating...' : 'List Item'}
           </button>
@@ -175,17 +175,17 @@ const MarketplacePage = () => {
       {loading ? (
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
           {[1, 2, 3, 4, 5, 6].map((i) => (
-            <div key={i} className="bg-white rounded-lg shadow-sm overflow-hidden animate-pulse">
-              <div className="aspect-square bg-gray-200" />
+            <div key={i} className="card rounded-lg shadow-sm overflow-hidden animate-pulse">
+              <div className="aspect-square bg-surface-high" />
               <div className="p-3">
-                <div className="h-4 bg-gray-200 rounded w-2/3 mb-2" />
-                <div className="h-4 bg-gray-200 rounded w-1/3" />
+                <div className="h-4 bg-surface-high rounded w-2/3 mb-2" />
+                <div className="h-4 bg-surface-high rounded w-1/3" />
               </div>
             </div>
           ))}
         </div>
       ) : listings.length === 0 ? (
-        <div className="text-center py-12 text-gray-500">
+        <div className="text-center py-12 text-on-surface-variant">
           <p className="text-4xl mb-4">🛒</p>
           <p>No listings found</p>
         </div>
@@ -195,19 +195,19 @@ const MarketplacePage = () => {
             <Link
               key={listing._id}
               to={`/marketplace/${listing._id}`}
-              className="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition"
+              className="card rounded-lg shadow-sm overflow-hidden hover:shadow-md transition"
             >
-              <div className="aspect-square bg-gray-100">
+              <div className="aspect-square bg-surface-high">
                 {listing.images?.[0] ? (
-                  <img src={listing.images[0]} alt="" className="w-full h-full object-cover" />
+                  <img src={listing.images[0]} alt={listing.title} className="w-full h-full object-cover" />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center text-gray-400">📷</div>
+                  <div className="w-full h-full flex items-center justify-center text-on-surface-variant">📷</div>
                 )}
               </div>
               <div className="p-3">
-                <p className="font-semibold text-gray-800 text-sm truncate">{listing.title}</p>
-                <p className="text-blue-600 font-bold text-sm">${listing.price}</p>
-                <p className="text-xs text-gray-500">{listing.location || 'Location not set'}</p>
+                <p className="font-semibold text-on-surface text-sm truncate">{listing.title}</p>
+                <p className="text-primary-400 font-bold text-sm">${listing.price}</p>
+                <p className="text-xs text-on-surface-variant">{listing.location || 'Location not set'}</p>
               </div>
             </Link>
           ))}

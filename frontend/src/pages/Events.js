@@ -41,10 +41,10 @@ const Events = () => {
     <Layout>
       <div className="max-w-2xl mx-auto mt-4 px-4 pb-8">
         <div className="flex items-center justify-between mb-4">
-          <h1 className="text-xl font-bold text-gray-800">Events</h1>
+          <h1 className="text-xl font-bold text-on-surface">Events</h1>
           <Link
             to="/events/create"
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700"
+            className="px-4 py-2 bg-primary-600 text-white rounded-lg text-sm font-medium hover:bg-primary-700"
           >
             Create Event
           </Link>
@@ -57,8 +57,8 @@ const Events = () => {
               onClick={() => setActiveTab(tab.key)}
               className={`px-4 py-2 rounded-lg text-sm font-medium ${
                 activeTab === tab.key
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-white text-gray-600 hover:bg-gray-100'
+                  ? 'bg-primary-600 text-white'
+                  : 'bg-white/10 text-on-surface-variant hover:bg-white/5'
               }`}
             >
               {tab.label}
@@ -67,9 +67,9 @@ const Events = () => {
         </div>
 
         {loading ? (
-          <div className="text-center py-8 text-gray-500">Loading events...</div>
+          <div className="text-center py-8 text-on-surface-variant">Loading events...</div>
         ) : events.length === 0 ? (
-          <div className="text-center py-8 text-gray-500">
+          <div className="text-center py-8 text-on-surface-variant">
             {activeTab === 'my' ? 'You have no events' : `No ${activeTab} events`}
           </div>
         ) : (

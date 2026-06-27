@@ -1,8 +1,8 @@
-import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import API from '../api/axios';
-import NotificationBell from '../components/NotificationBell';
+import Layout from '../components/layout/Layout';
 
 const CATEGORIES = [
   'Business', 'Entertainment', 'Health', 'Education', 'Technology',
@@ -23,6 +23,13 @@ const CreatePage = () => {
   const [coverPreview, setCoverPreview] = useState(null);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    return () => { if (profilePreview) URL.revokeObjectURL(profilePreview); };
+  }, [profilePreview]);
+  useEffect(() => {
+    return () => { if (coverPreview) URL.revokeObjectURL(coverPreview); };
+  }, [coverPreview]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -72,43 +79,33 @@ const CreatePage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      <nav className="bg-white shadow-md px-6 py-3 sticky top-0 z-40">
-        <div className="max-w-2xl mx-auto flex justify-between items-center">
-          <Link to="/feed" className="text-xl font-bold text-blue-600">Jolshaa</Link>
-          <div className="flex items-center gap-4">
-            <NotificationBell />
-            <button onClick={logout} className="text-sm text-red-600 hover:underline">Logout</button>
-          </div>
-        </div>
-      </nav>
-
+    <Layout logout={logout}>
       <div className="max-w-2xl mx-auto mt-8 px-4">
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-xl font-semibold mb-6">Create Page</h2>
+        <div className="card rounded-lg p-6">
+          <h2 className="text-xl font-semibold mb-6 text-on-surface">Create Page</h2>
 
-          {error && <div className="bg-red-100 text-red-700 px-4 py-2 rounded mb-4 text-sm">{error}</div>}
+          {error && <div className="bg-red-500/15 text-red-400 border border-red-500/25 px-4 py-2 rounded mb-4 text-sm">{error}</div>}
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Page Name *</label>
+              <label className="block text-sm font-medium text-on-surface-variant mb-1">Page Name *</label>
               <input
                 type="text"
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
-                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="input w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                 placeholder="My Awesome Page"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Category *</label>
+              <label className="block text-sm font-medium text-on-surface-variant mb-1">Category *</label>
               <select
                 name="category"
                 value={formData.category}
                 onChange={handleChange}
-                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="input w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
               >
                 <option value="">Select a category</option>
                 {CATEGORIES.map(cat => (
@@ -118,19 +115,19 @@ const CreatePage = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+              <label className="block text-sm font-medium text-on-surface-variant mb-1">Description</label>
               <textarea
                 name="description"
                 value={formData.description}
                 onChange={handleChange}
                 rows={3}
-                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="input w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                 placeholder="What's this page about?"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Profile Photo</label>
+              <label className="block text-sm font-medium text-on-surface-variant mb-1">Profile Photo</label>
               <input
                 type="file"
                 accept="image/*"
@@ -143,7 +140,7 @@ const CreatePage = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Cover Photo</label>
+              <label className="block text-sm font-medium text-on-surface-variant mb-1">Cover Photo</label>
               <input
                 type="file"
                 accept="image/*"
@@ -158,14 +155,14 @@ const CreatePage = () => {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-purple-600 text-white py-2 rounded-lg hover:bg-purple-700 disabled:opacity-50 transition"
+              className="btn-primary w-full py-2 rounded-lg disabled:opacity-50 transition"
             >
               {loading ? 'Creating...' : 'Create Page'}
             </button>
           </form>
         </div>
       </div>
-    </div>
+    </Layout>
   );
 };
 

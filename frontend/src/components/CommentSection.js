@@ -46,25 +46,25 @@ const Comment = ({ comment, onDelete }) => {
       <div className="flex items-start gap-2">
         <img
           src={comment.author?.profilePhoto || 'https://ui-avatars.com/api/?name=U&background=494454&color=dae2fd&size=128'}
-          alt=""
+          alt={comment.author?.name || 'User avatar'}
           className="w-8 h-8 rounded-full object-cover"
         />
         <div className="flex-1">
-          <div className="bg-gray-100 rounded-lg px-3 py-2">
-            <span className="font-semibold text-sm">{comment.author?.name}</span>
-            <p className="text-sm text-gray-700">{comment.text}</p>
+          <div className="bg-surface-high/50 rounded-lg px-3 py-2">
+            <span className="font-semibold text-sm text-on-surface">{comment.author?.name}</span>
+            <p className="text-sm text-on-surface-variant">{comment.text}</p>
           </div>
-          <div className="flex items-center gap-3 mt-1 text-xs text-gray-500">
+          <div className="flex items-center gap-3 mt-1 text-xs text-on-surface-variant">
             <button
               onClick={handleReact}
-              className={`font-medium hover:text-blue-600 ${reactions.myReaction ? 'text-blue-600' : ''}`}
+              className={`font-medium hover:text-primary-400 ${reactions.myReaction ? 'text-primary-400' : ''}`}
             >
               {reactions.myReaction ? 'Liked' : 'Like'}
               {reactions.count > 0 && ` (${reactions.count})`}
             </button>
             <button
               onClick={() => setShowReplies(!showReplies)}
-              className="hover:text-blue-600"
+              className="hover:text-primary-400"
             >
               Reply
             </button>
@@ -94,12 +94,12 @@ const Comment = ({ comment, onDelete }) => {
                 value={replyText}
                 onChange={(e) => setReplyText(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleReply()}
-                className="flex-1 bg-gray-100 rounded-full px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="flex-1 bg-surface-high/50 rounded-full px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-primary-400"
               />
               <button
                 onClick={handleReply}
                 disabled={replying || !replyText.trim()}
-                className="text-blue-600 text-sm font-medium hover:text-blue-700 disabled:opacity-50"
+                className="text-primary-400 text-sm font-medium hover:text-primary-300 disabled:opacity-50"
               >
                 Reply
               </button>
@@ -111,7 +111,7 @@ const Comment = ({ comment, onDelete }) => {
               {!showReplies && (
                 <button
                   onClick={() => setShowReplies(true)}
-                  className="text-sm text-gray-500 hover:text-blue-600 font-medium"
+                  className="text-sm text-on-surface-variant hover:text-primary-400 font-medium"
                 >
                   View {comment.replies.length} {comment.replies.length === 1 ? 'reply' : 'replies'}
                 </button>
@@ -120,15 +120,15 @@ const Comment = ({ comment, onDelete }) => {
                 <div key={reply._id} className="flex items-start gap-2 mt-2 ml-4">
                   <img
                     src={reply.author?.profilePhoto || 'https://ui-avatars.com/api/?name=U&background=494454&color=dae2fd&size=128'}
-                    alt=""
+                    alt={reply.author?.name || 'User avatar'}
                     className="w-6 h-6 rounded-full object-cover"
                   />
                   <div className="flex-1">
-                    <div className="bg-gray-50 rounded-lg px-3 py-1">
-                      <span className="font-semibold text-xs">{reply.author?.name}</span>
-                      <p className="text-xs text-gray-700">{reply.text}</p>
+                    <div className="bg-surface-high/30 rounded-lg px-3 py-1">
+                      <span className="font-semibold text-xs text-on-surface">{reply.author?.name}</span>
+                      <p className="text-xs text-on-surface-variant">{reply.text}</p>
                     </div>
-                    <span className="text-xs text-gray-400 ml-1">
+                    <span className="text-xs text-on-surface-variant ml-1">
                       {new Date(reply.createdAt).toLocaleDateString()}
                     </span>
                   </div>
@@ -137,7 +137,7 @@ const Comment = ({ comment, onDelete }) => {
               {showReplies && (
                 <button
                   onClick={() => setShowReplies(false)}
-                  className="text-xs text-gray-500 hover:text-blue-600 ml-6 mt-1"
+                  className="text-xs text-on-surface-variant hover:text-primary-400 ml-6 mt-1"
                 >
                   Hide replies
                 </button>
@@ -203,11 +203,11 @@ const CommentSection = ({ postId, commentCount }) => {
   };
 
   return (
-    <div className="border-t pt-3">
+    <div className="border-t border-white/10 pt-3">
       {!loaded && (
         <button
           onClick={loadComments}
-          className="text-sm text-gray-500 hover:text-blue-600 font-medium mb-2"
+          className="text-sm text-on-surface-variant hover:text-primary-400 font-medium mb-2"
         >
           View {commentCount} {commentCount === 1 ? 'comment' : 'comments'}
         </button>
@@ -226,7 +226,7 @@ const CommentSection = ({ postId, commentCount }) => {
           {page < totalPages && (
             <button
               onClick={() => setPage(page + 1)}
-              className="text-sm text-gray-500 hover:text-blue-600 font-medium ml-4 mt-2"
+              className="text-sm text-on-surface-variant hover:text-primary-400 font-medium ml-4 mt-2"
             >
               Load more comments
             </button>
@@ -237,7 +237,7 @@ const CommentSection = ({ postId, commentCount }) => {
       <div className="flex items-center gap-2 mt-3">
         <img
           src={user.profilePhoto || 'https://ui-avatars.com/api/?name=U&background=494454&color=dae2fd&size=128'}
-          alt=""
+          alt={user.name || 'Your avatar'}
           className="w-8 h-8 rounded-full object-cover"
         />
         <input
@@ -246,12 +246,12 @@ const CommentSection = ({ postId, commentCount }) => {
           value={text}
           onChange={(e) => setText(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && handleAddComment()}
-          className="flex-1 bg-gray-100 rounded-full px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="flex-1 bg-surface-high/50 rounded-full px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-primary-400"
         />
         <button
           onClick={handleAddComment}
           disabled={!text.trim()}
-          className="text-blue-600 text-sm font-medium hover:text-blue-700 disabled:opacity-50"
+          className="text-primary-400 text-sm font-medium hover:text-primary-300 disabled:opacity-50"
         >
           Post
         </button>

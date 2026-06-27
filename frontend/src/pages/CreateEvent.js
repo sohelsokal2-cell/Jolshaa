@@ -1,7 +1,8 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import API from '../api/axios';
+import Layout from '../components/layout/Layout';
 
 const CreateEvent = () => {
   const { user, logout } = useAuth();
@@ -21,6 +22,10 @@ const CreateEvent = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const fileInputRef = useRef(null);
+
+  useEffect(() => {
+    return () => { if (preview) URL.revokeObjectURL(preview); };
+  }, [preview]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -84,42 +89,34 @@ const CreateEvent = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      <nav className="bg-white shadow-md px-6 py-3 flex justify-between items-center">
-        <Link to="/feed" className="text-xl font-bold text-blue-600">Jolshaa</Link>
-        <div className="flex items-center gap-4">
-          <button onClick={() => navigate('/events')} className="text-sm text-gray-600 hover:underline">Back to Events</button>
-          <button onClick={logout} className="text-sm text-red-600 hover:underline">Logout</button>
-        </div>
-      </nav>
-
+    <Layout>
       <div className="max-w-lg mx-auto mt-8 px-4">
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-xl font-semibold mb-6">Create Event</h2>
+        <div className="card rounded-lg p-6">
+          <h2 className="text-xl font-semibold mb-6 text-on-surface">Create Event</h2>
 
-          {error && <div className="bg-red-100 text-red-700 px-4 py-2 rounded mb-4 text-sm">{error}</div>}
+          {error && <div className="bg-red-500/15 text-red-400 border border-red-500/25 px-4 py-2 rounded mb-4 text-sm">{error}</div>}
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Event Name *</label>
+              <label className="block text-sm font-medium text-on-surface-variant mb-1">Event Name *</label>
               <input
                 type="text"
                 name="title"
                 value={formData.title}
                 onChange={handleChange}
                 placeholder="Event name"
-                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="input"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Cover Photo</label>
+              <label className="block text-sm font-medium text-on-surface-variant mb-1">Cover Photo</label>
               <div className="relative">
-                <div className="h-40 bg-gray-100 rounded-lg overflow-hidden flex items-center justify-center">
+                <div className="h-40 bg-surface-high rounded-lg overflow-hidden flex items-center justify-center">
                   {preview ? (
                     <img src={preview} alt="" className="w-full h-full object-cover" />
                   ) : (
-                    <svg className="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-12 h-12 text-on-surface-variant/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                     </svg>
                   )}
@@ -128,7 +125,7 @@ const CreateEvent = () => {
                 <button
                   type="button"
                   onClick={() => fileInputRef.current.click()}
-                  className="absolute bottom-2 right-2 bg-white text-sm px-3 py-1 rounded shadow hover:bg-gray-50"
+                  className="absolute bottom-2 right-2 bg-surface-high text-sm px-3 py-1 rounded shadow hover:bg-surface-high"
                 >
                   {preview ? 'Change' : 'Add Photo'}
                 </button>
@@ -136,82 +133,82 @@ const CreateEvent = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+              <label className="block text-sm font-medium text-on-surface-variant mb-1">Description</label>
               <textarea
                 name="description"
                 value={formData.description}
                 onChange={handleChange}
                 rows={3}
                 placeholder="Tell people about your event"
-                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="input"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Location</label>
+              <label className="block text-sm font-medium text-on-surface-variant mb-1">Location</label>
               <input
                 type="text"
                 name="location"
                 value={formData.location}
                 onChange={handleChange}
                 placeholder="Event location"
-                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="input"
               />
             </div>
 
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Start Date *</label>
+                <label className="block text-sm font-medium text-on-surface-variant mb-1">Start Date *</label>
                 <input
                   type="date"
                   name="startDate"
                   value={formData.startDate}
                   onChange={handleChange}
-                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="input"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Start Time</label>
+                <label className="block text-sm font-medium text-on-surface-variant mb-1">Start Time</label>
                 <input
                   type="time"
                   name="startTime"
                   value={formData.startTime}
                   onChange={handleChange}
-                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="input"
                 />
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">End Date</label>
+                <label className="block text-sm font-medium text-on-surface-variant mb-1">End Date</label>
                 <input
                   type="date"
                   name="endDate"
                   value={formData.endDate}
                   onChange={handleChange}
-                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="input"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">End Time</label>
+                <label className="block text-sm font-medium text-on-surface-variant mb-1">End Time</label>
                 <input
                   type="time"
                   name="endTime"
                   value={formData.endTime}
                   onChange={handleChange}
-                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="input"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Visibility</label>
+              <label className="block text-sm font-medium text-on-surface-variant mb-1">Visibility</label>
               <select
                 name="visibility"
                 value={formData.visibility}
                 onChange={handleChange}
-                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="input"
               >
                 <option value="public">Public</option>
                 <option value="friends">Friends</option>
@@ -222,14 +219,14 @@ const CreateEvent = () => {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50 transition"
+              className="w-full btn-primary py-2 rounded-lg disabled:opacity-50 transition"
             >
               {loading ? 'Creating...' : 'Create Event'}
             </button>
           </form>
         </div>
       </div>
-    </div>
+    </Layout>
   );
 };
 

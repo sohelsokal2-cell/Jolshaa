@@ -117,42 +117,24 @@ const LeftSidebar = () => {
   const location = useLocation();
 
   return (
-    <aside className="hidden lg:block w-[280px] xl:w-[320px] flex-shrink-0">
-      <div
-        className="fixed top-14 left-0 w-[280px] xl:w-[320px] h-[calc(100vh-56px)] overflow-y-auto py-4 pl-4 pr-2 scrollbar-hide"
-        style={{
-          background: 'rgba(11, 19, 38, 0.75)',
-          borderRight: '1px solid rgba(255,255,255,0.05)',
-          backdropFilter: 'blur(20px)',
-          WebkitBackdropFilter: 'blur(20px)',
-        }}
-      >
+    <aside className="hidden md:block w-[280px] xl:w-[320px] flex-shrink-0">
+      <div className="fixed top-14 left-0 w-[280px] xl:w-[320px] h-[calc(100vh-56px)] overflow-y-auto py-4 pl-4 pr-2 scrollbar-hide glass-panel">
         {/* Profile link */}
         <Link
           to="/profile"
-          className="flex items-center gap-3 px-3 py-2.5 rounded-xl mb-2 transition-all duration-200 group"
-          style={{ color: '#dae2fd' }}
-          onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(139,92,246,0.08)'}
-          onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+          className="nav-link group text-on-surface hover:bg-violet-500/10 mb-2"
+          aria-label="View your profile"
         >
-          <div
-            style={{
-              outline: '2px solid rgba(139,92,246,0.5)',
-              outlineOffset: '2px',
-              borderRadius: '9999px',
-              transition: 'box-shadow 0.2s',
-            }}
-            className="group-hover:shadow-[0_0_12px_rgba(139,92,246,0.4)]"
-          >
+          <div className="rounded-full outline outline-2 outline-violet-500/50 outline-offset-2 transition-shadow group-hover:shadow-[0_0_12px_rgba(139,92,246,0.4)]">
             <Avatar src={user?.profilePhoto} alt={user?.name} size="md" />
           </div>
-          <span className="text-sm font-semibold truncate" style={{ color: '#dae2fd' }}>
+          <span className="text-sm font-semibold truncate text-on-surface">
             {user?.name}
           </span>
         </Link>
 
         {/* Divider */}
-        <div className="h-px mx-3 my-2" style={{ background: 'rgba(255,255,255,0.06)' }} />
+        <div className="h-px mx-3 my-2 bg-white/5" />
 
         {/* Nav items */}
         <nav className="space-y-0.5">
@@ -165,38 +147,13 @@ const LeftSidebar = () => {
               <Link
                 key={item.path}
                 to={item.path}
-                className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150 group relative"
-                style={
-                  isActive
-                    ? {
-                        background: 'rgba(139, 92, 246, 0.15)',
-                        color: '#c4b5fd',
-                        border: '1px solid rgba(139, 92, 246, 0.2)',
-                        boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.05)',
-                      }
-                    : { color: '#cbc3d7', border: '1px solid transparent' }
-                }
-                onMouseEnter={(e) => {
-                  if (!isActive) {
-                    e.currentTarget.style.background = 'rgba(139,92,246,0.08)';
-                    e.currentTarget.style.color = '#dae2fd';
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  if (!isActive) {
-                    e.currentTarget.style.background = 'transparent';
-                    e.currentTarget.style.color = '#cbc3d7';
-                  }
-                }}
+                aria-label={item.label}
+                className={isActive ? 'nav-link-active relative' : 'nav-link relative group'}
               >
-                {/* Active indicator dot */}
                 {isActive && (
-                  <span
-                    className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-5 rounded-r-full"
-                    style={{ background: '#8b5cf6', boxShadow: '0 0 8px rgba(139,92,246,0.7)' }}
-                  />
+                  <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-5 rounded-r-full bg-violet-500 shadow-[0_0_8px_rgba(139,92,246,0.7)]" />
                 )}
-                <span style={{ color: isActive ? '#a78bfa' : '#958ea0' }}>
+                <span className={isActive ? 'text-violet-400' : 'text-on-surface-variant'}>
                   {item.icon(isActive)}
                 </span>
                 {item.label}
@@ -206,10 +163,10 @@ const LeftSidebar = () => {
         </nav>
 
         {/* Divider */}
-        <div className="h-px mx-3 my-3" style={{ background: 'rgba(255,255,255,0.06)' }} />
+        <div className="h-px mx-3 my-3 bg-white/5" />
 
         {/* Footer */}
-        <div className="px-3 space-y-1" style={{ color: '#494454', fontSize: '0.625rem' }}>
+        <div className="px-3 space-y-1 text-xs text-on-surface-variant/60">
           <p>Privacy · Terms · Advertising · Cookies</p>
           <p>© 2026 Jolshaa</p>
         </div>
