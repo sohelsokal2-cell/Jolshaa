@@ -66,7 +66,8 @@ const EditProfile = () => {
         params: { text: ' ', postedInType: 'profile' },
         headers: { 'Content-Type': 'multipart/form-data' }
       });
-      const url = res.data.media[0];
+      const mediaItem = res.data.media[0];
+      const url = typeof mediaItem === 'string' ? mediaItem : mediaItem?.url || '';
       setFormData(prev => ({ ...prev, [type === 'profile' ? 'profilePhoto' : 'coverPhoto']: url }));
     } catch (err) {
       setError('Upload failed. Try again.');
