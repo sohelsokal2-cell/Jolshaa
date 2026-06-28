@@ -6,6 +6,7 @@ import { ToastProvider } from './components/ui/Toast';
 import ProtectedRoute from './components/ProtectedRoute';
 import Signup from './pages/Signup';
 import Login from './pages/Login';
+import Landing from './pages/Landing';
 import Profile from './pages/Profile';
 import EditProfile from './pages/EditProfile';
 import NewsFeed from './pages/NewsFeed';
@@ -31,6 +32,8 @@ import SavedPostsPage from './pages/SavedPostsPage';
 import ReelsFeed from './components/ReelsFeed';
 import CreateReel from './components/CreateReel';
 import CreatorDashboard from './pages/CreatorDashboard';
+import CreatorEarnings from './pages/CreatorEarnings';
+import CreatorSubscriptionManager from './pages/CreatorSubscriptionManager';
 import MarketplacePage from './pages/MarketplacePage';
 import ListingDetail from './pages/ListingDetail';
 import HashtagPage from './pages/HashtagPage';
@@ -38,6 +41,7 @@ import TopicFeedPage from './pages/TopicFeedPage';
 import CreatePost from './pages/CreatePost';
 import NotesPage from './pages/NotesPage';
 import NoteDetail from './pages/NoteDetail';
+import { PaymentSuccess, PaymentCancel, PaymentFail } from './pages/PaymentResult';
 
 const PublicRoute = ({ children }) => {
   const { user, loading } = useAuth();
@@ -49,6 +53,7 @@ const AppContent = () => {
   return (
     <Router>
       <Routes>
+        <Route path="/" element={<Landing />} />
         <Route path="/signup" element={<PublicRoute><Signup /></PublicRoute>} />
         <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
         <Route path="/feed" element={<ProtectedRoute><NewsFeed /></ProtectedRoute>} />
@@ -79,6 +84,8 @@ const AppContent = () => {
         <Route path="/reels/:id" element={<ProtectedRoute><ReelsFeed /></ProtectedRoute>} />
         <Route path="/reels/create" element={<ProtectedRoute><CreateReel /></ProtectedRoute>} />
         <Route path="/creator" element={<ProtectedRoute><CreatorDashboard /></ProtectedRoute>} />
+        <Route path="/creator/earnings" element={<ProtectedRoute><CreatorEarnings /></ProtectedRoute>} />
+        <Route path="/creator/subscriptions" element={<ProtectedRoute><CreatorSubscriptionManager /></ProtectedRoute>} />
         <Route path="/marketplace" element={<ProtectedRoute><MarketplacePage /></ProtectedRoute>} />
         <Route path="/marketplace/:id" element={<ProtectedRoute><ListingDetail /></ProtectedRoute>} />
         <Route path="/hashtag/:name" element={<ProtectedRoute><HashtagPage /></ProtectedRoute>} />
@@ -86,7 +93,10 @@ const AppContent = () => {
         <Route path="/create" element={<ProtectedRoute><CreatePost /></ProtectedRoute>} />
         <Route path="/notes" element={<ProtectedRoute><NotesPage /></ProtectedRoute>} />
         <Route path="/notes/:id" element={<ProtectedRoute><NoteDetail /></ProtectedRoute>} />
-        <Route path="*" element={<Navigate to="/feed" replace />} />
+        <Route path="/payment/success" element={<PaymentSuccess />} />
+        <Route path="/payment/cancel" element={<PaymentCancel />} />
+        <Route path="/payment/fail" element={<PaymentFail />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Router>
   );

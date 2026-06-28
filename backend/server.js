@@ -10,6 +10,8 @@ const { errorHandler } = require('./services/errorMonitor');
 const { startBackgroundJobs } = require('./services/backgroundJobs');
 const { initRedis } = require('./services/cache');
 const { loadMaintenanceMode, maintenanceCheck } = require('./middleware/maintenance');
+const { initFirebase } = require('./services/pushNotification');
+const { setupCallSignaling } = require('./services/callService');
 
 dotenv.config();
 
@@ -17,6 +19,7 @@ connectDB().then(() => {
   initRedis();
   startBackgroundJobs();
   loadMaintenanceMode();
+  initFirebase();
 });
 
 const app = express();
@@ -24,6 +27,7 @@ const server = http.createServer(app);
 
 // Initialize Socket.io
 initSocket(server);
+setupCallSignaling(require('./socket').getIO());
 
 const CLIENT_URL = (process.env.CLIENT_URL || 'http://localhost:3000').replace(/\/$/, '');
 
@@ -86,6 +90,7 @@ app.use('/api/notification-preferences', require('./routes/notificationPreferenc
 app.use('/api/story-archives', require('./routes/storyArchives'));
 app.use('/api/saved-folders', require('./routes/savedFolders'));
 app.use('/api/notes', require('./routes/notes'));
+app.use('/api/payments', require('./routes/payment'));
 
 app.use(errorHandler);
 

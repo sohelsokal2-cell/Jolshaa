@@ -4,24 +4,25 @@ const { protect } = require('../middleware/auth');
 const AIModeration = require('../services/aiModeration');
 const AICaptionSuggestion = require('../services/aiCaption');
 const AISearch = require('../services/aiSearch');
+const aiAdvanced = require('../services/aiAdvanced');
 
 router.use(protect);
 
 router.post('/moderate', async (req, res) => {
   const { text } = req.body;
-  const result = await AIModeration.moderatePost(text);
+  const result = await aiAdvanced.moderateContent(text);
   res.json(result);
 });
 
-router.post('/caption/suggest', (req, res) => {
+router.post('/caption/suggest', async (req, res) => {
   const { text, mood, hasMedia } = req.body;
-  const suggestions = AICaptionSuggestion.suggestCaption(text, mood, hasMedia);
+  const suggestions = await aiAdvanced.generateCaption(text, mood);
   res.json({ suggestions });
 });
 
-router.post('/caption/enhance', (req, res) => {
+router.post('/caption/enhance', async (req, res) => {
   const { text } = req.body;
-  const suggestions = AICaptionSuggestion.enhanceCaption(text);
+  const suggestions = await aiAdvanced.enhanceCaption(text);
   res.json({ suggestions });
 });
 

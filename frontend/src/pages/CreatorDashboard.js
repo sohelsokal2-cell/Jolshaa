@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import API from '../api/axios';
 import Layout from '../components/layout/Layout';
@@ -8,6 +9,7 @@ const CreatorDashboard = () => {
   const [stats, setStats] = useState(null);
   const [topPosts, setTopPosts] = useState([]);
   const [audience, setAudience] = useState(null);
+  const [earnings, setEarnings] = useState(null);
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState('overview');
 
@@ -17,13 +19,15 @@ const CreatorDashboard = () => {
 
   const fetchDashboard = async () => {
     try {
-      const [dashRes, audienceRes] = await Promise.all([
+      const [dashRes, audienceRes, earningsRes] = await Promise.all([
         API.get('/creator/dashboard'),
         API.get('/creator/audience'),
+        API.get('/creator/earnings').catch(() => ({ data: null })),
       ]);
       setStats(dashRes.data.stats);
       setTopPosts(dashRes.data.topPosts);
       setAudience(audienceRes.data);
+      setEarnings(earningsRes.data);
     } catch (err) {
       console.error('Failed to load dashboard');
     } finally {
@@ -52,15 +56,19 @@ const CreatorDashboard = () => {
       <h1 className="text-2xl font-bold mb-4 text-on-surface">Creator Dashboard</h1>
 
       <div className="flex gap-4 border-b mb-6">
-        {['overview', 'audience', 'posts'].map((t) => (
+        {['overview', 'audience', 'posts', 'earnings', 'subscriptions'].map((t) => (
           <button
             key={t}
-            onClick={() => setTab(t)}
+            onClick={() => t === 'earnings' || t === 'subscriptions' ? null : setTab(t)}
             className={`pb-2 px-1 font-medium text-sm border-b-2 capitalize ${
               tab === t ? 'border-primary-500 text-primary-400' : 'text-on-surface-variant'
             }`}
           >
-            {t}
+            {t === 'earnings' ? (
+              <Link to="/creator/earnings" className="text-on-surface-variant hover:text-primary-400">earnings</Link>
+            ) : t === 'subscriptions' ? (
+              <Link to="/creator/subscriptions" className="text-on-surface-variant hover:text-primary-400">subscriptions</Link>
+            ) : t}
           </button>
         ))}
       </div>
@@ -143,6 +151,82 @@ const CreatorDashboard = () => {
               </div>
             ))
           )}
+        </div>
+      )}
+
+      {tab === 'earnings' && (
+        <div className="space-y-6">
+          {earnings ? (
+            <>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {[
+                  { label: 'Total Earned', value: `$${earnings.totalEarned?.toFixed(2) || '0.00'}`, color: 'text-on-surface' },
+                  { label: 'Available Balance', value: `$${earnings.availableBalance?.toFixed(2) || '0.00'}`, color: 'text-green-600' },
+                  { label: 'Total Paid Out', value: `$${earnings.totalPaidOut?.toFixed(2) || '0.00'}`, color: 'text-blue-600' },
+                  { label: 'Pending Payout', value: `$${earnings.pendingPayout?.toFixed(2) || '0.00'}`, color: 'text-amber-600' },
+                ].map(s => (
+                  <div key={s.label} className="bg-surface rounded-lg shadow-sm p-4 text-center">
+                    <p className={`text-2xl font-bold ${s.color}`}>{s.value}</p>
+                    <p className="text-sm text-on-surface-variant">{s.label}</p>
+                  </div>
+                ))}
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-surface rounded-lg shadow-sm p-4">
+                  <h3 className="font-semibold mb-3 text-on-surface">Tips</h3>
+                  <p className="text-2xl font-bold text-emerald-600">${earnings.tipRevenue?.toFixed(2) || '0.00'}</p>
+                  <p className="text-sm text-on-surface-variant">{earnings.tipCount || 0} tips received</p>
+                </div>
+                <div className="bg-surface rounded-lg shadow-sm p-4">
+                  <h3 className="font-semibold mb-3 text-on-surface">Subscriptions</h3>
+                  <p className="text-2xl font-bold text-purple-600">${earnings.subscriptionRevenue?.toFixed(2) || '0.00'}</p>
+                  <p className="text-sm text-on-surface-variant">{earnings.subscriptionCount || 0} subscriptions</p>
+                </div>
+              </div>
+
+              <div className="bg-surface rounded-lg shadow-sm p-4">
+                <h3 className="font-semibold mb-3 text-on-surface">Recent Transactions</h3>
+                {earnings.recentTransactions?.length === 0 ? (
+                  <p className="text-on-surface-variant text-center py-4">No transactions yet</p>
+                ) : (
+                  <div className="space-y-2">
+                    {earnings.recentTransactions?.slice(0, 5).map(tx => (
+                      <div key={tx._id} className="flex items-center justify-between p-3 bg-neutral-50 dark:bg-neutral-800 rounded-lg">
+                        <div>
+                          <p className="text-sm font-medium text-on-surface">
+                            {tx.type === 'tip' ? 'Tip' : tx.type === 'subscription' ? 'Subscription' : tx.type}
+                          </p>
+                          <p className="text-xs text-on-surface-variant">{new Date(tx.createdAt).toLocaleDateString()}</p>
+                        </div>
+                        <p className="font-bold text-green-600">+${tx.amount.toFixed(2)}</p>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <Link to="/creator/earnings" className="block text-center text-primary-600 hover:underline text-sm font-medium">
+                View Full Earnings Dashboard →
+              </Link>
+            </>
+          ) : (
+            <p className="text-on-surface-variant text-center py-8">Earnings data not available</p>
+          )}
+        </div>
+      )}
+
+      {tab === 'subscriptions' && (
+        <div className="space-y-6">
+          <div className="bg-surface rounded-lg shadow-sm p-6">
+            <h3 className="font-semibold mb-4 text-on-surface">Subscription Management</h3>
+            <p className="text-sm text-on-surface-variant mb-4">
+              Set a monthly price for your subscribers. They'll be charged this amount each month to access your exclusive content.
+            </p>
+            <Link to="/creator/subscriptions" className="inline-block px-6 py-2 bg-primary-600 text-white rounded-lg font-medium hover:bg-primary-700 transition-colors">
+              Manage Subscriptions
+            </Link>
+          </div>
         </div>
       )}
     </div>

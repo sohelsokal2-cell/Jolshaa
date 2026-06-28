@@ -8,9 +8,73 @@ import CreatePostBox from '../components/CreatePostBox';
 import PostCard from '../components/PostCard';
 import { PostSkeleton } from '../components/ui/Skeleton';
 
+const AdCard = ({ ad, onImpression }) => {
+  const ref = useRef(null);
+  const impressionTracked = useRef(false);
+
+  useEffect(() => {
+    if (!ref.current) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !impressionTracked.current) {
+          impressionTracked.current = true;
+          API.post(`/ads/${ad._id}/impression`).catch(() => {});
+          if (onImpression) onImpression(ad._id);
+        }
+      },
+      { threshold: 0.5 }
+    );
+    observer.observe(ref.current);
+    return () => observer.disconnect();
+  }, [ad._id, onImpression]);
+
+  const handleClick = async () => {
+    try {
+      const res = await API.post(`/ads/${ad._id}/click`);
+      if (res.data.linkUrl) window.open(res.data.linkUrl, '_blank', 'noopener');
+    } catch {
+      if (ad.linkUrl) window.open(ad.linkUrl, '_blank', 'noopener');
+    }
+  };
+
+  return (
+    <div ref={ref} className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-xl overflow-hidden">
+      <div className="flex items-center gap-2 px-4 py-2 bg-neutral-50 dark:bg-neutral-800 border-b border-neutral-200 dark:border-neutral-700">
+        <span className="text-[10px] font-semibold uppercase tracking-wider text-amber-600">Sponsored</span>
+        {ad.advertiser?.name && (
+          <span className="text-[10px] text-neutral-400">by {ad.advertiser.name}</span>
+        )}
+      </div>
+      {ad.imageUrl && (
+        <img
+          src={ad.imageUrl}
+          alt={ad.title}
+          className="w-full h-48 object-cover cursor-pointer"
+          onClick={handleClick}
+        />
+      )}
+      <div className="p-4">
+        <h4 className="font-semibold text-sm text-neutral-900 dark:text-neutral-100 mb-1 cursor-pointer hover:underline" onClick={handleClick}>
+          {ad.title}
+        </h4>
+        {ad.description && (
+          <p className="text-xs text-neutral-500 mb-3 line-clamp-2">{ad.description}</p>
+        )}
+        <button
+          onClick={handleClick}
+          className="text-xs font-medium text-primary-600 hover:text-primary-700 dark:text-primary-400"
+        >
+          Learn more →
+        </button>
+      </div>
+    </div>
+  );
+};
+
 const NewsFeed = () => {
   const { user } = useAuth();
   const [posts, setPosts] = useState([]);
+  const [ads, setAds] = useState([]);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -46,6 +110,12 @@ const NewsFeed = () => {
   useEffect(() => {
     fetchPosts(1);
   }, [fetchPosts]);
+
+  useEffect(() => {
+    API.get('/ads/active')
+      .then(res => setAds(res.data.ads || []))
+      .catch(() => {});
+  }, []);
 
   useEffect(() => {
     if (observerRef.current) observerRef.current.disconnect();
@@ -114,9 +184,14 @@ const NewsFeed = () => {
       ) : (
         <>
           <div className="space-y-4">
-            {posts.map(post => (
-              <PostCard key={post._id} post={post} onDelete={handleDeletePost} />
-            ))}
+            {posts.map((post, index) => {
+              const items = [<PostCard key={post._id} post={post} onDelete={handleDeletePost} />];
+              if (ads.length > 0 && (index + 1) % 5 === 0) {
+                const adIndex = Math.floor((index + 1) / 5 - 1) % ads.length;
+                items.push(<AdCard key={`ad-${adIndex}-${post._id}`} ad={ads[adIndex]} />);
+              }
+              return items;
+            })}
           </div>
 
           <div ref={loadMoreRef} className="h-10" />

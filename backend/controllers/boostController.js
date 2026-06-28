@@ -1,10 +1,13 @@
 const Post = require('../models/Post');
 const User = require('../models/User');
+const Transaction = require('../models/Transaction');
 const { hasId } = require('../utils/id');
+
+const BOOST_PRICES = { 6: 1, 12: 2, 24: 3, 72: 7, 168: 12 };
 
 exports.boostPost = async (req, res) => {
   try {
-    const { duration, budget } = req.body;
+    const { duration, paymentMethod } = req.body;
     const post = await Post.findById(req.params.postId);
 
     if (!post) return res.status(404).json({ message: 'Post not found' });
@@ -13,6 +16,20 @@ exports.boostPost = async (req, res) => {
     }
 
     const hours = parseInt(duration) || 24;
+    const price = BOOST_PRICES[hours] || 3;
+
+    const tx = await Transaction.create({
+      user: req.user._id,
+      type: 'boost_payment',
+      amount: price,
+      currency: 'USD',
+      status: 'completed',
+      paymentMethod: paymentMethod || 'internal',
+      reference: post._id,
+      referenceModel: 'Post',
+      description: `Boost post for ${hours}h`,
+    });
+
     post.isBoosted = true;
     post.boostEndsAt = new Date(Date.now() + hours * 3600000);
     await post.save();
@@ -20,6 +37,7 @@ exports.boostPost = async (req, res) => {
     res.json({
       message: 'Post boosted successfully',
       boostEndsAt: post.boostEndsAt,
+      transaction: tx,
     });
   } catch (error) {
     res.status(500).json({ message: 'Server error' });

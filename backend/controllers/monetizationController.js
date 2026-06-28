@@ -8,6 +8,7 @@ const SubscriptionPlan = require('../models/SubscriptionPlan');
 const Refund = require('../models/Refund');
 const FraudAlert = require('../models/FraudAlert');
 const Notification = require('../models/Notification');
+const { sendEmail } = require('../services/emailService');
 
 // ========== ADS MANAGEMENT ==========
 
@@ -268,6 +269,19 @@ exports.processPayout = async (req, res) => {
         type: 'subscription',
         message: `Your payout of $${payout.amount} has been processed`,
       });
+
+      sendEmail({
+        to: payout.creator.email,
+        userId: payout.creator._id,
+        template: 'payout_processed',
+        data: {
+          creatorName: payout.creator.name,
+          amount: payout.amount,
+          paymentMethod: payout.paymentMethod || 'bank_transfer',
+          periodFrom: payout.period?.from ? new Date(payout.period.from).toLocaleDateString() : 'N/A',
+          periodTo: payout.period?.to ? new Date(payout.period.to).toLocaleDateString() : 'N/A',
+        },
+      }).catch(() => {});
     }
 
     res.json({ payout });

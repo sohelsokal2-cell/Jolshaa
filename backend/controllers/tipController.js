@@ -1,5 +1,6 @@
 const User = require('../models/User');
 const Notification = require('../models/Notification');
+const { sendEmail } = require('../services/emailService');
 
 exports.sendTip = async (req, res) => {
   try {
@@ -33,6 +34,13 @@ exports.sendTip = async (req, res) => {
       ...notification.toObject(),
       sender: { _id: sender._id, name: sender.name, profilePhoto: sender.profilePhoto },
     });
+
+    sendEmail({
+      to: recipient.email,
+      userId: recipient._id,
+      template: 'tip_received',
+      data: { recipientName: recipient.name, senderName: sender.name, amount, message },
+    }).catch(() => {});
 
     res.json({ message: 'Tip sent successfully', amount });
   } catch (error) {

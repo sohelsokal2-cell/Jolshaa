@@ -13,6 +13,7 @@ import AlbumGrid from '../components/AlbumGrid';
 import PostCard from '../components/PostCard';
 import ReportModal from '../components/ReportModal';
 import FriendButton from '../components/FriendButton';
+import SubscribeButton from '../components/SubscribeButton';
 import StoryHighlights from '../components/StoryHighlights';
 
 const Profile = () => {
@@ -171,12 +172,17 @@ const Profile = () => {
             </div>
             <div className="flex items-center gap-2 sm:pb-1">
               {!isOwnProfile ? (
-                <FriendButton
-                  userId={profileUser.id || profileUser._id}
-                  initialStatus={profileUser.friendStatus}
-                  initialRequestId={profileUser.friendRequestId}
-                  onStatusChange={handleFriendStatusChange}
-                />
+                <>
+                  <FriendButton
+                    userId={profileUser.id || profileUser._id}
+                    initialStatus={profileUser.friendStatus}
+                    initialRequestId={profileUser.friendRequestId}
+                    onStatusChange={handleFriendStatusChange}
+                  />
+                  {profileUser.isCreator && (
+                    <SubscribeButton userId={profileUser.id || profileUser._id} />
+                  )}
+                </>
               ) : (
                 <Link to="/edit-profile">
                   <Button variant="secondary" size="sm">

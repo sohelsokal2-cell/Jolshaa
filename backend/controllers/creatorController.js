@@ -3,6 +3,9 @@ const Post = require('../models/Post');
 const Reaction = require('../models/Reaction');
 const Comment = require('../models/Comment');
 const FriendRequest = require('../models/FriendRequest');
+const Transaction = require('../models/Transaction');
+const CreatorPayout = require('../models/CreatorPayout');
+const Notification = require('../models/Notification');
 const { hasId } = require('../utils/id');
 
 exports.toggleFollow = async (req, res) => {
@@ -202,6 +205,134 @@ exports.upgradeToCreator = async (req, res) => {
     await user.save();
 
     res.json({ message: 'Upgraded to creator account', user });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+exports.getCreatorEarnings = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const user = await User.findById(userId);
+    if (!user.isCreator) {
+      return res.status(400).json({ message: 'Not a creator account' });
+    }
+
+    const [tipData, subData, payoutData, recentTransactions] = await Promise.all([
+      Transaction.aggregate([
+        { $match: { type: 'tip', status: 'completed', reference: userId } },
+        { $group: { _id: null, total: { $sum: '$amount' }, count: { $sum: 1 } } },
+      ]),
+      Transaction.aggregate([
+        { $match: { type: 'subscription', status: 'completed', reference: userId } },
+        { $group: { _id: null, total: { $sum: '$amount' }, count: { $sum: 1 } } },
+      ]),
+      CreatorPayout.aggregate([
+        { $match: { creator: userId } },
+        { $group: { _id: '$status', total: { $sum: '$amount' } } },
+      ]),
+      Transaction.find({ reference: userId, status: 'completed' })
+        .sort({ createdAt: -1 })
+        .limit(20)
+        .select('type amount currency status createdAt description'),
+    ]);
+
+    const tipTotal = tipData[0]?.total || 0;
+    const tipCount = tipData[0]?.count || 0;
+    const subTotal = subData[0]?.total || 0;
+    const subCount = subData[0]?.count || 0;
+    const totalEarned = tipTotal + subTotal;
+
+    const payoutsByStatus = {};
+    payoutData.forEach(p => { payoutsByStatus[p._id] = p.total; });
+    const totalPaidOut = payoutsByStatus.completed || 0;
+    const pendingPayout = payoutsByStatus.pending || 0;
+    const availableBalance = totalEarned - totalPaidOut - pendingPayout;
+
+    res.json({
+      totalEarned,
+      tipRevenue: tipTotal,
+      tipCount,
+      subscriptionRevenue: subTotal,
+      subscriptionCount: subCount,
+      totalPaidOut,
+      pendingPayout,
+      availableBalance: Math.max(0, availableBalance),
+      recentTransactions,
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+exports.requestWithdrawal = async (req, res) => {
+  try {
+    const { amount, paymentMethod, paymentDetails } = req.body;
+    const userId = req.user._id;
+
+    if (!amount || amount <= 0) {
+      return res.status(400).json({ message: 'Valid withdrawal amount is required' });
+    }
+
+    const user = await User.findById(userId);
+    if (!user.isCreator) {
+      return res.status(400).json({ message: 'Not a creator account' });
+    }
+
+    // Calculate available balance
+    const [earned, paidOut, pending] = await Promise.all([
+      Transaction.aggregate([
+        { $match: { type: { $in: ['tip', 'subscription'] }, status: 'completed', reference: userId } },
+        { $group: { _id: null, total: { $sum: '$amount' } } },
+      ]),
+      CreatorPayout.aggregate([
+        { $match: { creator: userId, status: 'completed' } },
+        { $group: { _id: null, total: { $sum: '$amount' } } },
+      ]),
+      CreatorPayout.aggregate([
+        { $match: { creator: userId, status: { $in: ['pending', 'processing'] } } },
+        { $group: { _id: null, total: { $sum: '$amount' } } },
+      ]),
+    ]);
+
+    const totalEarned = earned[0]?.total || 0;
+    const totalPaidOut = paidOut[0]?.total || 0;
+    const totalPending = pending[0]?.total || 0;
+    const available = totalEarned - totalPaidOut - totalPending;
+
+    if (amount > available) {
+      return res.status(400).json({ message: `Insufficient balance. Available: $${available.toFixed(2)}` });
+    }
+
+    const now = new Date();
+    const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+
+    const payout = await CreatorPayout.create({
+      creator: userId,
+      amount,
+      period: { from: monthStart, to: now },
+      breakdown: {
+        tips: 0,
+        subscriptions: 0,
+      },
+      status: 'pending',
+      paymentMethod: paymentMethod || 'bank_transfer',
+      notes: paymentDetails ? JSON.stringify(paymentDetails) : '',
+    });
+
+    res.json({ message: 'Withdrawal request submitted', payout });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+exports.getPayoutHistory = async (req, res) => {
+  try {
+    const payouts = await CreatorPayout.find({ creator: req.user._id })
+      .sort({ createdAt: -1 })
+      .limit(50);
+
+    res.json({ payouts });
   } catch (error) {
     res.status(500).json({ message: 'Server error' });
   }
