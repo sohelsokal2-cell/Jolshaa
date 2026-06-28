@@ -11,6 +11,10 @@ const ChatSidebar = ({ activeConversation, onSelectConversation, className = '' 
   const [searchQuery, setSearchQuery] = useState('');
   const [menuOpen, setMenuOpen] = useState(null);
   const [filter, setFilter] = useState('all');
+  const [showNewChat, setShowNewChat] = useState(false);
+  const [friends, setFriends] = useState([]);
+  const [friendsLoading, setFriendsLoading] = useState(false);
+  const [friendSearch, setFriendSearch] = useState('');
 
   useEffect(() => { fetchConversations(); }, []);
 
@@ -22,6 +26,39 @@ const ChatSidebar = ({ activeConversation, onSelectConversation, className = '' 
       console.error('Failed to fetch conversations');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchFriends = async () => {
+    setFriendsLoading(true);
+    try {
+      const res = await API.get(`/friends/${user.id}`);
+      setFriends(res.data.friends);
+    } catch (err) {
+      console.error('Failed to fetch friends');
+    } finally {
+      setFriendsLoading(false);
+    }
+  };
+
+  const openNewChat = () => {
+    setShowNewChat(true);
+    if (friends.length === 0) fetchFriends();
+  };
+
+  const startConversation = async (friendId) => {
+    try {
+      const res = await API.post('/conversations', { participantId: friendId });
+      const conv = res.data;
+      setConversations(prev => {
+        const exists = prev.find(c => c._id === conv._id);
+        if (exists) return prev;
+        return [conv, ...prev];
+      });
+      onSelectConversation(conv);
+      setShowNewChat(false);
+    } catch (err) {
+      console.error('Failed to start conversation');
     }
   };
 
@@ -82,11 +119,72 @@ const ChatSidebar = ({ activeConversation, onSelectConversation, className = '' 
       return bTime - aTime;
     });
 
+  const filteredFriends = friends.filter(f =>
+    f.name.toLowerCase().includes(friendSearch.toLowerCase())
+  );
+
   return (
     <div className={`bg-white border-r h-full flex flex-col ${className}`}>
+      {/* New Chat Modal / Panel */}
+      {showNewChat && (
+        <div className="absolute inset-0 z-20 bg-white flex flex-col">
+          <div className="p-3 border-b flex items-center gap-2">
+            <button onClick={() => setShowNewChat(false)} className="text-gray-500 hover:text-gray-700">
+              ←
+            </button>
+            <h3 className="font-semibold">New Chat</h3>
+          </div>
+          <div className="p-2">
+            <input
+              type="text"
+              value={friendSearch}
+              onChange={(e) => setFriendSearch(e.target.value)}
+              placeholder="Search friends..."
+              className="w-full px-3 py-2 text-sm border rounded-full focus:outline-none focus:ring-1 focus:ring-blue-500"
+            />
+          </div>
+          <div className="flex-1 overflow-y-auto">
+            {friendsLoading ? (
+              <div className="p-4 space-y-3">
+                {[1,2,3].map(i => (
+                  <div key={i} className="flex items-center gap-3 animate-pulse">
+                    <div className="w-10 h-10 bg-gray-200 rounded-full" />
+                    <div className="h-4 bg-gray-200 rounded w-1/2" />
+                  </div>
+                ))}
+              </div>
+            ) : filteredFriends.length === 0 ? (
+              <div className="p-4 text-center text-gray-500">
+                {friendSearch ? 'No friends match search' : 'No friends yet'}
+              </div>
+            ) : (
+              filteredFriends.map(friend => (
+                <button
+                  key={friend._id}
+                  onClick={() => startConversation(friend._id)}
+                  className="w-full flex items-center gap-3 p-3 hover:bg-gray-50 transition text-left"
+                >
+                  <img
+                    src={friend.profilePhoto || 'https://ui-avatars.com/api/?name=U&background=494454&color=dae2fd&size=128'}
+                    alt="" className="w-10 h-10 rounded-full object-cover"
+                  />
+                  <span className="font-medium text-sm">{friend.name}</span>
+                </button>
+              ))
+            )}
+          </div>
+        </div>
+      )}
+
       <div className="p-3 md:p-4 border-b">
         <div className="flex items-center justify-between mb-3">
           <h2 className="text-lg md:text-xl font-bold">Chats</h2>
+          <button
+            onClick={openNewChat}
+            className="px-3 py-1.5 bg-blue-600 text-white text-sm rounded-full hover:bg-blue-700 transition"
+          >
+            + New Chat
+          </button>
         </div>
         <input
           type="text"
@@ -120,7 +218,14 @@ const ChatSidebar = ({ activeConversation, onSelectConversation, className = '' 
           </div>
         ) : filteredConversations.length === 0 ? (
           <div className="p-4 text-center text-gray-500">
-            {searchQuery ? 'No matching conversations' : 'No conversations yet'}
+            {searchQuery ? 'No matching conversations' : (
+              <div>
+                <p className="mb-2">No conversations yet</p>
+                <button onClick={openNewChat} className="text-blue-600 hover:underline text-sm">
+                  Start a new chat
+                </button>
+              </div>
+            )}
           </div>
         ) : (
           filteredConversations.map(conv => (

@@ -7,6 +7,7 @@ const ReelsFeed = () => {
   const { user } = useAuth();
   const [reels, setReels] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [currentReel, setCurrentReel] = useState(0);
@@ -18,6 +19,7 @@ const ReelsFeed = () => {
 
   const fetchReels = async () => {
     try {
+      setError(false);
       const res = await API.get(`/reels/feed?page=${page}`);
       if (page === 1) {
         setReels(res.data.reels);
@@ -27,6 +29,7 @@ const ReelsFeed = () => {
       setHasMore(page < res.data.totalPages);
     } catch (err) {
       console.error('Failed to fetch reels');
+      setError(true);
     } finally {
       setLoading(false);
     }
@@ -64,6 +67,36 @@ const ReelsFeed = () => {
     return (
       <div className="flex items-center justify-center h-screen">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center h-screen text-white gap-4">
+        <p className="text-xl">Failed to load reels</p>
+        <button
+          onClick={() => { setLoading(true); setPage(1); fetchReels(); }}
+          className="px-4 py-2 bg-blue-600 rounded-lg hover:bg-blue-700"
+        >
+          Try Again
+        </button>
+      </div>
+    );
+  }
+
+  if (!loading && reels.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center h-screen text-white gap-4">
+        <span className="text-5xl">🎬</span>
+        <p className="text-xl font-semibold">No Reels Yet</p>
+        <p className="text-gray-400">Be the first to create a reel!</p>
+        <Link
+          to="/reels/create"
+          className="px-4 py-2 bg-blue-600 rounded-lg hover:bg-blue-700"
+        >
+          Create Reel
+        </Link>
       </div>
     );
   }

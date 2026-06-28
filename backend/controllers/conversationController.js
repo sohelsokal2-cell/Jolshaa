@@ -54,9 +54,13 @@ exports.getConversations = async (req, res) => {
     const conversationsWithLast = conversations.map((conv) => {
       const rawLast = lastByConversation.get(conv._id.toString()) || null;
       const lastMessage = rawLast ? lastDocById.get(rawLast._id.toString()) || rawLast : null;
+      const obj = conv.toObject();
+      obj.isPinned = obj.pinnedBy?.some(id => id.toString() === userId.toString()) || false;
+      obj.isMuted = obj.mutedBy?.some(id => id.toString() === userId.toString()) || false;
+      obj.isArchived = obj.archivedBy?.some(id => id.toString() === userId.toString()) || false;
 
       return {
-        ...conv.toObject(),
+        ...obj,
         lastMessage: lastMessage || null,
       };
     });
@@ -138,6 +142,60 @@ exports.getConversation = async (req, res) => {
     }
 
     res.json(conversation);
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
+exports.togglePin = async (req, res) => {
+  try {
+    const conv = await Conversation.findOne({ _id: req.params.id, participants: req.user._id });
+    if (!conv) return res.status(404).json({ message: 'Conversation not found' });
+    const userId = req.user._id;
+    const idx = conv.pinnedBy.indexOf(userId);
+    if (idx === -1) {
+      conv.pinnedBy.push(userId);
+    } else {
+      conv.pinnedBy.splice(idx, 1);
+    }
+    await conv.save();
+    res.json({ isPinned: idx === -1 });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
+exports.toggleMute = async (req, res) => {
+  try {
+    const conv = await Conversation.findOne({ _id: req.params.id, participants: req.user._id });
+    if (!conv) return res.status(404).json({ message: 'Conversation not found' });
+    const userId = req.user._id;
+    const idx = conv.mutedBy.indexOf(userId);
+    if (idx === -1) {
+      conv.mutedBy.push(userId);
+    } else {
+      conv.mutedBy.splice(idx, 1);
+    }
+    await conv.save();
+    res.json({ isMuted: idx === -1 });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
+exports.archiveConversation = async (req, res) => {
+  try {
+    const conv = await Conversation.findOne({ _id: req.params.id, participants: req.user._id });
+    if (!conv) return res.status(404).json({ message: 'Conversation not found' });
+    const userId = req.user._id;
+    const idx = conv.archivedBy.indexOf(userId);
+    if (idx === -1) {
+      conv.archivedBy.push(userId);
+    } else {
+      conv.archivedBy.splice(idx, 1);
+    }
+    await conv.save();
+    res.json({ isArchived: idx === -1 });
   } catch (error) {
     res.status(500).json({ message: 'Server error', error: error.message });
   }
