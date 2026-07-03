@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+const mongoose = require('mongoose');
 const User = require('../models/User');
 const { hasId } = require('../utils/id');
 
@@ -38,6 +39,9 @@ const isBlockedBy = async (req, res, next) => {
     const targetId = req.params.id;
     if (!targetId) return next();
 
+    // Non-ObjectId params (e.g. slugs) are not user ids; skip block check safely
+    if (!mongoose.isValidObjectId(targetId)) return next();
+
     const targetUser = await User.findById(targetId).select('blockedUsers');
     if (targetUser && hasId(targetUser.blockedUsers, req.user._id)) {
       return res.status(403).json({ message: 'You are blocked by this user' });
@@ -49,7 +53,8 @@ const isBlockedBy = async (req, res, next) => {
 
     next();
   } catch (error) {
-    next();
+    // Fail closed: do not silently bypass block checks on unexpected errors
+    return res.status(500).json({ message: 'Server error' });
   }
 };
 

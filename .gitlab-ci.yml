@@ -1,0 +1,27 @@
+stages:
+  - check
+
+backend-syntax-check:
+  stage: check
+  image: node:20-alpine
+  script:
+    - find backend -name "*.js" -not -path "*/node_modules/*" -print0 | xargs -0 -n1 node --check
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+
+backend-install:
+  stage: check
+  image: node:20-alpine
+  script:
+    - cd backend
+    - npm install --no-audit --no-fund
+  cache:
+    key:
+      files:
+        - backend/package.json
+    paths:
+      - backend/node_modules/
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
