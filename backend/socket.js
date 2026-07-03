@@ -5,9 +5,11 @@ const Conversation = require('./models/Conversation');
 const Message = require('./models/Message');
 const Notification = require('./models/Notification');
 const User = require('./models/User');
+const CallLog = require('./models/CallLog');
 
 let io;
 const onlineUsers = new Map(); // userId -> Set<socketId>
+const activeCalls = new Map(); // userId -> { callerId, callType, conversationId }
 
 const SOCKET_RATE_LIMIT = {
   typing: { windowMs: 10_000, max: 20 },
@@ -468,8 +470,167 @@ const initSocket = (httpServer) => {
       } catch (e) { /* ignore */ }
     });
 
+    // ========== WebRTC Signaling Events ==========
+
+    // Caller initiates a call
+    socket.on('callUser', async ({ to, offer, callType, conversationId }) => {
+      if (!to || !offer) return;
+
+      // Check if recipient is already in a call
+      if (activeCalls.has(to)) {
+        return socket.emit('callBusy', { to });
+      }
+
+      // Check if recipient is online
+      if (!onlineUsers.has(to)) {
+        return socket.emit('callOffline', { to });
+      }
+
+      // Get caller info for the notification
+      let callerInfo = null;
+      try {
+        const callerUser = await User.findById(userId).select('name profilePhoto');
+        if (callerUser) {
+          callerInfo = { _id: callerUser._id, name: callerUser.name, profilePhoto: callerUser.profilePhoto };
+        }
+      } catch (e) { /* ignore */ }
+
+      // Track active call
+      activeCalls.set(userId, { otherUserId: to, callType, conversationId, initiator: userId });
+      activeCalls.set(to, { otherUserId: userId, callType, conversationId, initiator: userId });
+
+      io.to(`user:${to}`).emit('incomingCall', {
+        from: userId,
+        offer,
+        callType,
+        conversationId,
+        callerInfo,
+      });
+    });
+
+    // Receiver answers the call
+    socket.on('callAnswer', ({ to, answer }) => {
+      if (!to || !answer) return;
+
+      io.to(`user:${to}`).emit('callAnswered', {
+        answer,
+        from: userId,
+      });
+    });
+
+    // ICE candidate exchange
+    socket.on('iceCandidate', ({ to, candidate }) => {
+      if (!to || !candidate) return;
+
+      io.to(`user:${to}`).emit('iceCandidate', {
+        candidate,
+        from: userId,
+      });
+    });
+
+    // Either side ends the call
+    socket.on('endCall', async ({ to, conversationId, callType, duration, status }) => {
+      if (!to) return;
+
+      const callData = activeCalls.get(userId);
+      const initiator = callData?.initiator || userId;
+
+      // Clear active call tracking
+      activeCalls.delete(userId);
+      activeCalls.delete(to);
+
+      // Save call log
+      try {
+        if (conversationId && callType) {
+          await CallLog.create({
+            conversation: conversationId,
+            caller: initiator,
+            receiver: initiator === userId ? to : userId,
+            callType,
+            status: status || 'completed',
+            duration: duration || 0,
+          });
+        }
+      } catch (e) {
+        console.error('Failed to save call log:', e.message);
+      }
+
+      io.to(`user:${to}`).emit('callEnded', {
+        from: userId,
+        conversationId,
+        callType,
+        duration,
+        status,
+      });
+    });
+
+    // Receiver rejects the call
+    socket.on('callRejected', async ({ to, conversationId, callType }) => {
+      if (!to) return;
+
+      activeCalls.delete(userId);
+      activeCalls.delete(to);
+
+      // Save call log for rejected call
+      try {
+        if (conversationId && callType) {
+          await CallLog.create({
+            conversation: conversationId,
+            caller: to,
+            receiver: userId,
+            callType,
+            status: 'rejected',
+            duration: 0,
+          });
+        }
+      } catch (e) { /* ignore */ }
+
+      io.to(`user:${to}`).emit('callRejected', {
+        from: userId,
+      });
+    });
+
+    // Target is busy on another call
+    socket.on('callBusy', ({ to }) => {
+      if (!to) return;
+
+      io.to(`user:${to}`).emit('callBusy', {
+        from: userId,
+      });
+    });
+
     socket.on('disconnect', async () => {
       console.log(`User disconnected: ${userId}`);
+
+      // Clean up active call if user disconnects during a call
+      if (activeCalls.has(userId)) {
+        const callData = activeCalls.get(userId);
+        const otherUserId = callData.otherUserId;
+        activeCalls.delete(userId);
+        activeCalls.delete(otherUserId);
+
+        // Save call log for missed/disconnected call
+        try {
+          if (callData.conversationId && callData.callType) {
+            await CallLog.create({
+              conversation: callData.conversationId,
+              caller: callData.initiator,
+              receiver: callData.initiator === otherUserId ? userId : otherUserId,
+              callType: callData.callType,
+              status: 'missed',
+              duration: 0,
+            });
+          }
+        } catch (e) { /* ignore */ }
+
+        io.to(`user:${otherUserId}`).emit('callEnded', {
+          from: userId,
+          conversationId: callData.conversationId,
+          callType: callData.callType,
+          duration: 0,
+          status: 'missed',
+        });
+      }
 
       const userSockets = onlineUsers.get(userId);
       if (!userSockets) return;

@@ -3,6 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import { useSocket } from '../context/SocketContext';
 import API from '../api/axios';
 import VoiceRecorder from './VoiceRecorder';
+import CallButtons from './CallButtons';
 
 const EMOJI_OPTIONS = ['👍', '❤️', '😂', '😮', '😢', '😡'];
 const MAX_FILE_SIZE = 25 * 1024 * 1024;
@@ -45,7 +46,7 @@ const isWithinDeleteWindow = (date) => {
   return Date.now() - new Date(date).getTime() < 10 * 60 * 1000;
 };
 
-const ChatWindow = ({ conversation, onBack, showInfoPanel, onToggleInfo }) => {
+const ChatWindow = ({ conversation, onBack, showInfoPanel, onToggleInfo, onStartCall, callStatus }) => {
   const { user } = useAuth();
   const { socket, onlineUsers, setActiveChat, clearUnreadMessages } = useSocket();
   const [messages, setMessages] = useState([]);
@@ -82,13 +83,28 @@ const ChatWindow = ({ conversation, onBack, showInfoPanel, onToggleInfo }) => {
     try {
       if (before) setLoadingMore(true);
       const params = before ? `?before=${before}&limit=50` : '?limit=50';
-      const res = await API.get(`/conversations/${convId}/messages${params}`);
-      const newMessages = res.data.messages || [];
+      const [msgRes, callRes] = await Promise.all([
+        API.get(`/conversations/${convId}/messages${params}`),
+        API.get(`/conversations/${convId}/call-logs?limit=50`).catch(() => ({ data: { logs: [] } })),
+      ]);
+
+      const newMessages = (msgRes.data.messages || []).map(m => ({ ...m, _type: 'message' }));
+      const callLogs = (callRes.data.logs || []).map(cl => ({
+        ...cl,
+        _type: 'callLog',
+        createdAt: cl.createdAt,
+      }));
+
+      // Merge and sort by date
+      const merged = [...newMessages, ...callLogs].sort(
+        (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
+      );
+
       if (before) {
-        setMessages(prev => [...newMessages, ...prev]);
+        setMessages(prev => [...merged, ...prev]);
         setHasMore(newMessages.length === 50);
       } else {
-        setMessages(newMessages);
+        setMessages(merged);
         setHasMore(newMessages.length === 50);
         setTimeout(() => scrollToBottom(), 100);
       }
@@ -412,6 +428,17 @@ const ChatWindow = ({ conversation, onBack, showInfoPanel, onToggleInfo }) => {
             <p className="text-xs text-gray-400">{convData.participants?.length} members</p>
           ) : null}
         </div>
+        <CallButtons
+          onStartCall={(type) => {
+            const other = getOtherParticipant();
+            onStartCall?.(other?._id, type, convId, {
+              name: other?.name,
+              profilePhoto: other?.profilePhoto,
+            });
+          }}
+          disabled={callStatus !== 'idle'}
+          isGroup={convData?.isGroup}
+        />
         <button
           onClick={onToggleInfo}
           className={`p-2 rounded-full transition ${showInfoPanel ? 'bg-blue-100 text-blue-600' : 'text-gray-500 hover:bg-gray-100'}`}
@@ -445,10 +472,64 @@ const ChatWindow = ({ conversation, onBack, showInfoPanel, onToggleInfo }) => {
               </div>
             )}
             {messages.map((msg, idx) => {
-              const isOwn = msg.sender?._id === user.id;
               const prevMsg = idx > 0 ? messages[idx - 1] : null;
               const nextMsg = idx < messages.length - 1 ? messages[idx + 1] : null;
               const showDate = shouldShowDateSeparator(msg.createdAt, prevMsg?.createdAt);
+
+              // Call log system message
+              if (msg._type === 'callLog') {
+                const callDuration = msg.duration || 0;
+                const mins = Math.floor(callDuration / 60);
+                const secs = callDuration % 60;
+                const durationStr = callDuration > 0 ? ` (${mins > 0 ? mins + 'm ' : ''}${secs}s)` : '';
+
+                let statusText = '';
+                let statusIcon = null;
+                const iconClass = 'w-3.5 h-3.5';
+
+                if (msg.status === 'completed') {
+                  if (msg.callType === 'video') {
+                    statusIcon = <svg className={`${iconClass} text-green-600`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>;
+                    statusText = 'Video call' + durationStr;
+                  } else {
+                    statusIcon = <svg className={`${iconClass} text-green-600`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>;
+                    statusText = 'Audio call' + durationStr;
+                  }
+                } else if (msg.status === 'missed') {
+                  statusIcon = <svg className={`${iconClass} text-red-500`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>;
+                  statusText = 'Missed call';
+                } else if (msg.status === 'rejected') {
+                  statusIcon = <svg className={`${iconClass} text-red-500`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>;
+                  statusText = 'Declined call';
+                } else if (msg.status === 'cancelled') {
+                  statusIcon = <svg className={`${iconClass} text-gray-400`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>;
+                  statusText = 'Call cancelled';
+                } else {
+                  statusIcon = <svg className={`${iconClass} text-gray-400`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>;
+                  statusText = 'Call ended';
+                }
+
+                return (
+                  <div key={msg._id}>
+                    {showDate && (
+                      <div className="flex items-center justify-center my-4">
+                        <div className="bg-gray-100 text-gray-500 text-xs px-3 py-1 rounded-full font-medium">
+                          {formatDate(msg.createdAt)}
+                        </div>
+                      </div>
+                    )}
+                    <div className="flex justify-center my-2">
+                      <div className="flex items-center gap-1.5 text-xs text-gray-500 bg-gray-50 px-3 py-1 rounded-full">
+                        {statusIcon}
+                        <span>{statusText}</span>
+                      </div>
+                    </div>
+                  </div>
+                );
+              }
+
+              // Regular message
+              const isOwn = msg.sender?._id === user.id;
               const showSenderName = shouldShowSender(msg, prevMsg, convData?.isGroup);
               const isLastInGroup = !nextMsg || nextMsg.sender?._id !== msg.sender?._id;
               const isEditing = editingMsg?._id === msg._id;
