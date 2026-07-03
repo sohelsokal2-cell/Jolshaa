@@ -120,7 +120,7 @@ exports.createPost = async (req, res) => {
 
     res.status(201).json(post);
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -178,7 +178,7 @@ exports.getFeed = async (req, res) => {
       hasMore: rankedResult.hasMore
     });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -201,7 +201,7 @@ exports.updatePost = async (req, res) => {
 
     res.json(post);
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -219,7 +219,7 @@ exports.deletePost = async (req, res) => {
 
     res.json({ message: 'Post deleted' });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -262,7 +262,7 @@ exports.inviteCollaborator = async (req, res) => {
 
     res.json({ message: 'Collaborator invited' });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -281,7 +281,7 @@ exports.acceptCollaboration = async (req, res) => {
 
     res.json({ message: 'Collaboration accepted' });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -300,7 +300,7 @@ exports.removeCollaborator = async (req, res) => {
 
     res.json({ message: 'Collaborator removed' });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -356,7 +356,7 @@ exports.reactToPost = async (req, res) => {
 
     res.json({ message: 'Reaction added', myReaction: type });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -398,7 +398,7 @@ exports.sharePost = async (req, res) => {
 
     res.status(201).json(post);
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 

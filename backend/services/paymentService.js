@@ -64,7 +64,8 @@ const handleStripeWebhook = async (event) => {
     const session = event.data.object;
     const tx = await Transaction.findOneAndUpdate(
       { transactionId: session.id },
-      { status: 'completed', metadata: { ...session.metadata, paymentIntent: session.payment_intent } }
+      { status: 'completed', metadata: { ...session.metadata, paymentIntent: session.payment_intent } },
+      { new: true }
     );
 
     if (tx) {

@@ -158,6 +158,46 @@ const postSchema = new mongoose.Schema({
     ref: 'Comment',
     default: null
   },
+  factCheck: {
+    status: {
+      type: String,
+      enum: ['unverified', 'true', 'false', 'misleading'],
+      default: 'unverified'
+    },
+    trueVotes: [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User'
+    }],
+    falseVotes: [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User'
+    }],
+    misleadingVotes: [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User'
+    }],
+    totalVotes: {
+      type: Number,
+      default: 0
+    },
+    verifiedByAdmin: {
+      type: Boolean,
+      default: false
+    },
+    adminVerdict: {
+      type: String,
+      enum: ['true', 'false', 'misleading', null],
+      default: null
+    },
+    adminNote: {
+      type: String,
+      default: ''
+    },
+    flaggedForReview: {
+      type: Boolean,
+      default: false
+    }
+  },
 }, {
   timestamps: true
 });

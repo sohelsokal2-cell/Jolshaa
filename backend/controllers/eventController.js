@@ -48,7 +48,7 @@ exports.createEvent = async (req, res) => {
     res.status(201).json({ event });
   } catch (error) {
     console.error('Create event error:', error);
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -89,7 +89,7 @@ exports.getEvents = async (req, res) => {
       total
     });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -118,7 +118,7 @@ exports.getEvent = async (req, res) => {
       }
     });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -145,7 +145,7 @@ exports.updateEvent = async (req, res) => {
 
     res.json({ event });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -160,7 +160,7 @@ exports.deleteEvent = async (req, res) => {
     await Event.findByIdAndDelete(req.params.id);
     res.json({ message: 'Event deleted' });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -195,7 +195,7 @@ exports.rsvpEvent = async (req, res) => {
 
     res.json({ message: 'RSVP updated', status });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -227,7 +227,7 @@ exports.inviteUsers = async (req, res) => {
 
     res.json({ message: `${newInvites.length} users invited`, invitedUsers: event.invitedUsers });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -244,7 +244,7 @@ exports.getAttendees = async (req, res) => {
 
     res.json({ going, maybe, notGoing });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -287,6 +287,6 @@ exports.getMyEvents = async (req, res) => {
 
     res.json({ events: eventsWithMeta });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({ message: 'Server error' });
   }
 };

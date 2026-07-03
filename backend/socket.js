@@ -57,6 +57,7 @@ const initSocket = (httpServer) => {
       origin: (origin, callback) => {
         const allowedOrigins = [
           process.env.CLIENT_URL,
+          'https://jolshaa.vercel.app',
           'http://localhost:3000',
           'http://localhost:5173',
         ]
@@ -167,6 +168,19 @@ const initSocket = (httpServer) => {
     io.emit('userOnline', userId);
 
     socket.join(`user:${userId}`);
+
+    // Help system: join district room
+    socket.on('joinDistrictRoom', ({ district }) => {
+      if (district && typeof district === 'string') {
+        // Leave any previous district rooms
+        socket.rooms.forEach(room => {
+          if (room.startsWith('district_')) {
+            socket.leave(room);
+          }
+        });
+        socket.join(`district_${district}`);
+      }
+    });
 
     socket.on('joinConversation', async (conversationId) => {
       if (!(await ensureConversationAccess(conversationId, userId))) {

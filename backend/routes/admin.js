@@ -24,6 +24,11 @@ const {
 } = require('../controllers/moderationController');
 
 const {
+  adminVerdict,
+  getFlaggedPosts: getFactCheckFlaggedPosts,
+} = require('../controllers/factCheckController');
+
+const {
   getReportDashboard, getReportsEnhanced, assignReport, escalateReport, resolveReport,
   scanForSpam, getSpamQueue, reviewSpamFlag,
   getFlagsByReason,
@@ -190,6 +195,12 @@ router.post('/moderation/bulk', bulkAction);
 
 // Shadow moderation (generic)
 router.put('/moderation/:type/:id/shadow-hide', shadowHide);
+
+// ============================================================
+// FACT-CHECK REVIEW
+// ============================================================
+router.get('/factcheck/flagged', requireRole('admin', 'superadmin'), getFactCheckFlaggedPosts);
+router.put('/posts/:id/factcheck/verdict', requireRole('admin', 'superadmin'), adminVerdict);
 
 // ============================================================
 // REPORTS & SAFETY

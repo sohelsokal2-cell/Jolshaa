@@ -35,8 +35,8 @@ router.put('/safety', protect, updateSafety);
 router.delete('/account', protect, deleteAccount);
 router.post('/forgot-password', forgotPassword);
 router.post('/reset-password', resetPassword);
-router.get('/trusted-devices', getTrustedDevices);
-router.post('/trusted-devices', trustDevice);
-router.delete('/trusted-devices/:deviceId', removeTrustedDevice);
+router.get('/trusted-devices', protect, getTrustedDevices);
+router.post('/trusted-devices', protect, trustDevice);
+router.delete('/trusted-devices/:deviceId', protect, removeTrustedDevice);
 
 module.exports = router;

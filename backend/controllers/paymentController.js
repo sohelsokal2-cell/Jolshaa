@@ -44,7 +44,7 @@ exports.createCheckout = async (req, res) => {
     return res.status(400).json({ message: 'Invalid gateway. Use "stripe" or "sslcommerz".' });
   } catch (error) {
     console.error('Checkout error:', error);
-    res.status(500).json({ message: error.message || 'Server error' });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 

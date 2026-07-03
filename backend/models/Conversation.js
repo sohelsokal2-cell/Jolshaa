@@ -45,6 +45,16 @@ const conversationSchema = new mongoose.Schema({
     host: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
     viewers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
   },
+  conversationType: {
+    type: String,
+    enum: ['direct', 'group', 'help_coordination'],
+    default: 'direct'
+  },
+  helpRequest: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'HelpRequest',
+    default: null
+  },
 }, {
   timestamps: true
 });

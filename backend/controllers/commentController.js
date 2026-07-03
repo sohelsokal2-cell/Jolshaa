@@ -83,7 +83,7 @@ exports.addComment = async (req, res) => {
 
     res.status(201).json(comment);
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -154,7 +154,7 @@ exports.getComments = async (req, res) => {
       total
     });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -172,7 +172,7 @@ exports.deleteComment = async (req, res) => {
 
     res.json({ message: 'Comment deleted' });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -213,7 +213,7 @@ exports.reactToComment = async (req, res) => {
 
     res.json({ message: 'Reaction added', myReaction: type });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -240,7 +240,7 @@ exports.pinComment = async (req, res) => {
 
     res.json({ isPinned: true, message: 'Comment pinned' });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -259,6 +259,6 @@ exports.likeComment = async (req, res) => {
 
     res.json({ liked: index === -1, likeCount: comment.likes.length });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({ message: 'Server error' });
   }
 };

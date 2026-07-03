@@ -122,10 +122,6 @@ const userSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
   }],
-  friends: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User'
-  }],
   privacy: {
     postVisibility: {
       type: String,
@@ -182,19 +178,6 @@ const userSchema = new mongoose.Schema({
     lastUsedAt: { type: Date, default: Date.now },
     createdAt: { type: Date, default: Date.now }
   }],
-  loginHistory: [{
-    ip: { type: String, default: '' },
-    userAgent: { type: String, default: '' },
-    timestamp: { type: Date, default: Date.now },
-    success: { type: Boolean, default: true }
-  }],
-  sessions: [{
-    token: { type: String, required: true },
-    ip: { type: String, default: '' },
-    userAgent: { type: String, default: '' },
-    lastActive: { type: Date, default: Date.now },
-    createdAt: { type: Date, default: Date.now }
-  }],
   savedPosts: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Post'
@@ -208,10 +191,6 @@ const userSchema = new mongoose.Schema({
     ref: 'User'
   }],
   friends: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User'
-  }],
-  closeFriends: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
   }],
@@ -287,7 +266,7 @@ const userSchema = new mongoose.Schema({
     restrictedDMs: { type: Boolean, default: false },
   },
   sessions: [{
-    token: { type: String },
+    token: { type: String, required: true },
     ip: { type: String },
     userAgent: { type: String },
     location: { type: String, default: '' },
@@ -303,6 +282,14 @@ const userSchema = new mongoose.Schema({
     success: { type: Boolean, default: true },
     timestamp: { type: Date, default: Date.now }
   }],
+  helpedCount: {
+    type: Number,
+    default: 0
+  },
+  helpedOthersCount: {
+    type: Number,
+    default: 0
+  },
   createdAt: {
     type: Date,
     default: Date.now

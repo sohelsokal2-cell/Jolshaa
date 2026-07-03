@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import API from '../api/axios';
 import Avatar from './ui/Avatar';
+import HelpButton from './HelpButton';
 
 const CreatePostBox = ({ onPostCreated, postedInType, postedInRefId }) => {
   const { user } = useAuth();
@@ -242,6 +243,7 @@ const CreatePostBox = ({ onPostCreated, postedInType, postedInRefId }) => {
                 </>
               ) : 'Post'}
             </button>
+            <HelpButton variant="inline" />
           </div>
         </div>
       )}

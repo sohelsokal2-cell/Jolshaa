@@ -42,6 +42,8 @@ import CreatePost from './pages/CreatePost';
 import NotesPage from './pages/NotesPage';
 import NoteDetail from './pages/NoteDetail';
 import { PaymentSuccess, PaymentCancel, PaymentFail } from './pages/PaymentResult';
+import HelpFeed from './pages/HelpFeed';
+import HelpRequestDetail from './pages/HelpRequestDetail';
 
 const PublicRoute = ({ children }) => {
   const { user, loading } = useAuth();
@@ -96,6 +98,8 @@ const AppContent = () => {
         <Route path="/payment/success" element={<PaymentSuccess />} />
         <Route path="/payment/cancel" element={<PaymentCancel />} />
         <Route path="/payment/fail" element={<PaymentFail />} />
+        <Route path="/help" element={<ProtectedRoute><HelpFeed /></ProtectedRoute>} />
+        <Route path="/help/:id" element={<ProtectedRoute><HelpRequestDetail /></ProtectedRoute>} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Router>

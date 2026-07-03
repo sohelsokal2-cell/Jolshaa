@@ -44,7 +44,7 @@ exports.signup = async (req, res) => {
       }
     });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -108,7 +108,7 @@ exports.login = async (req, res) => {
       isNewDevice
     });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -158,7 +158,7 @@ exports.getMe = async (req, res) => {
       createdAt: user.createdAt
     });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -188,7 +188,7 @@ exports.changePassword = async (req, res) => {
 
     res.json({ message: 'Password changed successfully' });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -206,7 +206,7 @@ exports.getSessions = async (req, res) => {
     }));
     res.json({ sessions });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -217,7 +217,7 @@ exports.revokeSession = async (req, res) => {
     });
     res.json({ message: 'Session revoked' });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -229,7 +229,7 @@ exports.revokeAllSessions = async (req, res) => {
     });
     res.json({ message: 'All other sessions revoked' });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -244,7 +244,7 @@ exports.getLoginHistory = async (req, res) => {
     }));
     res.json({ history });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -253,7 +253,7 @@ exports.getSafety = async (req, res) => {
     const user = await User.findById(req.user._id).select('safety');
     res.json({ safety: user.safety || {} });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -269,7 +269,7 @@ exports.updateSafety = async (req, res) => {
     const user = await User.findByIdAndUpdate(req.user._id, update, { new: true }).select('safety');
     res.json({ safety: user.safety });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -309,7 +309,7 @@ exports.deleteAccount = async (req, res) => {
 
     res.json({ message: 'Account deleted successfully' });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -329,7 +329,8 @@ exports.forgotPassword = async (req, res) => {
     user.passwordResetExpires = expiresAt;
     await user.save();
 
-    res.json({ message: 'If an account exists with this email, a reset link has been sent.', token });
+    // TODO: send token via email instead of returning in response
+    res.json({ message: 'If an account exists with this email, a reset link has been sent.' });
   } catch (error) {
     res.status(500).json({ message: 'Server error' });
   }

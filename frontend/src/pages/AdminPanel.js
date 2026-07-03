@@ -67,6 +67,7 @@ const AdminPanel = () => {
         {activeTab === 'reels' && <ReelsModerationTab />}
         {activeTab === 'listings' && <ListingsModerationTab />}
         {activeTab === 'bulk' && <BulkActionsTab />}
+        {activeTab === 'factcheck' && <FactCheckReviewTab />}
         {activeTab === 'verification' && <VerificationTab />}
         {activeTab === 'admins' && <AdminsTab />}
         {activeTab === 'audit' && <AuditTab />}
@@ -8017,6 +8018,230 @@ const UndoPanel = () => {
           <div className="flex justify-end gap-2">
             <Button variant="secondary" onClick={() => setConfirmModal(null)}>Cancel</Button>
             <Button variant="danger" onClick={() => handleUndo(confirmModal._id)} disabled={undoing === confirmModal?._id}>{undoing === confirmModal?._id ? 'Undoing...' : 'Undo Action'}</Button>
+          </div>
+        </div>
+      </Modal>
+    </div>
+  );
+};
+
+// --- Fact-Check Review ---
+const FactCheckReviewTab = () => {
+  const [posts, setPosts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [verdictModal, setVerdictModal] = useState(null);
+  const [verdictType, setVerdictType] = useState('');
+  const [verdictNote, setVerdictNote] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+
+  useEffect(() => {
+    fetchFlagged();
+  }, [page]);
+
+  const fetchFlagged = async () => {
+    setLoading(true);
+    try {
+      const res = await API.get(`/admin/factcheck/flagged?page=${page}&limit=10`);
+      setPosts(res.data.posts);
+      setTotalPages(res.data.totalPages);
+    } catch (err) {
+      console.error('Failed to fetch flagged posts');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleVerdict = async () => {
+    if (!verdictModal || !verdictType) return;
+    setSubmitting(true);
+    try {
+      await API.put(`/admin/posts/${verdictModal._id}/factcheck/verdict`, {
+        verdict: verdictType,
+        note: verdictNote,
+      });
+      setVerdictModal(null);
+      setVerdictType('');
+      setVerdictNote('');
+      fetchFlagged();
+    } catch (err) {
+      console.error('Failed to submit verdict');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const timeAgo = (date) => {
+    const seconds = Math.floor((new Date() - new Date(date)) / 1000);
+    if (seconds < 60) return 'just now';
+    const minutes = Math.floor(seconds / 60);
+    if (minutes < 60) return `${minutes}m ago`;
+    const hours = Math.floor(minutes / 60);
+    if (hours < 24) return `${hours}h ago`;
+    const days = Math.floor(hours / 24);
+    return `${days}d ago`;
+  };
+
+  if (loading) return <div className="text-center py-8 text-neutral-500">Loading flagged posts...</div>;
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between mb-4">
+        <div>
+          <h2 className="text-xl font-bold text-neutral-900 dark:text-neutral-100">গুজব রিভিউ</h2>
+          <p className="text-sm text-neutral-500 mt-1">
+            Posts flagged by community votes for admin review
+          </p>
+        </div>
+        <Badge variant="warning">{posts.length} pending</Badge>
+      </div>
+
+      {posts.length === 0 ? (
+        <Card className="p-8 text-center">
+          <p className="text-neutral-500">No flagged posts to review. সব ভালো!</p>
+        </Card>
+      ) : (
+        <div className="space-y-3">
+          {posts.map((post) => (
+            <Card key={post._id} className="p-4">
+              <div className="flex gap-4">
+                <Avatar src={post.author?.profilePhoto} alt={post.author?.name} size="md" />
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="font-semibold text-sm text-neutral-900 dark:text-neutral-100">
+                      {post.author?.name}
+                    </span>
+                    <span className="text-xs text-neutral-500">{timeAgo(post.createdAt)}</span>
+                    <Badge variant={
+                      post.factCheck?.status === 'false' ? 'danger' :
+                      post.factCheck?.status === 'misleading' ? 'warning' : 'neutral'
+                    }>
+                      {post.factCheck?.status}
+                    </Badge>
+                  </div>
+
+                  {post.text && (
+                    <p className="text-sm text-neutral-700 dark:text-neutral-300 line-clamp-2 mb-2">
+                      {post.text}
+                    </p>
+                  )}
+
+                  {/* Vote stats */}
+                  <div className="flex items-center gap-4 text-xs text-neutral-500 mb-2">
+                    <span className="text-green-600">✓ {post.factCheck?.trueVotes?.length || 0} true</span>
+                    <span className="text-red-600">✗ {post.factCheck?.falseVotes?.length || 0} false</span>
+                    <span className="text-orange-600">~ {post.factCheck?.misleadingVotes?.length || 0} misleading</span>
+                    <span>Total: {post.factCheck?.totalVotes || 0}</span>
+                  </div>
+
+                  {/* Reports */}
+                  {post.reports?.length > 0 && (
+                    <div className="space-y-1.5 mb-3">
+                      <p className="text-xs font-medium text-neutral-600 dark:text-neutral-400">
+                        Reports ({post.reports.length}):
+                      </p>
+                      {post.reports.slice(0, 3).map((r, i) => (
+                        <div key={i} className="text-xs bg-neutral-50 dark:bg-neutral-900 rounded-lg p-2">
+                          <span className="font-medium text-neutral-700 dark:text-neutral-300">
+                            {r.reporter?.name}:
+                          </span>{' '}
+                          <span className="text-neutral-600 dark:text-neutral-400">{r.reason}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Verdict buttons */}
+                  <div className="flex gap-2">
+                    <Button
+                      size="xs"
+                      variant="success"
+                      onClick={() => { setVerdictModal(post); setVerdictType('true'); }}
+                    >
+                      সত্যি নিশ্চিত করুন
+                    </Button>
+                    <Button
+                      size="xs"
+                      variant="danger"
+                      onClick={() => { setVerdictModal(post); setVerdictType('false'); }}
+                    >
+                      গুজব নিশ্চিত করুন
+                    </Button>
+                    <Button
+                      size="xs"
+                      variant="warning"
+                      onClick={() => { setVerdictModal(post); setVerdictType('misleading'); }}
+                    >
+                      বিভ্রান্তিকর
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </Card>
+          ))}
+        </div>
+      )}
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="flex justify-center gap-2 mt-4">
+          <Button
+            variant="secondary"
+            size="sm"
+            disabled={page <= 1}
+            onClick={() => setPage(p => p - 1)}
+          >
+            Previous
+          </Button>
+          <span className="text-sm text-neutral-500 py-1">Page {page} of {totalPages}</span>
+          <Button
+            variant="secondary"
+            size="sm"
+            disabled={page >= totalPages}
+            onClick={() => setPage(p => p + 1)}
+          >
+            Next
+          </Button>
+        </div>
+      )}
+
+      {/* Verdict Modal */}
+      <Modal isOpen={!!verdictModal} onClose={() => setVerdictModal(null)} title="Admin Verdict">
+        <div className="p-5 space-y-4">
+          <div className="p-3 bg-neutral-50 dark:bg-neutral-900 rounded-lg">
+            <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100">
+              {verdictModal?.author?.name}
+            </p>
+            <p className="text-xs text-neutral-500 mt-0.5 line-clamp-2">
+              {verdictModal?.text || 'No text'}
+            </p>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
+              Verdict: <span className="font-bold">
+                {verdictType === 'true' ? 'সত্যি' : verdictType === 'false' ? 'গুজব' : 'বিভ্রান্তিকর'}
+              </span>
+            </label>
+            <textarea
+              value={verdictNote}
+              onChange={(e) => setVerdictNote(e.target.value)}
+              placeholder="Add a note explaining the verdict (optional)"
+              className="w-full border border-neutral-300 dark:border-neutral-600 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/30 bg-white dark:bg-neutral-700 resize-none"
+              rows={3}
+            />
+          </div>
+
+          <div className="flex justify-end gap-2">
+            <Button variant="secondary" onClick={() => setVerdictModal(null)}>Cancel</Button>
+            <Button
+              variant={verdictType === 'true' ? 'success' : verdictType === 'false' ? 'danger' : 'warning'}
+              onClick={handleVerdict}
+              disabled={submitting}
+            >
+              {submitting ? 'Submitting...' : 'Submit Verdict'}
+            </Button>
           </div>
         </div>
       </Modal>

@@ -67,7 +67,7 @@ exports.getConversations = async (req, res) => {
 
     res.json(conversationsWithLast);
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -123,7 +123,7 @@ exports.createConversation = async (req, res) => {
 
     res.status(201).json(conversation);
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -143,7 +143,7 @@ exports.getConversation = async (req, res) => {
 
     res.json(conversation);
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -161,7 +161,7 @@ exports.togglePin = async (req, res) => {
     await conv.save();
     res.json({ isPinned: idx === -1 });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -179,7 +179,7 @@ exports.toggleMute = async (req, res) => {
     await conv.save();
     res.json({ isMuted: idx === -1 });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -197,7 +197,7 @@ exports.archiveConversation = async (req, res) => {
     await conv.save();
     res.json({ isArchived: idx === -1 });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -245,6 +245,6 @@ exports.getMessages = async (req, res) => {
       total
     });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({ message: 'Server error' });
   }
 };

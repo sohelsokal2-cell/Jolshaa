@@ -8,7 +8,7 @@ exports.getUserOnlineStatus = async (req, res) => {
     const online = isUserOnline(req.params.id);
     res.json({ online });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -34,8 +34,7 @@ exports.getUserById = async (req, res) => {
     let friendStatus = 'none';
     let friendRequestId = null;
     if (!isOwnProfile) {
-      const currentUserFull = await User.findById(req.user._id).select('friends');
-      if (hasId(currentUserFull.friends, user._id)) {
+      if (hasId(currentUser.friends, user._id)) {
         friendStatus = 'friends';
       } else {
         const outgoing = await FriendRequest.findOne({ from: req.user._id, to: user._id, status: 'pending' });
@@ -52,25 +51,26 @@ exports.getUserById = async (req, res) => {
       }
     }
 
-    // Get mutual friends count
+    // Get mutual friends count (reuse currentUser, fetch target user's friends once)
     let mutualFriends = [];
     let mutualFriendsCount = 0;
+    let targetFriends = [];
     if (!isOwnProfile) {
-      const currentUserFull = await User.findById(req.user._id).select('friends');
       const targetUserFull = await User.findById(user._id).select('friends');
-      if (currentUserFull && targetUserFull) {
-        const mutualIds = currentUserFull.friends.filter(f => hasId(targetUserFull.friends, f));
-        mutualFriendsCount = mutualIds.length;
-        if (mutualIds.length > 0) {
-          mutualFriends = await User.find({ _id: { $in: mutualIds.slice(0, 5) } })
-            .select('name profilePhoto');
-        }
+      targetFriends = targetUserFull?.friends || [];
+      const mutualIds = currentUser.friends.filter(f => hasId(targetFriends, f));
+      mutualFriendsCount = mutualIds.length;
+      if (mutualIds.length > 0) {
+        mutualFriends = await User.find({ _id: { $in: mutualIds.slice(0, 5) } })
+          .select('name profilePhoto');
       }
+    } else {
+      const targetUserFull = await User.findById(user._id).select('friends');
+      targetFriends = targetUserFull?.friends || [];
     }
 
     // Get friend count
-    const targetFull = await User.findById(user._id).select('friends');
-    const friendCount = targetFull.friends.length;
+    const friendCount = targetFriends.length;
 
     // Get friend list (if allowed by privacy)
     let friends = [];
@@ -119,7 +119,7 @@ exports.getUserById = async (req, res) => {
 
     res.json(profile);
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -223,7 +223,7 @@ exports.getUserPosts = async (req, res) => {
       total
     });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -264,7 +264,7 @@ exports.updateProfile = async (req, res) => {
       createdAt: user.createdAt
     });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 

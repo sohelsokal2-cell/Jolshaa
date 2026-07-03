@@ -12,6 +12,7 @@ import Poll from './Poll';
 import QAPost from './QAPost';
 import BoostPostModal from './BoostPostModal';
 import MediaCarousel from './MediaCarousel';
+import FactCheckBadge from './FactCheckBadge';
 
 const PostCard = ({ post, onDelete }) => {
   const { user } = useAuth();
@@ -197,6 +198,9 @@ const PostCard = ({ post, onDelete }) => {
             </span>
           </div>
         )}
+
+        {/* Fact-check badge */}
+        <FactCheckBadge post={post} />
       </div>
 
       {/* Content */}

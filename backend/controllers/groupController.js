@@ -49,7 +49,7 @@ exports.createGroup = async (req, res) => {
 
     res.status(201).json(group);
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -82,7 +82,7 @@ exports.getGroups = async (req, res) => {
 
     res.json({ groups: groupsWithStatus, page, totalPages: Math.ceil(total / limit), total });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -130,7 +130,7 @@ exports.getGroup = async (req, res) => {
       pinnedPost: pinnedPostData
     });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -160,7 +160,7 @@ exports.updateGroup = async (req, res) => {
 
     res.json(group);
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -176,7 +176,7 @@ exports.deleteGroup = async (req, res) => {
     await Group.findByIdAndDelete(group._id);
     res.json({ message: 'Group deleted' });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -211,7 +211,7 @@ exports.joinGroup = async (req, res) => {
     await group.save();
     res.json({ message: 'Request sent', status: 'pending' });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -234,7 +234,7 @@ exports.approveRequest = async (req, res) => {
     await group.save();
     res.json({ message: 'Request approved' });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -257,7 +257,7 @@ exports.leaveGroup = async (req, res) => {
     await group.save();
     res.json({ message: 'Left group' });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -284,7 +284,7 @@ exports.removeMember = async (req, res) => {
     await group.save();
     res.json({ message: 'Member removed' });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -301,7 +301,7 @@ exports.getMembers = async (req, res) => {
       moderators: group.moderators
     });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -326,7 +326,7 @@ exports.addModerator = async (req, res) => {
     await group.save();
     res.json({ message: 'Moderator added' });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -348,7 +348,7 @@ exports.removeModerator = async (req, res) => {
     await group.save();
     res.json({ message: 'Moderator removed' });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -378,7 +378,7 @@ exports.pinPost = async (req, res) => {
     await group.save();
     res.json({ message: 'Post pinned', pinnedPost: postId });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -400,7 +400,7 @@ exports.updateRules = async (req, res) => {
     await group.save();
     res.json({ rules: group.rules });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -466,7 +466,7 @@ exports.getGroupFeed = async (req, res) => {
 
     res.json({ posts: postsWithMeta, page, totalPages: Math.ceil(total / limit), total });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -511,6 +511,6 @@ exports.createGroupPost = async (req, res) => {
 
     res.status(201).json(post);
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({ message: 'Server error' });
   }
 };

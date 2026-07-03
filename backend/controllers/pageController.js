@@ -51,7 +51,7 @@ exports.createPage = async (req, res) => {
 
     res.status(201).json(page);
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -89,7 +89,7 @@ exports.getPages = async (req, res) => {
       total
     });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -133,7 +133,7 @@ exports.getPage = async (req, res) => {
       featuredPost: featuredPostData
     });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -166,7 +166,7 @@ exports.updatePage = async (req, res) => {
 
     res.json(pg);
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -184,7 +184,7 @@ exports.deletePage = async (req, res) => {
 
     res.json({ message: 'Page deleted' });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -206,7 +206,7 @@ exports.followPage = async (req, res) => {
     await pg.save();
     res.json({ message: 'Following page', isFollowing: true });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -277,7 +277,7 @@ exports.getPageFeed = async (req, res) => {
       total
     });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -321,7 +321,7 @@ exports.createPagePost = async (req, res) => {
 
     res.status(201).json(post);
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -345,7 +345,7 @@ exports.featurePost = async (req, res) => {
     await pg.save();
     res.json({ message: 'Post featured', featuredPost: postId });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -395,6 +395,6 @@ exports.getPageInsights = async (req, res) => {
       followerGrowth
     });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({ message: 'Server error' });
   }
 };

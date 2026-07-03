@@ -76,7 +76,7 @@ exports.sendRequest = async (req, res) => {
     res.status(201).json({ message: 'Friend request sent', request });
   } catch (error) {
     if (error.code === 11000) return res.status(400).json({ message: 'Friend request already pending' });
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -103,7 +103,7 @@ exports.acceptRequest = async (req, res) => {
 
     res.json({ message: 'Friend request accepted' });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -121,7 +121,7 @@ exports.rejectRequest = async (req, res) => {
 
     res.json({ message: 'Friend request rejected' });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -142,7 +142,7 @@ exports.unfriend = async (req, res) => {
 
     res.json({ message: 'Unfriended' });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -154,7 +154,7 @@ exports.getFriends = async (req, res) => {
       .populate('friends', 'name profilePhoto bio');
     res.json({ friends: user.friends });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -167,7 +167,7 @@ exports.getRequests = async (req, res) => {
 
     res.json({ incoming, outgoing });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -185,7 +185,7 @@ exports.getMutualFriends = async (req, res) => {
 
     res.json({ mutualFriends, count: mutualFriends.length });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -227,7 +227,7 @@ exports.getSuggested = async (req, res) => {
 
     res.json({ suggested: suggestedWithMutual });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -248,6 +248,6 @@ exports.checkStatus = async (req, res) => {
 
     res.json({ status: 'none' });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({ message: 'Server error' });
   }
 };

@@ -48,7 +48,7 @@ app.use(cors({
   },
   credentials: true
 }));
-app.use(express.json());
+app.use(express.json({ limit: '1mb' }));
 app.use(generalLimiter);
 app.use(performanceMonitor);
 app.use(maintenanceCheck);
@@ -90,6 +90,7 @@ app.use('/api/notification-preferences', require('./routes/notificationPreferenc
 app.use('/api/story-archives', require('./routes/storyArchives'));
 app.use('/api/saved-folders', require('./routes/savedFolders'));
 app.use('/api/notes', require('./routes/notes'));
+app.use('/api/help', require('./routes/help'));
 app.use('/api/payments', require('./routes/payment'));
 
 app.use(errorHandler);

@@ -24,6 +24,11 @@ const {
   getComments,
   reactToComment
 } = require('../controllers/commentController');
+const {
+  vote,
+  report,
+  getStats,
+} = require('../controllers/factCheckController');
 
 router.use(protect);
 
@@ -45,5 +50,10 @@ router.put('/:id/schedule', schedulePost);
 router.post('/:id/collaborators', inviteCollaborator);
 router.put('/:id/collaborators/accept', acceptCollaboration);
 router.delete('/:id/collaborators/:userId', removeCollaborator);
+
+// Fact-check routes
+router.post('/:id/factcheck/vote', vote);
+router.post('/:id/factcheck/report', report);
+router.get('/:id/factcheck/stats', getStats);
 
 module.exports = router;

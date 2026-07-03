@@ -29,6 +29,8 @@ const Profile = () => {
   const [totalPages, setTotalPages] = useState(0);
   const [friends, setFriends] = useState([]);
   const [friendsLoading, setFriendsLoading] = useState(false);
+  const [helpHistory, setHelpHistory] = useState(null);
+  const [helpLoading, setHelpLoading] = useState(false);
 
   const isOwnProfile = !id || id === currentUser?.id;
 
@@ -49,6 +51,9 @@ const Profile = () => {
     }
     if (activeTab === 'friends' && profileUser) {
       fetchFriends();
+    }
+    if (activeTab === 'help' && profileUser) {
+      fetchHelpHistory();
     }
   }, [activeTab, profileUser]);
 
@@ -90,6 +95,19 @@ const Profile = () => {
     }
   };
 
+  const fetchHelpHistory = async () => {
+    setHelpLoading(true);
+    try {
+      const userId = profileUser.id || profileUser._id;
+      const res = await API.get(`/help/user/${userId}/history`);
+      setHelpHistory(res.data);
+    } catch (err) {
+      console.error('Failed to fetch help history');
+    } finally {
+      setHelpLoading(false);
+    }
+  };
+
   const handleDeletePost = (postId) => {
     setPosts(posts.filter(p => p._id !== postId));
   };
@@ -128,12 +146,14 @@ const Profile = () => {
         { key: 'posts', label: 'Posts' },
         { key: 'about', label: 'About' },
         { key: 'albums', label: 'Albums' },
+        { key: 'help', label: '🤝 সাহায্য' },
       ]
     : [
         { key: 'posts', label: 'Posts' },
         { key: 'about', label: 'About' },
         { key: 'albums', label: 'Albums' },
         { key: 'friends', label: 'Friends', count: profileUser.friendCount || 0 },
+        { key: 'help', label: '🤝 সাহায্য' },
       ];
 
   return (
@@ -353,6 +373,87 @@ const Profile = () => {
                   ))}
                 </div>
               )}
+            </div>
+          )}
+
+          {activeTab === 'help' && (
+            <div className="space-y-4">
+              {helpLoading ? (
+                <div className="text-center py-8 text-neutral-500">Loading help history...</div>
+              ) : helpHistory ? (
+                <>
+                  {/* Stats */}
+                  <Card>
+                    <div className="grid grid-cols-2 gap-4 text-center">
+                      <div className="p-3 bg-green-50 dark:bg-green-900/20 rounded-xl">
+                        <p className="text-2xl font-bold text-green-600 dark:text-green-400">{helpHistory.helpedOthersCount}</p>
+                        <p className="text-xs text-neutral-500 mt-0.5">🤝 সাহায্য করেছি</p>
+                      </div>
+                      <div className="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-xl">
+                        <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">{helpHistory.helpedCount}</p>
+                        <p className="text-xs text-neutral-500 mt-0.5">💙 সাহায্য পেয়েছি</p>
+                      </div>
+                    </div>
+                  </Card>
+
+                  {/* Given help */}
+                  {helpHistory.given?.length > 0 && (
+                    <Card>
+                      <h3 className="text-sm font-bold text-neutral-900 dark:text-neutral-100 mb-3">🤝 সাহায্য করেছি</h3>
+                      <div className="space-y-2">
+                        {helpHistory.given.map(req => (
+                          <Link
+                            key={req._id}
+                            to={`/help/${req._id}`}
+                            className="flex items-center gap-3 p-2 rounded-lg hover:bg-neutral-50 dark:hover:bg-neutral-700/50 transition-colors"
+                          >
+                            <span className="text-lg">{req.helpType === 'medical' ? '🏥' : req.helpType === 'flood' ? '🌊' : req.helpType === 'fire' ? '🔥' : '🆘'}</span>
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100 truncate">{req.title}</p>
+                              <p className="text-xs text-neutral-500">{req.requester?.name} · {req.location?.district}</p>
+                            </div>
+                            <span className="text-xs text-green-600 dark:text-green-400">✓ সমাধান</span>
+                          </Link>
+                        ))}
+                      </div>
+                    </Card>
+                  )}
+
+                  {/* Received help */}
+                  {helpHistory.received?.length > 0 && (
+                    <Card>
+                      <h3 className="text-sm font-bold text-neutral-900 dark:text-neutral-100 mb-3">💙 সাহায্য পেয়েছি</h3>
+                      <div className="space-y-2">
+                        {helpHistory.received.map(req => (
+                          <Link
+                            key={req._id}
+                            to={`/help/${req._id}`}
+                            className="flex items-center gap-3 p-2 rounded-lg hover:bg-neutral-50 dark:hover:bg-neutral-700/50 transition-colors"
+                          >
+                            <span className="text-lg">{req.helpType === 'medical' ? '🏥' : req.helpType === 'flood' ? '🌊' : req.helpType === 'fire' ? '🔥' : '🆘'}</span>
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100 truncate">{req.title}</p>
+                              <p className="text-xs text-neutral-500">{req.helpers?.length || 0} helpers · {req.location?.district}</p>
+                            </div>
+                            <span className={`text-xs px-2 py-0.5 rounded-full ${
+                              req.status === 'resolved' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300' : 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300'
+                            }`}>
+                              {req.status === 'resolved' ? '✓ সমাধান' : 'সক্রিয়'}
+                            </span>
+                          </Link>
+                        ))}
+                      </div>
+                    </Card>
+                  )}
+
+                  {helpHistory.given?.length === 0 && helpHistory.received?.length === 0 && (
+                    <div className="text-center py-8">
+                      <p className="text-4xl mb-2">🤝</p>
+                      <p className="text-sm text-neutral-500">এখনো কোনো সাহায্যের ইতিহাস নেই</p>
+                    </div>
+                  )}
+                </>
+              ) : null}
             </div>
           )}
         </div>
