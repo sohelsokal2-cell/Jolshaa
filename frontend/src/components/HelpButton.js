@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import { useAuth } from '../../context/AuthContext';
-import { useSocket } from '../../context/SocketContext';
-import API from '../../api/axios';
+import { useAuth } from '../context/AuthContext';
+import { useSocket } from '../context/SocketContext';
+import API from '../api/axios';
 import CreateHelpRequestModal from './CreateHelpRequestModal';
 
 const HelpButton = ({ variant = 'floating' }) => {

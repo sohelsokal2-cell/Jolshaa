@@ -6,13 +6,6 @@ const { getIO } = require('../socket');
 
 const VOTE_TYPES = ['true', 'false', 'misleading'];
 
-const calculateWeightedVote = (user) => {
-  if (!user || !user.createdAt) return 1;
-  const accountAgeMs = Date.now() - new Date(user.createdAt).getTime();
-  const sevenDaysMs = 7 * 24 * 60 * 60 * 1000;
-  return accountAgeMs < sevenDaysMs ? 0.5 : 1;
-};
-
 const recalculateStatus = (factCheck) => {
   const { trueVotes, falseVotes, misleadingVotes, totalVotes } = factCheck;
   if (totalVotes < 10) return 'unverified';
@@ -83,16 +76,16 @@ exports.vote = async (req, res) => {
     const userId = req.user._id;
     const voteField = `${vote}Votes`;
 
-    // Remove from any previous vote arrays
-    fc.trueVotes = fc.trueVotes.filter(uid => uid.toString() !== userId.toString());
-    fc.falseVotes = fc.falseVotes.filter(uid => uid.toString() !== userId.toString());
-    fc.misleadingVotes = fc.misleadingVotes.filter(uid => uid.toString() !== userId.toString());
-
     // Check if user already voted the same way (toggle off)
     const alreadyVoted = fc[voteField].some(uid => uid.toString() === userId.toString());
     if (alreadyVoted) {
+      fc[voteField] = fc[voteField].filter(uid => uid.toString() !== userId.toString());
       fc.totalVotes = Math.max(0, fc.totalVotes - 1);
     } else {
+      // Remove from other vote arrays
+      fc.trueVotes = fc.trueVotes.filter(uid => uid.toString() !== userId.toString());
+      fc.falseVotes = fc.falseVotes.filter(uid => uid.toString() !== userId.toString());
+      fc.misleadingVotes = fc.misleadingVotes.filter(uid => uid.toString() !== userId.toString());
       fc[voteField].push(userId);
       fc.totalVotes += 1;
     }

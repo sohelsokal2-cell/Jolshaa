@@ -16,15 +16,11 @@ router.use(protect);
 
 router.post('/request', createRequest);
 router.get('/nearby', getNearby);
+router.post('/posts/:id/help', createPostHelp);
+router.get('/user/:id/history', getHelpHistory);
 router.get('/:id', getRequest);
 router.post('/:id/offer', offerHelp);
 router.put('/:id/accept/:helperId', acceptHelper);
 router.put('/:id/resolve', resolveRequest);
-
-// Post-to-help conversion
-router.post('/posts/:id/help', createPostHelp);
-
-// User help history
-router.get('/user/:id/history', getHelpHistory);
 
 module.exports = router;

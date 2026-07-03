@@ -2,6 +2,7 @@ import TopNavbar from './TopNavbar';
 import LeftSidebar from './LeftSidebar';
 import RightSidebar from './RightSidebar';
 import BottomNav from './BottomNav';
+import HelpButton from '../HelpButton';
 
 const Layout = ({ children, showSidebar = true }) => {
   return (
@@ -46,6 +47,7 @@ const Layout = ({ children, showSidebar = true }) => {
       </div>
 
       <BottomNav />
+      <HelpButton variant="floating" />
     </div>
   );
 };

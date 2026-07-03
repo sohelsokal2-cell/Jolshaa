@@ -160,20 +160,51 @@ exports.getNearby = async (req, res) => {
     if (division) query['location.division'] = division;
     if (helpType && helpType !== 'all') query.helpType = helpType;
 
-    let sortOption = { urgency: 1, createdAt: -1 };
-    if (sort === 'newest') sortOption = { createdAt: -1 };
-    if (sort === 'urgent') sortOption = { urgency: 1, createdAt: -1 };
-
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 20;
     const skip = (page - 1) * limit;
 
-    const requests = await HelpRequest.find(query)
-      .sort(sortOption)
-      .skip(skip)
-      .limit(limit)
-      .populate('requester', 'name profilePhoto')
-      .select('-helpers');
+    let requests;
+    if (sort === 'urgent') {
+      requests = await HelpRequest.aggregate([
+        { $match: query },
+        {
+          $addFields: {
+            urgencyOrder: {
+              $switch: {
+                branches: [
+                  { case: { $eq: ['$urgency', 'immediate'] }, then: 1 },
+                  { case: { $eq: ['$urgency', 'within_hours'] }, then: 2 },
+                  { case: { $eq: ['$urgency', 'within_days'] }, then: 3 },
+                ],
+                default: 4,
+              },
+            },
+          },
+        },
+        { $sort: { urgencyOrder: 1, createdAt: -1 } },
+        { $skip: skip },
+        { $limit: limit },
+        {
+          $lookup: {
+            from: 'users',
+            localField: 'requester',
+            foreignField: '_id',
+            as: 'requester',
+            pipeline: [{ $project: { name: 1, profilePhoto: 1 } }],
+          },
+        },
+        { $unwind: { path: '$requester', preserveNullAndEmptyArrays: true } },
+        { $project: { helpers: 0, urgencyOrder: 0 } },
+      ]);
+    } else {
+      requests = await HelpRequest.find(query)
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit)
+        .populate('requester', 'name profilePhoto')
+        .select('-helpers');
+    }
 
     const total = await HelpRequest.countDocuments(query);
 

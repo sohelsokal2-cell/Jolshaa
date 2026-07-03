@@ -7,16 +7,41 @@ const FactCheckBadge = ({ post, onUpdate }) => {
   const [showModal, setShowModal] = useState(false);
   const [factCheck, setFactCheck] = useState(post.factCheck || null);
 
-  if (!factCheck) return null;
-
-  const { status, adminVerdict, adminNote, verifiedByAdmin, totalVotes } = factCheck;
-
-  const effectiveStatus = adminVerdict || status;
-
   const handleVoteUpdate = (updatedFc) => {
     setFactCheck(updatedFc);
     if (onUpdate) onUpdate(updatedFc);
   };
+
+  // No factCheck yet — show vote button to initiate
+  if (!factCheck) {
+    return (
+      <>
+        <div className="ml-[52px] mt-1">
+          <button
+            onClick={() => setShowModal(true)}
+            className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs text-neutral-500 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors"
+          >
+            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9" />
+            </svg>
+            সত্যি নাকি গুজব?
+          </button>
+        </div>
+        {showModal && (
+          <FactCheckVoteModal
+            postId={post._id}
+            factCheck={factCheck}
+            onClose={() => setShowModal(false)}
+            onUpdate={handleVoteUpdate}
+          />
+        )}
+      </>
+    );
+  }
+
+  const { status, adminVerdict, adminNote, verifiedByAdmin, totalVotes } = factCheck;
+
+  const effectiveStatus = adminVerdict || status;
 
   // Admin verdict badge - overrides everything
   if (verifiedByAdmin && adminVerdict) {
