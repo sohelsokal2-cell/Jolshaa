@@ -1,8 +1,11 @@
 const express = require('express');
 const http = require('http');
 const cors = require('cors');
+const dns = require('dns');
 const dotenv = require('dotenv');
 const connectDB = require('./config/db');
+
+dns.setServers(['8.8.8.8', '1.1.1.1']);
 const { initSocket } = require('./socket');
 const { authLimiter, postLimiter, commentLimiter, reportLimiter, messageLimiter, generalLimiter } = require('./middleware/rateLimiter');
 const { performanceMonitor } = require('./services/performanceMonitor');

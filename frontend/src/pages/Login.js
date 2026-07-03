@@ -1,8 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import Button from '../components/ui/Button';
 import Input from '../components/ui/Input';
+
+const TURNSTILE_SITE_KEY = process.env.REACT_APP_TURNSTILE_SITE_KEY;
 
 const Login = () => {
   const [formData, setFormData] = useState({ email: '', password: '' });
@@ -10,6 +12,16 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!TURNSTILE_SITE_KEY) return;
+    const script = document.createElement('script');
+    script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js';
+    script.async = true;
+    script.defer = true;
+    document.head.appendChild(script);
+    return () => { document.head.removeChild(script); };
+  }, []);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -21,9 +33,14 @@ const Login = () => {
     const { email, password } = formData;
     if (!email || !password) return setError('All fields are required');
 
+    const turnstileToken = document.querySelector('[name=cf-turnstile-response]')?.value;
+    if (TURNSTILE_SITE_KEY && !turnstileToken) {
+      return setError('Please complete the captcha');
+    }
+
     setLoading(true);
     try {
-      await login(email, password);
+      await login(email, password, turnstileToken || '');
       navigate('/feed');
     } catch (err) {
       setError(err.response?.data?.message || 'Login failed');
@@ -72,6 +89,9 @@ const Login = () => {
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
               }
             />
+            {TURNSTILE_SITE_KEY && (
+              <div className="cf-turnstile" data-sitekey={TURNSTILE_SITE_KEY} data-theme="auto" />
+            )}
             <Button type="submit" fullWidth loading={loading} size="lg">
               Log In
             </Button>
