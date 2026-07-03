@@ -146,14 +146,14 @@ const Profile = () => {
         { key: 'posts', label: 'Posts' },
         { key: 'about', label: 'About' },
         { key: 'albums', label: 'Albums' },
-        { key: 'help', label: '🤝 সাহায্য' },
+        { key: 'help', label: '🤝 Help' },
       ]
     : [
         { key: 'posts', label: 'Posts' },
         { key: 'about', label: 'About' },
         { key: 'albums', label: 'Albums' },
         { key: 'friends', label: 'Friends', count: profileUser.friendCount || 0 },
-        { key: 'help', label: '🤝 সাহায্য' },
+        { key: 'help', label: '🤝 Help' },
       ];
 
   return (
@@ -387,11 +387,11 @@ const Profile = () => {
                     <div className="grid grid-cols-2 gap-4 text-center">
                       <div className="p-3 bg-green-50 dark:bg-green-900/20 rounded-xl">
                         <p className="text-2xl font-bold text-green-600 dark:text-green-400">{helpHistory.helpedOthersCount}</p>
-                        <p className="text-xs text-neutral-500 mt-0.5">🤝 সাহায্য করেছি</p>
+                        <p className="text-xs text-neutral-500 mt-0.5">🤝 Helped others</p>
                       </div>
                       <div className="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-xl">
                         <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">{helpHistory.helpedCount}</p>
-                        <p className="text-xs text-neutral-500 mt-0.5">💙 সাহায্য পেয়েছি</p>
+                        <p className="text-xs text-neutral-500 mt-0.5">💙 Received help</p>
                       </div>
                     </div>
                   </Card>
@@ -399,7 +399,7 @@ const Profile = () => {
                   {/* Given help */}
                   {helpHistory.given?.length > 0 && (
                     <Card>
-                      <h3 className="text-sm font-bold text-neutral-900 dark:text-neutral-100 mb-3">🤝 সাহায্য করেছি</h3>
+                      <h3 className="text-sm font-bold text-neutral-900 dark:text-neutral-100 mb-3">🤝 Helped Others</h3>
                       <div className="space-y-2">
                         {helpHistory.given.map(req => (
                           <Link
@@ -412,7 +412,7 @@ const Profile = () => {
                               <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100 truncate">{req.title}</p>
                               <p className="text-xs text-neutral-500">{req.requester?.name} · {req.location?.district}</p>
                             </div>
-                            <span className="text-xs text-green-600 dark:text-green-400">✓ সমাধান</span>
+                            <span className="text-xs text-green-600 dark:text-green-400">✓ Resolved</span>
                           </Link>
                         ))}
                       </div>
@@ -422,7 +422,7 @@ const Profile = () => {
                   {/* Received help */}
                   {helpHistory.received?.length > 0 && (
                     <Card>
-                      <h3 className="text-sm font-bold text-neutral-900 dark:text-neutral-100 mb-3">💙 সাহায্য পেয়েছি</h3>
+                      <h3 className="text-sm font-bold text-neutral-900 dark:text-neutral-100 mb-3">💙 Received Help</h3>
                       <div className="space-y-2">
                         {helpHistory.received.map(req => (
                           <Link
@@ -438,7 +438,7 @@ const Profile = () => {
                             <span className={`text-xs px-2 py-0.5 rounded-full ${
                               req.status === 'resolved' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300' : 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300'
                             }`}>
-                              {req.status === 'resolved' ? '✓ সমাধান' : 'সক্রিয়'}
+                              {req.status === 'resolved' ? '✓ Resolved' : 'Active'}
                             </span>
                           </Link>
                         ))}
@@ -449,7 +449,7 @@ const Profile = () => {
                   {helpHistory.given?.length === 0 && helpHistory.received?.length === 0 && (
                     <div className="text-center py-8">
                       <p className="text-4xl mb-2">🤝</p>
-                      <p className="text-sm text-neutral-500">এখনো কোনো সাহায্যের ইতিহাস নেই</p>
+                      <p className="text-sm text-neutral-500">No help history yet</p>
                     </div>
                   )}
                 </>

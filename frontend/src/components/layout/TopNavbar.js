@@ -139,7 +139,7 @@ const TopNavbar = () => {
 
             {showProfileMenu && (
               <div
-                className="dropdown absolute right-0 mt-2 w-64 rounded-2xl z-50 py-2 animate-scale-in bg-surface border border-white/10 backdrop-blur-xl shadow-2xl shadow-black/70 ring-1 ring-violet-500/10"
+                className="dropdown absolute right-0 mt-2 w-64 max-w-[calc(100vw-2rem)] rounded-2xl z-50 py-2 animate-scale-in bg-surface border border-white/10 backdrop-blur-xl shadow-2xl shadow-black/70 ring-1 ring-violet-500/10"
               >
                 {/* Profile header */}
                 <div className="px-4 py-3 mb-1 border-b border-white/7">

@@ -6,7 +6,6 @@ import Layout from '../components/layout/Layout';
 import StoriesBar from '../components/StoriesBar';
 import CreatePostBox from '../components/CreatePostBox';
 import PostCard from '../components/PostCard';
-import HelpButton from '../components/HelpButton';
 import { PostSkeleton } from '../components/ui/Skeleton';
 
 const AdCard = ({ ad, onImpression }) => {
@@ -211,7 +210,6 @@ const NewsFeed = () => {
           )}
         </>
       )}
-      <HelpButton variant="floating" />
     </Layout>
   );
 };

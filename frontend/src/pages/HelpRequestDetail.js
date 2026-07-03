@@ -85,23 +85,23 @@ const HelpRequestDetail = () => {
   const myOffer = request.helpers?.find(h => h.user?._id === user?.id || h.user === user?.id);
   const timeLeft = () => {
     const diff = new Date(request.expiresAt) - new Date();
-    if (diff <= 0) return 'মেয়াদ শেষ';
+    if (diff <= 0) return 'Expired';
     const hours = Math.floor(diff / (1000 * 60 * 60));
-    if (hours > 24) return `${Math.floor(hours / 24)}দ ${hours % 24}ঘ`;
-    return `${hours}ঘ বাকি`;
+    if (hours > 24) return `${Math.floor(hours / 24)}d ${hours % 24}h`;
+    return `${hours}h left`;
   };
 
   return (
     <Layout>
       <div className="max-w-2xl mx-auto px-4 py-4">
         <Link to="/help" className="text-sm text-primary-600 hover:underline mb-4 inline-flex items-center gap-1">
-          ← সাহায্য ফিড
+          ← Help Feed
         </Link>
 
         {/* Status banner */}
         {request.status === 'resolved' && (
           <div className="mt-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-xl p-4 mb-4">
-            <p className="text-sm font-bold text-green-700 dark:text-green-300">✅ সমাধান হয়েছে</p>
+            <p className="text-sm font-bold text-green-700 dark:text-green-300">✅ Resolved</p>
             {request.resolvedNote && (
               <p className="text-xs text-green-600/70 dark:text-green-400/70 mt-1">{request.resolvedNote}</p>
             )}
@@ -142,8 +142,8 @@ const HelpRequestDetail = () => {
             </div>
 
             <div className="flex items-center gap-4 text-xs text-neutral-500 mb-4">
-              <span>👁 {request.viewCount || 0} দেখেছেন</span>
-              <span>🤝 {request.helpers?.length || 0} জন সাহায্য করতে চেয়েছেন</span>
+              <span>👁 {request.viewCount || 0} views</span>
+              <span>🤝 {request.helpers?.length || 0} people want to help</span>
             </div>
 
             {/* Resolve button for owner */}
@@ -154,20 +154,20 @@ const HelpRequestDetail = () => {
                     <textarea
                       value={resolveNote}
                       onChange={(e) => setResolveNote(e.target.value)}
-                      placeholder="কীভাবে সমাধান হয়েছে লিখুন (ঐচ্ছিক)..."
+                      placeholder="Describe how it was resolved (optional)..."
                       className="w-full border border-neutral-300 dark:border-neutral-600 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-green-500/30 bg-white dark:bg-neutral-700 resize-none"
                       rows={3}
                     />
                     <div className="flex gap-2">
                       <Button variant="success" onClick={handleResolve} disabled={resolving}>
-                        {resolving ? '...' : '✅ সমাধান হয়েছে'}
+                        {resolving ? '...' : '✅ Resolved'}
                       </Button>
-                      <Button variant="secondary" onClick={() => setShowResolve(false)}>বাতিল</Button>
+                      <Button variant="secondary" onClick={() => setShowResolve(false)}>Cancel</Button>
                     </div>
                   </div>
                 ) : (
                   <Button variant="success" onClick={() => setShowResolve(true)}>
-                    ✅ সমস্যা সমাধান হয়েছে
+                    ✅ Issue Resolved
                   </Button>
                 )}
               </div>
@@ -179,7 +179,7 @@ const HelpRequestDetail = () => {
         {request.helpers?.length > 0 && (
           <div className="mt-4 bg-white dark:bg-neutral-800 rounded-xl shadow-card p-4">
             <h3 className="text-sm font-bold text-neutral-900 dark:text-neutral-100 mb-3">
-              🤝 সাহায্য করতে চেয়েছেন ({request.helpers.length})
+              🤝 People wanting to help ({request.helpers.length})
             </h3>
             <div className="space-y-3">
               {request.helpers.map((h) => (
@@ -194,7 +194,7 @@ const HelpRequestDetail = () => {
                         h.status === 'accepted' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300' :
                         'bg-neutral-100 text-neutral-500 dark:bg-neutral-700 dark:text-neutral-400'
                       }`}>
-                        {h.status === 'accepted' ? 'গ্রহণ করা হয়েছে' : 'অফার করেছেন'}
+                        {h.status === 'accepted' ? 'Accepted' : 'Offered'}
                       </span>
                     </div>
                     {h.message && (
@@ -207,7 +207,7 @@ const HelpRequestDetail = () => {
                         className="mt-2"
                         onClick={() => handleAccept(h._id)}
                       >
-                        গ্রহণ করুন 🤝
+                        Accept 🤝
                       </Button>
                     )}
                   </div>
@@ -221,12 +221,12 @@ const HelpRequestDetail = () => {
         {!isOwner && request.status === 'active' && !myOffer && (
           <div className="mt-4 bg-white dark:bg-neutral-800 rounded-xl shadow-card p-4">
             <h3 className="text-sm font-bold text-neutral-900 dark:text-neutral-100 mb-3">
-              সাহায্য করতে চান?
+              Want to help?
             </h3>
             <textarea
               value={offerMessage}
               onChange={(e) => setOfferMessage(e.target.value)}
-              placeholder="কীভাবে সাহায্য করতে পারবেন লিখুন..."
+              placeholder="Describe how you can help..."
               className="w-full border border-neutral-300 dark:border-neutral-600 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-green-500/30 bg-white dark:bg-neutral-700 resize-none mb-3"
               rows={3}
             />
@@ -236,7 +236,7 @@ const HelpRequestDetail = () => {
               disabled={!offerMessage.trim() || submitting}
               className="w-full"
             >
-              {submitting ? 'পাঠানো হচ্ছে...' : '🤝 আমি সাহায্য করতে পারি'}
+              {submitting ? 'Sending...' : '🤝 I can help'}
             </Button>
           </div>
         )}
@@ -244,14 +244,14 @@ const HelpRequestDetail = () => {
         {myOffer && (
           <div className="mt-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-xl p-4 text-center">
             <p className="text-sm font-medium text-green-700 dark:text-green-300">
-              ✅ আপনি সাহায্যের অফার পাঠিয়েছেন
+              ✅ You have sent a help offer
             </p>
           </div>
         )}
 
         {/* Coordination Chat */}
         {showChat && myConversation && (
-          <div className="mt-4" style={{ height: '450px' }}>
+          <div className="mt-4 h-[50vh] sm:h-[450px]">
             <HelpCoordinationChat
               helpRequest={request}
               conversation={myConversation}
@@ -281,7 +281,7 @@ const HelpRequestDetail = () => {
               }}
               className="w-full"
             >
-              💬 সাহায্য সমন্বয় চ্যাট
+              💬 Help Coordination Chat
             </Button>
           </div>
         )}

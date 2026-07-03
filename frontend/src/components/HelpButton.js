@@ -36,7 +36,7 @@ const HelpButton = ({ variant = 'floating' }) => {
           className="flex items-center gap-2 px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-full text-sm font-medium transition-colors shadow-lg shadow-red-500/25"
         >
           <span className="text-lg">🆘</span>
-          সাহায্য চাই
+          Need Help
         </button>
         {showModal && <CreateHelpRequestModal onClose={() => setShowModal(false)} />}
       </>
@@ -50,7 +50,7 @@ const HelpButton = ({ variant = 'floating' }) => {
         className={`fixed bottom-20 right-4 lg:bottom-6 lg:right-6 z-40 w-14 h-14 rounded-full bg-red-500 hover:bg-red-600 text-white shadow-lg shadow-red-500/30 flex items-center justify-center transition-all duration-300 hover:scale-110 ${
           hasActive ? 'animate-pulse' : ''
         }`}
-        title="সাহায্য চাই"
+        title="Need Help"
       >
         <span className="text-2xl">🆘</span>
       </button>

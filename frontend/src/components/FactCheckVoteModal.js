@@ -82,7 +82,7 @@ const FactCheckVoteModal = ({ postId, factCheck: initialFc, onClose, onUpdate })
         <div className="px-5 py-4 border-b border-neutral-100 dark:border-neutral-700">
           <div className="flex items-center justify-between">
             <h3 className="text-lg font-bold text-neutral-900 dark:text-neutral-100">
-              সত্যি নাকি গুজব?
+              Fact Check?
             </h3>
             <button onClick={onClose} className="text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200">
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -101,7 +101,7 @@ const FactCheckVoteModal = ({ postId, factCheck: initialFc, onClose, onUpdate })
               </svg>
               <div>
                 <p className="text-sm font-medium text-blue-700 dark:text-blue-300">
-                  যাচাইকৃত: {stats.adminVerdict === 'true' ? 'সত্যি' : stats.adminVerdict === 'false' ? 'গুজব' : 'বিভ্রান্তিকর'}
+                  Verified: {stats.adminVerdict === 'true' ? 'True' : stats.adminVerdict === 'false' ? 'Fake' : 'Misleading'}
                 </p>
                 {stats.adminNote && (
                   <p className="text-xs text-blue-600/70 dark:text-blue-400/70">{stats.adminNote}</p>
@@ -114,47 +114,47 @@ const FactCheckVoteModal = ({ postId, factCheck: initialFc, onClose, onUpdate })
         {/* Vote buttons */}
         <div className="p-5">
           <p className="text-sm text-neutral-600 dark:text-neutral-400 mb-4">
-            এই পোস্টটি সম্পর্কে আপনার মতামত দিন:
+            Share your opinion on this post:
           </p>
 
-          <div className="grid grid-cols-3 gap-3 mb-5">
+          <div className="grid grid-cols-3 gap-2 sm:gap-3 mb-5">
             <button
               onClick={() => handleVote('true')}
               disabled={voting}
-              className={`flex flex-col items-center gap-1.5 p-3 rounded-xl border-2 transition-all ${
+              className={`flex flex-col items-center gap-1 sm:gap-1.5 p-2 sm:p-3 rounded-xl border-2 transition-all ${
                 userVote === 'true'
                   ? 'border-green-500 bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300'
                   : 'border-neutral-200 dark:border-neutral-700 hover:border-green-300 dark:hover:border-green-700 text-neutral-600 dark:text-neutral-400'
               } ${voting ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
             >
-              <span className="text-2xl">✓</span>
-              <span className="text-xs font-medium">সত্যি মনে হচ্ছে</span>
+              <span className="text-xl sm:text-2xl">✓</span>
+                <span className="text-[10px] sm:text-xs font-medium leading-tight">True</span>
             </button>
 
             <button
               onClick={() => handleVote('false')}
               disabled={voting}
-              className={`flex flex-col items-center gap-1.5 p-3 rounded-xl border-2 transition-all ${
+              className={`flex flex-col items-center gap-1 sm:gap-1.5 p-2 sm:p-3 rounded-xl border-2 transition-all ${
                 userVote === 'false'
                   ? 'border-red-500 bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-300'
                   : 'border-neutral-200 dark:border-neutral-700 hover:border-red-300 dark:hover:border-red-700 text-neutral-600 dark:text-neutral-400'
               } ${voting ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
             >
-              <span className="text-2xl">✗</span>
-              <span className="text-xs font-medium">মিথ্যা মনে হচ্ছে</span>
+              <span className="text-xl sm:text-2xl">✗</span>
+                <span className="text-[10px] sm:text-xs font-medium leading-tight">Fake</span>
             </button>
 
             <button
               onClick={() => handleVote('misleading')}
               disabled={voting}
-              className={`flex flex-col items-center gap-1.5 p-3 rounded-xl border-2 transition-all ${
+              className={`flex flex-col items-center gap-1 sm:gap-1.5 p-2 sm:p-3 rounded-xl border-2 transition-all ${
                 userVote === 'misleading'
                   ? 'border-orange-500 bg-orange-50 dark:bg-orange-900/20 text-orange-700 dark:text-orange-300'
                   : 'border-neutral-200 dark:border-neutral-700 hover:border-orange-300 dark:hover:border-orange-700 text-neutral-600 dark:text-neutral-400'
               } ${voting ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
             >
-              <span className="text-2xl">~</span>
-              <span className="text-xs font-medium">বিভ্রান্তিকর</span>
+              <span className="text-xl sm:text-2xl">~</span>
+                <span className="text-[10px] sm:text-xs font-medium leading-tight">Misleading</span>
             </button>
           </div>
 
@@ -162,29 +162,29 @@ const FactCheckVoteModal = ({ postId, factCheck: initialFc, onClose, onUpdate })
           {stats?.totalVotes > 0 && (
             <div className="mb-5">
               <div className="flex justify-between text-xs text-neutral-500 dark:text-neutral-400 mb-1.5">
-                <span>ভোট বিতরণ</span>
-                <span>{stats.totalVotes} জন ভোট দিয়েছেন</span>
+                <span>Vote Distribution</span>
+                <span>{stats.totalVotes} people voted</span>
               </div>
               <div className="h-3 bg-neutral-100 dark:bg-neutral-700 rounded-full overflow-hidden flex">
                 {dist.true > 0 && (
                   <div
                     className="bg-green-500 transition-all duration-500"
                     style={{ width: `${dist.true}%` }}
-                    title={`সত্যি: ${dist.true}%`}
+                    title={`True: ${dist.true}%`}
                   />
                 )}
                 {dist.false > 0 && (
                   <div
                     className="bg-red-500 transition-all duration-500"
                     style={{ width: `${dist.false}%` }}
-                    title={`মিথ্যা: ${dist.false}%`}
+                    title={`Fake: ${dist.false}%`}
                   />
                 )}
                 {dist.misleading > 0 && (
                   <div
                     className="bg-orange-500 transition-all duration-500"
                     style={{ width: `${dist.misleading}%` }}
-                    title={`বিভ্রান্তিকর: ${dist.misleading}%`}
+                    title={`Misleading: ${dist.misleading}%`}
                   />
                 )}
               </div>
@@ -203,20 +203,20 @@ const FactCheckVoteModal = ({ postId, factCheck: initialFc, onClose, onUpdate })
                 onClick={() => setShowReportForm(true)}
                 className="text-sm text-primary-600 dark:text-primary-400 hover:underline"
               >
-                কারণ জানাতে চান?
+                Want to report?
               </button>
             ) : (
               <div className="space-y-3">
                 {reportSubmitted ? (
                   <p className="text-sm text-green-600 dark:text-green-400">
-                    আপনার রিপোর্ট জমা হয়েছে। ধন্যবাদ!
+                    Your report has been submitted. Thank you!
                   </p>
                 ) : (
                   <>
                     <textarea
                       value={reportReason}
                       onChange={(e) => setReportReason(e.target.value)}
-                      placeholder="কেন মনে হচ্ছে এটি ভুল তথ্য..."
+                      placeholder="Why do you think this is false information..."
                       className="w-full border border-neutral-300 dark:border-neutral-600 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/30 focus:border-primary-500 bg-white dark:bg-neutral-700 resize-none"
                       rows={3}
                     />
@@ -226,13 +226,13 @@ const FactCheckVoteModal = ({ postId, factCheck: initialFc, onClose, onUpdate })
                         disabled={!reportReason.trim()}
                         className="px-4 py-1.5 bg-primary-600 text-white rounded-lg text-sm font-medium hover:bg-primary-700 transition-colors disabled:opacity-50"
                       >
-                        জমা দিন
+                        Submit
                       </button>
                       <button
                         onClick={() => { setShowReportForm(false); setReportReason(''); }}
                         className="px-4 py-1.5 bg-neutral-200 dark:bg-neutral-700 text-neutral-700 dark:text-neutral-200 rounded-lg text-sm font-medium hover:bg-neutral-300 dark:hover:bg-neutral-600 transition-colors"
                       >
-                        বাতিল
+                        Cancel
                       </button>
                     </div>
                   </>

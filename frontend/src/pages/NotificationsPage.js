@@ -74,8 +74,8 @@ const NotificationsPage = () => {
   return (
     <Layout>
       <div className="max-w-2xl mx-auto py-6 px-4">
-        <div className="flex items-center justify-between mb-6">
-          <h1 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">Notifications</h1>
+        <div className="flex items-center justify-between gap-3 mb-6">
+          <h1 className="text-xl sm:text-2xl font-bold text-neutral-900 dark:text-neutral-100">Notifications</h1>
           {notifications.some(n => !n.isRead) && (
             <Button size="sm" variant="ghost" onClick={markAllAsRead}>Mark all read</Button>
           )}

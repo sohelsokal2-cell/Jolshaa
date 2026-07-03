@@ -39,11 +39,19 @@ const conversationSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
   }],
-  watchParty: {
-    active: { type: Boolean, default: false },
-    videoUrl: { type: String, default: '' },
-    host: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
-    viewers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+  deletedBy: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  }],
+  lastMessage: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Message',
+    default: null
+  },
+  unreadCount: {
+    type: Map,
+    of: Number,
+    default: {}
   },
   conversationType: {
     type: String,
@@ -55,10 +63,26 @@ const conversationSchema = new mongoose.Schema({
     ref: 'HelpRequest',
     default: null
   },
+  disappearingMessages: {
+    enabled: { type: Boolean, default: false },
+    duration: { type: Number, default: 0 }
+  },
+  watchParty: {
+    active: { type: Boolean, default: false },
+    videoUrl: { type: String, default: '' },
+    host: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
+    viewers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+  },
+  createdBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    default: null
+  }
 }, {
   timestamps: true
 });
 
 conversationSchema.index({ participants: 1 });
+conversationSchema.index({ lastMessage: 1 });
 
 module.exports = mongoose.model('Conversation', conversationSchema);

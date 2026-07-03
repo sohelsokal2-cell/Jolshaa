@@ -15,9 +15,9 @@ const URGENCY_COLORS = {
 };
 
 const URGENCY_LABELS = {
-  immediate: '🔴 এখনই দরকার',
-  within_hours: '🟡 কয়েক ঘণ্টার মধ্যে',
-  within_days: '🟢 কয়েক দিনের মধ্যে',
+  immediate: '🔴 Immediate',
+  within_hours: '🟡 Within hours',
+  within_days: '🟢 Within days',
 };
 
 const HelpRequestCard = ({ request, onOfferSubmitted }) => {
@@ -29,12 +29,12 @@ const HelpRequestCard = ({ request, onOfferSubmitted }) => {
 
   const timeLeft = () => {
     const diff = new Date(request.expiresAt) - new Date();
-    if (diff <= 0) return 'মেয়াদ শেষ';
+    if (diff <= 0) return 'Expired';
     const hours = Math.floor(diff / (1000 * 60 * 60));
     const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-    if (hours > 24) return `${Math.floor(hours / 24)}দ ${hours % 24}ঘ`;
-    if (hours > 0) return `${hours}ঘ ${minutes}মি`;
-    return `${minutes}মি`;
+    if (hours > 24) return `${Math.floor(hours / 24)}d ${hours % 24}h`;
+    if (hours > 0) return `${hours}h ${minutes}m`;
+    return `${minutes}m`;
   };
 
   const handleOffer = async () => {
@@ -59,7 +59,7 @@ const HelpRequestCard = ({ request, onOfferSubmitted }) => {
       <div className={`px-4 py-2 border-b ${URGENCY_COLORS[request.urgency] || URGENCY_COLORS.immediate}`}>
         <div className="flex items-center justify-between">
           <span className="text-xs font-medium">{URGENCY_LABELS[request.urgency]}</span>
-          <span className="text-xs opacity-70">⏳ {timeLeft()} বাকি</span>
+          <span className="text-xs opacity-70">⏳ {timeLeft()} left</span>
         </div>
       </div>
 
@@ -91,7 +91,7 @@ const HelpRequestCard = ({ request, onOfferSubmitted }) => {
             onClick={() => setExpanded(!expanded)}
             className="text-xs text-primary-600 dark:text-primary-400 hover:underline mb-3"
           >
-            {expanded ? 'কম দেখুন' : 'আরো দেখুন'}
+            {expanded ? 'Show less' : 'Show more'}
           </button>
         )}
 
@@ -101,20 +101,20 @@ const HelpRequestCard = ({ request, onOfferSubmitted }) => {
             <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
             </svg>
-            {helperCount} জন সাহায্য করতে চেয়েছেন
+            {helperCount} people want to help
           </span>
           <span className="text-neutral-300 dark:text-neutral-600">·</span>
-          <span>{request.viewCount || 0} দেখেছেন</span>
+          <span>{request.viewCount || 0} views</span>
         </div>
 
         {/* Offer section */}
         {offered ? (
           <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-xl p-3 text-center">
             <p className="text-sm font-medium text-green-700 dark:text-green-300">
-              ✅ অফার পাঠানো হয়েছে!
+              ✅ Offer sent!
             </p>
             <p className="text-xs text-green-600/70 dark:text-green-400/70 mt-0.5">
-              অনুরোধকারী আপনার সাথে যোগাযোগ করবেন
+              The requester will contact you
             </p>
           </div>
         ) : (
@@ -122,7 +122,7 @@ const HelpRequestCard = ({ request, onOfferSubmitted }) => {
             <textarea
               value={offerMessage}
               onChange={(e) => setOfferMessage(e.target.value)}
-              placeholder="কীভাবে সাহায্য করতে পারবেন লিখুন..."
+              placeholder="Describe how you can help..."
               className="w-full border border-neutral-300 dark:border-neutral-600 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-green-500/30 focus:border-green-500 bg-white dark:bg-neutral-700 resize-none"
               rows={2}
             />
@@ -136,7 +136,7 @@ const HelpRequestCard = ({ request, onOfferSubmitted }) => {
               ) : (
                 <>
                   <span>🤝</span>
-                  আমি সাহায্য করতে পারি
+                  I can help
                 </>
               )}
             </button>

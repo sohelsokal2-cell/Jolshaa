@@ -107,9 +107,9 @@ const HelpCoordinationChat = ({ helpRequest, conversation: initialConversation, 
   };
 
   const urgencyLabels = {
-    urgent: 'জরুরি',
-    within_hours: '২৪ ঘণ্টার মধ্যে',
-    within_days: '৭ দিনের মধ্যে',
+    urgent: 'Urgent',
+    within_hours: 'Within 24 hours',
+    within_days: 'Within 7 days',
   };
 
   return (
@@ -143,7 +143,7 @@ const HelpCoordinationChat = ({ helpRequest, conversation: initialConversation, 
         <div className="flex items-center gap-3 mt-2 text-xs text-neutral-500">
           <span>📞 {helpRequest.contactPhone}</span>
           {helpRequest.helpers?.length > 0 && (
-            <span>🤝 {helpRequest.helpers.length} জন সাহায্য করছেন</span>
+            <span>🤝 {helpRequest.helpers.length} helping</span>
           )}
         </div>
       </div>
@@ -153,12 +153,12 @@ const HelpCoordinationChat = ({ helpRequest, conversation: initialConversation, 
         {loading ? (
           <div className="text-center text-neutral-500 py-8">
             <div className="w-8 h-8 border-2 border-red-500 border-t-transparent rounded-full animate-spin mx-auto mb-2" />
-            চ্যাট লোড হচ্ছে...
+            Loading chat...
           </div>
         ) : messages.length === 0 ? (
           <div className="text-center py-8">
             <p className="text-3xl mb-2">🤝</p>
-            <p className="text-sm text-neutral-500">চ্যাট শুরু করুন</p>
+            <p className="text-sm text-neutral-500">Start chatting</p>
           </div>
         ) : (
           messages.map((msg) => {
@@ -197,7 +197,7 @@ const HelpCoordinationChat = ({ helpRequest, conversation: initialConversation, 
               <span className="w-1.5 h-1.5 bg-red-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
               <span className="w-1.5 h-1.5 bg-red-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
             </div>
-            <span className="text-xs">{typingUsers.map(u => u.userName).join(', ')} টাইপ করছেন...</span>
+            <span className="text-xs">{typingUsers.map(u => u.userName).join(', ')} typing...</span>
           </div>
         )}
         <div ref={messagesEndRef} />
@@ -210,7 +210,7 @@ const HelpCoordinationChat = ({ helpRequest, conversation: initialConversation, 
             type="text" value={text}
             onChange={(e) => { setText(e.target.value); handleTypingEmit(); }}
             onKeyDown={handleKeyPress}
-            placeholder="বার্তা লিখুন..."
+            placeholder="Type a message..."
             className="flex-1 px-4 py-2 rounded-full border border-red-200 dark:border-red-900/50 bg-white dark:bg-neutral-800 text-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
           />
           <button onClick={handleSend} disabled={!text.trim()}

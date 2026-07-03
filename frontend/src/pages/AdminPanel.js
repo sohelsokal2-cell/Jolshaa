@@ -8089,7 +8089,7 @@ const FactCheckReviewTab = () => {
     <div className="space-y-4">
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h2 className="text-xl font-bold text-neutral-900 dark:text-neutral-100">গুজব রিভিউ</h2>
+          <h2 className="text-xl font-bold text-neutral-900 dark:text-neutral-100">Fact Check Review</h2>
           <p className="text-sm text-neutral-500 mt-1">
             Posts flagged by community votes for admin review
           </p>
@@ -8099,7 +8099,7 @@ const FactCheckReviewTab = () => {
 
       {posts.length === 0 ? (
         <Card className="p-8 text-center">
-          <p className="text-neutral-500">No flagged posts to review. সব ভালো!</p>
+          <p className="text-neutral-500">No flagged posts to review. All clear!</p>
         </Card>
       ) : (
         <div className="space-y-3">
@@ -8159,21 +8159,21 @@ const FactCheckReviewTab = () => {
                       variant="success"
                       onClick={() => { setVerdictModal(post); setVerdictType('true'); }}
                     >
-                      সত্যি নিশ্চিত করুন
+                      Confirm True
                     </Button>
                     <Button
                       size="xs"
                       variant="danger"
                       onClick={() => { setVerdictModal(post); setVerdictType('false'); }}
                     >
-                      গুজব নিশ্চিত করুন
+                      Confirm Fake
                     </Button>
                     <Button
                       size="xs"
                       variant="warning"
                       onClick={() => { setVerdictModal(post); setVerdictType('misleading'); }}
                     >
-                      বিভ্রান্তিকর
+                      Misleading
                     </Button>
                   </div>
                 </div>
@@ -8221,7 +8221,7 @@ const FactCheckReviewTab = () => {
           <div>
             <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
               Verdict: <span className="font-bold">
-                {verdictType === 'true' ? 'সত্যি' : verdictType === 'false' ? 'গুজব' : 'বিভ্রান্তিকর'}
+                {verdictType === 'true' ? 'True' : verdictType === 'false' ? 'Fake' : 'Misleading'}
               </span>
             </label>
             <textarea

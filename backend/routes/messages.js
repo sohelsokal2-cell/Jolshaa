@@ -7,12 +7,10 @@ const {
   reactToMessage,
   editMessage,
   deleteMessage,
+  forwardMessage,
+  pinMessage,
+  markAsSeen,
   searchMessages,
-  archiveConversation,
-  pinConversation,
-  muteConversation,
-  addGroupAdmin,
-  removeGroupAdmin,
   startWatchParty,
   joinWatchParty,
   endWatchParty,
@@ -21,15 +19,13 @@ const {
 router.use(protect);
 
 router.post('/', upload.single('media'), sendMessage);
+router.post('/forward', forwardMessage);
 router.get('/search/:conversationId', searchMessages);
 router.put('/:messageId/react', reactToMessage);
 router.put('/:messageId/edit', editMessage);
 router.delete('/:messageId', deleteMessage);
-router.put('/archive/:conversationId', archiveConversation);
-router.put('/pin/:conversationId', pinConversation);
-router.put('/mute/:conversationId', muteConversation);
-router.post('/group/:conversationId/admin', addGroupAdmin);
-router.delete('/group/:conversationId/admin/:userId', removeGroupAdmin);
+router.put('/:messageId/pin', pinMessage);
+router.put('/seen/:conversationId', markAsSeen);
 router.post('/watch-party/:conversationId/start', startWatchParty);
 router.post('/watch-party/:conversationId/join', joinWatchParty);
 router.post('/watch-party/:conversationId/end', endWatchParty);

@@ -2,20 +2,20 @@ import { useState } from 'react';
 import API from '../api/axios';
 
 const HELP_TYPES = [
-  { value: 'medical', label: '🏥 চিকিৎসা', labelEn: 'Medical' },
-  { value: 'flood', label: '🌊 বন্যা', labelEn: 'Flood' },
-  { value: 'fire', label: '🔥 আগুন', labelEn: 'Fire' },
-  { value: 'lost_person', label: '🔍 হারানো মানুষ', labelEn: 'Lost Person' },
-  { value: 'food', label: '🍲 খাবার', labelEn: 'Food' },
-  { value: 'shelter', label: '🏠 আশ্রয়', labelEn: 'Shelter' },
-  { value: 'financial', label: '💰 আর্থিক', labelEn: 'Financial' },
-  { value: 'other', label: '🆘 অন্যান্য', labelEn: 'Other' },
+  { value: 'medical', label: '🏥 Medical' },
+  { value: 'flood', label: '🌊 Flood' },
+  { value: 'fire', label: '🔥 Fire' },
+  { value: 'lost_person', label: '🔍 Lost Person' },
+  { value: 'food', label: '🍲 Food' },
+  { value: 'shelter', label: '🏠 Shelter' },
+  { value: 'financial', label: '💰 Financial' },
+  { value: 'other', label: '🆘 Other' },
 ];
 
 const URGENCY_OPTIONS = [
-  { value: 'immediate', label: 'এখনই দরকার', emoji: '🔴', hours: 6 },
-  { value: 'within_hours', label: 'কয়েক ঘণ্টার মধ্যে', emoji: '🟡', hours: 24 },
-  { value: 'within_days', label: 'কয়েক দিনের মধ্যে', emoji: '🟢', hours: 72 },
+  { value: 'immediate', label: 'Immediate', emoji: '🔴', hours: 6 },
+  { value: 'within_hours', label: 'Within hours', emoji: '🟡', hours: 24 },
+  { value: 'within_days', label: 'Within days', emoji: '🟢', hours: 72 },
 ];
 
 const DIVISIONS = [
@@ -86,7 +86,7 @@ const CreateHelpRequestModal = ({ onClose, post }) => {
         <div className="px-5 py-4 border-b border-neutral-100 dark:border-neutral-700 sticky top-0 bg-white dark:bg-neutral-800 z-10">
           <div className="flex items-center justify-between">
             <h3 className="text-lg font-bold text-neutral-900 dark:text-neutral-100">
-              🆘 সাহায্য চাই
+              🆘 Request Help
             </h3>
             <button onClick={onClose} className="text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200">
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -104,13 +104,13 @@ const CreateHelpRequestModal = ({ onClose, post }) => {
           {/* Title */}
           <div>
             <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
-              কী ধরনের সাহায্য দরকার? *
+              What kind of help is needed? *
             </label>
             <input
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="সংক্ষিপ্ত বিবরণ (সর্বোচ্চ ১০০ অক্ষর)"
+              placeholder="Brief description (max 100 chars)"
               maxLength={100}
               className="w-full border border-neutral-300 dark:border-neutral-600 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-500/30 focus:border-red-500 bg-white dark:bg-neutral-700"
             />
@@ -120,7 +120,7 @@ const CreateHelpRequestModal = ({ onClose, post }) => {
           {/* Help Type */}
           <div>
             <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
-              সাহায্যের ধরন *
+              Help Type *
             </label>
             <select
               value={helpType}
@@ -136,12 +136,12 @@ const CreateHelpRequestModal = ({ onClose, post }) => {
           {/* Description */}
           <div>
             <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
-              বিস্তারিত বিবরণ *
+              Detailed Description *
             </label>
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="কী ঘটেছে? কেন সাহায্য দরকার? কীভাবে সাহায্য করতে পারবেন?"
+              placeholder="What happened? Why is help needed? How can you help?"
               className="w-full border border-neutral-300 dark:border-neutral-600 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-500/30 bg-white dark:bg-neutral-700 resize-none"
               rows={4}
             />
@@ -150,7 +150,7 @@ const CreateHelpRequestModal = ({ onClose, post }) => {
           {/* Urgency */}
           <div>
             <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
-              জরুরি মাত্রা *
+              Urgency Level *
             </label>
             <div className="grid grid-cols-3 gap-2">
               {URGENCY_OPTIONS.map(opt => (
@@ -170,21 +170,21 @@ const CreateHelpRequestModal = ({ onClose, post }) => {
               ))}
             </div>
             <p className="text-xs text-neutral-400 mt-1.5">
-              মূল্যায়ন: {expiryHours} ঘণ্টা পর এই অনুরোধ মেয়াদোত্তীর্ণ হবে
+              Note: This request will expire in {expiryHours} hours
             </p>
           </div>
 
           {/* Location */}
           <div className="space-y-3">
             <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300">
-              অবস্থান *
+              Location *
             </label>
             <select
               value={division}
               onChange={(e) => { setDivision(e.target.value); setDistrict(''); }}
               className="w-full border border-neutral-300 dark:border-neutral-600 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-500/30 bg-white dark:bg-neutral-700"
             >
-              <option value="">বিভাগ নির্বাচন করুন</option>
+              <option value="">Select Division</option>
               {DIVISIONS.map(d => <option key={d} value={d}>{d}</option>)}
             </select>
 
@@ -194,7 +194,7 @@ const CreateHelpRequestModal = ({ onClose, post }) => {
                 onChange={(e) => setDistrict(e.target.value)}
                 className="w-full border border-neutral-300 dark:border-neutral-600 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-500/30 bg-white dark:bg-neutral-700"
               >
-                <option value="">জেলা নির্বাচন করুন</option>
+                <option value="">Select District</option>
                 {(DISTRICTS[division] || []).map(d => <option key={d} value={d}>{d}</option>)}
               </select>
             )}
@@ -204,7 +204,7 @@ const CreateHelpRequestModal = ({ onClose, post }) => {
                 type="text"
                 value={upazila}
                 onChange={(e) => setUpazila(e.target.value)}
-                placeholder="উপজেলা (ঐচ্ছিক)"
+                placeholder="Upazila (optional)"
                 className="w-full border border-neutral-300 dark:border-neutral-600 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-500/30 bg-white dark:bg-neutral-700"
               />
             )}
@@ -219,10 +219,10 @@ const CreateHelpRequestModal = ({ onClose, post }) => {
             {loading ? (
               <>
                 <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                পাঠানো হচ্ছে...
+                Sending...
               </>
             ) : (
-              'সাহায্যের অনুরোধ পাঠাও 🆘'
+              'Submit Help Request 🆘'
             )}
           </button>
         </form>

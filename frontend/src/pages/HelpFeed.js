@@ -8,20 +8,20 @@ import CreateHelpRequestModal from '../components/CreateHelpRequestModal';
 import { PostSkeleton } from '../components/ui/Skeleton';
 
 const FILTER_OPTIONS = [
-  { value: 'all', label: 'সব', icon: '📋' },
-  { value: 'medical', label: 'চিকিৎসা', icon: '🏥' },
-  { value: 'flood', label: 'বন্যা', icon: '🌊' },
-  { value: 'fire', label: 'আগুন', icon: '🔥' },
-  { value: 'lost_person', label: 'হারানো মানুষ', icon: '🔍' },
-  { value: 'food', label: 'খাবার', icon: '🍲' },
-  { value: 'shelter', label: 'আশ্রয়', icon: '🏠' },
-  { value: 'financial', label: 'আর্থিক', icon: '💰' },
-  { value: 'other', label: 'অন্যান্য', icon: '🆘' },
+  { value: 'all', label: 'All', icon: '📋' },
+  { value: 'medical', label: 'Medical', icon: '🏥' },
+  { value: 'flood', label: 'Flood', icon: '🌊' },
+  { value: 'fire', label: 'Fire', icon: '🔥' },
+  { value: 'lost_person', label: 'Lost Person', icon: '🔍' },
+  { value: 'food', label: 'Food', icon: '🍲' },
+  { value: 'shelter', label: 'Shelter', icon: '🏠' },
+  { value: 'financial', label: 'Financial', icon: '💰' },
+  { value: 'other', label: 'Other', icon: '🆘' },
 ];
 
 const SORT_OPTIONS = [
-  { value: 'urgent', label: 'সবচেয়ে জরুরি' },
-  { value: 'newest', label: 'নতুন' },
+  { value: 'urgent', label: 'Most Urgent' },
+  { value: 'newest', label: 'Newest' },
 ];
 
 const HelpFeed = () => {
@@ -49,7 +49,7 @@ const HelpFeed = () => {
       };
 
       const handleUrgentAlert = (data) => {
-        setNewRequestAlert(`🚨 জরুরি: ${data.title}`);
+        setNewRequestAlert(`🚨 Urgent: ${data.title}`);
         setTimeout(() => setNewRequestAlert(null), 8000);
       };
 
@@ -102,13 +102,13 @@ const HelpFeed = () => {
         <div className="max-w-2xl mx-auto px-4 py-12 text-center">
           <div className="text-6xl mb-4">🆘</div>
           <h2 className="text-xl font-bold text-neutral-900 dark:text-neutral-100 mb-2">
-            সাহায্য চাই
+            Request Help
           </h2>
           <p className="text-sm text-neutral-500 mb-4">
-            আপনার অবস্থান সেট করুন যাতে আপনার এলাকার সাহায্যের অনুরোধ দেখতে পান।
+            Set your location to see help requests in your area.
           </p>
           <a href="/profile/edit" className="text-sm text-primary-600 hover:underline">
-            প্রোফাইল এডিট করুন →
+            Edit profile →
           </a>
         </div>
       </Layout>
@@ -119,18 +119,18 @@ const HelpFeed = () => {
     <Layout>
       <div className="max-w-2xl mx-auto px-4 py-4">
         {/* Header */}
-        <div className="flex items-center justify-between mb-4">
-          <div>
-            <h1 className="text-xl font-bold text-neutral-900 dark:text-neutral-100 flex items-center gap-2">
-              🆘 সাহায্য চাই
+        <div className="flex items-start justify-between gap-3 mb-4">
+          <div className="min-w-0">
+            <h1 className="text-lg sm:text-xl font-bold text-neutral-900 dark:text-neutral-100">
+              🆘               Request Help
             </h1>
-            <p className="text-xs text-neutral-500 mt-0.5">{district} — সক্রিয় সাহায্যের অনুরোধ</p>
+            <p className="text-xs text-neutral-500 mt-0.5 truncate">{district} — Active help requests</p>
           </div>
           <button
             onClick={() => setShowCreate(true)}
-            className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-full text-sm font-medium transition-colors shadow-lg shadow-red-500/25"
+            className="px-3 sm:px-4 py-1.5 sm:py-2 bg-red-500 hover:bg-red-600 text-white rounded-full text-xs sm:text-sm font-medium transition-colors shadow-lg shadow-red-500/25 flex-shrink-0"
           >
-            + নতুন
+            + New
           </button>
         </div>
 
@@ -186,8 +186,8 @@ const HelpFeed = () => {
             <div className="text-5xl mb-3">✨</div>
             <p className="text-neutral-500 text-sm">
               {filter === 'all'
-                ? 'এই এলাকায় এখন কোনো সাহায্যের অনুরোধ নেই'
-                : 'এই ধরনের কোনো সাহায্যের অনুরোধ নেই'}
+                ? 'No help requests in this area yet'
+                : 'No help requests of this type'}
             </p>
           </div>
         ) : (

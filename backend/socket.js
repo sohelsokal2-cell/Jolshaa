@@ -14,10 +14,10 @@ const SOCKET_RATE_LIMIT = {
   sendMessage: { windowMs: 10_000, max: 10 },
   sendNotification: { windowMs: 10_000, max: 20 },
   liveComment: { windowMs: 60_000, max: 5 },
+  markAsSeen: { windowMs: 10_000, max: 30 },
 };
 
 const makeRateLimiter = () => {
-  // key: `${userId}:${action}` => { count, windowStart }
   const state = new Map();
   return (userId, action) => {
     const rule = SOCKET_RATE_LIMIT[action];
@@ -100,10 +100,6 @@ const initSocket = (httpServer) => {
     return Boolean(conversation);
   };
 
-  // Parity checks for socket liveComment:
-  // - comment restriction
-  // - block checks
-  // - post privacy / commentPrivacy checks
   const ensureCanLiveComment = async (reqUser, postId, text) => {
     if (!postId || !text || typeof text !== 'string' || text.trim().length === 0) {
       return { ok: false, message: 'Invalid comment' };
@@ -122,7 +118,6 @@ const initSocket = (httpServer) => {
     const post = await Post.findById(postId).select('author privacy');
     if (!post) return { ok: false, message: 'Post not found' };
 
-    // If post author != current user => enforce block/privacy
     if (post.author.toString() !== currentUser._id.toString()) {
       const postAuthor = await User.findById(post.author).select('blockedUsers privacy');
       const commenter = await User.findById(currentUser._id).select('blockedUsers');
@@ -149,7 +144,7 @@ const initSocket = (httpServer) => {
     // Enforce banned/suspended
     try {
       const freshUser = await User.findById(userId).select(
-        'isBanned isSuspended bannedAt bannedReason suspendedAt suspendedReason restrictions'
+        'isBanned isSuspended bannedAt bannedReason suspendedAt suspendedReason restrictions friends'
       );
       if (!freshUser) return socket.disconnect(true);
       if (freshUser.isBanned) return socket.disconnect(true);
@@ -165,14 +160,29 @@ const initSocket = (httpServer) => {
     if (!onlineUsers.has(userId)) onlineUsers.set(userId, new Set());
     onlineUsers.get(userId).add(socket.id);
 
-    io.emit('userOnline', userId);
+    // Update user lastSeen and activeStatus
+    try {
+      await User.findByIdAndUpdate(userId, { lastSeen: new Date(), activeStatus: 'online' });
+    } catch (e) { /* ignore */ }
+
+    // Notify friends that user came online
+    try {
+      const userFriends = socket.user.friends || [];
+      const friendIds = userFriends.map(id => id.toString());
+      for (const friendId of friendIds) {
+        if (onlineUsers.has(friendId)) {
+          io.to(`user:${friendId}`).emit('userOnline', userId);
+        }
+      }
+      // Also broadcast to all for backward compatibility
+      io.emit('userOnline', userId);
+    } catch (e) { /* ignore */ }
 
     socket.join(`user:${userId}`);
 
     // Help system: join district room
     socket.on('joinDistrictRoom', ({ district }) => {
       if (district && typeof district === 'string') {
-        // Leave any previous district rooms
         socket.rooms.forEach(room => {
           if (room.startsWith('district_')) {
             socket.leave(room);
@@ -193,8 +203,9 @@ const initSocket = (httpServer) => {
       socket.leave(`conversation:${conversationId}`);
     });
 
+    // Send message via socket
     socket.on('sendMessage', async (data) => {
-      const { conversationId, text, media } = data || {};
+      const { conversationId, text, media, mediaType, replyTo, forwardedFrom } = data || {};
       const rl = rateLimiter(userId, 'sendMessage');
       if (!rl.allowed) return sendSocketError(socket, 'Too many messages, slow down');
 
@@ -203,15 +214,37 @@ const initSocket = (httpServer) => {
       }
 
       try {
-        const message = await Message.create({
+        const messageData = {
           conversation: conversationId,
           sender: userId,
           text: text || '',
           media: media || null,
+          mediaType: mediaType || null,
+          replyTo: replyTo || null,
+          forwardedFrom: forwardedFrom || null,
           readBy: [userId],
-        });
+        };
 
+        const message = await Message.create(messageData);
         await message.populate('sender', 'name profilePhoto');
+        if (replyTo) {
+          await message.populate('replyTo');
+        }
+
+        // Update conversation lastMessage and unread counts
+        const conversation = await Conversation.findById(conversationId).select('participants');
+        const unreadInc = {};
+        if (conversation) {
+          conversation.participants.forEach(p => {
+            if (p.toString() !== userId.toString()) {
+              unreadInc[`unreadCount.${p.toString()}`] = 1;
+            }
+          });
+        }
+        await Conversation.findByIdAndUpdate(conversationId, {
+          lastMessage: message._id,
+          $inc: unreadInc,
+        });
 
         io.to(`conversation:${conversationId}`).emit('newMessage', {
           ...message.toObject(),
@@ -243,6 +276,112 @@ const initSocket = (httpServer) => {
       });
     });
 
+    // Mark messages as seen / read
+    socket.on('markAsSeen', async ({ conversationId, messageIds } = {}) => {
+      const rl = rateLimiter(userId, 'markAsSeen');
+      if (!rl.allowed) return;
+
+      if (!(await ensureConversationAccess(conversationId, userId))) return;
+
+      try {
+        // Reset unread count for this user
+        await Conversation.findByIdAndUpdate(conversationId, {
+          [`unreadCount.${userId}`]: 0,
+        });
+
+        if (messageIds && messageIds.length > 0) {
+          await Message.updateMany(
+            { _id: { $in: messageIds }, conversation: conversationId },
+            { $addToSet: { readBy: userId } }
+          );
+        }
+
+        socket.to(`conversation:${conversationId}`).emit('messagesSeen', {
+          conversationId,
+          userId,
+          seenAt: new Date(),
+        });
+      } catch (err) {
+        sendSocketError(socket, 'Failed to mark as seen');
+      }
+    });
+
+    // Forward a message
+    socket.on('forwardMessage', async (data) => {
+      const { originalMessageId, targetConversationIds, text } = data || {};
+
+      if (!originalMessageId || !targetConversationIds || targetConversationIds.length === 0) {
+        return sendSocketError(socket, 'Invalid forward data');
+      }
+
+      try {
+        const originalMessage = await Message.findById(originalMessageId);
+        if (!originalMessage) return sendSocketError(socket, 'Original message not found');
+
+        const forwardedMessages = [];
+
+        for (const targetConvId of targetConversationIds) {
+          if (!(await ensureConversationAccess(targetConvId, userId))) continue;
+
+          const message = await Message.create({
+            conversation: targetConvId,
+            sender: userId,
+            text: text || originalMessage.text,
+            media: originalMessage.media,
+            mediaType: originalMessage.mediaType,
+            fileName: originalMessage.fileName,
+            fileSize: originalMessage.fileSize,
+            voiceDuration: originalMessage.voiceDuration,
+            forwardedFrom: originalMessageId,
+            readBy: [userId],
+          });
+
+          await message.populate('sender', 'name profilePhoto');
+
+          await Conversation.findByIdAndUpdate(targetConvId, {
+            lastMessage: message._id,
+          });
+
+          io.to(`conversation:${targetConvId}`).emit('newMessage', {
+            ...message.toObject(),
+            conversationId: targetConvId,
+          });
+
+          forwardedMessages.push(message);
+        }
+
+        socket.emit('forwardSuccess', { messages: forwardedMessages });
+      } catch (err) {
+        sendSocketError(socket, 'Failed to forward message');
+      }
+    });
+
+    // Pin/Unpin message
+    socket.on('pinMessage', async ({ conversationId, messageId }) => {
+      if (!(await ensureConversationAccess(conversationId, userId))) return;
+
+      try {
+        const message = await Message.findById(messageId);
+        if (!message) return sendSocketError(socket, 'Message not found');
+
+        const wasPinned = message.isPinned;
+        message.isPinned = !wasPinned;
+        message.pinnedBy = wasPinned ? null : userId;
+        message.pinnedAt = wasPinned ? null : new Date();
+        await message.save();
+
+        io.to(`conversation:${conversationId}`).emit('messagePinned', {
+          conversationId,
+          messageId,
+          isPinned: message.isPinned,
+          pinnedBy: userId,
+        });
+      } catch (err) {
+        sendSocketError(socket, 'Failed to pin message');
+      }
+    });
+
+    // Send notification
     socket.on('sendNotification', async (data) => {
       const rl = rateLimiter(userId, 'sendNotification');
       if (!rl.allowed) return sendSocketError(socket, 'Too many notifications, slow down');
@@ -274,7 +413,6 @@ const initSocket = (httpServer) => {
         await notification.populate('sender', 'name profilePhoto');
         io.to(`user:${recipientId}`).emit('newNotification', notification);
       } catch (err) {
-        // avoid console spam: still standardize payload
         sendSocketError(socket, 'Failed to send notification');
       }
     });
@@ -316,7 +454,21 @@ const initSocket = (httpServer) => {
       }
     });
 
-    socket.on('disconnect', () => {
+    // Update active status
+    socket.on('updateActiveStatus', async ({ status } = {}) => {
+      const allowedStatuses = ['online', 'away', 'busy'];
+      if (!allowedStatuses.includes(status)) return;
+
+      try {
+        await User.findByIdAndUpdate(userId, { activeStatus: status });
+        const userFriends = socket.user.friends || [];
+        for (const friendId of userFriends) {
+          io.to(`user:${friendId.toString()}`).emit('activeStatusChanged', { userId, status });
+        }
+      } catch (e) { /* ignore */ }
+    });
+
+    socket.on('disconnect', async () => {
       console.log(`User disconnected: ${userId}`);
 
       const userSockets = onlineUsers.get(userId);
@@ -325,6 +477,23 @@ const initSocket = (httpServer) => {
       userSockets.delete(socket.id);
       if (userSockets.size === 0) {
         onlineUsers.delete(userId);
+
+        // Update lastSeen and activeStatus
+        try {
+          await User.findByIdAndUpdate(userId, { lastSeen: new Date(), activeStatus: 'offline' });
+        } catch (e) { /* ignore */ }
+
+        // Notify friends that user went offline
+        try {
+          const freshUser = await User.findById(userId).select('friends');
+          const friendIds = (freshUser?.friends || []).map(id => id.toString());
+          for (const friendId of friendIds) {
+            if (onlineUsers.has(friendId)) {
+              io.to(`user:${friendId}`).emit('userOffline', userId);
+            }
+          }
+        } catch (e) { /* ignore */ }
+
         io.emit('userOffline', userId);
       }
     });

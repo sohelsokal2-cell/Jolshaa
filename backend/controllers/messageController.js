@@ -20,9 +20,8 @@ const uploadToCloudinary = (buffer, folder, resourceType = 'auto') => {
 
 exports.sendMessage = async (req, res) => {
   try {
-    const { conversationId, text, replyTo } = req.body;
+    const { conversationId, text, replyTo, forwardedFrom } = req.body;
 
-    const User = require('../models/User');
     const currentUser = await User.findById(req.user._id).select('restrictions');
     const msgRestricted = currentUser.restrictions?.find(r => r.type === 'message' && (!r.expiresAt || r.expiresAt > new Date()));
     if (msgRestricted) {
@@ -41,6 +40,7 @@ exports.sendMessage = async (req, res) => {
     let fileName = null;
     let fileSize = null;
     let voiceDuration = null;
+    let mediaMetadata = {};
 
     if (req.file) {
       const isAudio = req.file.mimetype.startsWith('audio/');
@@ -51,10 +51,16 @@ exports.sendMessage = async (req, res) => {
       media = result.secure_url;
       fileName = req.file.originalname;
       fileSize = req.file.size;
+      mediaMetadata = {
+        width: result.width || null,
+        height: result.height || null,
+        duration: result.duration || null,
+      };
 
       if (isAudio) {
         mediaType = req.body.isVoice === 'true' ? 'voice' : 'audio';
         voiceDuration = parseFloat(req.body.duration) || null;
+        mediaMetadata.duration = voiceDuration;
       } else if (isVideo) {
         mediaType = 'video';
       } else if (req.file.mimetype.startsWith('image/')) {
@@ -64,7 +70,7 @@ exports.sendMessage = async (req, res) => {
       }
     }
 
-    const message = await Message.create({
+    const messageData = {
       conversation: conversationId,
       sender: req.user._id,
       text: text || '',
@@ -73,17 +79,31 @@ exports.sendMessage = async (req, res) => {
       fileName,
       fileSize,
       voiceDuration,
+      mediaMetadata,
       replyTo: replyTo || null,
+      forwardedFrom: forwardedFrom || null,
       readBy: [req.user._id],
-    });
+    };
 
-    await message.populate('sender', 'name profilePhoto');
-    if (replyTo) {
-      await message.populate('replyTo');
+    // Link preview detection
+    if (text && !media) {
+      const urlRegex = /(https?:\/\/[^\s]+)/g;
+      const urls = text.match(urlRegex);
+      if (urls && urls.length > 0) {
+        messageData.linkPreview = { url: urls[0] };
+      }
     }
 
-    conversation.updatedAt = new Date();
-    await conversation.save();
+    const message = await Message.create(messageData);
+
+    await message.populate('sender', 'name profilePhoto');
+    if (replyTo) await message.populate('replyTo');
+    if (forwardedFrom) await message.populate('forwardedFrom');
+
+    await Conversation.findByIdAndUpdate(conversationId, {
+      lastMessage: message._id,
+      updatedAt: new Date(),
+    });
 
     getIO().to(`conversation:${conversationId}`).emit('newMessage', {
       ...message.toObject(),
@@ -100,7 +120,7 @@ exports.sendMessage = async (req, res) => {
         message: {
           _id: message._id,
           text: message.text,
-          sender: { _id: req.user._id, name: req.user.name, profilePhoto: req.user.profilePhoto },
+          sender: { _id: message.sender._id, name: message.sender.name, profilePhoto: message.sender.profilePhoto },
         },
       });
     }
@@ -154,6 +174,19 @@ exports.editMessage = async (req, res) => {
       return res.status(403).json({ message: 'Not authorized' });
     }
 
+    const editWindowMs = 15 * 60 * 1000;
+    const messageAge = Date.now() - new Date(message.createdAt).getTime();
+    if (messageAge > editWindowMs) {
+      return res.status(400).json({ message: 'Edit window has expired (15 minutes)' });
+    }
+
+    if (message.text && message.text !== text) {
+      message.editHistory.push({
+        text: message.text,
+        editedAt: new Date(),
+      });
+    }
+
     message.text = text;
     message.isEdited = true;
     await message.save();
@@ -161,6 +194,7 @@ exports.editMessage = async (req, res) => {
     getIO().to(`conversation:${message.conversation}`).emit('messageEdited', {
       messageId: message._id,
       text,
+      editHistory: message.editHistory,
     });
 
     res.json({ message });
@@ -171,22 +205,171 @@ exports.editMessage = async (req, res) => {
 
 exports.deleteMessage = async (req, res) => {
   try {
+    const { deleteForEveryone } = req.body;
     const message = await Message.findById(req.params.messageId);
     if (!message) return res.status(404).json({ message: 'Message not found' });
-    if (message.sender.toString() !== req.user._id.toString()) {
+
+    if (deleteForEveryone) {
+      if (message.sender.toString() !== req.user._id.toString()) {
+        return res.status(403).json({ message: 'Not authorized' });
+      }
+
+      const deleteWindowMs = 10 * 60 * 1000;
+      const messageAge = Date.now() - new Date(message.createdAt).getTime();
+      if (messageAge > deleteWindowMs) {
+        return res.status(400).json({ message: 'Delete for everyone window has expired (10 minutes)' });
+      }
+
+      message.text = '';
+      message.media = null;
+      message.mediaType = null;
+      message.fileName = null;
+      message.fileSize = null;
+      message.voiceDuration = null;
+      message.deletedForEveryone = true;
+      message.isDeleted = true;
+      await message.save();
+
+      getIO().to(`conversation:${message.conversation}`).emit('messageDeleted', {
+        messageId: message._id,
+        deletedForEveryone: true,
+      });
+    } else {
+      if (!hasId(message.deletedFor, req.user._id)) {
+        message.deletedFor.push(req.user._id);
+        await message.save();
+      }
+
+      getIO().to(`user:${req.user._id}`).emit('messageDeleted', {
+        messageId: message._id,
+        deletedForMe: true,
+      });
+    }
+
+    res.json({ message: 'Message deleted' });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+exports.forwardMessage = async (req, res) => {
+  try {
+    const { messageIds, targetConversationIds } = req.body;
+
+    if (!messageIds || messageIds.length === 0) {
+      return res.status(400).json({ message: 'No messages to forward' });
+    }
+    if (!targetConversationIds || targetConversationIds.length === 0) {
+      return res.status(400).json({ message: 'No target conversations' });
+    }
+
+    const originalMessages = await Message.find({ _id: { $in: messageIds } });
+    const forwardedMessages = [];
+
+    for (const targetConvId of targetConversationIds) {
+      const conversation = await Conversation.findOne({
+        _id: targetConvId,
+        participants: req.user._id,
+      });
+
+      if (!conversation) continue;
+
+      for (const origMsg of originalMessages) {
+        const message = await Message.create({
+          conversation: targetConvId,
+          sender: req.user._id,
+          text: origMsg.text,
+          media: origMsg.media,
+          mediaType: origMsg.mediaType,
+          fileName: origMsg.fileName,
+          fileSize: origMsg.fileSize,
+          voiceDuration: origMsg.voiceDuration,
+          mediaMetadata: origMsg.mediaMetadata,
+          forwardedFrom: origMsg._id,
+          readBy: [req.user._id],
+        });
+
+        await message.populate('sender', 'name profilePhoto');
+
+        await Conversation.findByIdAndUpdate(targetConvId, {
+          lastMessage: message._id,
+          updatedAt: new Date(),
+        });
+
+        getIO().to(`conversation:${targetConvId}`).emit('newMessage', {
+          ...message.toObject(),
+          conversationId: targetConvId,
+        });
+
+        forwardedMessages.push(message);
+      }
+    }
+
+    res.json({ messages: forwardedMessages });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+exports.pinMessage = async (req, res) => {
+  try {
+    const message = await Message.findById(req.params.messageId);
+    if (!message) return res.status(404).json({ message: 'Message not found' });
+
+    const conversation = await Conversation.findById(message.conversation);
+    if (!conversation || !conversation.participants.some(p => p._id.toString() === req.user._id.toString())) {
       return res.status(403).json({ message: 'Not authorized' });
     }
 
-    message.isDeleted = true;
-    message.text = '';
-    message.media = null;
+    const wasPinned = message.isPinned;
+    message.isPinned = !wasPinned;
+    message.pinnedBy = wasPinned ? null : req.user._id;
+    message.pinnedAt = wasPinned ? null : new Date();
     await message.save();
 
-    getIO().to(`conversation:${message.conversation}`).emit('messageDeleted', {
+    getIO().to(`conversation:${message.conversation}`).emit('messagePinned', {
       messageId: message._id,
+      isPinned: message.isPinned,
+      pinnedBy: req.user._id,
     });
 
-    res.json({ message: 'Message deleted' });
+    res.json({ isPinned: message.isPinned });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+exports.markAsSeen = async (req, res) => {
+  try {
+    const { conversationId } = req.params;
+
+    const conversation = await Conversation.findOne({
+      _id: conversationId,
+      participants: req.user._id,
+    });
+
+    if (!conversation) return res.status(404).json({ message: 'Conversation not found' });
+
+    await Conversation.findByIdAndUpdate(conversationId, {
+      [`unreadCount.${req.user._id}`]: 0,
+    });
+
+    await Message.updateMany(
+      {
+        conversation: conversationId,
+        sender: { $ne: req.user._id },
+        readBy: { $ne: req.user._id },
+      },
+      { $addToSet: { readBy: req.user._id } }
+    );
+
+    getIO().to(`conversation:${conversationId}`).emit('messagesSeen', {
+      conversationId,
+      userId: req.user._id,
+      seenAt: new Date(),
+    });
+
+    res.json({ message: 'Messages marked as seen' });
   } catch (error) {
     res.status(500).json({ message: 'Server error' });
   }
@@ -199,10 +382,13 @@ exports.searchMessages = async (req, res) => {
 
     if (!query) return res.status(400).json({ message: 'Search query required' });
 
+    const conversation = await Conversation.findOne({ _id: conversationId, participants: req.user._id }).select('_id');
+    if (!conversation) return res.status(403).json({ message: 'Not authorized' });
+
     const messages = await Message.find({
       conversation: conversationId,
       $text: { $search: query },
-      isDeleted: false,
+      deletedForEveryone: false,
     })
       .populate('sender', 'name profilePhoto')
       .sort({ createdAt: -1 })
@@ -214,108 +400,10 @@ exports.searchMessages = async (req, res) => {
   }
 };
 
-exports.archiveConversation = async (req, res) => {
-  try {
-    const conversation = await Conversation.findById(req.params.conversationId);
-    if (!conversation) return res.status(404).json({ message: 'Conversation not found' });
-
-    const isArchived = hasId(conversation.archivedBy, req.user._id);
-    if (isArchived) {
-      conversation.archivedBy.pull(req.user._id);
-    } else {
-      conversation.archivedBy.push(req.user._id);
-    }
-    await conversation.save();
-
-    res.json({ isArchived: !isArchived });
-  } catch (error) {
-    res.status(500).json({ message: 'Server error' });
-  }
-};
-
-exports.pinConversation = async (req, res) => {
-  try {
-    const conversation = await Conversation.findById(req.params.conversationId);
-    if (!conversation) return res.status(404).json({ message: 'Conversation not found' });
-
-    const isPinned = hasId(conversation.pinnedBy, req.user._id);
-    if (isPinned) {
-      conversation.pinnedBy.pull(req.user._id);
-    } else {
-      conversation.pinnedBy.push(req.user._id);
-    }
-    await conversation.save();
-
-    res.json({ isPinned: !isPinned });
-  } catch (error) {
-    res.status(500).json({ message: 'Server error' });
-  }
-};
-
-exports.muteConversation = async (req, res) => {
-  try {
-    const conversation = await Conversation.findById(req.params.conversationId);
-    if (!conversation) return res.status(404).json({ message: 'Conversation not found' });
-
-    const isMuted = hasId(conversation.mutedBy, req.user._id);
-    if (isMuted) {
-      conversation.mutedBy.pull(req.user._id);
-    } else {
-      conversation.mutedBy.push(req.user._id);
-    }
-    await conversation.save();
-
-    res.json({ isMuted: !isMuted });
-  } catch (error) {
-    res.status(500).json({ message: 'Server error' });
-  }
-};
-
-exports.addGroupAdmin = async (req, res) => {
-  try {
-    const conversation = await Conversation.findById(req.params.conversationId);
-    if (!conversation || !conversation.isGroup) {
-      return res.status(404).json({ message: 'Group not found' });
-    }
-    if (!hasId(conversation.admins, req.user._id)) {
-      return res.status(403).json({ message: 'Not authorized' });
-    }
-
-    const { userId } = req.body;
-    if (!hasId(conversation.admins, userId)) {
-      conversation.admins.push(userId);
-      await conversation.save();
-    }
-
-    res.json({ admins: conversation.admins });
-  } catch (error) {
-    res.status(500).json({ message: 'Server error' });
-  }
-};
-
-exports.removeGroupAdmin = async (req, res) => {
-  try {
-    const conversation = await Conversation.findById(req.params.conversationId);
-    if (!conversation || !conversation.isGroup) {
-      return res.status(404).json({ message: 'Group not found' });
-    }
-    if (!hasId(conversation.admins, req.user._id)) {
-      return res.status(403).json({ message: 'Not authorized' });
-    }
-
-    conversation.admins.pull(req.params.userId);
-    await conversation.save();
-
-    res.json({ admins: conversation.admins });
-  } catch (error) {
-    res.status(500).json({ message: 'Server error' });
-  }
-};
-
 exports.startWatchParty = async (req, res) => {
   try {
     const { videoUrl } = req.body;
-    const conversation = await Conversation.findById(req.params.conversationId);
+    const conversation = await Conversation.findOne({ _id: req.params.conversationId, participants: req.user._id });
     if (!conversation) return res.status(404).json({ message: 'Conversation not found' });
 
     conversation.watchParty = {
@@ -339,7 +427,7 @@ exports.startWatchParty = async (req, res) => {
 
 exports.joinWatchParty = async (req, res) => {
   try {
-    const conversation = await Conversation.findById(req.params.conversationId);
+    const conversation = await Conversation.findOne({ _id: req.params.conversationId, participants: req.user._id });
     if (!conversation || !conversation.watchParty.active) {
       return res.status(400).json({ message: 'No active watch party' });
     }
@@ -362,7 +450,7 @@ exports.joinWatchParty = async (req, res) => {
 
 exports.endWatchParty = async (req, res) => {
   try {
-    const conversation = await Conversation.findById(req.params.conversationId);
+    const conversation = await Conversation.findOne({ _id: req.params.conversationId, participants: req.user._id });
     if (!conversation) return res.status(404).json({ message: 'Conversation not found' });
 
     conversation.watchParty = { active: false, videoUrl: '', host: null, viewers: [] };

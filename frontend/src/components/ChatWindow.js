@@ -1,295 +1,808 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useSocket } from '../context/SocketContext';
 import API from '../api/axios';
-import ChatFileUpload from './ChatFileUpload';
+import VoiceRecorder from './VoiceRecorder';
 
 const EMOJI_OPTIONS = ['👍', '❤️', '😂', '😮', '😢', '😡'];
+const MAX_FILE_SIZE = 25 * 1024 * 1024;
+const MAX_VIDEO_SIZE = 100 * 1024 * 1024;
 
-const ChatWindow = ({ conversation, onBack }) => {
+const formatTime = (date) => {
+  return new Date(date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+};
+
+const formatDate = (date) => {
+  const d = new Date(date);
+  const now = new Date();
+  const diffMs = now - d;
+  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+  if (diffDays === 0) return 'Today';
+  if (diffDays === 1) return 'Yesterday';
+  return d.toLocaleDateString([], { weekday: 'long', month: 'long', day: 'numeric' });
+};
+
+const shouldShowDateSeparator = (curr, prev) => {
+  if (!prev) return true;
+  const c = new Date(curr);
+  const p = new Date(prev);
+  return c.toDateString() !== p.toDateString();
+};
+
+const shouldShowSender = (msg, prevMsg, isGroup) => {
+  if (!isGroup) return false;
+  if (!prevMsg) return true;
+  if (prevMsg.sender?._id !== msg.sender?._id) return true;
+  const timeDiff = new Date(msg.createdAt) - new Date(prevMsg.createdAt);
+  return timeDiff > 60000;
+};
+
+const isWithinEditWindow = (date) => {
+  return Date.now() - new Date(date).getTime() < 15 * 60 * 1000;
+};
+
+const isWithinDeleteWindow = (date) => {
+  return Date.now() - new Date(date).getTime() < 10 * 60 * 1000;
+};
+
+const ChatWindow = ({ conversation, onBack, showInfoPanel, onToggleInfo }) => {
   const { user } = useAuth();
-  const { socket } = useSocket();
+  const { socket, onlineUsers, setActiveChat, clearUnreadMessages } = useSocket();
   const [messages, setMessages] = useState([]);
   const [text, setText] = useState('');
   const [loading, setLoading] = useState(true);
+  const [hasMore, setHasMore] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
   const [typingUsers, setTypingUsers] = useState([]);
+  const [selectedMsg, setSelectedMsg] = useState(null);
   const [editingMsg, setEditingMsg] = useState(null);
   const [editText, setEditText] = useState('');
-  const [openEmojiPicker, setOpenEmojiPicker] = useState(null);
-  const [tappedMsg, setTappedMsg] = useState(null);
+  const [replyTo, setReplyTo] = useState(null);
+  const [forwardMsg, setForwardMsg] = useState(null);
+  const [showEmojiPicker, setShowEmojiPicker] = useState(null);
+  const [showForwardModal, setShowForwardModal] = useState(false);
+  const [forwardConversations, setForwardConversations] = useState([]);
+  const [selectedForwardConvs, setSelectedForwardConvs] = useState([]);
+  const [showDeleteModal, setShowDeleteModal] = useState(null);
+  const [showMediaPreview, setShowMediaPreview] = useState(null);
+  const [previewImages, setPreviewImages] = useState([]);
+  const [uploadingFile, setUploadingFile] = useState(false);
   const messagesEndRef = useRef(null);
+  const messagesContainerRef = useRef(null);
   const typingTimeoutRef = useRef(null);
+  const fileInputRef = useRef(null);
+  const imageInputRef = useRef(null);
+
+  const convData = typeof conversation === 'object' ? conversation : null;
+  const convId = typeof conversation === 'string' ? conversation : conversation?._id;
+
+  // Fetch messages
+  const fetchMessages = useCallback(async (before = null) => {
+    if (!convId) return;
+    try {
+      if (before) setLoadingMore(true);
+      const params = before ? `?before=${before}&limit=50` : '?limit=50';
+      const res = await API.get(`/conversations/${convId}/messages${params}`);
+      const newMessages = res.data.messages || [];
+      if (before) {
+        setMessages(prev => [...newMessages, ...prev]);
+        setHasMore(newMessages.length === 50);
+      } else {
+        setMessages(newMessages);
+        setHasMore(newMessages.length === 50);
+        setTimeout(() => scrollToBottom(), 100);
+      }
+    } catch (err) {
+      console.error('Failed to fetch messages');
+    } finally {
+      setLoading(false);
+      setLoadingMore(false);
+    }
+  }, [convId]);
 
   useEffect(() => {
-    if (!conversation) return;
+    if (!convId) return;
+    setLoading(true);
+    setMessages([]);
+    setHasMore(true);
+    setSelectedMsg(null);
+    setReplyTo(null);
+    setEditingMsg(null);
     fetchMessages();
-    socket?.emit('joinConversation', conversation._id);
-    return () => { socket?.emit('leaveConversation', conversation._id); };
-  }, [conversation?._id]);
+    socket?.emit('joinConversation', convId);
+    setActiveChat?.(convId);
+    clearUnreadMessages?.();
 
+    // Mark as seen
+    API.put(`/messages/seen/${convId}`).catch(() => {});
+
+    return () => {
+      socket?.emit('leaveConversation', convId);
+      setActiveChat?.(null);
+    };
+  }, [convId, socket, fetchMessages]);
+
+  // Socket events
   useEffect(() => {
-    if (!socket || !conversation) return;
+    if (!socket || !convId) return;
+
     const handleNewMessage = (message) => {
-      if (message.conversation === conversation._id || message.conversationId === conversation._id) {
-        setMessages(prev => [...prev, message]);
+      const msgConvId = message.conversationId || message.conversation;
+      if (msgConvId === convId) {
+        setMessages(prev => {
+          if (prev.find(m => m._id === message._id)) return prev;
+          return [...prev, message];
+        });
+        setTimeout(() => scrollToBottom(), 50);
+        API.put(`/messages/seen/${convId}`).catch(() => {});
       }
     };
+
     const handleTyping = ({ conversationId, userId, userName }) => {
-      if (conversationId === conversation._id && userId !== user.id) {
+      if (conversationId === convId && userId !== user.id) {
         setTypingUsers(prev => {
           if (prev.find(u => u.userId === userId)) return prev;
           return [...prev, { userId, userName }];
         });
       }
     };
+
     const handleStopTyping = ({ conversationId, userId }) => {
-      if (conversationId === conversation._id) {
+      if (conversationId === convId) {
         setTypingUsers(prev => prev.filter(u => u.userId !== userId));
       }
     };
-    const handleMessageUpdated = (updated) => {
-      setMessages(prev => prev.map(m => m._id === updated._id ? updated : m));
+
+    const handleMessageEdited = ({ messageId, text: newText }) => {
+      setMessages(prev => prev.map(m => m._id === messageId ? { ...m, text: newText, isEdited: true } : m));
     };
-    const handleMessageDeleted = ({ messageId }) => {
-      setMessages(prev => prev.filter(m => m._id !== messageId));
+
+    const handleMessageDeleted = ({ messageId, deletedForEveryone }) => {
+      if (deletedForEveryone) {
+        setMessages(prev => prev.map(m => m._id === messageId ? { ...m, text: '', media: null, deletedForEveryone: true, isDeleted: true } : m));
+      } else {
+        setMessages(prev => prev.filter(m => m._id !== messageId));
+      }
+    };
+
+    const handleMessageReaction = ({ messageId, reactions }) => {
+      setMessages(prev => prev.map(m => m._id === messageId ? { ...m, reactions } : m));
+    };
+
+    const handleMessagesSeen = ({ userId }) => {
+      if (userId !== user.id) {
+        setMessages(prev => prev.map(m => ({ ...m, readBy: [...(m.readBy || []), userId] })));
+      }
     };
 
     socket.on('newMessage', handleNewMessage);
     socket.on('typing', handleTyping);
     socket.on('stopTyping', handleStopTyping);
-    socket.on('messageUpdated', handleMessageUpdated);
+    socket.on('messageEdited', handleMessageEdited);
     socket.on('messageDeleted', handleMessageDeleted);
+    socket.on('messageReaction', handleMessageReaction);
+    socket.on('messagesSeen', handleMessagesSeen);
+
     return () => {
       socket.off('newMessage', handleNewMessage);
       socket.off('typing', handleTyping);
       socket.off('stopTyping', handleStopTyping);
-      socket.off('messageUpdated', handleMessageUpdated);
+      socket.off('messageEdited', handleMessageEdited);
       socket.off('messageDeleted', handleMessageDeleted);
+      socket.off('messageReaction', handleMessageReaction);
+      socket.off('messagesSeen', handleMessagesSeen);
     };
-  }, [socket, conversation?._id]);
+  }, [socket, convId, user?.id]);
 
-  useEffect(() => {
+  const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages, typingUsers]);
+  };
 
-  const fetchMessages = async () => {
-    try {
-      const res = await API.get(`/conversations/${conversation._id}/messages`);
-      setMessages(res.data.messages);
-    } catch (err) {
-      console.error('Failed to fetch messages');
-    } finally {
-      setLoading(false);
+  const handleLoadMore = () => {
+    if (hasMore && !loadingMore && messages.length > 0) {
+      fetchMessages(messages[0].createdAt);
     }
   };
 
+  // Scroll detection for load more
+  useEffect(() => {
+    const container = messagesContainerRef.current;
+    if (!container) return;
+    const handleScroll = () => {
+      if (container.scrollTop < 100) handleLoadMore();
+    };
+    container.addEventListener('scroll', handleScroll);
+    return () => container.removeEventListener('scroll', handleScroll);
+  }, [hasMore, loadingMore, messages]);
+
+  // Send message
   const handleSend = () => {
-    if (!text.trim()) return;
-    socket?.emit('sendMessage', { conversationId: conversation._id, text: text.trim() });
+    if (!text.trim() || !convId) return;
+    const payload = {
+      conversationId: convId,
+      text: text.trim(),
+    };
+    if (replyTo) {
+      payload.replyTo = replyTo._id;
+    }
+    socket?.emit('sendMessage', payload);
     setText('');
-    socket?.emit('stopTyping', { conversationId: conversation._id });
+    setReplyTo(null);
+    socket?.emit('stopTyping', { conversationId: convId });
   };
 
   const handleKeyPress = (e) => {
-    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); }
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSend();
+    }
   };
 
   const handleTypingEmit = () => {
-    socket?.emit('typing', { conversationId: conversation._id, userName: user.name });
+    socket?.emit('typing', { conversationId: convId, userName: user.name });
     clearTimeout(typingTimeoutRef.current);
     typingTimeoutRef.current = setTimeout(() => {
-      socket?.emit('stopTyping', { conversationId: conversation._id });
+      socket?.emit('stopTyping', { conversationId: convId });
     }, 2000);
   };
 
+  // File upload
+  const handleFileUpload = async (e, type = 'file') => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const maxSize = type === 'video' ? MAX_VIDEO_SIZE : MAX_FILE_SIZE;
+    if (file.size > maxSize) {
+      alert(`File must be under ${type === 'video' ? '100MB' : '25MB'}`);
+      return;
+    }
+
+    setUploadingFile(true);
+    const formData = new FormData();
+    formData.append('media', file);
+    formData.append('conversationId', convId);
+    if (replyTo) formData.append('replyTo', replyTo._id);
+
+    try {
+      await API.post('/messages', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+      setReplyTo(null);
+    } catch (err) {
+      console.error('Failed to upload file');
+    } finally {
+      setUploadingFile(false);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+      if (imageInputRef.current) imageInputRef.current.value = '';
+    }
+  };
+
+  // Edit message
   const handleEditMessage = async (msg) => {
     if (!editText.trim() || editText === msg.text) { setEditingMsg(null); return; }
     try {
-      const res = await API.put(`/messages/${msg._id}`, { text: editText.trim() });
-      setMessages(prev => prev.map(m => m._id === msg._id ? res.data.message : m));
+      await API.put(`/messages/${msg._id}/edit`, { text: editText.trim() });
+      setMessages(prev => prev.map(m => m._id === msg._id ? { ...m, text: editText.trim(), isEdited: true } : m));
     } catch (err) {
-      console.error('Failed to edit');
+      alert(err.response?.data?.message || 'Failed to edit');
     }
     setEditingMsg(null);
     setEditText('');
   };
 
-  const handleDeleteMessage = async (msgId) => {
-    if (!window.confirm('Delete this message?')) return;
+  // Delete message
+  const handleDeleteMessage = async (msgId, deleteForEveryone = false) => {
     try {
-      await API.delete(`/messages/${msgId}`);
-      setMessages(prev => prev.filter(m => m._id !== msgId));
+      await API.delete(`/messages/${msgId}`, { data: { deleteForEveryone } });
+      if (deleteForEveryone) {
+        setMessages(prev => prev.map(m => m._id === msgId ? { ...m, text: '', media: null, deletedForEveryone: true, isDeleted: true } : m));
+      } else {
+        setMessages(prev => prev.filter(m => m._id !== msgId));
+      }
     } catch (err) {
-      console.error('Failed to delete');
+      alert(err.response?.data?.message || 'Failed to delete');
     }
+    setShowDeleteModal(null);
   };
 
+  // React to message
   const handleReaction = async (msgId, emoji) => {
     try {
-      const res = await API.post(`/messages/${msgId}/react`, { emoji });
+      const res = await API.put(`/messages/${msgId}/react`, { emoji });
       setMessages(prev => prev.map(m => m._id === msgId ? { ...m, reactions: res.data.reactions } : m));
     } catch (err) {
       console.error('Failed to react');
     }
-    setOpenEmojiPicker(null);
+    setShowEmojiPicker(null);
   };
 
-  const getOtherParticipant = () => conversation.participants.find(p => p._id !== user.id);
+  // Pin message
+  const handlePinMessage = async (msgId) => {
+    try {
+      await API.put(`/messages/${msgId}/pin`);
+      setMessages(prev => prev.map(m => m._id === msgId ? { ...m, isPinned: !m.isPinned } : m));
+    } catch (err) {
+      console.error('Failed to pin');
+    }
+    setSelectedMsg(null);
+  };
+
+  // Forward message
+  const openForwardModal = async (msg) => {
+    setForwardMsg(msg);
+    setSelectedForwardConvs([]);
+    try {
+      const res = await API.get('/conversations');
+      setForwardConversations(res.data);
+    } catch (err) { console.error('Failed'); }
+    setShowForwardModal(true);
+    setSelectedMsg(null);
+  };
+
+  const handleForward = async () => {
+    if (!forwardMsg || selectedForwardConvs.length === 0) return;
+    try {
+      await API.post('/messages/forward', {
+        messageIds: [forwardMsg._id],
+        targetConversationIds: selectedForwardConvs,
+      });
+      setShowForwardModal(false);
+      setForwardMsg(null);
+      setSelectedForwardConvs([]);
+    } catch (err) {
+      alert('Failed to forward');
+    }
+  };
+
+  // Get conversation info
+  const getOtherParticipant = () => convData?.participants?.find(p => p._id !== user.id);
   const getHeaderName = () => {
-    if (conversation.isGroup) return conversation.groupName || 'Group Chat';
+    if (convData?.isGroup) return convData.groupName || 'Group Chat';
     return getOtherParticipant()?.name || 'Unknown';
   };
+  const getHeaderPhoto = () => {
+    if (convData?.isGroup) return convData.groupPhoto;
+    return getOtherParticipant()?.profilePhoto;
+  };
+  const isOnlineUser = () => {
+    if (convData?.isGroup) return false;
+    const other = getOtherParticipant();
+    return other && (onlineUsers.has(other._id) || other.activeStatus === 'online');
+  };
 
-  if (!conversation) {
+  if (!convId) {
     return (
       <div className="flex-1 flex items-center justify-center text-gray-500">
-        Select a conversation to start chatting
+        <div className="text-center">
+          <div className="text-6xl mb-4">💬</div>
+          <p className="text-lg font-medium">Select a conversation</p>
+          <p className="text-sm text-gray-400">Choose from your existing chats or start a new one</p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="flex-1 flex flex-col h-full">
-      <div className="p-3 md:p-4 border-b bg-white flex items-center gap-3">
+    <div className="flex-1 flex flex-col h-full bg-white">
+      {/* Header */}
+      <div className="px-3 py-2 border-b bg-white flex items-center gap-3 flex-shrink-0">
         {onBack && (
           <button onClick={onBack} className="p-1 -ml-1 text-gray-600 hover:text-gray-900 md:hidden">
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
           </button>
         )}
-        <img
-          src={(conversation.isGroup ? conversation.groupPhoto : getOtherParticipant()?.profilePhoto) || 'https://ui-avatars.com/api/?name=U&background=494454&color=dae2fd&size=128'}
-          alt="" className="w-10 h-10 rounded-full object-cover"
-        />
-        <div>
-          <h3 className="font-semibold">{getHeaderName()}</h3>
-          {typingUsers.length > 0 && (
-            <p className="text-xs text-green-500">
+        <div className="relative">
+          <img
+            src={getHeaderPhoto() || 'https://ui-avatars.com/api/?name=U&background=494454&color=dae2fd&size=128'}
+            alt="" className="w-10 h-10 rounded-full object-cover"
+          />
+          {isOnlineUser() && (
+            <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white" />
+          )}
+        </div>
+        <div className="flex-1 min-w-0">
+          <h3 className="font-semibold text-sm truncate">{getHeaderName()}</h3>
+          {typingUsers.length > 0 ? (
+            <p className="text-xs text-green-500 truncate">
               {typingUsers.map(u => u.userName).join(', ')} {typingUsers.length === 1 ? 'is' : 'are'} typing...
             </p>
+          ) : isOnlineUser() ? (
+            <p className="text-xs text-green-500">Active now</p>
+          ) : convData?.isGroup ? (
+            <p className="text-xs text-gray-400">{convData.participants?.length} members</p>
+          ) : null}
+        </div>
+        <button
+          onClick={onToggleInfo}
+          className={`p-2 rounded-full transition ${showInfoPanel ? 'bg-blue-100 text-blue-600' : 'text-gray-500 hover:bg-gray-100'}`}
+        >
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+        </button>
+      </div>
+
+      {/* Messages */}
+      <div ref={messagesContainerRef} className="flex-1 overflow-y-auto px-4 py-2 space-y-1">
+        {loading ? (
+          <div className="flex items-center justify-center h-full">
+            <div className="text-center text-gray-500">
+              <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-2" />
+              Loading messages...
+            </div>
+          </div>
+        ) : messages.length === 0 ? (
+          <div className="flex items-center justify-center h-full">
+            <div className="text-center text-gray-500">
+              <div className="text-4xl mb-2">👋</div>
+              <p className="font-medium">No messages yet</p>
+              <p className="text-sm text-gray-400">Say hello to start the conversation!</p>
+            </div>
+          </div>
+        ) : (
+          <>
+            {loadingMore && (
+              <div className="text-center py-2">
+                <div className="w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto" />
+              </div>
+            )}
+            {messages.map((msg, idx) => {
+              const isOwn = msg.sender?._id === user.id;
+              const prevMsg = idx > 0 ? messages[idx - 1] : null;
+              const nextMsg = idx < messages.length - 1 ? messages[idx + 1] : null;
+              const showDate = shouldShowDateSeparator(msg.createdAt, prevMsg?.createdAt);
+              const showSenderName = shouldShowSender(msg, prevMsg, convData?.isGroup);
+              const isLastInGroup = !nextMsg || nextMsg.sender?._id !== msg.sender?._id;
+              const isEditing = editingMsg?._id === msg._id;
+              const reactions = msg.reactions || [];
+              const isDeleted = msg.deletedForEveryone;
+
+              return (
+                <div key={msg._id}>
+                  {/* Date separator */}
+                  {showDate && (
+                    <div className="flex items-center justify-center my-4">
+                      <div className="bg-gray-100 text-gray-500 text-xs px-3 py-1 rounded-full font-medium">
+                        {formatDate(msg.createdAt)}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Deleted message */}
+                  {isDeleted ? (
+                    <div className={`flex ${isOwn ? 'justify-end' : 'justify-start'} mb-1`}>
+                      <div className={`px-4 py-2 rounded-2xl text-sm italic ${
+                        isOwn ? 'bg-gray-100 text-gray-400' : 'bg-gray-50 text-gray-400'
+                      }`}>
+                        This message was deleted
+                      </div>
+                    </div>
+                  ) : (
+                    <div className={`flex ${isOwn ? 'justify-end' : 'justify-start'} ${isLastInGroup ? 'mb-3' : 'mb-0.5'}`}>
+                      <div className={`max-w-[75%] lg:max-w-[50%] relative group ${isOwn ? 'order-2' : ''}`}>
+                        {/* Sender name (group) */}
+                        {showSenderName && !isOwn && (
+                          <div className="flex items-center gap-1.5 mb-1 ml-1">
+                            <img
+                              src={msg.sender?.profilePhoto || 'https://ui-avatars.com/api/?name=U&background=494454&color=dae2fd&size=128'}
+                              alt="" className="w-6 h-6 rounded-full object-cover"
+                            />
+                            <span className="text-xs font-medium text-gray-600">{msg.sender?.name}</span>
+                          </div>
+                        )}
+
+                        {/* Reply preview */}
+                        {msg.replyTo && (
+                          <div className={`px-3 py-1.5 mb-0.5 rounded-t-2xl text-xs border-l-2 ${
+                            isOwn ? 'bg-blue-50 border-blue-300' : 'bg-gray-50 border-gray-300'
+                          }`}>
+                            <p className="font-medium text-gray-600 truncate">{msg.replyTo.sender?.name || 'Message'}</p>
+                            <p className="text-gray-500 truncate">{msg.replyTo.text || 'Media'}</p>
+                          </div>
+                        )}
+
+                        {/* Forwarded indicator */}
+                        {msg.forwardedFrom && (
+                          <div className={`text-xs text-gray-400 mb-0.5 ${isOwn ? 'text-right' : 'ml-1'}`}>
+                            ↪ Forwarded
+                          </div>
+                        )}
+
+                        {/* Message bubble */}
+                        {isEditing ? (
+                          <div className="flex gap-1 p-1 bg-white border rounded-2xl shadow-sm">
+                            <input
+                              type="text" value={editText}
+                              onChange={(e) => setEditText(e.target.value)}
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter') handleEditMessage(msg);
+                                if (e.key === 'Escape') setEditingMsg(null);
+                              }}
+                              className="flex-1 px-3 py-1.5 text-sm border rounded-full focus:outline-none focus:ring-1 focus:ring-blue-500"
+                              autoFocus
+                            />
+                            <button onClick={() => handleEditMessage(msg)} className="p-2 text-blue-600 hover:bg-blue-50 rounded-full">
+                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                            </button>
+                            <button onClick={() => setEditingMsg(null)} className="p-2 text-gray-400 hover:bg-gray-50 rounded-full">
+                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+                            </button>
+                          </div>
+                        ) : (
+                          <div className={`px-3.5 py-2 rounded-2xl ${
+                            isOwn
+                              ? 'bg-blue-600 text-white' + (isLastInGroup ? ' rounded-br-sm' : '')
+                              : 'bg-gray-200 text-gray-800' + (isLastInGroup ? ' rounded-bl-sm' : '')
+                          }`}>
+                            {msg.text && <p className="text-sm whitespace-pre-wrap break-words">{msg.text}</p>}
+                            {msg.media && msg.mediaType === 'image' && (
+                              <img src={msg.media} alt="" className="mt-1 rounded-lg max-w-full max-h-64 object-cover cursor-pointer"
+                                onClick={() => setShowMediaPreview({ type: 'image', url: msg.media })} />
+                            )}
+                            {msg.media && msg.mediaType === 'video' && (
+                              <video src={msg.media} controls className="mt-1 rounded-lg max-w-full max-h-64" />
+                            )}
+                            {msg.media && msg.mediaType === 'voice' && (
+                              <div className="flex items-center gap-2 mt-1">
+                                <audio src={msg.media} controls className="h-8 flex-1" />
+                                {msg.voiceDuration && (
+                                  <span className="text-xs opacity-70">{Math.floor(msg.voiceDuration / 60)}:{(msg.voiceDuration % 60).toString().padStart(2, '0')}</span>
+                                )}
+                              </div>
+                            )}
+                            {msg.media && msg.mediaType === 'audio' && (
+                              <audio src={msg.media} controls className="mt-1 h-8 w-full" />
+                            )}
+                            {msg.media && msg.mediaType === 'file' && (
+                              <a href={msg.media} target="_blank" rel="noopener noreferrer"
+                                className={`flex items-center gap-2 mt-1 p-2 rounded-lg ${isOwn ? 'bg-blue-700 hover:bg-blue-800' : 'bg-gray-300 hover:bg-gray-400'} transition`}>
+                                <span className="text-lg">📎</span>
+                                <span className="text-sm truncate">{msg.fileName || 'File'}</span>
+                              </a>
+                            )}
+                          </div>
+                        )}
+
+                        {/* Reactions */}
+                        {reactions.length > 0 && !isDeleted && (
+                          <div className={`flex flex-wrap gap-0.5 mt-0.5 ${isOwn ? 'justify-end' : 'justify-start'}`}>
+                            {[...new Set(reactions.map(r => r.emoji))].map(emoji => {
+                              const count = reactions.filter(r => r.emoji === emoji).length;
+                              const iReacted = reactions.some(r => r.user === user.id || r.user?._id === user.id);
+                              return (
+                                <button key={emoji}
+                                  onClick={() => handleReaction(msg._id, emoji)}
+                                  className={`text-xs border rounded-full px-1.5 py-0.5 flex items-center gap-0.5 transition ${
+                                    iReacted ? 'bg-blue-50 border-blue-200' : 'bg-white border-gray-200 hover:bg-gray-50'
+                                  }`}>
+                                  <span>{emoji}</span>
+                                  {count > 1 && <span className="text-gray-500">{count}</span>}
+                                </button>
+                              );
+                            })}
+                          </div>
+                        )}
+
+                        {/* Timestamp & read receipts */}
+                        {isLastInGroup && (
+                          <div className={`text-[10px] text-gray-400 mt-0.5 flex items-center gap-1 ${isOwn ? 'justify-end mr-1' : 'ml-1'}`}>
+                            <span>{formatTime(msg.createdAt)}</span>
+                            {msg.isEdited && <span className="italic">(edited)</span>}
+                            {isOwn && (
+                              msg.readBy?.length > 1
+                                ? <span className="text-blue-500">✓✓</span>
+                                : <span className="text-gray-400">✓</span>
+                            )}
+                          </div>
+                        )}
+
+                        {/* Action buttons (hover) */}
+                        {!isEditing && !isDeleted && (
+                          <div
+                            className={`absolute top-0 -translate-y-1 flex items-center gap-0.5 bg-white border rounded-lg shadow-sm px-0.5 py-0.5 z-10 ${
+                              selectedMsg === msg._id ? 'flex' : 'hidden group-hover:flex'
+                            }`}
+                            style={{ [isOwn ? 'right' : 'left']: '0' }}
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            <button onClick={() => setShowEmojiPicker(showEmojiPicker === msg._id ? null : msg._id)}
+                              className="p-1 hover:bg-gray-100 rounded text-sm" title="React">😊</button>
+                            <button onClick={() => { setReplyTo(msg); setSelectedMsg(null); }}
+                              className="p-1 hover:bg-gray-100 rounded text-sm" title="Reply">↩️</button>
+                            <button onClick={() => openForwardModal(msg)}
+                              className="p-1 hover:bg-gray-100 rounded text-sm" title="Forward">↪️</button>
+                            {isOwn && isWithinEditWindow(msg.createdAt) && (
+                              <button onClick={() => { setEditingMsg(msg); setEditText(msg.text || ''); setSelectedMsg(null); }}
+                                className="p-1 hover:bg-gray-100 rounded text-sm" title="Edit">✏️</button>
+                            )}
+                            {isOwn && isWithinDeleteWindow(msg.createdAt) && (
+                              <button onClick={() => setShowDeleteModal(msg)}
+                                className="p-1 hover:bg-gray-100 rounded text-sm text-red-500" title="Delete">🗑</button>
+                            )}
+                            {!isOwn && (
+                              <button onClick={() => setShowDeleteModal(msg)}
+                                className="p-1 hover:bg-gray-100 rounded text-sm text-red-500" title="Delete for me">🗑</button>
+                            )}
+                          </div>
+                        )}
+
+                        {/* Emoji picker */}
+                        {showEmojiPicker === msg._id && (
+                          <>
+                            <div className="fixed inset-0 z-10" onClick={() => setShowEmojiPicker(null)} />
+                            <div className={`absolute z-20 bg-white border rounded-xl shadow-xl p-1.5 flex gap-0.5 ${
+                              isOwn ? 'right-0' : 'left-0'
+                            }`} style={{ bottom: '100%', marginBottom: '4px' }}>
+                              {EMOJI_OPTIONS.map(emoji => (
+                                <button key={emoji} onClick={() => handleReaction(msg._id, emoji)}
+                                  className="p-1.5 hover:bg-gray-100 rounded-lg text-lg transition hover:scale-110">{emoji}</button>
+                              ))}
+                            </div>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+            <div ref={messagesEndRef} />
+          </>
+        )}
+      </div>
+
+      {/* Reply preview bar */}
+      {replyTo && (
+        <div className="px-4 py-2 bg-blue-50 border-t border-blue-100 flex items-center gap-2">
+          <div className="flex-1 min-w-0">
+            <p className="text-xs font-medium text-blue-700">Replying to {replyTo.sender?.name || 'message'}</p>
+            <p className="text-xs text-gray-500 truncate">{replyTo.text || 'Media'}</p>
+          </div>
+          <button onClick={() => setReplyTo(null)} className="p-1 text-gray-400 hover:text-gray-600">
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+          </button>
+        </div>
+      )}
+
+      {/* Input area */}
+      <div className="px-3 py-2 border-t bg-white flex-shrink-0">
+        {uploadingFile && (
+          <div className="text-center py-2">
+            <div className="w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto" />
+          </div>
+        )}
+        <div className="flex items-end gap-1.5">
+          <input ref={imageInputRef} type="file" accept="image/*" className="hidden" onChange={(e) => handleFileUpload(e, 'image')} />
+          <button onClick={() => imageInputRef.current?.click()}
+            className="p-2 text-gray-500 hover:text-blue-600 rounded-full hover:bg-gray-100 transition"
+            title="Send image">
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+          </button>
+
+          <input ref={fileInputRef} type="file" accept="video/*,audio/*,.pdf,.doc,.docx,.txt,.zip" className="hidden" onChange={(e) => handleFileUpload(e, 'file')} />
+          <button onClick={() => fileInputRef.current?.click()}
+            className="p-2 text-gray-500 hover:text-blue-600 rounded-full hover:bg-gray-100 transition"
+            title="Attach file">
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" /></svg>
+          </button>
+
+          <div className="flex-1 relative">
+            <textarea
+              value={text}
+              onChange={(e) => { setText(e.target.value); handleTypingEmit(); }}
+              onKeyDown={handleKeyPress}
+              placeholder="Message"
+              rows={1}
+              className="w-full px-4 py-2 bg-gray-100 rounded-full text-sm resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 max-h-32"
+              style={{ minHeight: '40px' }}
+            />
+          </div>
+
+          {text.trim() ? (
+            <button onClick={handleSend}
+              className="p-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" /></svg>
+            </button>
+          ) : (
+            <VoiceRecorder
+              conversationId={convId}
+              onSend={() => fetchMessages()}
+            />
           )}
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-4 space-y-3">
-        {loading ? (
-          <div className="text-center text-gray-500">Loading messages...</div>
-        ) : messages.length === 0 ? (
-          <div className="text-center text-gray-500">No messages yet. Say hello!</div>
-        ) : (
-          messages.map((msg) => {
-            const isOwn = msg.sender._id === user.id;
-            const isEditing = editingMsg?._id === msg._id;
-            const reactions = msg.reactions || [];
-            return (
-              <div key={msg._id} className={`flex ${isOwn ? 'justify-end' : 'justify-start'}`}>
-                <div
-                  className={`max-w-xs lg:max-w-md group relative ${isOwn ? 'order-2' : ''}`}
-                  onClick={() => setTappedMsg(tappedMsg === msg._id ? null : msg._id)}
-                >
-                  {!isOwn && (
-                    <div className="flex items-center gap-2 mb-1">
-                      <img
-                        src={msg.sender.profilePhoto || 'https://ui-avatars.com/api/?name=U&background=494454&color=dae2fd&size=128'}
-                        alt="" className="w-6 h-6 rounded-full object-cover"
-                      />
-                      <span className="text-xs text-gray-500">{msg.sender.name}</span>
-                    </div>
-                  )}
-
-                  {isEditing ? (
-                    <div className="flex gap-1">
-                      <input
-                        type="text" value={editText}
-                        onChange={(e) => setEditText(e.target.value)}
-                        onKeyDown={(e) => { if (e.key === 'Enter') handleEditMessage(msg); if (e.key === 'Escape') setEditingMsg(null); }}
-                        className="flex-1 px-3 py-1 text-sm border rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500"
-                        autoFocus
-                      />
-                      <button onClick={() => handleEditMessage(msg)} className="text-xs text-blue-600 hover:underline">Save</button>
-                      <button onClick={() => setEditingMsg(null)} className="text-xs text-gray-500 hover:underline">Cancel</button>
-                    </div>
-                  ) : (
-                    <div className={`px-4 py-2 rounded-2xl ${
-                      isOwn ? 'bg-blue-600 text-white rounded-br-none' : 'bg-gray-200 text-gray-800 rounded-bl-none'
-                    }`}>
-                      {msg.text && <p className="text-sm">{msg.text}</p>}
-                      {msg.media && <img src={msg.media} alt="" className="mt-2 rounded max-w-full" />}
-                    </div>
-                  )}
-
-                  {reactions.length > 0 && (
-                    <div className={`flex gap-0.5 mt-1 ${isOwn ? 'justify-end' : 'justify-start'}`}>
-                      {[...new Set(reactions.map(r => r.emoji))].map(emoji => {
-                        const count = reactions.filter(r => r.emoji === emoji).length;
-                        return (
-                          <span key={emoji} className="text-xs bg-white dark:bg-neutral-800 border rounded-full px-1.5 py-0.5 cursor-pointer hover:bg-gray-100"
-                            onClick={() => handleReaction(msg._id, emoji)}>
-                            {emoji} {count > 1 && count}
-                          </span>
-                        );
-                      })}
-                    </div>
-                  )}
-
-                  <div className={`text-xs text-gray-400 mt-1 flex items-center gap-2 ${isOwn ? 'justify-end' : ''}`}>
-                    <span>{new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
-                    {msg.isEdited && <span className="italic">(edited)</span>}
-                    {isOwn && msg.readBy?.length > 1 && <span className="text-blue-500">✓✓</span>}
-                  </div>
-
-                  <div
-                    className={`absolute top-0 items-center gap-0.5 -translate-y-1/2 bg-white border rounded-lg shadow-sm px-1 py-0.5 z-10 ${
-                      tappedMsg === msg._id ? 'flex' : 'hidden group-hover:flex'
-                    }`}
-                    style={{ [isOwn ? 'right' : 'left']: '0' }}
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    <button onClick={() => setOpenEmojiPicker(openEmojiPicker === msg._id ? null : msg._id)}
-                      className="p-1 hover:bg-gray-100 rounded text-xs">😊</button>
-                    {isOwn && (
-                      <>
-                        <button onClick={() => { setEditingMsg(msg); setEditText(msg.text || ''); }}
-                          className="p-1 hover:bg-gray-100 rounded text-xs">✏️</button>
-                        <button onClick={() => handleDeleteMessage(msg._id)}
-                          className="p-1 hover:bg-gray-100 rounded text-xs text-red-500">🗑</button>
-                      </>
-                    )}
-                  </div>
-
-                  {openEmojiPicker === msg._id && (
-                    <div className={`absolute z-20 bg-white border rounded-lg shadow-lg p-1 flex gap-1 ${isOwn ? 'right-0' : 'left-0'}`} style={{ top: '-30px' }}>
-                      {EMOJI_OPTIONS.map(emoji => (
-                        <button key={emoji} onClick={() => handleReaction(msg._id, emoji)}
-                          className="p-1 hover:bg-gray-100 rounded text-lg">{emoji}</button>
-                      ))}
-                    </div>
-                  )}
-                </div>
+      {/* Delete confirmation modal */}
+      {showDeleteModal && (
+        <>
+          <div className="fixed inset-0 bg-black/50 z-30" onClick={() => setShowDeleteModal(null)} />
+          <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-40 bg-white rounded-2xl shadow-2xl p-6 w-80">
+            <h3 className="font-bold text-lg mb-4">Delete Message</h3>
+            {showDeleteModal.sender?._id === user.id && isWithinDeleteWindow(showDeleteModal.createdAt) ? (
+              <div className="space-y-3">
+                <button onClick={() => handleDeleteMessage(showDeleteModal._id, false)}
+                  className="w-full text-left px-4 py-3 text-sm hover:bg-gray-50 rounded-lg border">
+                  Delete for me
+                </button>
+                <button onClick={() => handleDeleteMessage(showDeleteModal._id, true)}
+                  className="w-full text-left px-4 py-3 text-sm hover:bg-red-50 rounded-lg border border-red-200 text-red-600">
+                  Delete for everyone
+                </button>
               </div>
-            );
-          })
-        )}
-        <div ref={messagesEndRef} />
-      </div>
+            ) : (
+              <button onClick={() => handleDeleteMessage(showDeleteModal._id, false)}
+                className="w-full px-4 py-2.5 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700">
+                Delete for me
+              </button>
+            )}
+            <button onClick={() => setShowDeleteModal(null)}
+              className="w-full mt-3 px-4 py-2 text-sm text-gray-500 hover:bg-gray-50 rounded-lg">
+              Cancel
+            </button>
+          </div>
+        </>
+      )}
 
-      <div className="p-4 border-t bg-white">
-        <div className="flex items-center gap-2">
-          <ChatFileUpload conversationId={conversation._id} onSend={() => fetchMessages()} />
-          <input
-            type="text" value={text}
-            onChange={(e) => { setText(e.target.value); handleTypingEmit(); }}
-            onKeyDown={handleKeyPress}
-            placeholder="Type a message..."
-            className="flex-1 px-4 py-2 border rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          <button onClick={handleSend} disabled={!text.trim()}
-            className="bg-blue-600 text-white p-2 rounded-full hover:bg-blue-700 disabled:opacity-50 transition">
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-            </svg>
-          </button>
-        </div>
-      </div>
+      {/* Forward modal */}
+      {showForwardModal && (
+        <>
+          <div className="fixed inset-0 bg-black/50 z-30" onClick={() => setShowForwardModal(false)} />
+          <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-40 bg-white rounded-2xl shadow-2xl w-96 max-h-[70vh] flex flex-col">
+            <div className="p-4 border-b flex items-center justify-between">
+              <h3 className="font-bold">Forward to</h3>
+              <button onClick={() => setShowForwardModal(false)} className="text-gray-400 hover:text-gray-600">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+              </button>
+            </div>
+            <div className="flex-1 overflow-y-auto">
+              {forwardConversations.map(conv => {
+                const isSelected = selectedForwardConvs.includes(conv._id);
+                const other = conv.participants?.find(p => p._id !== user.id);
+                return (
+                  <button key={conv._id}
+                    onClick={() => {
+                      setSelectedForwardConvs(prev =>
+                        isSelected ? prev.filter(id => id !== conv._id) : [...prev, conv._id]
+                      );
+                    }}
+                    className="w-full flex items-center gap-3 p-3 hover:bg-gray-50 transition text-left">
+                    <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+                      isSelected ? 'bg-blue-600 border-blue-600' : 'border-gray-300'
+                    }`}>
+                      {isSelected && <span className="text-white text-xs">&#10003;</span>}
+                    </div>
+                    <img
+                      src={conv.isGroup ? conv.groupPhoto : other?.profilePhoto || 'https://ui-avatars.com/api/?name=U&background=494454&color=dae2fd&size=128'}
+                      alt="" className="w-10 h-10 rounded-full object-cover"
+                    />
+                    <span className="font-medium text-sm">{conv.isGroup ? conv.groupName || 'Group' : other?.name || 'Unknown'}</span>
+                  </button>
+                );
+              })}
+            </div>
+            {selectedForwardConvs.length > 0 && (
+              <div className="p-3 border-t">
+                <button onClick={handleForward}
+                  className="w-full py-2 bg-blue-600 text-white text-sm rounded-full hover:bg-blue-700 transition">
+                  Forward ({selectedForwardConvs.length})
+                </button>
+              </div>
+            )}
+          </div>
+        </>
+      )}
+
+      {/* Media preview */}
+      {showMediaPreview && (
+        <>
+          <div className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center" onClick={() => setShowMediaPreview(null)}>
+            <button className="absolute top-4 right-4 text-white p-2 hover:bg-white/10 rounded-full">
+              <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+            </button>
+            {showMediaPreview.type === 'image' && (
+              <img src={showMediaPreview.url} alt="" className="max-w-[90vw] max-h-[90vh] object-contain" />
+            )}
+          </div>
+        </>
+      )}
     </div>
   );
 };

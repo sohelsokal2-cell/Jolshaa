@@ -282,6 +282,15 @@ const userSchema = new mongoose.Schema({
     success: { type: Boolean, default: true },
     timestamp: { type: Date, default: Date.now }
   }],
+  activeStatus: {
+    type: String,
+    enum: ['online', 'away', 'busy', 'offline'],
+    default: 'offline'
+  },
+  lastSeen: {
+    type: Date,
+    default: Date.now
+  },
   helpedCount: {
     type: Number,
     default: 0
