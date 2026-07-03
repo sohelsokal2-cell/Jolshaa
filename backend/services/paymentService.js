@@ -62,14 +62,23 @@ const createStripeCheckout = async ({ userId, amount, currency, type, referenceI
 const handleStripeWebhook = async (event) => {
   if (event.type === 'checkout.session.completed') {
     const session = event.data.object;
-    const tx = await Transaction.findOneAndUpdate(
-      { transactionId: session.id },
-      { status: 'completed', metadata: { ...session.metadata, paymentIntent: session.payment_intent } }
-    );
+    const tx = await Transaction.findOne({ transactionId: session.id });
+    if (!tx) return { success: false };
 
-    if (tx) {
-      await activatePostPayment(tx);
+    // Idempotency: don't re-activate on duplicate webhook deliveries
+    if (tx.status === 'completed') return { success: true, type: session.metadata?.type };
+
+    // Verify the paid amount matches the transaction amount
+    if (session.amount_total !== Math.round(tx.amount * 100)) {
+      console.error(`Stripe amount mismatch for session ${session.id}`);
+      return { success: false };
     }
+
+    tx.status = 'completed';
+    tx.metadata = { ...session.metadata, paymentIntent: session.payment_intent };
+    await tx.save();
+
+    await activatePostPayment(tx);
 
     return { success: true, type: session.metadata?.type };
   }
@@ -135,14 +144,29 @@ const createSSLCommerzPayment = async ({ userId, amount, currency, type, referen
 const handleSSLCommerzSuccess = async (tran_id, val_id) => {
   const validation = await sslcz.validate({ val_id });
   if (validation.status === 'VALID' || validation.status === 'VALIDATED') {
-    const tx = await Transaction.findByIdAndUpdate(tran_id, {
-      status: 'completed',
-      metadata: { sslcommerzValId: val_id, validationStatus: validation.status },
-    });
+    const tx = await Transaction.findById(tran_id);
+    if (!tx) return { success: false };
 
-    if (tx) {
-      await activatePostPayment(tx);
+    // Idempotency: don't re-activate on duplicate callbacks
+    if (tx.status === 'completed') return { success: true };
+
+    // Verify paid amount and currency match the transaction
+    const paidAmount = Number(validation.amount);
+    const paidCurrency = validation.currency || validation.currency_type;
+    if (!Number.isFinite(paidAmount)
+      || Math.abs(paidAmount - tx.amount) > 0.01
+      || (paidCurrency && paidCurrency !== tx.currency)) {
+      tx.status = 'failed';
+      tx.metadata = { sslcommerzValId: val_id, error: 'amount_or_currency_mismatch' };
+      await tx.save();
+      return { success: false };
     }
+
+    tx.status = 'completed';
+    tx.metadata = { sslcommerzValId: val_id, validationStatus: validation.status };
+    await tx.save();
+
+    await activatePostPayment(tx);
 
     return { success: true };
   }

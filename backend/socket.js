@@ -82,6 +82,7 @@ const initSocket = (httpServer) => {
     try {
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
       socket.userId = decoded.id;
+      socket.authToken = token;
       next();
     } catch (err) {
       next(new Error('Invalid token'));
@@ -108,6 +109,10 @@ const initSocket = (httpServer) => {
       return { ok: false, message: 'Invalid comment' };
     }
 
+    if (text.length > 1000) {
+      return { ok: false, message: 'Comment too long' };
+    }
+
     const currentUser = reqUser;
 
     const commentRestricted = currentUser?.restrictions?.find(
@@ -123,7 +128,7 @@ const initSocket = (httpServer) => {
 
     // If post author != current user => enforce block/privacy
     if (post.author.toString() !== currentUser._id.toString()) {
-      const postAuthor = await User.findById(post.author).select('blockedUsers privacy');
+      const postAuthor = await User.findById(post.author).select('blockedUsers privacy friends');
       const commenter = await User.findById(currentUser._id).select('blockedUsers');
 
       if (postAuthor && postAuthor.blockedUsers?.some((id) => id.toString() === currentUser._id.toString())) {
@@ -134,8 +139,25 @@ const initSocket = (httpServer) => {
         return { ok: false, message: 'You have blocked this user' };
       }
 
+      const isFriend = Boolean(
+        postAuthor?.friends?.some((id) => id.toString() === currentUser._id.toString())
+      );
+
+      // Post-level privacy parity with HTTP comment flow
+      if (post.privacy === 'onlyme') {
+        return { ok: false, message: 'Post not found' };
+      }
+
+      if (post.privacy === 'friends' && !isFriend) {
+        return { ok: false, message: 'Only friends can comment on this post' };
+      }
+
       if (postAuthor?.privacy?.commentPrivacy === 'none') {
         return { ok: false, message: 'Comments are disabled on this post' };
+      }
+
+      if (postAuthor?.privacy?.commentPrivacy === 'friends' && !isFriend) {
+        return { ok: false, message: 'Only friends can comment' };
       }
     }
 
@@ -148,11 +170,16 @@ const initSocket = (httpServer) => {
     // Enforce banned/suspended
     try {
       const freshUser = await User.findById(userId).select(
-        'isBanned isSuspended bannedAt bannedReason suspendedAt suspendedReason restrictions'
+        'isBanned isSuspended bannedAt bannedReason suspendedAt suspendedReason restrictions sessions'
       );
       if (!freshUser) return socket.disconnect(true);
       if (freshUser.isBanned) return socket.disconnect(true);
       if (freshUser.isSuspended) return socket.disconnect(true);
+
+      // Enforce server-side session validity (parity with HTTP protect middleware)
+      const hasActiveSession = Array.isArray(freshUser.sessions)
+        && freshUser.sessions.some((s) => s.token === socket.authToken);
+      if (!hasActiveSession) return socket.disconnect(true);
 
       socket.user = freshUser;
     } catch (e) {
@@ -184,6 +211,10 @@ const initSocket = (httpServer) => {
       const rl = rateLimiter(userId, 'sendMessage');
       if (!rl.allowed) return sendSocketError(socket, 'Too many messages, slow down');
 
+      const trimmedText = typeof text === 'string' ? text.trim() : '';
+      if (!trimmedText && !media) return sendSocketError(socket, 'Message cannot be empty');
+      if (trimmedText.length > 5000) return sendSocketError(socket, 'Message too long');
+
       if (!(await ensureConversationAccess(conversationId, userId))) {
         return sendSocketError(socket, 'Not authorized');
       }
@@ -192,7 +223,7 @@ const initSocket = (httpServer) => {
         const message = await Message.create({
           conversation: conversationId,
           sender: userId,
-          text: text || '',
+          text: trimmedText,
           media: media || null,
           readBy: [userId],
         });
@@ -245,8 +276,21 @@ const initSocket = (httpServer) => {
         if (!recipientId) return;
         if (recipientId === userId) return;
 
-        const allowedTypes = ['comment', 'like', 'message', 'notification', 'follow', 'reply', 'system'];
-        const safeType = allowedTypes.includes(type) ? type : 'notification';
+        const mongoose = require('mongoose');
+        if (!mongoose.isValidObjectId(recipientId)) return;
+
+        // Do not allow clients to forge privileged/system notification types
+        const allowedTypes = ['comment', 'like', 'message', 'follow', 'reply'];
+        if (!allowedTypes.includes(type)) {
+          return sendSocketError(socket, 'Notification type not allowed');
+        }
+        const safeType = type;
+
+        // Respect blocks between sender and recipient
+        const recipient = await User.findById(recipientId).select('blockedUsers');
+        if (!recipient) return;
+        if (recipient.blockedUsers?.some((id) => id.toString() === userId)) return;
+        if (socket.user?.blockedUsers?.some((id) => id.toString() === recipientId)) return;
 
         const notification = await Notification.create({
           recipient: recipientId,

@@ -23,6 +23,9 @@ connectDB().then(() => {
 });
 
 const app = express();
+// Required behind reverse proxies (Vercel/Render/NGINX) so req.ip and
+// express-rate-limit use the real client IP instead of the proxy IP
+app.set('trust proxy', 1);
 const server = http.createServer(app);
 
 // Initialize Socket.io
@@ -48,7 +51,12 @@ app.use(cors({
   },
   credentials: true
 }));
-app.use(express.json());
+// Skip global JSON parsing for the Stripe webhook: it needs the raw body
+// for signature verification (express.raw is applied in the payment router)
+app.use((req, res, next) => {
+  if (req.originalUrl === '/api/payments/webhook/stripe') return next();
+  return express.json()(req, res, next);
+});
 app.use(generalLimiter);
 app.use(performanceMonitor);
 app.use(maintenanceCheck);

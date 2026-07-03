@@ -182,19 +182,6 @@ const userSchema = new mongoose.Schema({
     lastUsedAt: { type: Date, default: Date.now },
     createdAt: { type: Date, default: Date.now }
   }],
-  loginHistory: [{
-    ip: { type: String, default: '' },
-    userAgent: { type: String, default: '' },
-    timestamp: { type: Date, default: Date.now },
-    success: { type: Boolean, default: true }
-  }],
-  sessions: [{
-    token: { type: String, required: true },
-    ip: { type: String, default: '' },
-    userAgent: { type: String, default: '' },
-    lastActive: { type: Date, default: Date.now },
-    createdAt: { type: Date, default: Date.now }
-  }],
   savedPosts: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Post'
@@ -204,14 +191,6 @@ const userSchema = new mongoose.Schema({
     ref: 'User'
   }],
   following: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User'
-  }],
-  friends: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User'
-  }],
-  closeFriends: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
   }],

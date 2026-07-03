@@ -4,7 +4,12 @@ const storage = multer.memoryStorage();
 
 const fileFilter = (req, file, cb) => {
   const allowed = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'video/mp4', 'video/webm'];
-  cb(null, allowed.includes(file.mimetype));
+  if (!allowed.includes(file.mimetype)) {
+    const error = new Error('Unsupported file type. Allowed: JPEG, PNG, GIF, WebP, MP4, WebM');
+    error.statusCode = 400;
+    return cb(error);
+  }
+  cb(null, true);
 };
 
 const upload = multer({

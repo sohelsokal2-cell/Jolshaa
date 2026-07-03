@@ -322,14 +322,24 @@ exports.forgotPassword = async (req, res) => {
     if (!user) return res.json({ message: 'If an account exists with this email, a reset link has been sent.' });
 
     const crypto = require('crypto');
-    const token = crypto.randomBytes(32).toString('hex');
+    const rawToken = crypto.randomBytes(32).toString('hex');
+    const hashedToken = crypto.createHash('sha256').update(rawToken).digest('hex');
     const expiresAt = new Date(Date.now() + 3600000); // 1 hour
 
-    user.passwordResetToken = token;
+    user.passwordResetToken = hashedToken;
     user.passwordResetExpires = expiresAt;
     await user.save();
 
-    res.json({ message: 'If an account exists with this email, a reset link has been sent.', token });
+    // Send the raw token via email only; never expose it in the API response
+    const { sendEmail } = require('../services/emailService');
+    const clientUrl = (process.env.CLIENT_URL || 'http://localhost:3000').replace(/\/$/, '');
+    await sendEmail({
+      to: user.email,
+      template: 'password_reset',
+      data: { name: user.name, resetUrl: `${clientUrl}/reset-password?token=${rawToken}` }
+    });
+
+    res.json({ message: 'If an account exists with this email, a reset link has been sent.' });
   } catch (error) {
     res.status(500).json({ message: 'Server error' });
   }
@@ -341,8 +351,11 @@ exports.resetPassword = async (req, res) => {
     if (!token || !newPassword) return res.status(400).json({ message: 'Token and new password are required' });
     if (newPassword.length < 6) return res.status(400).json({ message: 'Password must be at least 6 characters' });
 
+    const crypto = require('crypto');
+    const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
+
     const user = await User.findOne({
-      passwordResetToken: token,
+      passwordResetToken: hashedToken,
       passwordResetExpires: { $gt: new Date() }
     }).select('+password');
 
@@ -351,6 +364,8 @@ exports.resetPassword = async (req, res) => {
     user.password = newPassword;
     user.passwordResetToken = undefined;
     user.passwordResetExpires = undefined;
+    // Invalidate all existing sessions after a password reset
+    user.sessions = [];
     await user.save();
 
     res.json({ message: 'Password reset successful' });

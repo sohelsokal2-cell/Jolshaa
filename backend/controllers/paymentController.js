@@ -15,10 +15,15 @@ exports.createCheckout = async (req, res) => {
       return res.status(400).json({ message: 'gateway, amount, and type are required' });
     }
 
+    const numericAmount = Number(amount);
+    if (!Number.isFinite(numericAmount) || numericAmount <= 0 || numericAmount > 100000) {
+      return res.status(400).json({ message: 'Invalid amount' });
+    }
+
     if (gateway === 'stripe') {
       const result = await createStripeCheckout({
         userId: req.user._id,
-        amount,
+        amount: numericAmount,
         currency: currency || 'usd',
         type,
         referenceId,
@@ -30,7 +35,7 @@ exports.createCheckout = async (req, res) => {
     if (gateway === 'sslcommerz') {
       const result = await createSSLCommerzPayment({
         userId: req.user._id,
-        amount,
+        amount: numericAmount,
         currency: currency || 'BDT',
         type,
         referenceId,
@@ -103,10 +108,12 @@ exports.sslCommerzCancel = async (req, res) => {
 
 exports.getPaymentStatus = async (req, res) => {
   try {
+    const mongoose = require('mongoose');
     const Transaction = require('../models/Transaction');
-    const tx = await Transaction.findOne({
-      $or: [{ transactionId: req.params.transactionId }, { _id: req.params.transactionId }],
-    });
+    const id = req.params.transactionId;
+    const or = [{ transactionId: id }];
+    if (mongoose.isValidObjectId(id)) or.push({ _id: id });
+    const tx = await Transaction.findOne({ $or: or });
     if (!tx) return res.status(404).json({ message: 'Transaction not found' });
     if (tx.user.toString() !== req.user._id.toString() && !req.user.isAdmin) {
       return res.status(403).json({ message: 'Not authorized' });

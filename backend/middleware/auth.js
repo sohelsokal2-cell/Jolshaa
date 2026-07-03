@@ -19,6 +19,14 @@ const protect = async (req, res, next) => {
       return res.status(401).json({ message: 'Not authorized, user not found' });
     }
 
+    // Enforce server-side session validity so revoked sessions and password
+    // changes actually invalidate previously issued JWTs
+    const hasActiveSession = Array.isArray(req.user.sessions)
+      && req.user.sessions.some((s) => s.token === token);
+    if (!hasActiveSession) {
+      return res.status(401).json({ message: 'Session expired, please log in again' });
+    }
+
     if (req.user.isBanned) {
       return res.status(403).json({ message: 'Account banned', banned: true, bannedAt: req.user.bannedAt, bannedReason: req.user.bannedReason });
     }
