@@ -58,6 +58,20 @@ app.use((req, res, next) => {
   return express.json()(req, res, next);
 });
 app.use(generalLimiter);
+
+// Strip internal error details (error.message leaks) from all 5xx JSON
+// responses, since many controllers include `error: error.message`
+app.use((req, res, next) => {
+  const originalJson = res.json.bind(res);
+  res.json = (body) => {
+    if (res.statusCode >= 500 && body && typeof body === 'object' && 'error' in body) {
+      const { error, ...safeBody } = body;
+      return originalJson(safeBody);
+    }
+    return originalJson(body);
+  };
+  next();
+});
 app.use(performanceMonitor);
 app.use(maintenanceCheck);
 
