@@ -7,21 +7,23 @@ import Tabs from '../ui/Tabs';
 import Modal from '../ui/Modal';
 import Input from '../ui/Input';
 import AdsterraSettings from './AdsterraSettings';
+import AdNetworksManager from '../../pages/AdNetworksManager';
 
 const MonetizationTab = () => {
   const [subTab, setSubTab] = useState('creator-apps');
 
   const subTabs = [
-    { key: 'creator-apps', label: 'Creator Applications' },
-    { key: 'ad-review', label: 'Ad Review Queue' },
-    { key: 'payout-requests', label: 'Payout Requests' },
-    { key: 'platform-revenue', label: 'Platform Revenue' },
-    { key: 'ads', label: 'Ads Management' },
-    { key: 'boosts', label: 'Boosted Posts' },
+    { key: 'creator-apps', label: 'Creator Apps' },
+    { key: 'ad-review', label: 'Ad Review' },
+    { key: 'payout-requests', label: 'Payouts' },
+    { key: 'platform-revenue', label: 'Revenue' },
+    { key: 'ads', label: 'Ads' },
+    { key: 'boosts', label: 'Boosts' },
+    { key: 'ad-networks', label: 'Ad Networks' },
     { key: 'adsterra', label: 'Adsterra' },
     { key: 'subscriptions', label: 'Subscriptions' },
     { key: 'transactions', label: 'Transactions' },
-    { key: 'fraud', label: 'Fraud Detection' },
+    { key: 'fraud', label: 'Fraud' },
   ];
 
   return (
@@ -33,6 +35,7 @@ const MonetizationTab = () => {
       {subTab === 'platform-revenue' && <PlatformRevenuePanel />}
       {subTab === 'ads' && <AdsManagementPanel />}
       {subTab === 'boosts' && <BoostedPostsPanel />}
+      {subTab === 'ad-networks' && <AdNetworksManager />}
       {subTab === 'adsterra' && <AdsterraSettings />}
       {subTab === 'subscriptions' && <SubscriptionsPanel />}
       {subTab === 'transactions' && <TransactionsPanel />}

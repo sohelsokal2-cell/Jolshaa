@@ -221,6 +221,18 @@ export const MultiAdNetworks = () => {
         if (network.adFormats?.nativeBanner?.script) {
           injectScript(network.adFormats.nativeBanner.script, `native-banner-${name}`);
         }
+        if (network.adFormats?.video?.script) {
+          injectScript(network.adFormats.video.script, `video-${name}`);
+        }
+        if (network.adFormats?.interstitial?.script) {
+          injectScript(network.adFormats.interstitial.script, `interstitial-${name}`);
+        }
+        if (network.adFormats?.banner?.script) {
+          injectScript(network.adFormats.banner.script, `banner-${name}`);
+        }
+        if (network.adFormats?.directLink?.script) {
+          injectScript(network.adFormats.directLink.script, `direct-link-${name}`);
+        }
       }
     }).catch(() => {});
   }, []);

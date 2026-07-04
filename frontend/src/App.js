@@ -49,7 +49,6 @@ import NoteDetail from './pages/NoteDetail';
 import { PaymentSuccess, PaymentCancel, PaymentFail } from './pages/PaymentResult';
 import HelpFeed from './pages/HelpFeed';
 import HelpRequestDetail from './pages/HelpRequestDetail';
-import { AdsterraAds } from './components/AdsterraAds';
 import { MultiAdNetworks } from './components/MultiAdNetworks';
 import AdNetworksManager from './pages/AdNetworksManager';
 
@@ -115,7 +114,6 @@ const AppContent = () => {
         <Route path="/help/:id" element={<ProtectedRoute><HelpRequestDetail /></ProtectedRoute>} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
-      <AdsterraAds />
       <MultiAdNetworks />
     </Router>
   );
