@@ -22,6 +22,8 @@ const VideoPlayer = ({
   const hideControlsTimerRef = useRef(null);
   const viewTrackingRef = useRef(null);
   const lastTapRef = useRef(0);
+  const adEligibilityRef = useRef(null);
+  const midRollAdShownRef = useRef(false);
 
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(initialMuted);
@@ -37,9 +39,29 @@ const VideoPlayer = ({
   const [hasInteracted, setHasInteracted] = useState(false);
   const [showPlayOverlay, setShowPlayOverlay] = useState(!autoplay);
   const [sourceLoaded, setSourceLoaded] = useState(false);
+  const [showMidRollAd, setShowMidRollAd] = useState(false);
+  const [adSkippable, setAdSkippable] = useState(false);
   const isPlayingRef = useRef(false);
 
   const posterUrl = poster || thumbnail;
+  const currentAdRef = useRef(null);
+
+  const handleSkipAd = async () => {
+    setShowMidRollAd(false);
+    // Track the click via ad server
+    if (currentAdRef.current?.impressionId) {
+      try {
+        await API.post(`/ads/${currentAdRef.current.campaignId}/track-click`, {
+          impressionId: currentAdRef.current.impressionId,
+        });
+      } catch (e) { /* ignore */ }
+    }
+    // Resume video
+    const video = videoRef.current;
+    if (video) {
+      video.play().catch(() => {});
+    }
+  };
 
   // Format time mm:ss
   const formatTime = (s) => {
@@ -127,6 +149,24 @@ const VideoPlayer = ({
         lastTrackedRef.current = currentInterval;
         trackView(video.currentTime, pct);
       }
+
+      // Mid-roll ad: show at 50% of video (only once, only if eligible)
+      if (
+        duration >= 60 &&
+        !midRollAdShownRef.current &&
+        adEligibilityRef.current?.eligible &&
+        adEligibilityRef.current?.ad &&
+        pct >= 50 &&
+        isPlaying
+      ) {
+        midRollAdShownRef.current = true;
+        currentAdRef.current = adEligibilityRef.current.ad;
+        video.pause();
+        setShowMidRollAd(true);
+        setAdSkippable(false);
+        // Allow skip after 5 seconds
+        setTimeout(() => setAdSkippable(true), 5000);
+      }
     };
 
     const handleEnded = () => {
@@ -143,7 +183,21 @@ const VideoPlayer = ({
       video.removeEventListener('timeupdate', handleTimeUpdate);
       video.removeEventListener('ended', handleEnded);
     };
-  }, [postId, duration]);
+  }, [postId, duration, isPlaying]);
+
+  // Check ad eligibility when video loads
+  useEffect(() => {
+    if (!postId) return;
+    API.get(`/ads/video/${postId}/serve`)
+      .then(res => {
+        if (res.data.eligible) {
+          adEligibilityRef.current = res.data;
+        } else {
+          adEligibilityRef.current = { eligible: false };
+        }
+      })
+      .catch(() => { adEligibilityRef.current = { eligible: false }; });
+  }, [postId]);
 
   // Video event listeners
   useEffect(() => {
@@ -373,6 +427,32 @@ const VideoPlayer = ({
             <svg className="w-8 h-8 text-white ml-1" fill="currentColor" viewBox="0 0 24 24">
               <path d="M8 5v14l11-7z" />
             </svg>
+          </div>
+        </div>
+      )}
+
+      {/* Mid-roll ad overlay */}
+      {showMidRollAd && (
+        <div className="absolute inset-0 z-30 flex flex-col items-center justify-center bg-black/90">
+          <div className="bg-neutral-800 rounded-xl p-6 max-w-sm mx-4 text-center shadow-2xl border border-neutral-600">
+            <div className="flex items-center justify-center gap-2 mb-3">
+              <span className="text-xs font-medium text-amber-400 bg-amber-400/10 px-2 py-0.5 rounded">Sponsored</span>
+            </div>
+            <div className="w-full h-32 bg-gradient-to-br from-primary-500 to-primary-700 rounded-lg mb-4 flex items-center justify-center">
+              <span className="text-white text-lg font-bold">Advertisement</span>
+            </div>
+            <p className="text-sm text-neutral-400 mb-4">Support this creator by watching the ad</p>
+            <button
+              onClick={handleSkipAd}
+              disabled={!adSkippable}
+              className={`w-full py-2.5 rounded-lg text-sm font-medium transition-colors ${
+                adSkippable
+                  ? 'bg-primary-600 text-white hover:bg-primary-700'
+                  : 'bg-neutral-700 text-neutral-400 cursor-not-allowed'
+              }`}
+            >
+              {adSkippable ? 'Skip Ad' : 'Ad playing...'}
+            </button>
           </div>
         </div>
       )}

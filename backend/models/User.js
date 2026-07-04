@@ -304,6 +304,7 @@ const userSchema = new mongoose.Schema({
     isCreator: { type: Boolean, default: false },
     followerCount: { type: Number, default: 0 },
     totalEarnings: { type: Number, default: 0 },
+    totalPaidOut: { type: Number, default: 0 },
     availableBalance: { type: Number, default: 0 },
     pendingBalance: { type: Number, default: 0 },
     payoutMethod: {

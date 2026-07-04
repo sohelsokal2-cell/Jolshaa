@@ -272,6 +272,7 @@ exports.verifyUser = async (req, res) => {
 
     res.json({ message: user.isVerified ? 'User verified' : 'User unverified', isVerified: user.isVerified });
   } catch (error) {
+    console.error('verifyUser error:', error.message, error.errors);
     res.status(500).json({ message: 'Server error' });
   }
 };

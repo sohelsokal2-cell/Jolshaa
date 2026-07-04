@@ -34,7 +34,9 @@ exports.getConversations = async (req, res) => {
       obj.isPinned = obj.pinnedBy?.some(id => id.toString() === userId.toString()) || false;
       obj.isMuted = obj.mutedBy?.some(id => id.toString() === userId.toString()) || false;
       obj.isArchived = obj.archivedBy?.some(id => id.toString() === userId.toString()) || false;
-      obj.unreadCount = obj.unreadCount?.get(userId.toString()) || 0;
+      obj.unreadCount = obj.unreadCount instanceof Map
+        ? obj.unreadCount.get(userId.toString()) || 0
+        : obj.unreadCount?.[userId.toString()] || 0;
       return obj;
     });
 
@@ -364,7 +366,7 @@ exports.deleteConversation = async (req, res) => {
 exports.getMessages = async (req, res) => {
   try {
     const { before, limit: limitStr } = req.query;
-    const limit = parseInt(limitStr) || 50;
+    const limit = Math.min(Math.max(parseInt(limitStr, 10) || 50, 1), 100);
 
     const conversation = await Conversation.findOne({
       _id: req.params.id,
@@ -381,22 +383,31 @@ exports.getMessages = async (req, res) => {
     };
 
     if (before) {
-      query.createdAt = { $lt: new Date(before) };
+      const beforeDate = new Date(before);
+      if (!Number.isNaN(beforeDate.getTime())) {
+        query.createdAt = { $lt: beforeDate };
+      }
     }
 
     const messages = await Message.find(query)
-      .sort({ createdAt: -1 })
-      .limit(limit)
+      .sort({ createdAt: -1, _id: -1 })
+      .limit(limit + 1)
       .populate('sender', 'name profilePhoto')
       .populate({ path: 'replyTo', select: 'text sender media mediaType isDeleted deletedForEveryone', populate: { path: 'sender', select: 'name profilePhoto' } })
       .populate({ path: 'forwardedFrom', select: 'text sender media mediaType fileName', populate: { path: 'sender', select: 'name profilePhoto' } })
       .populate('readBy', 'name profilePhoto');
 
-    const total = await Message.countDocuments({ conversation: req.params.id });
+    const total = await Message.countDocuments({
+      conversation: req.params.id,
+      deletedFor: { $ne: req.user._id },
+    });
+
+    const hasMore = messages.length > limit;
+    const pageMessages = hasMore ? messages.slice(0, limit) : messages;
 
     res.json({
-      messages: messages.reverse(),
-      hasMore: messages.length === limit,
+      messages: pageMessages.reverse(),
+      hasMore,
       total,
     });
   } catch (error) {

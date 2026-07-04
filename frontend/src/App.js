@@ -49,6 +49,9 @@ import NoteDetail from './pages/NoteDetail';
 import { PaymentSuccess, PaymentCancel, PaymentFail } from './pages/PaymentResult';
 import HelpFeed from './pages/HelpFeed';
 import HelpRequestDetail from './pages/HelpRequestDetail';
+import { AdsterraAds } from './components/AdsterraAds';
+import { MultiAdNetworks } from './components/MultiAdNetworks';
+import AdNetworksManager from './pages/AdNetworksManager';
 
 const PublicRoute = ({ children }) => {
   const { user, loading } = useAuth();
@@ -97,6 +100,7 @@ const AppContent = () => {
         <Route path="/creator/subscriptions/:creatorId" element={<ProtectedRoute><SubscriptionTiersPage /></ProtectedRoute>} />
         <Route path="/creator/apply" element={<ProtectedRoute><MonetizationApplicationPage /></ProtectedRoute>} />
         <Route path="/ads/manager" element={<ProtectedRoute><AdsManagerDashboard /></ProtectedRoute>} />
+        <Route path="/admin/ad-networks" element={<ProtectedRoute><AdNetworksManager /></ProtectedRoute>} />
         <Route path="/marketplace" element={<ProtectedRoute><MarketplacePage /></ProtectedRoute>} />
         <Route path="/marketplace/:id" element={<ProtectedRoute><ListingDetail /></ProtectedRoute>} />
         <Route path="/hashtag/:name" element={<ProtectedRoute><HashtagPage /></ProtectedRoute>} />
@@ -111,6 +115,8 @@ const AppContent = () => {
         <Route path="/help/:id" element={<ProtectedRoute><HelpRequestDetail /></ProtectedRoute>} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
+      <AdsterraAds />
+      <MultiAdNetworks />
     </Router>
   );
 };

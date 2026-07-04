@@ -6,6 +6,8 @@ const Message = require('./models/Message');
 const Notification = require('./models/Notification');
 const User = require('./models/User');
 const CallLog = require('./models/CallLog');
+const { hasId } = require('./utils/id');
+const { validateNotificationPayload } = require('./utils/socketValidation');
 
 let io;
 const onlineUsers = new Map(); // userId -> Set<socketId>
@@ -78,13 +80,22 @@ const initSocket = (httpServer) => {
   });
 
   // Auth middleware
-  io.use((socket, next) => {
+  io.use(async (socket, next) => {
     const token = socket.handshake.auth?.token;
     if (!token) return next(new Error('Authentication required'));
 
     try {
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      socket.userId = decoded.id;
+      const freshUser = await User.findById(decoded.id).select(
+        'isBanned isSuspended bannedAt bannedReason suspendedAt suspendedReason restrictions friends'
+      );
+
+      if (!freshUser || freshUser.isBanned || freshUser.isSuspended) {
+        return next(new Error('Account unavailable'));
+      }
+
+      socket.userId = freshUser._id.toString();
+      socket.user = freshUser;
       next();
     } catch (err) {
       next(new Error('Invalid token'));
@@ -124,11 +135,11 @@ const initSocket = (httpServer) => {
       const postAuthor = await User.findById(post.author).select('blockedUsers privacy');
       const commenter = await User.findById(currentUser._id).select('blockedUsers');
 
-      if (postAuthor && postAuthor.blockedUsers?.some((id) => id.toString() === currentUser._id.toString())) {
+      if (postAuthor && hasId(postAuthor.blockedUsers, currentUser._id)) {
         return { ok: false, message: 'You are blocked by this user' };
       }
 
-      if (commenter && commenter.blockedUsers?.some((id) => id.toString() === post.author.toString())) {
+      if (commenter && hasId(commenter.blockedUsers, post.author)) {
         return { ok: false, message: 'You have blocked this user' };
       }
 
@@ -143,19 +154,8 @@ const initSocket = (httpServer) => {
   io.on('connection', async (socket) => {
     const userId = socket.userId;
 
-    // Enforce banned/suspended
-    try {
-      const freshUser = await User.findById(userId).select(
-        'isBanned isSuspended bannedAt bannedReason suspendedAt suspendedReason restrictions friends'
-      );
-      if (!freshUser) return socket.disconnect(true);
-      if (freshUser.isBanned) return socket.disconnect(true);
-      if (freshUser.isSuspended) return socket.disconnect(true);
-
-      socket.user = freshUser;
-    } catch (e) {
-      return socket.disconnect(true);
-    }
+    if (!socket.user) return socket.disconnect(true);
+    if (socket.user.isBanned || socket.user.isSuspended) return socket.disconnect(true);
 
     console.log(`User connected: ${userId}`);
 
@@ -397,19 +397,27 @@ const initSocket = (httpServer) => {
           relatedConversation,
         } = data || {};
 
-        if (!recipientId) return;
+        const validation = validateNotificationPayload({
+          recipientId,
+          type,
+          relatedPost,
+          relatedComment,
+          relatedConversation,
+        });
+
+        if (!validation.ok) return sendSocketError(socket, validation.message);
         if (recipientId === userId) return;
 
-        const allowedTypes = ['comment', 'like', 'message', 'notification', 'follow', 'reply', 'system'];
-        const safeType = allowedTypes.includes(type) ? type : 'notification';
+        const recipientExists = await User.findById(recipientId).select('_id');
+        if (!recipientExists) return sendSocketError(socket, 'Recipient not found');
 
         const notification = await Notification.create({
           recipient: recipientId,
           sender: userId,
-          type: safeType,
-          relatedPost: relatedPost || null,
-          relatedComment: relatedComment || null,
-          relatedConversation: relatedConversation || null,
+          type: validation.type,
+          relatedPost: validation.relatedPost,
+          relatedComment: validation.relatedComment,
+          relatedConversation: validation.relatedConversation,
         });
 
         await notification.populate('sender', 'name profilePhoto');

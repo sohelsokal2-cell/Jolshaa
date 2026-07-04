@@ -6,6 +6,7 @@ import Badge from '../ui/Badge';
 import Tabs from '../ui/Tabs';
 import Modal from '../ui/Modal';
 import Input from '../ui/Input';
+import AdsterraSettings from './AdsterraSettings';
 
 const MonetizationTab = () => {
   const [subTab, setSubTab] = useState('creator-apps');
@@ -17,6 +18,7 @@ const MonetizationTab = () => {
     { key: 'platform-revenue', label: 'Platform Revenue' },
     { key: 'ads', label: 'Ads Management' },
     { key: 'boosts', label: 'Boosted Posts' },
+    { key: 'adsterra', label: 'Adsterra' },
     { key: 'subscriptions', label: 'Subscriptions' },
     { key: 'transactions', label: 'Transactions' },
     { key: 'fraud', label: 'Fraud Detection' },
@@ -31,6 +33,7 @@ const MonetizationTab = () => {
       {subTab === 'platform-revenue' && <PlatformRevenuePanel />}
       {subTab === 'ads' && <AdsManagementPanel />}
       {subTab === 'boosts' && <BoostedPostsPanel />}
+      {subTab === 'adsterra' && <AdsterraSettings />}
       {subTab === 'subscriptions' && <SubscriptionsPanel />}
       {subTab === 'transactions' && <TransactionsPanel />}
       {subTab === 'fraud' && <FraudDetectionPanel />}

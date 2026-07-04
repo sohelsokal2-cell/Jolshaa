@@ -1,9 +1,11 @@
 const AdCampaign = require('../models/AdCampaign');
+const AdImpression = require('../models/AdImpression');
 const Post = require('../models/Post');
 const User = require('../models/User');
 const Transaction = require('../models/Transaction');
 const Notification = require('../models/Notification');
 const { getIO } = require('../socket');
+const AdServer = require('../services/adServer');
 
 // ========== CREATE CAMPAIGN ==========
 
@@ -292,26 +294,18 @@ exports.rejectCampaign = async (req, res) => {
 
 exports.trackImpression = async (req, res) => {
   try {
-    const campaign = await AdCampaign.findByIdAndUpdate(
+    const { impressionId, adType } = req.body;
+    const device = /Mobi|Android/i.test(req.headers['user-agent']) ? 'mobile' : 'desktop';
+
+    const result = await AdServer.trackImpression(
       req.params.id,
-      {
-        $inc: {
-          'metrics.impressions': 1,
-          'metrics.reach': 1,
-        },
-      },
-      { new: true }
+      req.user._id,
+      req.body.postId,
+      adType || 'feed',
+      device
     );
 
-    if (!campaign) return res.status(404).json({ message: 'Campaign not found' });
-
-    // Update CTR
-    if (campaign.metrics.impressions > 0) {
-      campaign.metrics.ctr = (campaign.metrics.clicks / campaign.metrics.impressions) * 100;
-      await campaign.save();
-    }
-
-    res.json({ success: true });
+    res.json({ success: true, ...result });
   } catch (error) {
     res.status(500).json({ message: 'Server error' });
   }
@@ -319,25 +313,13 @@ exports.trackImpression = async (req, res) => {
 
 exports.trackClick = async (req, res) => {
   try {
-    const campaign = await AdCampaign.findByIdAndUpdate(
-      req.params.id,
-      { $inc: { 'metrics.clicks': 1 } },
-      { new: true }
-    );
-
-    if (!campaign) return res.status(404).json({ message: 'Campaign not found' });
-
-    // Update CTR
-    if (campaign.metrics.impressions > 0) {
-      campaign.metrics.ctr = (campaign.metrics.clicks / campaign.metrics.impressions) * 100;
-      await campaign.save();
+    const { impressionId } = req.body;
+    if (!impressionId) {
+      return res.status(400).json({ message: 'impressionId is required' });
     }
 
-    // Deduct daily spend
-    campaign.spentAmount += campaign.dailyBudget * 0.01; // Simplified cost model
-    await campaign.save();
-
-    res.json({ success: true });
+    const result = await AdServer.trackClick(impressionId, req.user._id);
+    res.json(result);
   } catch (error) {
     res.status(500).json({ message: 'Server error' });
   }
@@ -354,28 +336,10 @@ exports.getFeedWithAds = async (req, res) => {
     const currentUser = await User.findById(req.user._id).select('blockedUsers location dateOfBirth gender');
     const blockedIds = currentUser?.blockedUsers || [];
 
-    // Get user age for targeting
-    const userAge = currentUser?.dateOfBirth
-      ? Math.floor((Date.now() - new Date(currentUser.dateOfBirth).getTime()) / (31557600000))
-      : 25;
+    // Use AdServer to select targeted ads
+    const ads = await AdServer.selectAd(req.user._id, 'feed', 3);
 
-    // Get active ad campaigns matching user
-    const activeAds = await AdCampaign.find({
-      status: 'active',
-      'duration.startDate': { $lte: new Date() },
-      'duration.endDate': { $gte: new Date() },
-      $or: [
-        { 'targetAudience.gender': 'all' },
-        { 'targetAudience.gender': currentUser?.gender || 'all' },
-      ],
-    })
-      .populate({
-        path: 'post',
-        populate: { path: 'author', select: 'name profilePhoto' },
-      })
-      .limit(5);
-
-    // Inject ads every 5-7 organic posts
+    // Get organic posts
     const organicPosts = await Post.find({
       author: { $nin: blockedIds },
       visibility: 'public',
@@ -389,25 +353,34 @@ exports.getFeedWithAds = async (req, res) => {
       .skip(skip)
       .limit(limit);
 
-    // Merge ads into feed
+    // Merge ads into feed (every 5-7 posts)
     const feed = [];
     let adIndex = 0;
-    const adInterval = 5 + Math.floor(Math.random() * 3); // Random 5-7
+    const adInterval = 5 + Math.floor(Math.random() * 3);
 
     for (let i = 0; i < organicPosts.length; i++) {
       feed.push({ ...organicPosts[i].toObject(), isSponsored: false });
 
-      if ((i + 1) % adInterval === 0 && adIndex < activeAds.length) {
-        const ad = activeAds[adIndex];
+      if ((i + 1) % adInterval === 0 && adIndex < ads.length) {
+        const ad = ads[adIndex];
         if (ad?.post) {
+          // Track impression via AdServer
+          const device = /Mobi|Android/i.test(req.headers['user-agent']) ? 'mobile' : 'desktop';
+          const impression = await AdServer.trackImpression(
+            ad.campaignId,
+            req.user._id,
+            ad.postId,
+            'feed',
+            device
+          );
+
           feed.push({
             ...ad.post.toObject(),
             isSponsored: true,
             sponsorName: 'Sponsored',
-            adCampaignId: ad._id,
+            adCampaignId: ad.campaignId,
+            impressionId: impression.impressionId,
           });
-          // Track impression
-          await AdCampaign.findByIdAndUpdate(ad._id, { $inc: { 'metrics.impressions': 1 } });
           adIndex++;
         }
       }
@@ -416,6 +389,61 @@ exports.getFeedWithAds = async (req, res) => {
     res.json({ posts: feed, page, hasMore: organicPosts.length === limit });
   } catch (error) {
     console.error('Feed with ads error:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+// ========== SERVE VIDEO ADS ==========
+
+exports.serveVideoAd = async (req, res) => {
+  try {
+    const { postId } = req.params;
+
+    const post = await Post.findById(postId).select('video author');
+    if (!post || !post.video || !post.video.url) {
+      return res.status(404).json({ message: 'Video not found' });
+    }
+
+    const creator = await User.findById(post.author).select('monetization');
+    if (!creator?.monetization?.isCreator) {
+      return res.json({ eligible: false, reason: 'Creator not monetized' });
+    }
+
+    if ((post.video.duration || 0) < 60) {
+      return res.json({ eligible: false, reason: 'Video too short (min 60s)' });
+    }
+
+    if ((post.video.views || 0) < 1000) {
+      return res.json({ eligible: false, reason: 'Not enough views (min 1000)' });
+    }
+
+    // Select a video ad for mid-roll
+    const ads = await AdServer.selectAd(req.user._id, 'video_midroll', 1);
+
+    if (ads.length === 0) {
+      return res.json({ eligible: false, reason: 'No ads available' });
+    }
+
+    const ad = ads[0];
+    const device = /Mobi|Android/i.test(req.headers['user-agent']) ? 'mobile' : 'desktop';
+    const impression = await AdServer.trackImpression(
+      ad.campaignId,
+      req.user._id,
+      ad.postId,
+      'video_midroll',
+      device
+    );
+
+    res.json({
+      eligible: true,
+      ad: {
+        campaignId: ad.campaignId,
+        impressionId: impression.impressionId,
+        post: ad.post,
+        advertiser: ad.advertiser,
+      },
+    });
+  } catch (error) {
     res.status(500).json({ message: 'Server error' });
   }
 };

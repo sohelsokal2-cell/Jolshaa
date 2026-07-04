@@ -14,10 +14,14 @@ const {
   trackImpression,
   trackClick,
   getFeedWithAds,
+  serveVideoAd,
 } = require('../controllers/adCampaignController');
 
 // Feed with ads (authenticated users)
 router.get('/feed', protect, getFeedWithAds);
+
+// Video ad serving
+router.get('/video/:postId/serve', protect, serveVideoAd);
 
 // All routes below require authentication
 router.use(protect);

@@ -95,6 +95,8 @@ app.use('/api/notes', require('./routes/notes'));
 app.use('/api/help', require('./routes/help'));
 app.use('/api/payments', require('./routes/payment'));
 app.use('/api/payouts', require('./routes/payouts'));
+app.use('/api/adsterra', require('./routes/adsterra'));
+app.use('/api/ad-networks', require('./routes/adNetwork'));
 
 app.use(errorHandler);
 

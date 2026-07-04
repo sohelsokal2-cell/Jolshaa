@@ -206,7 +206,7 @@ const PostCard = ({ post, onDelete }) => {
 
             {post.isSponsored && (
           <div className="ml-[52px] mt-1">
-            <SponsoredPostLabel campaignId={post.campaignId} />
+            <SponsoredPostLabel campaignId={post.adCampaignId} impressionId={post.impressionId} />
           </div>
         )}
         {post.isBoosted && (

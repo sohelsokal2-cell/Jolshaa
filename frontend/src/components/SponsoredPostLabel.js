@@ -1,7 +1,17 @@
 import { useState } from 'react';
+import API from '../api/axios';
 
-const SponsoredPostLabel = ({ campaignId, className = '' }) => {
+const SponsoredPostLabel = ({ campaignId, impressionId, className = '' }) => {
   const [showInfo, setShowInfo] = useState(false);
+
+  const handleLearnMore = async () => {
+    if (impressionId && campaignId) {
+      try {
+        await API.post(`/ads/${campaignId}/track-click`, { impressionId });
+      } catch (e) { /* ignore */ }
+    }
+    setShowInfo(false);
+  };
 
   return (
     <div className={`relative inline-flex items-center gap-1 ${className}`}>
@@ -27,7 +37,7 @@ const SponsoredPostLabel = ({ campaignId, className = '' }) => {
               to show this content to you based on your profile information and interests.
             </p>
             <button
-              onClick={() => setShowInfo(false)}
+              onClick={handleLearnMore}
               className="text-xs text-primary-600 dark:text-primary-400 mt-2 font-medium"
             >
               Learn More
