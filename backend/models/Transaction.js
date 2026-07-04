@@ -9,55 +9,73 @@ const transactionSchema = new mongoose.Schema(
     },
     type: {
       type: String,
-      enum: ['ad_payment', 'boost_payment', 'subscription', 'tip', 'payout', 'refund', 'withdrawal'],
+      enum: [
+        'star_purchase',
+        'star_gift_sent',
+        'star_gift_received',
+        'subscription_payment',
+        'subscription_earning',
+        'ad_revenue',
+        'ad_campaign_payment',
+        'boost_payment',
+        'creator_bonus',
+        'payout_request',
+        'payout_completed',
+        'refund',
+      ],
       required: true,
     },
     amount: {
       type: Number,
       required: true,
     },
-    currency: {
+    starsAmount: {
+      type: Number,
+      default: 0,
+    },
+    relatedUser: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+    },
+    relatedPost: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Post',
+    },
+    paymentGateway: {
       type: String,
-      default: 'USD',
+      enum: ['sslcommerz', 'bkash', 'nagad', 'rocket', 'internal'],
+      default: 'internal',
+    },
+    gatewayTransactionId: {
+      type: String,
+      sparse: true,
     },
     status: {
       type: String,
-      enum: ['pending', 'completed', 'failed', 'cancelled'],
+      enum: ['pending', 'completed', 'failed', 'refunded'],
       default: 'pending',
     },
     description: {
       type: String,
       default: '',
     },
-    reference: {
-      type: mongoose.Schema.Types.ObjectId,
-      refPath: 'referenceModel',
-    },
-    referenceModel: {
-      type: String,
-      enum: ['Ad', 'Post', 'User'],
-    },
-    paymentMethod: {
-      type: String,
-      enum: ['card', 'wallet', 'bank', 'internal'],
-      default: 'internal',
-    },
-    transactionId: {
-      type: String,
-      unique: true,
-      sparse: true,
-    },
     metadata: {
       type: mongoose.Schema.Types.Mixed,
       default: {},
     },
+    createdAt: {
+      type: Date,
+      default: Date.now,
+    },
   },
   {
-    timestamps: true,
+    timestamps: false,
   }
 );
 
 transactionSchema.index({ user: 1, createdAt: -1 });
 transactionSchema.index({ type: 1, status: 1 });
+transactionSchema.index({ gatewayTransactionId: 1 });
+transactionSchema.index({ relatedUser: 1 });
 
 module.exports = mongoose.model('Transaction', transactionSchema);

@@ -14,6 +14,7 @@ import PostCard from '../components/PostCard';
 import ReportModal from '../components/ReportModal';
 import FriendButton from '../components/FriendButton';
 import SubscribeButton from '../components/SubscribeButton';
+import SubscriptionTiersPage from './SubscriptionTiersPage';
 import StoryHighlights from '../components/StoryHighlights';
 
 const Profile = () => {
@@ -270,6 +271,15 @@ const Profile = () => {
         <div className="px-4 sm:px-0 mb-4">
           <StoryHighlights userId={profileUser.id || profileUser._id} />
         </div>
+
+        {/* Subscription Tiers (for creators) */}
+        {!isOwnProfile && profileUser.isCreator && (
+          <div className="px-4 sm:px-0 mb-4">
+            <Card>
+              <SubscriptionTiersPage creatorId={profileUser.id || profileUser._id} />
+            </Card>
+          </div>
+        )}
 
         {/* Tabs */}
         <Card padding={false} className="mb-4">

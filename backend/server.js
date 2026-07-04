@@ -76,6 +76,7 @@ app.use('/api/boost', require('./routes/boost'));
 app.use('/api/subscriptions', require('./routes/subscriptions'));
 app.use('/api/tips', require('./routes/tips'));
 app.use('/api/ads', require('./routes/ads'));
+app.use('/api/videos', require('./routes/videos'));
 app.use('/api/marketplace', require('./routes/marketplace'));
 app.use('/api/reports', reportLimiter, require('./routes/reports'));
 app.use('/api/admin', require('./routes/admin'));
@@ -92,6 +93,7 @@ app.use('/api/saved-folders', require('./routes/savedFolders'));
 app.use('/api/notes', require('./routes/notes'));
 app.use('/api/help', require('./routes/help'));
 app.use('/api/payments', require('./routes/payment'));
+app.use('/api/payouts', require('./routes/payouts'));
 
 app.use(errorHandler);
 

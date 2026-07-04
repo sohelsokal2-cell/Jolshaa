@@ -83,9 +83,10 @@ const ChatWindow = ({ conversation, onBack, showInfoPanel, onToggleInfo, onStart
     try {
       if (before) setLoadingMore(true);
       const params = before ? `?before=${before}&limit=50` : '?limit=50';
+      const callParams = before ? `?before=${before}&limit=50` : '?limit=50';
       const [msgRes, callRes] = await Promise.all([
         API.get(`/conversations/${convId}/messages${params}`),
-        API.get(`/conversations/${convId}/call-logs?limit=50`).catch(() => ({ data: { logs: [] } })),
+        API.get(`/conversations/${convId}/call-logs${callParams}`).catch(() => ({ data: { logs: [] } })),
       ]);
 
       const newMessages = (msgRes.data.messages || []).map(m => ({ ...m, _type: 'message' }));

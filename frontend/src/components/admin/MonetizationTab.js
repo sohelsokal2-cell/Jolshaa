@@ -8,29 +8,31 @@ import Modal from '../ui/Modal';
 import Input from '../ui/Input';
 
 const MonetizationTab = () => {
-  const [subTab, setSubTab] = useState('ads');
+  const [subTab, setSubTab] = useState('creator-apps');
 
   const subTabs = [
+    { key: 'creator-apps', label: 'Creator Applications' },
+    { key: 'ad-review', label: 'Ad Review Queue' },
+    { key: 'payout-requests', label: 'Payout Requests' },
+    { key: 'platform-revenue', label: 'Platform Revenue' },
     { key: 'ads', label: 'Ads Management' },
     { key: 'boosts', label: 'Boosted Posts' },
-    { key: 'payouts', label: 'Creator Payouts' },
     { key: 'subscriptions', label: 'Subscriptions' },
-    { key: 'tips', label: 'Tips / Donations' },
     { key: 'transactions', label: 'Transactions' },
-    { key: 'refunds', label: 'Refunds' },
     { key: 'fraud', label: 'Fraud Detection' },
   ];
 
   return (
     <div className="space-y-4">
       <Tabs tabs={subTabs} activeTab={subTab} onChange={setSubTab} className="mb-4" />
+      {subTab === 'creator-apps' && <CreatorApplicationsPanel />}
+      {subTab === 'ad-review' && <AdReviewQueuePanel />}
+      {subTab === 'payout-requests' && <PayoutRequestsPanel />}
+      {subTab === 'platform-revenue' && <PlatformRevenuePanel />}
       {subTab === 'ads' && <AdsManagementPanel />}
       {subTab === 'boosts' && <BoostedPostsPanel />}
-      {subTab === 'payouts' && <CreatorPayoutsPanel />}
       {subTab === 'subscriptions' && <SubscriptionsPanel />}
-      {subTab === 'tips' && <TipsDonationsPanel />}
       {subTab === 'transactions' && <TransactionsPanel />}
-      {subTab === 'refunds' && <RefundsPanel />}
       {subTab === 'fraud' && <FraudDetectionPanel />}
     </div>
   );
@@ -591,6 +593,398 @@ const RefundsPanel = () => {
           </div>
         </div>
       </Modal>
+    </div>
+  );
+};
+
+const CreatorApplicationsPanel = () => {
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState('');
+  const [reviewModal, setReviewModal] = useState(null);
+  const [note, setNote] = useState('');
+
+  const fetchData = () => {
+    setLoading(true);
+    API.get('/creator/admin/pending-applications').then(res => setData(res.data)).finally(() => setLoading(false));
+  };
+
+  useEffect(() => { fetchData(); }, []);
+
+  const handleApprove = async (userId) => {
+    await API.put(`/creator/admin/approve/${userId}`, { note });
+    setReviewModal(null);
+    setNote('');
+    fetchData();
+  };
+
+  const handleReject = async (userId) => {
+    await API.put(`/creator/admin/reject/${userId}`, { note });
+    setReviewModal(null);
+    setNote('');
+    fetchData();
+  };
+
+  if (loading) return <div className="text-center py-8 text-neutral-500">Loading...</div>;
+  if (!data) return null;
+
+  const apps = data.applications || [];
+  const shown = filter ? apps.filter(a => a.monetization?.verificationStatus === filter) : apps;
+
+  return (
+    <div className="space-y-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <Card className="bg-blue-50 dark:bg-blue-900/20">
+          <p className="text-xs text-neutral-500">Total Applications</p>
+          <p className="text-2xl font-bold text-blue-600">{apps.length}</p>
+        </Card>
+        <Card className="bg-amber-50 dark:bg-amber-900/20">
+          <p className="text-xs text-neutral-500">Pending Review</p>
+          <p className="text-2xl font-bold text-amber-600">{apps.filter(a => a.monetization?.verificationStatus === 'pending').length}</p>
+        </Card>
+        <Card className="bg-green-50 dark:bg-green-900/20">
+          <p className="text-xs text-neutral-500">Approved</p>
+          <p className="text-2xl font-bold text-green-600">{apps.filter(a => a.monetization?.verificationStatus === 'approved').length}</p>
+        </Card>
+        <Card className="bg-red-50 dark:bg-red-900/20">
+          <p className="text-xs text-neutral-500">Rejected</p>
+          <p className="text-2xl font-bold text-red-600">{apps.filter(a => a.monetization?.verificationStatus === 'rejected').length}</p>
+        </Card>
+      </div>
+
+      <Card>
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="font-semibold text-neutral-900 dark:text-neutral-100">Creator Applications</h3>
+          <select value={filter} onChange={e => setFilter(e.target.value)} className="text-sm border rounded px-2 py-1">
+            <option value="">All Status</option>
+            <option value="pending">Pending</option>
+            <option value="under_review">Under Review</option>
+            <option value="approved">Approved</option>
+            <option value="rejected">Rejected</option>
+          </select>
+        </div>
+        {shown.length === 0 ? (
+          <p className="text-center py-8 text-neutral-500 text-sm">No applications found</p>
+        ) : (
+          <div className="space-y-3">
+            {shown.map(app => (
+              <div key={app._id} className="p-4 bg-neutral-50 dark:bg-neutral-800 rounded-lg border border-neutral-200 dark:border-neutral-700">
+                <div className="flex items-start justify-between">
+                  <div className="flex items-center gap-3">
+                    {app.profilePhoto && <img src={app.profilePhoto} className="w-10 h-10 rounded-full" alt="" />}
+                    <div>
+                      <p className="font-medium text-neutral-900 dark:text-neutral-100">{app.name}</p>
+                      <p className="text-xs text-neutral-500">{app.email}</p>
+                      <div className="flex gap-3 mt-1 text-xs text-neutral-500">
+                        <span>{app.followers?.length || 0} followers</span>
+                        <span>Applied {app.monetization?.appliedAt ? new Date(app.monetization.appliedAt).toLocaleDateString() : 'N/A'}</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Badge variant={app.monetization?.verificationStatus === 'pending' ? 'warning' : app.monetization?.verificationStatus === 'approved' ? 'success' : 'danger'}>
+                      {app.monetization?.verificationStatus}
+                    </Badge>
+                    {app.monetization?.verificationStatus === 'pending' && (
+                      <Button size="sm" onClick={() => setReviewModal(app)}>Review</Button>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </Card>
+
+      <Modal isOpen={!!reviewModal} onClose={() => { setReviewModal(null); setNote(''); }} title="Review Application">
+        <div className="p-5 space-y-4">
+          {reviewModal && (
+            <>
+              <div className="flex items-center gap-3">
+                {reviewModal.profilePhoto && <img src={reviewModal.profilePhoto} className="w-12 h-12 rounded-full" alt="" />}
+                <div>
+                  <p className="font-medium">{reviewModal.name}</p>
+                  <p className="text-sm text-neutral-500">{reviewModal.email}</p>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-3 text-center">
+                <div className="bg-neutral-50 dark:bg-neutral-800 rounded-lg p-3">
+                  <p className="text-lg font-bold text-blue-600">{reviewModal.followers?.length || 0}</p>
+                  <p className="text-xs text-neutral-500">Followers</p>
+                </div>
+                <div className="bg-neutral-50 dark:bg-neutral-800 rounded-lg p-3">
+                  <p className="text-lg font-bold text-purple-600">{reviewModal.monetization?.appliedAt ? Math.floor((Date.now() - new Date(reviewModal.createdAt).getTime()) / (1000 * 60 * 60 * 24)) : 0}</p>
+                  <p className="text-xs text-neutral-500">Account Age (days)</p>
+                </div>
+              </div>
+              <textarea
+                className="w-full border rounded-lg px-3 py-2 text-sm bg-white dark:bg-neutral-800 border-neutral-300 dark:border-neutral-600"
+                rows={3}
+                placeholder="Add a note (optional)"
+                value={note}
+                onChange={e => setNote(e.target.value)}
+              />
+              <div className="flex justify-end gap-2">
+                <Button variant="danger" onClick={() => handleReject(reviewModal._id)}>Reject</Button>
+                <Button variant="success" onClick={() => handleApprove(reviewModal._id)}>Approve</Button>
+              </div>
+            </>
+          )}
+        </div>
+      </Modal>
+    </div>
+  );
+};
+
+const AdReviewQueuePanel = () => {
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  const fetchData = () => {
+    setLoading(true);
+    API.get('/ads/admin/review-queue?limit=50').then(res => setData(res.data)).finally(() => setLoading(false));
+  };
+
+  useEffect(() => { fetchData(); }, []);
+
+  const handleApprove = async (campaignId) => {
+    await API.put(`/ads/admin/${campaignId}/approve`);
+    fetchData();
+  };
+
+  const handleReject = async (campaignId) => {
+    await API.put(`/ads/admin/${campaignId}/reject`);
+    fetchData();
+  };
+
+  if (loading) return <div className="text-center py-8 text-neutral-500">Loading...</div>;
+  if (!data) return null;
+
+  const campaigns = data.campaigns || [];
+
+  return (
+    <div className="space-y-4">
+      <Card>
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="font-semibold text-neutral-900 dark:text-neutral-100">Ad Campaign Review Queue</h3>
+          <span className="text-sm text-neutral-500">{campaigns.length} pending review</span>
+        </div>
+        {campaigns.length === 0 ? (
+          <p className="text-center py-8 text-neutral-500 text-sm">No campaigns pending review</p>
+        ) : (
+          <div className="space-y-3">
+            {campaigns.map(campaign => (
+              <div key={campaign._id} className="p-4 bg-neutral-50 dark:bg-neutral-800 rounded-lg border border-neutral-200 dark:border-neutral-700">
+                <div className="flex items-start justify-between">
+                  <div>
+                    <p className="font-medium text-neutral-900 dark:text-neutral-100">{campaign.title || 'Untitled Campaign'}</p>
+                    <p className="text-xs text-neutral-500">by {campaign.advertiser?.name} &middot; {campaign.postType === 'video' ? 'Video' : 'Photo'} Post</p>
+                    <div className="flex gap-3 mt-1 text-xs text-neutral-500">
+                      <span>Budget: {campaign.budget} BDT</span>
+                      <span>Spent: {campaign.spent?.toFixed(2) || '0.00'} BDT</span>
+                      <span>Impressions: {(campaign.impressions || 0).toLocaleString()}</span>
+                      <span>Clicks: {(campaign.clicks || 0).toLocaleString()}</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Badge variant="warning">pending review</Badge>
+                    <div className="flex gap-1">
+                      <Button size="sm" variant="success" onClick={() => handleApprove(campaign._id)}>Approve</Button>
+                      <Button size="sm" variant="danger" onClick={() => handleReject(campaign._id)}>Reject</Button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </Card>
+    </div>
+  );
+};
+
+const PayoutRequestsPanel = () => {
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState('');
+  const [processModal, setProcessModal] = useState(null);
+  const [adminNote, setAdminNote] = useState('');
+
+  const fetchData = () => {
+    setLoading(true);
+    API.get('/payouts/admin/pending').then(res => setData(res.data)).finally(() => setLoading(false));
+  };
+
+  useEffect(() => { fetchData(); }, []);
+
+  const handleProcess = async (requestId, status) => {
+    await API.put(`/payouts/admin/${requestId}/process`, { status, adminNote });
+    setProcessModal(null);
+    setAdminNote('');
+    fetchData();
+  };
+
+  if (loading) return <div className="text-center py-8 text-neutral-500">Loading...</div>;
+  if (!data) return null;
+
+  const payouts = data.payouts || [];
+  const statusColors = { pending: 'warning', processing: 'info', completed: 'success', rejected: 'danger', failed: 'danger' };
+
+  return (
+    <div className="space-y-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <Card className="bg-amber-50 dark:bg-amber-900/20">
+          <p className="text-xs text-neutral-500">Pending</p>
+          <p className="text-2xl font-bold text-amber-600">{data.total || 0}</p>
+        </Card>
+        <Card className="bg-blue-50 dark:bg-blue-900/20">
+          <p className="text-xs text-neutral-500">Total Requests</p>
+          <p className="text-2xl font-bold text-blue-600">{data.total || 0}</p>
+        </Card>
+      </div>
+
+      <Card>
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="font-semibold text-neutral-900 dark:text-neutral-100">Payout Requests</h3>
+        </div>
+        {payouts.length === 0 ? (
+          <p className="text-center py-8 text-neutral-500 text-sm">No pending payout requests</p>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b text-left text-neutral-500">
+                  <th className="pb-2">Creator</th>
+                  <th className="pb-2">Amount</th>
+                  <th className="pb-2">Method</th>
+                  <th className="pb-2">Account</th>
+                  <th className="pb-2">Status</th>
+                  <th className="pb-2">Date</th>
+                  <th className="pb-2">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {payouts.map(req => (
+                  <tr key={req._id} className="border-b last:border-0">
+                    <td className="py-2">
+                      <div className="flex items-center gap-2">
+                        {req.user?.profilePhoto && <img src={req.user.profilePhoto} className="w-6 h-6 rounded-full" alt="" />}
+                        <span>{req.user?.name}</span>
+                      </div>
+                    </td>
+                    <td className="py-2 font-medium">{req.amount} BDT</td>
+                    <td className="py-2 capitalize">{req.paymentMethod}</td>
+                    <td className="py-2 font-mono text-xs">{req.accountDetails}</td>
+                    <td className="py-2"><Badge variant={statusColors[req.status]}>{req.status}</Badge></td>
+                    <td className="py-2 text-xs text-neutral-500">{new Date(req.createdAt).toLocaleDateString()}</td>
+                    <td className="py-2">
+                      {req.status === 'pending' && (
+                        <div className="flex gap-1">
+                          <Button size="sm" variant="success" onClick={() => setProcessModal({ ...req, action: 'completed' })}>Approve</Button>
+                          <Button size="sm" variant="danger" onClick={() => setProcessModal({ ...req, action: 'rejected' })}>Reject</Button>
+                        </div>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </Card>
+
+      <Modal isOpen={!!processModal} onClose={() => { setProcessModal(null); setAdminNote(''); }} title={`Process Payout: ${processModal?.action === 'completed' ? 'Approve' : 'Reject'}`}>
+        <div className="p-5 space-y-4">
+          {processModal && (
+            <>
+              <p className="text-sm text-neutral-600">
+                {processModal.action === 'completed'
+                  ? `Confirm payout of ${processModal.amount} BDT to ${processModal.user?.name} via ${processModal.paymentMethod}?`
+                  : `Reject payout request of ${processModal.amount} BDT from ${processModal.user?.name}?`
+                }
+              </p>
+              <textarea
+                className="w-full border rounded-lg px-3 py-2 text-sm bg-white dark:bg-neutral-800 border-neutral-300 dark:border-neutral-600"
+                rows={2}
+                placeholder="Admin note (optional)"
+                value={adminNote}
+                onChange={e => setAdminNote(e.target.value)}
+              />
+              <div className="flex justify-end gap-2">
+                <Button variant="secondary" onClick={() => { setProcessModal(null); setAdminNote(''); }}>Cancel</Button>
+                <Button variant={processModal.action === 'completed' ? 'success' : 'danger'} onClick={() => handleProcess(processModal._id, processModal.action)}>
+                  {processModal.action === 'completed' ? 'Confirm Payment' : 'Reject Request'}
+                </Button>
+              </div>
+            </>
+          )}
+        </div>
+      </Modal>
+    </div>
+  );
+};
+
+const PlatformRevenuePanel = () => {
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    setLoading(true);
+    API.get('/payouts/admin/platform-revenue').then(res => setData(res.data)).finally(() => setLoading(false));
+  }, []);
+
+  if (loading) return <div className="text-center py-8 text-neutral-500">Loading...</div>;
+  if (!data) return null;
+
+  return (
+    <div className="space-y-4">
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+        <Card className="bg-emerald-50 dark:bg-emerald-900/20">
+          <p className="text-xs text-neutral-500">This Month Revenue</p>
+          <p className="text-2xl font-bold text-emerald-600">{data.thisMonthRevenue?.toFixed(2) || '0.00'} BDT</p>
+        </Card>
+        <Card className="bg-blue-50 dark:bg-blue-900/20">
+          <p className="text-xs text-neutral-500">Last Month Revenue</p>
+          <p className="text-2xl font-bold text-blue-600">{data.lastMonthRevenue?.toFixed(2) || '0.00'} BDT</p>
+        </Card>
+        <Card className="bg-purple-50 dark:bg-purple-900/20">
+          <p className="text-xs text-neutral-500">Revenue Change</p>
+          <p className="text-2xl font-bold text-purple-600">{data.revenueChange || 0}%</p>
+        </Card>
+      </div>
+
+      <div className="grid grid-cols-2 gap-3">
+        <Card className="bg-amber-50 dark:bg-amber-900/20">
+          <p className="text-xs text-neutral-500">Total Paid Out</p>
+          <p className="text-2xl font-bold text-amber-600">{data.totalPaidOut?.toFixed(2) || '0.00'} BDT</p>
+        </Card>
+        <Card className="bg-red-50 dark:bg-red-900/20">
+          <p className="text-xs text-neutral-500">Pending Payout Liability</p>
+          <p className="text-2xl font-bold text-red-600">{data.pendingPayoutLiability?.toFixed(2) || '0.00'} BDT</p>
+        </Card>
+      </div>
+
+      <Card>
+        <h3 className="font-semibold text-neutral-900 dark:text-neutral-100 mb-4">Top Earning Creators</h3>
+        <div className="space-y-3">
+          {(data.topCreators || []).map((creator, i) => (
+            <div key={creator._id} className="flex items-center justify-between p-3 bg-neutral-50 dark:bg-neutral-800 rounded-lg">
+              <div className="flex items-center gap-3">
+                <span className="text-sm font-bold text-neutral-400 w-6">#{i + 1}</span>
+                {creator.profilePhoto && <img src={creator.profilePhoto} className="w-8 h-8 rounded-full" alt="" />}
+                <div>
+                  <p className="font-medium text-sm">{creator.name}</p>
+                  <p className="text-xs text-neutral-500">Balance: {creator.monetization?.availableBalance?.toFixed(2) || '0.00'} BDT</p>
+                </div>
+              </div>
+              <p className="font-bold text-emerald-600">{creator.monetization?.totalEarnings?.toFixed(2) || '0.00'} BDT</p>
+            </div>
+          ))}
+          {(!data.topCreators || data.topCreators.length === 0) && (
+            <p className="text-center py-4 text-neutral-500 text-sm">No creator data yet</p>
+          )}
+        </div>
+      </Card>
     </div>
   );
 };

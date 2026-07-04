@@ -2,26 +2,35 @@ const express = require('express');
 const router = express.Router();
 const { protect } = require('../middleware/auth');
 const {
+  createTier,
+  getTiers,
+  updateTier,
+  deleteTier,
   subscribe,
-  getSubscribers,
-  setSubscriptionPrice,
+  cancelSubscription,
+  getMySubscriptions,
+  getMySubscribers,
   checkSubscription,
-  createPlan,
-  getPlans,
-  updatePlan,
-  deletePlan,
 } = require('../controllers/subscriptionController');
 
+// Public: get tiers for a creator
+router.get('/tiers/:creatorId', getTiers);
+
+// All routes below require authentication
 router.use(protect);
 
-router.post('/subscribe/:userId', subscribe);
-router.get('/subscribers', getSubscribers);
-router.put('/price', setSubscriptionPrice);
-router.get('/check/:userId', checkSubscription);
+// Tier management (creator only — controller checks isCreator)
+router.post('/tiers', createTier);
+router.put('/tiers/:tierId', updateTier);
+router.delete('/tiers/:tierId', deleteTier);
 
-router.post('/plans', createPlan);
-router.get('/plans/:userId', getPlans);
-router.put('/plans/:planId', updatePlan);
-router.delete('/plans/:planId', deletePlan);
+// Subscribe / Unsubscribe
+router.post('/subscribe', subscribe);
+router.put('/:id/cancel', cancelSubscription);
+
+// My subscriptions / subscribers
+router.get('/my-subscriptions', getMySubscriptions);
+router.get('/my-subscribers', getMySubscribers);
+router.get('/check/:creatorId', checkSubscription);
 
 module.exports = router;

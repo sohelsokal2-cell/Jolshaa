@@ -1,27 +1,42 @@
 const express = require('express');
 const router = express.Router();
-const { protect } = require('../middleware/auth');
+const { protect, adminOnly } = require('../middleware/auth');
 const {
-  createAd,
-  getAds,
-  getActiveAds,
+  createCampaign,
+  payForCampaign,
+  getMyCampaigns,
+  getCampaignAnalytics,
+  pauseCampaign,
+  resumeCampaign,
+  getReviewQueue,
+  approveCampaign,
+  rejectCampaign,
   trackImpression,
   trackClick,
-  updateAd,
-  deleteAd,
-  getAdStats,
-} = require('../controllers/adController');
+  getFeedWithAds,
+} = require('../controllers/adCampaignController');
 
-router.get('/active', getActiveAds);
+// Feed with ads (authenticated users)
+router.get('/feed', protect, getFeedWithAds);
 
+// All routes below require authentication
 router.use(protect);
 
-router.post('/', createAd);
-router.get('/', getAds);
-router.put('/:adId', updateAd);
-router.delete('/:adId', deleteAd);
-router.get('/:adId/stats', getAdStats);
-router.post('/:adId/impression', trackImpression);
-router.post('/:adId/click', trackClick);
+// Create and manage campaigns
+router.post('/create', createCampaign);
+router.post('/:id/pay', payForCampaign);
+router.get('/my-campaigns', getMyCampaigns);
+router.get('/:id/analytics', getCampaignAnalytics);
+router.post('/:id/pause', pauseCampaign);
+router.post('/:id/resume', resumeCampaign);
+
+// Track ad interactions
+router.post('/:id/track-impression', trackImpression);
+router.post('/:id/track-click', trackClick);
+
+// Admin routes
+router.get('/admin/review-queue', adminOnly, getReviewQueue);
+router.put('/admin/:id/approve', adminOnly, approveCampaign);
+router.put('/admin/:id/reject', adminOnly, rejectCampaign);
 
 module.exports = router;

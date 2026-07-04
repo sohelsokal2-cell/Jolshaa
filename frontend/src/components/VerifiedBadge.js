@@ -1,4 +1,4 @@
-const VerifiedBadge = ({ size = 'sm' }) => {
+const VerifiedBadge = ({ size = 'sm', className = '' }) => {
   const sizes = {
     sm: 'w-4 h-4',
     md: 'w-5 h-5',
@@ -7,7 +7,7 @@ const VerifiedBadge = ({ size = 'sm' }) => {
 
   return (
     <svg
-      className={`${sizes[size]} text-blue-500 inline-block ml-1`}
+      className={`${sizes[size]} text-blue-500 inline-block ml-0.5 flex-shrink-0 ${className}`}
       fill="currentColor"
       viewBox="0 0 24 24"
     >

@@ -3,6 +3,14 @@ import { useAuth } from '../context/AuthContext';
 import API from '../api/axios';
 import Avatar from './ui/Avatar';
 import HelpButton from './HelpButton';
+import useVideoUpload from '../hooks/useVideoUpload';
+import VideoUploadProgress from './VideoUploadProgress';
+
+const formatDuration = (seconds) => {
+  const mins = Math.floor(seconds / 60);
+  const secs = seconds % 60;
+  return `${mins}:${secs.toString().padStart(2, '0')}`;
+};
 
 const CreatePostBox = ({ onPostCreated, postedInType, postedInRefId }) => {
   const { user } = useAuth();
@@ -19,6 +27,26 @@ const CreatePostBox = ({ onPostCreated, postedInType, postedInRefId }) => {
   const [error, setError] = useState('');
   const [expanded, setExpanded] = useState(false);
   const fileInputRef = useRef(null);
+  const videoInputRef = useRef(null);
+
+  const {
+    videoFile,
+    videoPreview,
+    thumbnail,
+    videoDuration,
+    videoDimensions,
+    isShortForm,
+    setIsShortForm,
+    uploadProgress,
+    uploadStatus,
+    uploadError,
+    postId,
+    selectVideo,
+    startUpload,
+    cancelUpload,
+    resetUpload,
+    retryUpload,
+  } = useVideoUpload();
 
   useEffect(() => {
     return () => { previews.forEach(url => URL.revokeObjectURL(url)); };
@@ -38,6 +66,18 @@ const CreatePostBox = ({ onPostCreated, postedInType, postedInRefId }) => {
     setError('');
   };
 
+  const handleVideoSelect = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setError('');
+    const valid = await selectVideo(file);
+    if (!valid) return;
+    // Clear image files when video is selected
+    setFiles([]);
+    setPreviews([]);
+    setAltTexts([]);
+  };
+
   const removeFile = (index) => {
     URL.revokeObjectURL(previews[index]);
     const newFiles = files.filter((_, i) => i !== index);
@@ -48,9 +88,25 @@ const CreatePostBox = ({ onPostCreated, postedInType, postedInRefId }) => {
     setAltTexts(newAltTexts);
   };
 
+  const removeVideo = () => {
+    resetUpload();
+  };
+
+  const handleCancelUpload = () => {
+    cancelUpload();
+  };
+
+  const handleRetryUpload = () => {
+    retryUpload(text, visibility);
+  };
+
+  const hasMedia = files.length > 0 || videoFile;
+  const isUploading = uploadStatus === 'uploading' || uploadStatus === 'processing';
+  const isReady = uploadStatus === 'ready';
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!text.trim() && files.length === 0) {
+    if (!text.trim() && !hasMedia) {
       return setError('Write something or add media');
     }
 
@@ -58,24 +114,44 @@ const CreatePostBox = ({ onPostCreated, postedInType, postedInRefId }) => {
     setError('');
 
     try {
-      const formData = new FormData();
-      formData.append('text', text);
-      formData.append('visibility', visibility);
-      if (feeling) formData.append('feeling', feeling);
-      if (contentWarning && contentWarning !== 'none') formData.append('contentWarning', contentWarning);
-      if (communityLabel) formData.append('communityLabel', communityLabel);
-      if (footnotes) formData.append('footnotes', footnotes);
-      if (postedInType) formData.append('postedInType', postedInType);
-      if (postedInRefId) formData.append('postedInRefId', postedInRefId);
-      files.forEach(file => formData.append('media', file));
-      if (altTexts.some(a => a.trim())) {
-        formData.append('altTexts', JSON.stringify(altTexts));
+      // Upload video if present
+      if (videoFile) {
+        if (!isReady && !isUploading) {
+          const createdPostId = await startUpload(text, visibility);
+          if (!createdPostId) {
+            setLoading(false);
+            return;
+          }
+          // Video upload handles its own post creation — use returned ID
+          if (onPostCreated) onPostCreated({ _id: createdPostId });
+        } else if (isReady && postId) {
+          // Video already uploaded — call onPostCreated with existing postId
+          if (onPostCreated) onPostCreated({ _id: postId });
+        }
+      } else {
+        // Regular image post
+        const formData = new FormData();
+        formData.append('text', text);
+        formData.append('visibility', visibility);
+        if (feeling) formData.append('feeling', feeling);
+        if (contentWarning && contentWarning !== 'none') formData.append('contentWarning', contentWarning);
+        if (communityLabel) formData.append('communityLabel', communityLabel);
+        if (footnotes) formData.append('footnotes', footnotes);
+        if (postedInType) formData.append('postedInType', postedInType);
+        if (postedInRefId) formData.append('postedInRefId', postedInRefId);
+        files.forEach(file => formData.append('media', file));
+        if (altTexts.some(a => a.trim())) {
+          formData.append('altTexts', JSON.stringify(altTexts));
+        }
+
+        const res = await API.post('/posts', formData, {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        });
+
+        if (onPostCreated) onPostCreated(res.data);
       }
 
-      const res = await API.post('/posts', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' }
-      });
-
+      // Reset form
       setText('');
       setFeeling('');
       setVisibility('public');
@@ -84,14 +160,27 @@ const CreatePostBox = ({ onPostCreated, postedInType, postedInRefId }) => {
       setFootnotes('');
       setFiles([]);
       setPreviews([]);
+      setAltTexts([]);
       setExpanded(false);
-      if (onPostCreated) onPostCreated(res.data);
+      resetUpload();
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to create post');
     } finally {
       setLoading(false);
     }
   };
+
+  const handleCancel = () => {
+    setExpanded(false);
+    setText('');
+    setFiles([]);
+    setPreviews([]);
+    setAltTexts([]);
+    setError('');
+    resetUpload();
+  };
+
+  const isVertical = videoDimensions.height > videoDimensions.width;
 
   return (
     <div className="bg-white dark:bg-neutral-800 rounded-xl shadow-card p-4 mb-4">
@@ -119,7 +208,71 @@ const CreatePostBox = ({ onPostCreated, postedInType, postedInRefId }) => {
             <div className="bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 px-3 py-2 rounded-lg text-xs">{error}</div>
           )}
 
-          {previews.length > 0 && (
+          {/* Video Preview */}
+          {videoFile && (
+            <div className="space-y-2">
+              <div className="relative rounded-lg overflow-hidden border border-neutral-200 dark:border-neutral-600">
+                <video
+                  src={videoPreview}
+                  className="w-full max-h-48 object-cover"
+                  controls={uploadStatus === 'idle' || uploadStatus === 'error'}
+                  muted
+                />
+                {/* Thumbnail overlay when processing */}
+                {(uploadStatus === 'processing' || uploadStatus === 'uploading') && thumbnail && (
+                  <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                    <img src={thumbnail} alt="" className="w-full h-full object-cover opacity-50" />
+                  </div>
+                )}
+                {/* Duration badge */}
+                <div className="absolute top-2 right-2 bg-black/60 px-2 py-0.5 rounded text-white text-xs font-mono">
+                  {formatDuration(videoDuration)}
+                </div>
+                {/* Remove button */}
+                {(uploadStatus === 'idle' || uploadStatus === 'error') && (
+                  <button
+                    onClick={removeVideo}
+                    className="absolute top-2 left-2 bg-red-500 text-white rounded-full w-6 h-6 text-xs flex items-center justify-center hover:bg-red-600 transition-colors"
+                  >
+                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+                  </button>
+                )}
+              </div>
+
+              {/* Video info row */}
+              <div className="flex items-center justify-between text-xs text-neutral-500 dark:text-neutral-400">
+                <span>
+                  {videoDimensions.width}x{videoDimensions.height} &middot; {formatDuration(videoDuration)}
+                  {isVertical ? ' (Vertical)' : ' (Horizontal)'}
+                </span>
+                {/* Short form toggle — only show if duration <= 90s */}
+                {videoDuration <= 90 && videoDuration >= 15 && (
+                  <label className="flex items-center gap-1.5 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={isShortForm}
+                      onChange={(e) => setIsShortForm(e.target.checked)}
+                      className="w-3.5 h-3.5 rounded border-neutral-300 text-primary-600 focus:ring-primary-500"
+                    />
+                    <span className="text-purple-600 dark:text-purple-400 font-medium">Post as Short</span>
+                  </label>
+                )}
+              </div>
+
+              {/* Upload progress */}
+              <VideoUploadProgress
+                uploadStatus={uploadStatus}
+                uploadProgress={uploadProgress}
+                uploadError={uploadError}
+                isShortForm={isShortForm}
+                onRetry={handleRetryUpload}
+                onCancel={handleCancelUpload}
+              />
+            </div>
+          )}
+
+          {/* Image Previews */}
+          {previews.length > 0 && !videoFile && (
             <div className="space-y-2">
               <div className="flex gap-2 overflow-x-auto pb-2">
                 {previews.map((preview, i) => (
@@ -159,24 +312,49 @@ const CreatePostBox = ({ onPostCreated, postedInType, postedInRefId }) => {
             </div>
           )}
 
+          {/* Action buttons */}
           <div className="flex items-center gap-2 flex-wrap">
+            {/* Hidden file inputs */}
             <input
               ref={fileInputRef}
               type="file"
-              accept="image/*,video/*"
+              accept="image/*"
               multiple
               onChange={handleFileChange}
               className="hidden"
             />
+            <input
+              ref={videoInputRef}
+              type="file"
+              accept="video/mp4,video/webm,video/quicktime,video/x-msvideo"
+              onChange={handleVideoSelect}
+              className="hidden"
+            />
+
+            {/* Photo button */}
             <button
               onClick={() => fileInputRef.current.click()}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors"
+              disabled={!!videoFile}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
             >
               <svg className="w-4 h-4 text-accent-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
               </svg>
-              Photo/Video
+              Photo
             </button>
+
+            {/* Video button */}
+            <button
+              onClick={() => videoInputRef.current.click()}
+              disabled={files.length > 0 || isUploading}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              <svg className="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+              </svg>
+              Video
+            </button>
+
             <input
               type="text"
               placeholder="Feeling..."
@@ -189,9 +367,9 @@ const CreatePostBox = ({ onPostCreated, postedInType, postedInRefId }) => {
               onChange={(e) => setVisibility(e.target.value)}
               className="px-3 py-1.5 rounded-lg text-xs bg-neutral-100 dark:bg-neutral-700 text-neutral-700 dark:text-neutral-200 focus:outline-none focus:ring-2 focus:ring-primary-500/30"
             >
-              <option value="public">🌍 Public</option>
-              <option value="friends">👥 Friends</option>
-              <option value="onlyme">🔒 Only Me</option>
+              <option value="public">Public</option>
+              <option value="friends">Friends</option>
+              <option value="onlyme">Only Me</option>
             </select>
             <select
               value={contentWarning}
@@ -199,12 +377,12 @@ const CreatePostBox = ({ onPostCreated, postedInType, postedInRefId }) => {
               className="px-3 py-1.5 rounded-lg text-xs bg-neutral-100 dark:bg-neutral-700 text-neutral-700 dark:text-neutral-200 focus:outline-none focus:ring-2 focus:ring-primary-500/30"
             >
               <option value="none">No Warning</option>
-              <option value="violence">⚠️ Violence</option>
-              <option value="nudity">⚠️ Nudity</option>
-              <option value="drugs">⚠️ Drugs</option>
-              <option value="language">⚠️ Language</option>
-              <option value="spoiler">⚠️ Spoiler</option>
-              <option value="sensitive">⚠️ Sensitive</option>
+              <option value="violence">Violence</option>
+              <option value="nudity">Nudity</option>
+              <option value="drugs">Drugs</option>
+              <option value="language">Language</option>
+              <option value="spoiler">Spoiler</option>
+              <option value="sensitive">Sensitive</option>
             </select>
             <input
               type="text"
@@ -226,20 +404,20 @@ const CreatePostBox = ({ onPostCreated, postedInType, postedInRefId }) => {
 
           <div className="flex items-center gap-2">
             <button
-              onClick={() => { setExpanded(false); setText(''); setFiles([]); setPreviews([]); setError(''); }}
+              onClick={handleCancel}
               className="px-4 py-2 rounded-lg text-sm font-medium text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors"
             >
               Cancel
             </button>
             <button
               onClick={handleSubmit}
-              disabled={loading || (!text.trim() && files.length === 0)}
+              disabled={loading || (!text.trim() && !hasMedia) || isUploading}
               className="flex-1 bg-primary-600 text-white py-2 rounded-lg text-sm font-medium hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
             >
-              {loading ? (
+              {loading || isUploading ? (
                 <>
                   <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  Posting...
+                  {isUploading ? 'Uploading...' : 'Posting...'}
                 </>
               ) : 'Post'}
             </button>

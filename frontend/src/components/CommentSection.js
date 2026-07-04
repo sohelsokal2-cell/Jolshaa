@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import API from '../api/axios';
 import ReportModal from './ReportModal';
+import SubscriberBadge from './SubscriberBadge';
 
 const Comment = ({ comment, onDelete, isPinned, onPin }) => {
   const { user } = useAuth();
@@ -57,6 +58,7 @@ const Comment = ({ comment, onDelete, isPinned, onPin }) => {
         <div className="flex-1">
           <div className="bg-surface-high/50 rounded-lg px-3 py-2">
             <span className="font-semibold text-sm text-on-surface">{comment.author?.name}</span>
+            {comment.author?.subscriberTier && <SubscriberBadge tier={comment.author.subscriberTier} size="sm" />}
             <p className="text-sm text-on-surface-variant">{comment.text}</p>
           </div>
           <div className="flex items-center gap-3 mt-1 text-xs text-on-surface-variant">

@@ -266,31 +266,35 @@ const useWebRTC = ({ socket, currentUser }) => {
 
   // End active call
   const endCall = useCallback((status = 'completed') => {
-    if (!remoteUserId) return;
+    if (!remoteUserIdRef.current) return;
 
     const duration = callStartTimeRef.current
       ? Math.floor((Date.now() - callStartTimeRef.current) / 1000)
       : 0;
 
+    const currentCallType = callTypeRef.current;
+    const currentRecipientInfo = recipientInfoRef.current;
+    const currentCallerInfo = callerInfoRef.current;
+
     // Store call ended info for the ended screen
     setCallEndedInfo({
       duration,
       status,
-      callType,
-      remoteUserId,
-      remoteUserInfo: recipientInfo || callerInfo,
+      callType: currentCallType,
+      remoteUserId: remoteUserIdRef.current,
+      remoteUserInfo: currentRecipientInfo || currentCallerInfo,
     });
 
     socket.emit('endCall', {
-      to: remoteUserId,
+      to: remoteUserIdRef.current,
       conversationId: currentConversationId.current,
-      callType,
+      callType: currentCallType,
       duration,
       status,
     });
 
     cleanup();
-  }, [remoteUserId, callType, callerInfo, recipientInfo, socket, cleanup]);
+  }, [socket, cleanup]);
 
   // Toggle mute
   const toggleMute = useCallback(() => {

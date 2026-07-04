@@ -13,6 +13,10 @@ import QAPost from './QAPost';
 import BoostPostModal from './BoostPostModal';
 import MediaCarousel from './MediaCarousel';
 import FactCheckBadge from './FactCheckBadge';
+import VideoPlayer from './VideoPlayer';
+import VideoAnalyticsDashboard from './VideoAnalyticsDashboard';
+import StarGiftButton from './StarGiftButton';
+import SponsoredPostLabel from './SponsoredPostLabel';
 
 const PostCard = ({ post, onDelete }) => {
   const { user } = useAuth();
@@ -27,6 +31,7 @@ const PostCard = ({ post, onDelete }) => {
   const [showReport, setShowReport] = useState(false);
   const [showShare, setShowShare] = useState(false);
   const [showBoost, setShowBoost] = useState(false);
+  const [showAnalytics, setShowAnalytics] = useState(false);
   const [contentRevealed, setContentRevealed] = useState(!post.contentWarning || post.contentWarning === 'none');
   const menuRef = useRef(null);
 
@@ -89,8 +94,22 @@ const PostCard = ({ post, onDelete }) => {
   };
 
   const renderMedia = (media) => {
+    // If post has a dedicated video field (uploaded via video-upload endpoint)
+    if (post.video && post.video.url) {
+      return (
+        <VideoPlayer
+          src={post.video.url}
+          poster={post.video.thumbnailUrl}
+          thumbnail={post.video.thumbnailUrl}
+          autoplay
+          postId={post._id}
+          qualities={post.video.qualities || []}
+          className="w-full max-h-[500px]"
+        />
+      );
+    }
     if (!media || media.length === 0) return null;
-    return <MediaCarousel media={media} />;
+    return <MediaCarousel media={media} postVideo={post.video} postId={post._id} />;
   };
 
   return (
@@ -185,9 +204,9 @@ const PostCard = ({ post, onDelete }) => {
           </p>
         )}
 
-        {post.isSponsored && (
+            {post.isSponsored && (
           <div className="ml-[52px] mt-1">
-            <span className="text-xs text-neutral-500 bg-neutral-100 dark:bg-neutral-700 px-2 py-0.5 rounded">Sponsored</span>
+            <SponsoredPostLabel campaignId={post.campaignId} />
           </div>
         )}
         {post.isBoosted && (
@@ -249,11 +268,33 @@ const PostCard = ({ post, onDelete }) => {
       </div>
 
       {/* Media */}
-      {!sharedPost && post.media && post.media.length > 0 && (
+      {!sharedPost && ((post.media && post.media.length > 0) || (post.video && post.video.url)) && (
         <div className="relative">
           <div className={!contentRevealed ? '' : ''}>
             {renderMedia(post.media)}
           </div>
+          {/* Video view count badge */}
+          {post.video && post.video.url && post.video.views > 0 && (
+            <div className="absolute top-3 left-3 bg-black/60 text-white text-xs px-2.5 py-1 rounded-full flex items-center gap-1.5">
+              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+              </svg>
+              {post.video.views.toLocaleString()} views
+            </div>
+          )}
+          {/* Analytics button for video post owner */}
+          {isOwner && post.video && post.video.url && (
+            <button
+              onClick={() => setShowAnalytics(true)}
+              className="absolute top-3 right-3 bg-black/60 text-white text-xs px-2.5 py-1 rounded-full flex items-center gap-1.5 hover:bg-black/80 transition-colors"
+            >
+              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+              </svg>
+              Analytics
+            </button>
+          )}
           {!contentRevealed && post.contentWarning && post.contentWarning !== 'none' && (
             <div className="absolute inset-0 bg-black/60 backdrop-blur-md flex flex-col items-center justify-center z-10">
               <span className="text-4xl mb-2">⚠️</span>
@@ -269,6 +310,11 @@ const PostCard = ({ post, onDelete }) => {
             </div>
           )}
         </div>
+      )}
+
+      {/* Video Analytics Dashboard */}
+      {showAnalytics && post.video && post.video.url && (
+        <VideoAnalyticsDashboard postId={post._id} onClose={() => setShowAnalytics(false)} />
       )}
 
       {/* Poll */}
@@ -344,6 +390,13 @@ const PostCard = ({ post, onDelete }) => {
             </svg>
             Share
           </button>
+          {!isOwner && (
+            <StarGiftButton
+              toUserId={post.author?._id}
+              postId={post._id}
+              creatorName={post.author?.name}
+            />
+          )}
           <SaveButton postId={post._id} initialSaved={post.isSaved} className="flex-shrink-0" />
         </div>
       </div>

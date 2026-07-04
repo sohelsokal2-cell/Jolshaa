@@ -13,9 +13,35 @@ const postSchema = new mongoose.Schema({
   },
   media: [{
     url: { type: String },
+    type: { type: String, enum: ['image', 'video'], default: 'image' },
     altText: { type: String, default: '' },
     caption: { type: String, default: '' },
+    thumbnailUrl: { type: String, default: '' },
   }],
+  video: {
+    url: { type: String },
+    thumbnailUrl: { type: String },
+    duration: { type: Number },
+    width: { type: Number },
+    height: { type: Number },
+    format: { type: String },
+    sizeInBytes: { type: Number },
+    processingStatus: {
+      type: String,
+      enum: ['uploading', 'processing', 'ready', 'failed'],
+      default: 'uploading',
+    },
+    isShortForm: { type: Boolean, default: false },
+    views: { type: Number, default: 0 },
+    uniqueViewers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+    watchTime: { type: Number, default: 0 },
+    qualities: [{
+      resolution: String,
+      url: String,
+    }],
+    audioTrack: { type: String, default: '' },
+    effectsUsed: [{ type: String }],
+  },
   feeling: {
     type: String,
     default: null,
@@ -207,5 +233,8 @@ postSchema.index({ visibility: 1, createdAt: -1 });
 postSchema.index({ 'postedIn.type': 1, 'postedIn.refId': 1, createdAt: -1 });
 postSchema.index({ text: 'text' });
 postSchema.index({ hashtags: 1 });
+postSchema.index({ 'video.isShortForm': 1, createdAt: -1 });
+postSchema.index({ 'video.processingStatus': 1 });
+postSchema.index({ 'video.views': -1, createdAt: -1 });
 
 module.exports = mongoose.model('Post', postSchema);

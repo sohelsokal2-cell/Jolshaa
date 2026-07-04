@@ -29,8 +29,16 @@ const {
   report,
   getStats,
 } = require('../controllers/factCheckController');
+const {
+  uploadVideo,
+  getVideoStatus,
+  deleteVideo,
+} = require('../controllers/videoController');
 
 router.use(protect);
+
+// Video upload — must be before /:id routes to avoid conflicts
+router.post('/video-upload', upload.single('video'), uploadVideo);
 
 router.post('/', upload.array('media', 5), createPost);
 router.get('/feed', getFeed);
@@ -50,6 +58,10 @@ router.put('/:id/schedule', schedulePost);
 router.post('/:id/collaborators', inviteCollaborator);
 router.put('/:id/collaborators/accept', acceptCollaboration);
 router.delete('/:id/collaborators/:userId', removeCollaborator);
+
+// Video status & delete
+router.get('/:id/video-status', getVideoStatus);
+router.delete('/:id/video', deleteVideo);
 
 // Fact-check routes
 router.post('/:id/factcheck/vote', vote);

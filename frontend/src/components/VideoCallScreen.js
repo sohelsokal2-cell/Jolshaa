@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef } from 'react';
 
 const formatDuration = (seconds) => {
   const hrs = Math.floor(seconds / 3600);
@@ -25,13 +25,6 @@ const VideoCallScreen = ({
   const [isPipExpanded, setIsPipExpanded] = useState(false);
   const [isFrontCamera, setIsFrontCamera] = useState(true);
   const localPipRef = useRef(null);
-
-  // Attach streams to video elements
-  useEffect(() => {
-    if (localVideoRef?.current && !isCameraOff) {
-      // Stream is attached via the ref in Messages.js
-    }
-  }, [localVideoRef, isCameraOff]);
 
   const remoteName = remoteUserInfo?.name || 'Unknown';
   const remotePhoto = remoteUserInfo?.profilePhoto || 'https://ui-avatars.com/api/?name=U&background=494454&color=dae2fd&size=128';

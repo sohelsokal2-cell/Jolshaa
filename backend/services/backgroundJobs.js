@@ -3,6 +3,7 @@ const Notification = require('../models/Notification');
 const Post = require('../models/Post');
 const Story = require('../models/Story');
 const User = require('../models/User');
+const RevenueShareConfig = require('../models/RevenueShareConfig');
 const { getIO } = require('../socket');
 const DataRetention = require('./dataRetention');
 const BackupService = require('./backup');
@@ -88,10 +89,13 @@ function toggleCronJob(name, enabled) {
   if (!job) return false;
   job.enabled = enabled;
   if (enabled) {
+    clearInterval(job.timerId);
     job.timerId = setInterval(job.handler, job.intervalMs);
+    job.nextRun = new Date(Date.now() + job.intervalMs);
   } else {
     clearInterval(job.timerId);
     job.timerId = null;
+    job.nextRun = null;
   }
   return true;
 }
@@ -171,6 +175,28 @@ cleanupQueue.process(async (data) => {
 });
 
 function startBackgroundJobs() {
+  // Initialize RevenueShareConfig with default values if none exists
+  RevenueShareConfig.findOne().then(existing => {
+    if (!existing) {
+      RevenueShareConfig.create({
+        videoAdRevenueShare: { creator: 55, platform: 45 },
+        starGiftRevenueShare: { creator: 70, platform: 30 },
+        subscriptionRevenueShare: { creator: 80, platform: 20 },
+        starPackages: [
+          { stars: 10, priceBDT: 50 },
+          { stars: 25, priceBDT: 100 },
+          { stars: 50, priceBDT: 200 },
+          { stars: 100, priceBDT: 400 },
+          { stars: 200, priceBDT: 750 },
+          { stars: 500, priceBDT: 1800 },
+        ],
+        adRevenuePerView: 0.50,
+        minimumPayout: 1000,
+        payoutProcessingDays: 5,
+      }).then(() => console.log('RevenueShareConfig initialized with defaults'));
+    }
+  }).catch(err => console.error('Failed to initialize RevenueShareConfig:', err.message));
+
   trackCronJob('expired_stories_cleanup', 3600000, async () => {
     cleanupQueue.add({ type: 'expired_stories' });
   });

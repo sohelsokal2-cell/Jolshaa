@@ -299,6 +299,38 @@ const userSchema = new mongoose.Schema({
     type: Number,
     default: 0
   },
+  monetization: {
+    isEligible: { type: Boolean, default: false },
+    isCreator: { type: Boolean, default: false },
+    followerCount: { type: Number, default: 0 },
+    totalEarnings: { type: Number, default: 0 },
+    availableBalance: { type: Number, default: 0 },
+    pendingBalance: { type: Number, default: 0 },
+    payoutMethod: {
+      type: { type: String, enum: ['bkash', 'nagad', 'rocket', 'bank'], default: null },
+      accountNumber: { type: String },
+      accountName: { type: String },
+      bankName: { type: String },
+      branchName: { type: String },
+      routingNumber: { type: String }
+    },
+    taxInfo: {
+      nidNumber: { type: String },
+      tinNumber: { type: String }
+    },
+    verificationStatus: {
+      type: String,
+      enum: ['not_applied', 'pending', 'approved', 'rejected'],
+      default: 'not_applied'
+    },
+    appliedAt: { type: Date },
+    approvedAt: { type: Date },
+    rejectionReason: { type: String }
+  },
+  badges: {
+    verified: { type: Boolean, default: false },
+    verifiedAt: { type: Date }
+  },
   createdAt: {
     type: Date,
     default: Date.now

@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react';
+import VideoPlayer from './VideoPlayer';
 
-const MediaCarousel = ({ media }) => {
+const MediaCarousel = ({ media, postVideo, postId }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const touchStartX = useRef(0);
   const touchEndX = useRef(0);
@@ -9,7 +10,7 @@ const MediaCarousel = ({ media }) => {
 
   const isVideo = (item) => {
     const url = typeof item === 'string' ? item : item.url;
-    return url?.includes('.mp4') || url?.includes('.webm') || url?.includes('video');
+    return item?.type === 'video' || url?.endsWith('.mp4') || url?.endsWith('.webm') || url?.endsWith('.mov');
   };
 
   const getAltText = (item) => {
@@ -24,6 +25,11 @@ const MediaCarousel = ({ media }) => {
 
   const getUrl = (item) => {
     return typeof item === 'string' ? item : item.url;
+  };
+
+  const getThumbnail = (item) => {
+    if (typeof item === 'object' && item.thumbnailUrl) return item.thumbnailUrl;
+    return postVideo?.thumbnailUrl || '';
   };
 
   const handleTouchStart = (e) => {
@@ -48,11 +54,14 @@ const MediaCarousel = ({ media }) => {
     return (
       <div className="relative">
         {isVideo(item) ? (
-          <video
+          <VideoPlayer
             src={getUrl(item)}
-            controls
-            className="w-full object-cover max-h-[500px] bg-black"
-            aria-label={getAltText(item)}
+            poster={getThumbnail(item)}
+            thumbnail={getThumbnail(item)}
+            autoplay
+            postId={postId}
+            qualities={postVideo?.qualities || []}
+            className="w-full max-h-[500px]"
           />
         ) : (
           <img
@@ -84,11 +93,14 @@ const MediaCarousel = ({ media }) => {
         {media.map((item, i) => (
           <div key={i} className="w-full flex-shrink-0 relative">
             {isVideo(item) ? (
-              <video
+              <VideoPlayer
                 src={getUrl(item)}
-                controls
-                className="w-full object-cover max-h-[500px] bg-black"
-                aria-label={getAltText(item)}
+                poster={getThumbnail(item)}
+                thumbnail={getThumbnail(item)}
+                autoplay={i === currentIndex}
+                postId={postId}
+                qualities={postVideo?.qualities || []}
+                className="w-full max-h-[500px]"
               />
             ) : (
               <img

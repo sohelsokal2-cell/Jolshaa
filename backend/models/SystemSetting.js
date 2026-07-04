@@ -14,7 +14,7 @@ const systemSettingSchema = new mongoose.Schema(
     },
     category: {
       type: String,
-      enum: ['site', 'feature', 'maintenance', 'announcement', 'email', 'security', 'upload'],
+      enum: ['site', 'feature', 'maintenance', 'announcement', 'email', 'security', 'upload', 'monetization'],
       default: 'site',
     },
     description: {

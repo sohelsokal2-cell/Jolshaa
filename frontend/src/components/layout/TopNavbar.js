@@ -2,12 +2,14 @@ import { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useDarkMode } from '../../context/DarkModeContext';
+import { useDataSaver } from '../../context/DataSaverContext';
 import Avatar from '../ui/Avatar';
 import NotificationBell from '../NotificationBell';
 
 const TopNavbar = () => {
   const { user, logout } = useAuth();
   const { isDark, toggleDark } = useDarkMode();
+  const { dataSaver, toggleDataSaver } = useDataSaver();
   const navigate = useNavigate();
   const location = useLocation();
   const [searchQuery, setSearchQuery] = useState('');
@@ -115,6 +117,20 @@ const TopNavbar = () => {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
               </svg>
             )}
+          </button>
+
+          {/* Data saver toggle */}
+          <button
+            onClick={toggleDataSaver}
+            className={`p-2 rounded-full transition-all duration-200 hover:bg-white/5 ${
+              dataSaver ? 'text-green-400 hover:text-green-300' : 'text-on-surface-variant hover:text-violet-300'
+            }`}
+            title={dataSaver ? 'Data saver ON — tap to disable' : 'Data saver OFF — tap to enable'}
+            aria-label={dataSaver ? 'Disable data saver' : 'Enable data saver'}
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
           </button>
 
           {/* Profile menu */}

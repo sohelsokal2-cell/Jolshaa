@@ -1,19 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
-
 const OutgoingCallScreen = ({ recipientInfo, callType, onEndCall }) => {
-  const [elapsed, setElapsed] = useState(0);
-  const timerRef = useRef(null);
-
-  useEffect(() => {
-    timerRef.current = setInterval(() => {
-      setElapsed(prev => prev + 1);
-    }, 1000);
-
-    return () => {
-      if (timerRef.current) clearInterval(timerRef.current);
-    };
-  }, []);
-
   const recipientName = recipientInfo?.name || 'Unknown';
   const recipientPhoto = recipientInfo?.profilePhoto || 'https://ui-avatars.com/api/?name=U&background=494454&color=dae2fd&size=128';
 

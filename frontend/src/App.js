@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { SocketProvider } from './context/SocketContext';
 import { DarkModeProvider } from './context/DarkModeContext';
+import { DataSaverProvider } from './context/DataSaverContext';
 import { ToastProvider } from './components/ui/Toast';
 import ProtectedRoute from './components/ProtectedRoute';
 import Signup from './pages/Signup';
@@ -31,9 +32,13 @@ import MemoriesPage from './pages/MemoriesPage';
 import SavedPostsPage from './pages/SavedPostsPage';
 import ReelsFeed from './components/ReelsFeed';
 import CreateReel from './components/CreateReel';
+import ShortsPage from './components/ShortsPage';
 import CreatorDashboard from './pages/CreatorDashboard';
 import CreatorEarnings from './pages/CreatorEarnings';
 import CreatorSubscriptionManager from './pages/CreatorSubscriptionManager';
+import MonetizationApplicationPage from './pages/MonetizationApplicationPage';
+import AdsManagerDashboard from './pages/AdsManagerDashboard';
+import SubscriptionTiersPage from './pages/SubscriptionTiersPage';
 import MarketplacePage from './pages/MarketplacePage';
 import ListingDetail from './pages/ListingDetail';
 import HashtagPage from './pages/HashtagPage';
@@ -85,9 +90,13 @@ const AppContent = () => {
         <Route path="/reels" element={<ProtectedRoute><ReelsFeed /></ProtectedRoute>} />
         <Route path="/reels/:id" element={<ProtectedRoute><ReelsFeed /></ProtectedRoute>} />
         <Route path="/reels/create" element={<ProtectedRoute><CreateReel /></ProtectedRoute>} />
+        <Route path="/shorts" element={<ProtectedRoute><ShortsPage /></ProtectedRoute>} />
         <Route path="/creator" element={<ProtectedRoute><CreatorDashboard /></ProtectedRoute>} />
         <Route path="/creator/earnings" element={<ProtectedRoute><CreatorEarnings /></ProtectedRoute>} />
         <Route path="/creator/subscriptions" element={<ProtectedRoute><CreatorSubscriptionManager /></ProtectedRoute>} />
+        <Route path="/creator/subscriptions/:creatorId" element={<ProtectedRoute><SubscriptionTiersPage /></ProtectedRoute>} />
+        <Route path="/creator/apply" element={<ProtectedRoute><MonetizationApplicationPage /></ProtectedRoute>} />
+        <Route path="/ads/manager" element={<ProtectedRoute><AdsManagerDashboard /></ProtectedRoute>} />
         <Route path="/marketplace" element={<ProtectedRoute><MarketplacePage /></ProtectedRoute>} />
         <Route path="/marketplace/:id" element={<ProtectedRoute><ListingDetail /></ProtectedRoute>} />
         <Route path="/hashtag/:name" element={<ProtectedRoute><HashtagPage /></ProtectedRoute>} />
@@ -109,13 +118,15 @@ const AppContent = () => {
 function App() {
   return (
     <DarkModeProvider>
-      <AuthProvider>
-        <SocketProvider>
-          <ToastProvider>
-            <AppContent />
-          </ToastProvider>
-        </SocketProvider>
-      </AuthProvider>
+      <DataSaverProvider>
+        <AuthProvider>
+          <SocketProvider>
+            <ToastProvider>
+              <AppContent />
+            </ToastProvider>
+          </SocketProvider>
+        </AuthProvider>
+      </DataSaverProvider>
     </DarkModeProvider>
   );
 }

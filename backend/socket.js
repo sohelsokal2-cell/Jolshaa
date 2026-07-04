@@ -476,6 +476,10 @@ const initSocket = (httpServer) => {
     socket.on('callUser', async ({ to, offer, callType, conversationId }) => {
       if (!to || !offer) return;
 
+      if (!(await ensureConversationAccess(conversationId, userId))) {
+        return sendSocketError(socket, 'Not authorized');
+      }
+
       // Check if recipient is already in a call
       if (activeCalls.has(to)) {
         return socket.emit('callBusy', { to });
@@ -496,8 +500,8 @@ const initSocket = (httpServer) => {
       } catch (e) { /* ignore */ }
 
       // Track active call
-      activeCalls.set(userId, { otherUserId: to, callType, conversationId, initiator: userId });
-      activeCalls.set(to, { otherUserId: userId, callType, conversationId, initiator: userId });
+      activeCalls.set(userId, { otherUserId: to, callType, conversationId, initiator: userId, logWritten: false });
+      activeCalls.set(to, { otherUserId: userId, callType, conversationId, initiator: userId, logWritten: false });
 
       io.to(`user:${to}`).emit('incomingCall', {
         from: userId,
@@ -509,8 +513,13 @@ const initSocket = (httpServer) => {
     });
 
     // Receiver answers the call
-    socket.on('callAnswer', ({ to, answer }) => {
+    socket.on('callAnswer', async ({ to, answer }) => {
       if (!to || !answer) return;
+
+      const callData = activeCalls.get(userId);
+      if (!(await ensureConversationAccess(callData?.conversationId, userId))) {
+        return sendSocketError(socket, 'Not authorized');
+      }
 
       io.to(`user:${to}`).emit('callAnswered', {
         answer,
@@ -539,9 +548,10 @@ const initSocket = (httpServer) => {
       activeCalls.delete(userId);
       activeCalls.delete(to);
 
-      // Save call log
+      // Save call log (only once per call — use logWritten flag to prevent duplicates)
       try {
-        if (conversationId && callType) {
+        if (conversationId && callType && !callData?.logWritten) {
+          if (callData) callData.logWritten = true;
           await CallLog.create({
             conversation: conversationId,
             caller: initiator,
@@ -568,12 +578,15 @@ const initSocket = (httpServer) => {
     socket.on('callRejected', async ({ to, conversationId, callType }) => {
       if (!to) return;
 
+      const callData = activeCalls.get(userId);
+
       activeCalls.delete(userId);
       activeCalls.delete(to);
 
-      // Save call log for rejected call
+      // Save call log for rejected call (only once)
       try {
-        if (conversationId && callType) {
+        if (conversationId && callType && !callData?.logWritten) {
+          if (callData) callData.logWritten = true;
           await CallLog.create({
             conversation: conversationId,
             caller: to,
@@ -606,16 +619,17 @@ const initSocket = (httpServer) => {
       if (activeCalls.has(userId)) {
         const callData = activeCalls.get(userId);
         const otherUserId = callData.otherUserId;
+        const initiator = callData.initiator;
         activeCalls.delete(userId);
         activeCalls.delete(otherUserId);
 
-        // Save call log for missed/disconnected call
+        // Save call log for missed/disconnected call (only once)
         try {
-          if (callData.conversationId && callData.callType) {
+          if (callData.conversationId && callData.callType && !callData.logWritten) {
             await CallLog.create({
               conversation: callData.conversationId,
-              caller: callData.initiator,
-              receiver: callData.initiator === otherUserId ? userId : otherUserId,
+              caller: initiator,
+              receiver: initiator === otherUserId ? userId : otherUserId,
               callType: callData.callType,
               status: 'missed',
               duration: 0,
