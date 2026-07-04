@@ -6,7 +6,6 @@ import Badge from '../ui/Badge';
 import Tabs from '../ui/Tabs';
 import Modal from '../ui/Modal';
 import Input from '../ui/Input';
-import AdsterraSettings from './AdsterraSettings';
 import AdNetworksManager from '../../pages/AdNetworksManager';
 
 const MonetizationTab = () => {
@@ -20,7 +19,6 @@ const MonetizationTab = () => {
     { key: 'ads', label: 'Ads' },
     { key: 'boosts', label: 'Boosts' },
     { key: 'ad-networks', label: 'Ad Networks' },
-    { key: 'adsterra', label: 'Adsterra' },
     { key: 'subscriptions', label: 'Subscriptions' },
     { key: 'transactions', label: 'Transactions' },
     { key: 'fraud', label: 'Fraud' },
@@ -36,7 +34,6 @@ const MonetizationTab = () => {
       {subTab === 'ads' && <AdsManagementPanel />}
       {subTab === 'boosts' && <BoostedPostsPanel />}
       {subTab === 'ad-networks' && <AdNetworksManager />}
-      {subTab === 'adsterra' && <AdsterraSettings />}
       {subTab === 'subscriptions' && <SubscriptionsPanel />}
       {subTab === 'transactions' && <TransactionsPanel />}
       {subTab === 'fraud' && <FraudDetectionPanel />}
