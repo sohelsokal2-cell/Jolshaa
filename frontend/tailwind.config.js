@@ -68,6 +68,30 @@ module.exports = {
           900: '#4c1d95',
           950: '#2e1065',
         },
+        // Jolshaa Stitch design system — namespaced so it never
+        // collides with the existing violet "primary" palette above.
+        // Used only by pages being redesigned to match the Stitch mocks.
+        jolshaa: {
+          teal:       '#00685f',
+          'teal-container': '#008378',
+          'on-teal':  '#ffffff',
+          indigo:     '#4e45d5',
+          'indigo-container': '#6860ef',
+          'indigo-fixed': '#e3dfff',
+          'indigo-fixed-dim': '#c3c0ff',
+          'on-indigo-fixed': '#100069',
+          coral:      '#924628',
+          'coral-container': '#b05e3d',
+          surface:            '#f5faf8',
+          'surface-container-lowest': '#ffffff',
+          'surface-container-low':    '#f0f5f2',
+          'surface-container':        '#eaefed',
+          'surface-container-high':   '#e4e9e7',
+          'on-surface':         '#171d1c',
+          'on-surface-variant': '#3d4947',
+          outline:         '#6d7a77',
+          'outline-variant': '#bcc9c6',
+        },
       },
       spacing: {
         '18':  '4.5rem',
@@ -77,6 +101,7 @@ module.exports = {
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+        display: ['Be Vietnam Pro', 'Inter', 'system-ui', '-apple-system', 'sans-serif'],
       },
       fontSize: {
         '2xs': ['0.625rem', { lineHeight: '0.875rem' }],
@@ -97,6 +122,9 @@ module.exports = {
         'glow-violet': '0 0 20px rgb(139 92 246 / 0.3)',
         'glow-sm':     '0 0 10px rgb(139 92 246 / 0.2)',
         'inner-glass': 'inset 0 1px 0 0 rgb(255 255 255 / 0.1)',
+        // Jolshaa Stitch design system shadows (see `jolshaa` color namespace above)
+        'ambient':       '0px 4px 20px rgba(0, 0, 0, 0.04)',
+        'ambient-hover': '0px 10px 30px rgba(0, 0, 0, 0.08)',
       },
       animation: {
         'fade-in':    'fadeIn 0.2s ease-out',
