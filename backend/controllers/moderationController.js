@@ -471,6 +471,9 @@ exports.bulkAction = async (req, res) => {
     if (!type || !ids || !Array.isArray(ids) || !action) {
       return res.status(400).json({ message: 'type, ids array, and action are required' });
     }
+    if (ids.length === 0 || ids.length > 100) {
+      return res.status(400).json({ message: 'ids must contain between 1 and 100 items' });
+    }
 
     const validTypes = ['post', 'comment', 'story', 'reel', 'listing'];
     const validActions = ['remove', 'flag', 'hide', 'approve', 'unflag', 'unhide'];

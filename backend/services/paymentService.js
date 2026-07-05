@@ -24,7 +24,7 @@ if (SSLCOMMERZ_STORE_ID && SSLCOMMERZ_STORE_PASS && SSLCommerzPayment) {
   sslcz = new SSLCommerzPayment({
     store_id: SSLCOMMERZ_STORE_ID,
     store_pass: SSLCOMMERZ_STORE_PASS,
-    is_live: SSLCOMMERZ_IS_SANDBOX === 'false',
+    is_live: !SSLCOMMERZ_IS_SANDBOX,
   });
   console.log(`[SSLCommerz] Initialized (${SSLCOMMERZ_IS_SANDBOX ? 'SANDBOX' : 'LIVE'} mode)`);
 } else {
@@ -302,7 +302,15 @@ const handleIPN = async (body) => {
     return { success: false, error: 'Missing tran_id or val_id' };
   }
 
-  // Validate the IPN
+  // Verify the transaction exists before processing
+  const tx = await Transaction.findById(tran_id);
+  if (!tx) return { success: false, error: 'Transaction not found' };
+
+  // Prevent double-processing
+  if (tx.status === 'completed') {
+    return { success: true, message: 'Already processed' };
+  }
+
   if (status === 'VALID' || status === 'VALIDATED') {
     return await validateAndCompletePayment(tran_id, val_id);
   }

@@ -25,13 +25,18 @@ exports.createGroup = async (req, res) => {
   try {
     const { name, description, privacy, rules } = req.body;
     if (!name) return res.status(400).json({ message: 'Group name is required' });
+    if (name.length > 100) return res.status(400).json({ message: 'Group name too long' });
 
     let coverPhoto = null;
     if (req.file) {
       coverPhoto = await uploadToCloudinary(req.file.buffer, 'jolshaa/groups');
     }
 
-    const parsedRules = rules ? JSON.parse(rules) : [];
+    let parsedRules = [];
+    try {
+      parsedRules = rules ? JSON.parse(rules) : [];
+      if (!Array.isArray(parsedRules)) parsedRules = [];
+    } catch { parsedRules = []; }
 
     const group = await Group.create({
       name,
@@ -144,10 +149,15 @@ exports.updateGroup = async (req, res) => {
     }
 
     const { name, description, privacy, rules } = req.body;
-    if (name !== undefined) group.name = name;
-    if (description !== undefined) group.description = description;
+    if (name !== undefined) group.name = String(name).substring(0, 100);
+    if (description !== undefined) group.description = String(description).substring(0, 500);
     if (privacy !== undefined) group.privacy = privacy;
-    if (rules !== undefined) group.rules = JSON.parse(rules);
+    if (rules !== undefined) {
+      try {
+        const parsed = JSON.parse(rules);
+        group.rules = Array.isArray(parsed) ? parsed.slice(0, 10) : group.rules;
+      } catch { /* keep existing rules */ }
+    }
 
     if (req.file) {
       group.coverPhoto = await uploadToCloudinary(req.file.buffer, 'jolshaa/groups');

@@ -1,6 +1,8 @@
 const express = require('express');
 const http = require('http');
 const cors = require('cors');
+const helmet = require('helmet');
+const cookieParser = require('cookie-parser');
 const dotenv = require('dotenv');
 const connectDB = require('./config/db');
 const { initSocket } = require('./socket');
@@ -12,18 +14,13 @@ const { initRedis } = require('./services/cache');
 const { loadMaintenanceMode, maintenanceCheck } = require('./middleware/maintenance');
 const { initFirebase } = require('./services/pushNotification');
 const { setupCallSignaling } = require('./services/callService');
+const { sanitizeQuery } = require('./utils/mongoSanitize');
 
 dotenv.config();
 
-connectDB().then(() => {
-  initRedis();
-  startBackgroundJobs();
-  loadMaintenanceMode();
-  initFirebase();
-});
-
 const app = express();
 app.set('trust proxy', 1);
+const PORT = process.env.PORT || 5000;
 const server = http.createServer(app);
 
 // Initialize Socket.io
@@ -39,6 +36,9 @@ const allowedOrigins = [
   'http://localhost:5173',
 ].filter(Boolean).map(o => o.replace(/\/$/, ''));
 
+app.use(helmet({
+  crossOriginResourcePolicy: { policy: 'cross-origin' },
+}));
 app.use(cors({
   origin: function (origin, callback) {
     if (!origin || allowedOrigins.includes(origin.replace(/\/$/, ''))) {
@@ -50,6 +50,21 @@ app.use(cors({
   credentials: true
 }));
 app.use(express.json({ limit: '1mb' }));
+app.use(express.urlencoded({ extended: true, limit: '1mb' }));
+app.use(cookieParser());
+
+// NoSQL injection protection - sanitize query parameters and body
+app.use((req, res, next) => {
+  try {
+    if (req.query) req.query = sanitizeQuery(req.query);
+    if (req.body && typeof req.body === 'object') req.body = sanitizeQuery(req.body);
+    if (req.params && typeof req.params === 'object') req.params = sanitizeQuery(req.params);
+  } catch (err) {
+    return res.status(400).json({ message: 'Invalid query parameters' });
+  }
+  next();
+});
+
 app.use(generalLimiter);
 app.use(performanceMonitor);
 app.use(maintenanceCheck);
@@ -100,5 +115,15 @@ app.use('/api/ad-networks', require('./routes/adNetwork'));
 
 app.use(errorHandler);
 
-const PORT = process.env.PORT || 5000;
-server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+// Connect to DB and start server
+connectDB().then(() => {
+  initRedis();
+  startBackgroundJobs();
+  loadMaintenanceMode();
+  initFirebase();
+
+  server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+}).catch(err => {
+  console.error('Failed to connect to database:', err.message);
+  process.exit(1);
+});

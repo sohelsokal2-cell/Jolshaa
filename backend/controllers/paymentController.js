@@ -11,6 +11,8 @@ const Transaction = require('../models/Transaction');
 const User = require('../models/User');
 const UserWallet = require('../models/UserWallet');
 
+const CLIENT_URL = (process.env.CLIENT_URL || 'http://localhost:3000').replace(/\/$/, '');
+
 // ========== CREATE CHECKOUT SESSION ==========
 
 exports.createCheckout = async (req, res) => {
@@ -271,9 +273,15 @@ exports.sendStarGift = async (req, res) => {
       return res.status(400).json({ message: 'Insufficient star balance' });
     }
 
-    // Deduct from sender immediately
-    senderWallet.starsBalance -= starsAmount;
-    await senderWallet.save();
+    // Atomic deduct using findOneAndUpdate to prevent race condition
+    const updatedWallet = await UserWallet.findOneAndUpdate(
+      { user: req.user._id, starsBalance: { $gte: starsAmount } },
+      { $inc: { starsBalance: -starsAmount } },
+      { new: true }
+    );
+    if (!updatedWallet) {
+      return res.status(400).json({ message: 'Insufficient star balance' });
+    }
 
     // Creator gets 70% of BDT value (1 star ≈ 1 BDT)
     const creatorBdtShare = starsAmount * 0.70;
@@ -358,5 +366,3 @@ exports.getStarGiftHistory = async (req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
 };
-
-const CLIENT_URL = (process.env.CLIENT_URL || 'http://localhost:3000').replace(/\/$/, '');

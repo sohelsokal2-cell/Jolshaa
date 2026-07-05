@@ -558,6 +558,14 @@ exports.mergeUsers = async (req, res) => {
   try {
     const { primaryUserId, secondaryUserId } = req.body;
 
+    if (!primaryUserId || !secondaryUserId) {
+      return res.status(400).json({ message: 'Both user IDs are required' });
+    }
+
+    if (!mongoose.Types.ObjectId.isValid(primaryUserId) || !mongoose.Types.ObjectId.isValid(secondaryUserId)) {
+      return res.status(400).json({ message: 'Invalid user ID format' });
+    }
+
     if (primaryUserId === secondaryUserId) {
       return res.status(400).json({ message: 'Cannot merge a user with itself' });
     }

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import ReactMarkdown from 'react-markdown';
 import API from '../api/axios';
 import { useAuth } from '../context/AuthContext';
 import Layout from '../components/layout/Layout';
@@ -45,18 +46,6 @@ const NoteDetail = () => {
         bookmarkCount: res.data.bookmarkCount,
       }));
     } catch (err) {}
-  };
-
-  const renderMarkdown = (text) => {
-    return text
-      .replace(/### (.*)/g, '<h3 class="text-lg font-bold mt-6 mb-3 text-neutral-900 dark:text-white">$1</h3>')
-      .replace(/## (.*)/g, '<h2 class="text-xl font-bold mt-8 mb-3 text-neutral-900 dark:text-white">$1</h2>')
-      .replace(/# (.*)/g, '<h1 class="text-2xl font-bold mt-8 mb-4 text-neutral-900 dark:text-white">$1</h1>')
-      .replace(/\*\*(.*?)\*\*/g, '<strong class="font-bold">$1</strong>')
-      .replace(/\*(.*?)\*/g, '<em>$1</em>')
-      .replace(/`(.*?)`/g, '<code class="bg-neutral-100 dark:bg-neutral-700 px-1.5 py-0.5 rounded text-sm font-mono">$1</code>')
-      .replace(/\n\n/g, '</p><p class="mb-4">')
-      .replace(/\n/g, '<br/>');
   };
 
   if (loading) {
@@ -122,10 +111,9 @@ const NoteDetail = () => {
             </div>
           )}
 
-          <div
-            className="prose prose-lg max-w-none text-neutral-700 dark:text-neutral-200 leading-relaxed"
-            dangerouslySetInnerHTML={{ __html: `<p class="mb-4">${renderMarkdown(note.content)}</p>` }}
-          />
+          <div className="prose prose-lg max-w-none text-neutral-700 dark:text-neutral-200 leading-relaxed">
+            <ReactMarkdown>{note.content}</ReactMarkdown>
+          </div>
 
           <div className="flex items-center gap-4 mt-8 pt-6 border-t border-neutral-200 dark:border-neutral-700">
             <button

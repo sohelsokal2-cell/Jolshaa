@@ -128,55 +128,58 @@ exports.search = async (req, res) => {
 exports.advancedSearch = async (req, res) => {
   try {
     const { q, type, startDate, endDate, hashtag, author, page = 1, limit = 20 } = req.query;
+    const safeLimit = Math.min(parseInt(limit) || 20, 50);
+    const safePage = Math.max(parseInt(page) || 1, 1);
 
     let results = { users: [], posts: [], hashtags: [] };
 
     if (type === 'users' || !type) {
       const userQuery = {};
       if (q) {
+        const escaped = q.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&').substring(0, 100);
         userQuery.$or = [
-          { username: { $regex: q, $options: 'i' } },
-          { name: { $regex: q, $options: 'i' } }
+          { name: { $regex: escaped, $options: 'i' } }
         ];
       }
       results.users = await User.find(userQuery)
-        .select('name username profilePhoto bio followersCount')
-        .skip((page - 1) * limit)
-        .limit(parseInt(limit));
+        .select('name profilePhoto bio')
+        .skip((safePage - 1) * safeLimit)
+        .limit(safeLimit);
     }
 
     if (type === 'posts' || !type) {
-      const postQuery = {};
-      if (q) postQuery.text = { $regex: q, $options: 'i' };
-      if (hashtag) postQuery.hashtags = hashtag;
+      const postQuery = { status: 'published', visibility: 'public' };
+      if (q) {
+        const escaped = q.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&').substring(0, 100);
+        postQuery.text = { $regex: escaped, $options: 'i' };
+      }
+      if (hashtag) postQuery.hashtags = String(hashtag).toLowerCase().substring(0, 50);
       if (author) postQuery.author = author;
       if (startDate || endDate) {
         postQuery.createdAt = {};
         if (startDate) postQuery.createdAt.$gte = new Date(startDate);
         if (endDate) postQuery.createdAt.$lte = new Date(endDate);
       }
-      postQuery.status = 'published';
-      postQuery.visibility = 'public';
 
       results.posts = await Post.find(postQuery)
-        .populate('author', 'username name profilePhoto')
+        .populate('author', 'name profilePhoto')
         .sort({ createdAt: -1 })
-        .skip((page - 1) * limit)
-        .limit(parseInt(limit));
+        .skip((safePage - 1) * safeLimit)
+        .limit(safeLimit);
     }
 
     if (type === 'hashtags' || !type) {
       const hashtagResults = await Post.aggregate([
         { $unwind: '$hashtags' },
-        ...(q ? [{ $match: { hashtags: { $regex: q, $options: 'i' } } }] : []),
+        ...(q ? [{ $match: { hashtags: { $regex: q.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&').substring(0, 50), $options: 'i' } } }] : []),
         { $group: { _id: '$hashtags', count: { $sum: 1 } } },
         { $sort: { count: -1 } },
-        { $limit: parseInt(limit) }
+        { $limit: safeLimit }
       ]);
       results.hashtags = hashtagResults;
     }
 
-    res.json({ results, page: parseInt(page), limit: parseInt(limit) });
+    res.json({ results, page: safePage, limit: safeLimit });
   } catch (error) {
     res.status(500).json({ message: 'Server error' });
   }

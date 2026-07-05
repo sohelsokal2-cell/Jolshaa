@@ -11,6 +11,8 @@ const ModeratorNote = require('../models/ModeratorNote');
 const UndoSnapshot = require('../models/UndoSnapshot');
 const Notification = require('../models/Notification');
 
+const escapeRegex = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
 // ========== GLOBAL SEARCH ==========
 
 exports.globalSearch = async (req, res) => {
@@ -20,7 +22,7 @@ exports.globalSearch = async (req, res) => {
       return res.status(400).json({ message: 'Search query must be at least 2 characters' });
     }
 
-    const regex = new RegExp(q, 'i');
+    const regex = new RegExp(escapeRegex(q), 'i');
     const skip = (parseInt(page) - 1) * parseInt(limit);
     const results = {};
 
@@ -79,7 +81,7 @@ exports.getFilteredUsers = async (req, res) => {
     const filter = {};
 
     if (search) {
-      const regex = new RegExp(search, 'i');
+      const regex = new RegExp(escapeRegex(search), 'i');
       filter.$or = [{ name: regex }, { email: regex }];
     }
     if (role) filter.role = role;
@@ -108,7 +110,7 @@ exports.getFilteredPosts = async (req, res) => {
     const { search, author, visibility, isBoosted, isSuspended, sort = '-createdAt', page = 1, limit = 20 } = req.query;
     const filter = {};
 
-    if (search) filter.text = new RegExp(search, 'i');
+    if (search) filter.text = new RegExp(escapeRegex(search), 'i');
     if (author) filter.author = author;
     if (visibility) filter.visibility = visibility;
     if (isBoosted !== undefined) filter.isBoosted = isBoosted === 'true';
@@ -226,8 +228,9 @@ exports.exportCSV = async (req, res) => {
       `"${String(cell ?? '').replace(/"/g, '""')}"`
     ).join(','))].join('\n');
 
+    const safeType = type.replace(/[^a-zA-Z0-9_-]/g, '');
     res.setHeader('Content-Type', 'text/csv');
-    res.setHeader('Content-Disposition', `attachment; filename="${type}_export_${Date.now()}.csv"`);
+    res.setHeader('Content-Disposition', `attachment; filename="${safeType}_export_${Date.now()}.csv"`);
     res.send(csv);
   } catch (error) {
     res.status(500).json({ message: 'Server error' });
@@ -242,7 +245,7 @@ exports.getAuditTrail = async (req, res) => {
     const filter = {};
 
     if (admin) filter.admin = admin;
-    if (action) filter.action = { $regex: action };
+    if (action) filter.action = { $regex: escapeRegex(action) };
     if (targetType) filter.targetType = targetType;
     if (from || to) {
       filter.createdAt = {};

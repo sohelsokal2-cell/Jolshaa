@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Jolshaa - News Feed</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Be+Vietnam+Pro:wght@600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-tertiary-fixed": "#370e00",
+                        "secondary-fixed-dim": "#c3c0ff",
+                        "inverse-primary": "#6bd8cb",
+                        "tertiary-fixed": "#ffdbce",
+                        "tertiary-container": "#b05e3d",
+                        "background": "#f5faf8",
+                        "on-error-container": "#93000a",
+                        "tertiary": "#924628",
+                        "primary-fixed": "#89f5e7",
+                        "primary-fixed-dim": "#6bd8cb",
+                        "surface-dim": "#d6dbd9",
+                        "outline-variant": "#bcc9c6",
+                        "primary-container": "#008378",
+                        "on-secondary": "#ffffff",
+                        "on-primary-container": "#f4fffc",
+                        "on-secondary-fixed-variant": "#372abf",
+                        "secondary": "#4e45d5",
+                        "primary": "#00685f",
+                        "on-error": "#ffffff",
+                        "outline": "#6d7a77",
+                        "on-tertiary-fixed-variant": "#773215",
+                        "on-surface-variant": "#3d4947",
+                        "error-container": "#ffdad6",
+                        "on-secondary-fixed": "#100069",
+                        "surface-container": "#eaefed",
+                        "secondary-container": "#6860ef",
+                        "surface-container-highest": "#dee4e1",
+                        "on-background": "#171d1c",
+                        "on-secondary-container": "#fffbff",
+                        "on-surface": "#171d1c",
+                        "surface-container-high": "#e4e9e7",
+                        "inverse-on-surface": "#edf2f0",
+                        "surface-container-low": "#f0f5f2",
+                        "tertiary-fixed-dim": "#ffb59a",
+                        "on-tertiary-container": "#fffbff",
+                        "secondary-fixed": "#e3dfff",
+                        "inverse-surface": "#2c3130",
+                        "surface-variant": "#dee4e1",
+                        "surface-tint": "#006a61",
+                        "surface-container-lowest": "#ffffff",
+                        "on-primary-fixed": "#00201d",
+                        "surface": "#f5faf8",
+                        "on-tertiary": "#ffffff",
+                        "surface-bright": "#f5faf8",
+                        "on-primary": "#ffffff",
+                        "on-primary-fixed-variant": "#005049",
+                        "error": "#ba1a1a"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "unit": "4px",
+                        "stack-md": "16px",
+                        "margin-desktop": "40px",
+                        "margin-mobile": "16px",
+                        "stack-sm": "8px",
+                        "gutter": "24px",
+                        "stack-lg": "32px",
+                        "container-max": "1280px"
+                    },
+                    "fontFamily": {
+                        "headline-lg": ["Be Vietnam Pro"],
+                        "label-md": ["Inter"],
+                        "headline-md": ["Be Vietnam Pro"],
+                        "headline-lg-mobile": ["Be Vietnam Pro"],
+                        "display-lg": ["Be Vietnam Pro"],
+                        "label-sm": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "title-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-lg": ["32px", { "lineHeight": "1.25", "fontWeight": "700" }],
+                        "label-md": ["14px", { "lineHeight": "1.4", "letterSpacing": "0.01em", "fontWeight": "500" }],
+                        "headline-md": ["24px", { "lineHeight": "1.3", "fontWeight": "600" }],
+                        "headline-lg-mobile": ["28px", { "lineHeight": "1.25", "fontWeight": "700" }],
+                        "display-lg": ["48px", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "label-sm": ["12px", { "lineHeight": "1.4", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "body-md": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "title-lg": ["20px", { "lineHeight": "1.5", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { background-color: #f9fafb; /* Floor level 0 */ }
+        .ambient-shadow-sm { box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.04); }
+        .ambient-shadow-md { box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.08); }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="font-body-md text-on-surface antialiased pt-16 md:pt-0">
+<!-- TopNavBar -->
+<nav class="fixed top-0 w-full z-50 bg-surface shadow-sm flex justify-between items-center px-margin-mobile md:px-margin-desktop h-16 max-w-container-max mx-auto left-0 right-0">
+<div class="flex items-center gap-gutter w-1/3">
+<a class="font-headline-lg text-headline-lg font-bold text-primary" href="#">Jolshaa</a>
+<div class="hidden md:flex relative w-full max-w-md">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="w-full bg-[#f3f4f6] text-on-surface border-none rounded-full py-2 pl-10 pr-4 focus:bg-surface focus:ring-2 focus:ring-primary transition-all font-body-md text-body-md" placeholder="Search Jolshaa..." type="text"/>
+</div>
+</div>
+<div class="hidden md:flex items-center justify-center gap-stack-lg w-1/3">
+<a class="text-primary font-semibold border-b-2 border-primary pb-[18px] pt-[18px] px-2 flex items-center justify-center relative" href="#"><span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">home</span></a>
+<a class="text-on-surface-variant font-medium hover:bg-surface-container-low transition-colors p-2 rounded-lg" href="#"><span class="material-symbols-outlined">group</span></a>
+<a class="text-on-surface-variant font-medium hover:bg-surface-container-low transition-colors p-2 rounded-lg" href="#"><span class="material-symbols-outlined">groups</span></a>
+<a class="text-on-surface-variant font-medium hover:bg-surface-container-low transition-colors p-2 rounded-lg" href="#"><span class="material-symbols-outlined">storefront</span></a>
+</div>
+<div class="flex items-center justify-end gap-stack-sm md:gap-stack-md w-1/3">
+<button class="md:hidden p-2 text-on-surface-variant"><span class="material-symbols-outlined">search</span></button>
+<button class="hidden md:flex p-2 rounded-full bg-surface-container hover:bg-surface-container-high transition-colors text-on-surface-variant"><span class="material-symbols-outlined">grid_view</span></button>
+<button class="p-2 rounded-full bg-surface-container hover:bg-surface-container-high transition-colors text-on-surface-variant"><span class="material-symbols-outlined">chat</span></button>
+<button class="p-2 rounded-full bg-surface-container hover:bg-surface-container-high transition-colors text-on-surface-variant relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-1 right-1 w-2.5 h-2.5 bg-[#f43f5e] rounded-full border-2 border-surface"></span>
+</button>
+<button class="w-10 h-10 rounded-full overflow-hidden border-2 border-transparent hover:border-primary transition-colors ml-2 cursor-pointer active:opacity-80">
+<img alt="User profile" class="w-full h-full object-cover" data-alt="A portrait of a young Bangladeshi professional smiling in a brightly lit modern office setting. Modern corporate style, warm lighting, approachable look." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDKrwBqKW-bzA63VTQbILfZ9_XH8bwNT2BgqPu6RTZPApnH2A0NaIJvbykKx7qVX9fOXK13ZumKkz36ScYXytslFdFoAgA8-CiCXV8DIDTb4WLFenxNCrWXtVdKVusGlCZOU50TiIT4Lg1qm0sjEd94m-w3Cc8BuK9Sad74tm3giksTJ-mjpXBsBYb4vDGzXG11c_tcWraWWLDhU1yqSZzbxq8AAUYftz_2H5bchg82PeQ9y4nAChDBQNVxuUMNR4jO7VSJSxb91Q"/>
+</button>
+</div>
+</nav>
+<!-- Main Layout -->
+<div class="max-w-container-max mx-auto md:px-margin-desktop md:pt-24 pb-24 md:pb-8 flex justify-center w-full gap-gutter">
+<!-- Left Sidebar (Desktop) -->
+<aside class="hidden md:flex flex-col gap-stack-md py-stack-lg w-64 sticky top-24 h-[calc(100vh-6rem)] overflow-y-auto no-scrollbar shrink-0">
+<a class="flex items-center gap-3 p-3 rounded-lg hover:bg-surface-container-high transition-all" href="#">
+<img alt="User Avatar" class="w-9 h-9 rounded-full object-cover" data-alt="A portrait of a young Bangladeshi professional smiling in a brightly lit modern office setting. Modern corporate style, warm lighting, approachable look." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCUEbdqtr7NTUrzlFnIWY8aMHjseaIdhbv8OI_tkSwce5J-WEGwTS8u5qk3tmxqddfpOTaLxdK5Cq4DjXyw4P8Txm2aM03HB3cxRvMp78ZNQNNOuEzuA_q88d1-L7n_bwlJbdaJYj1tAZs8EPCngfUTc_zFJHR1ianrrBFl9c_rvL2SFAd5ZPiBVGDKt4w89as0jwvIzWGDy8kY9pzL3rRpsSLqtku3IBilN6rxvw7kbSRecMA-g9MNQke2y7zzst0QY9-pmqr5Ag"/>
+<span class="font-label-md text-label-md text-on-surface font-semibold">Rafiqul Islam</span>
+</a>
+<div class="h-px w-full bg-surface-container my-2"></div>
+<nav class="flex flex-col gap-1">
+<a class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-high rounded-lg px-4 py-3 font-label-md text-label-md transition-all group" href="#">
+<span class="material-symbols-outlined text-primary group-hover:scale-110 transition-transform">group</span>
+                    Friends
+                </a>
+<a class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-high rounded-lg px-4 py-3 font-label-md text-label-md transition-all group" href="#">
+<span class="material-symbols-outlined text-[#0ea5e9] group-hover:scale-110 transition-transform">groups</span>
+                    Groups
+                </a>
+<a class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-high rounded-lg px-4 py-3 font-label-md text-label-md transition-all group" href="#">
+<span class="material-symbols-outlined text-[#f59e0b] group-hover:scale-110 transition-transform">storefront</span>
+                    Marketplace
+                </a>
+<a class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-high rounded-lg px-4 py-3 font-label-md text-label-md transition-all group" href="#">
+<span class="material-symbols-outlined text-[#ec4899] group-hover:scale-110 transition-transform">bookmark</span>
+                    Saved
+                </a>
+<a class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-high rounded-lg px-4 py-3 font-label-md text-label-md transition-all group" href="#">
+<span class="material-symbols-outlined text-[#8b5cf6] group-hover:scale-110 transition-transform">event</span>
+                    Events
+                </a>
+</nav>
+<div class="mt-auto pt-4 flex flex-wrap gap-2 px-4 text-xs text-on-surface-variant/70">
+<a class="hover:underline" href="#">Privacy</a> ·
+                <a class="hover:underline" href="#">Terms</a> ·
+                <a class="hover:underline" href="#">Advertising</a> ·
+                <span>Jolshaa © 2024</span>
+</div>
+</aside>
+<!-- Center Feed Column -->
+<main class="w-full max-w-[600px] flex flex-col gap-stack-lg shrink-1">
+<!-- Stories Bar -->
+<div class="flex gap-4 overflow-x-auto no-scrollbar py-2 px-margin-mobile md:px-0">
+<!-- Add Story -->
+<div class="relative w-28 h-40 rounded-xl overflow-hidden shadow-sm shrink-0 group cursor-pointer bg-surface">
+<img alt="Your profile" class="w-full h-28 object-cover group-hover:scale-105 transition-transform duration-300" data-alt="A portrait of a young Bangladeshi professional smiling in a brightly lit modern office setting. Modern corporate style, warm lighting, approachable look." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCUiqPhSRfi3feF8LbTaFliGKdQ8h4Waw6Y_YE3zl_T3qNxzUZouNDZZAvjTwnCKrQbSuJ4n2_SH3iw97Mq3ElARZtT8fWlU252XZCK93g9g5Qgzn9jRtae5iBd6IPDxAEj6oVvGgZGEeniGANTiXRo7tGDoJFsAvlKjpXbimGi-CgqYROT5uqlA8MjkRxM8f56yRF9DAdUhubQxV_rn7gU8d4ik-GoSL9KZggc-Oh9he1qwVngLnqR8ZTiN_4IMDyyOaqJepaPzg"/>
+<div class="absolute bottom-0 w-full h-16 bg-surface flex flex-col items-center justify-end pb-3">
+<div class="absolute -top-4 bg-primary text-white rounded-full p-1 border-4 border-surface w-10 h-10 flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">add</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface font-semibold">Create Story</span>
+</div>
+</div>
+<!-- Story 1 -->
+<div class="relative w-28 h-40 rounded-xl overflow-hidden shadow-sm shrink-0 group cursor-pointer">
+<div class="w-full h-full bg-cover bg-center group-hover:scale-105 transition-transform duration-300" data-alt="A vibrant street food stall in Dhaka at night, bustling with people. Warm glowing lights, rich colors, lively atmosphere." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAytaFwByaHbrSti2B9UmfdfFdQcdENXnmTM23PoCOC9z6F-A01xhYGnBuW8qu_dOP1S2buQtm6y6OTYAelQdXZshoTMFzyJanpcm9qhvMFm07iKqzm9aGAqdal68Rf8F4CZ04_ZuXrmZ8fHM1ZEJKnEsYVsJUNZgY30K04vmjUia_aq5nwmBdzqK11N5C0UR6Lh8ufUX80cTchu91MBys9lYkBrZ7S9_-S4A3CTTv1O6G35ArTdJMR1j5Ez0JPBkLg9fLQRzrMlw')"></div>
+<div class="absolute inset-0 bg-gradient-to-b from-black/20 to-black/60"></div>
+<div class="absolute top-3 left-3 w-10 h-10 rounded-full border-4 border-primary overflow-hidden">
+<img alt="User" class="w-full h-full object-cover" data-alt="Portrait of a young woman wearing a colorful scarf, smiling warmly outdoors." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAch7LITV2KwlJWpXmU5fLVzN34quCf1j3SQtwwI8PiNyp7RWV5EryAbRgl__uHoE4YKunnvdWFg9jwiAChztqBok3qdcpYUzGEUSeZZbUyi4ANs84gXfKKq8hFHiuOFvxSXIRfZeED1IPB59cE94QbRUT9iZOUTgrHvv25_wNdNm79cD2XTpllUf7_KkrvUjXfxje9aVq36mbiEEvjY58O_TXVmFgmwD7h3rsFsp1ajOXo9KmssVx_ghcPOE1ivTHsv4OiNtj3Rg"/>
+</div>
+<span class="absolute bottom-3 left-3 font-label-sm text-label-sm text-white font-semibold line-clamp-1 pr-2">Nusrat Jahan</span>
+</div>
+<!-- Story 2 -->
+<div class="relative w-28 h-40 rounded-xl overflow-hidden shadow-sm shrink-0 group cursor-pointer">
+<div class="w-full h-full bg-cover bg-center group-hover:scale-105 transition-transform duration-300" data-alt="A tranquil view of a tea garden in Sylhet, Bangladesh, early morning mist, lush green terraces." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCHIXwWUxk-JEOSlAhpdUK2MnmctrhG7h4e2zNLz2ItDKWLFajp6prOO4NzKSqH67vHo0bUjjuu9YMvS5ycW8JkhxPY-ywo4M0nzWihPb9CCFxZaGQGyUt9nhWEMyf1KoDIZbu8fGHzNPqfD2ED2stNM8jyZNuo_v4m2JTdtLgmQKaLGQ1OUE_kRuShw6rWp7pZQ_x4r8pwIb3z6Vo1KPnPXXuB3Gs9BkC2PAMI2IwVi1b9GiBdetn8mT8J_6neG9KNVMAEIFY_-Q')"></div>
+<div class="absolute inset-0 bg-gradient-to-b from-black/20 to-black/60"></div>
+<div class="absolute top-3 left-3 w-10 h-10 rounded-full border-4 border-primary overflow-hidden">
+<img alt="User" class="w-full h-full object-cover" data-alt="Portrait of an older gentleman with glasses reading a book in a cozy cafe." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA_yDigRmTBWfisrEIYJuDOwIHrruqAEtYXfAS-vJcTXku2NPAMZ5fjeXfA3_p5YkAKOoBMQf_abhJgd5XDmkjgrkAfsAjJUJL6Loyey8t-E1w3Am6ZSKzUZaKQM29qwRkuvNItYmvjYrkbztJnvBgkjuxjo9VfzA5CPhFJF5mbJPc6KLoWGyfQ-Lff0U0Y2EUU6DnyyVYw31X8VhygUTtMBr1q2lrFidSL-8r9EamOcfj30IRNRxkWLlcEWFQcwzDNMBZHOOMGOw"/>
+</div>
+<span class="absolute bottom-3 left-3 font-label-sm text-label-sm text-white font-semibold line-clamp-1 pr-2">Kamal Hossain</span>
+</div>
+<!-- Story 3 -->
+<div class="relative w-28 h-40 rounded-xl overflow-hidden shadow-sm shrink-0 group cursor-pointer hidden sm:block">
+<div class="w-full h-full bg-cover bg-center group-hover:scale-105 transition-transform duration-300" data-alt="Abstract digital art with flowing teal and indigo waves on a light background. Modern, soft, airy aesthetic." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBfYKGOYZmg8S61kZQP46W2ta2Vr3UAxswnGI6fYZNCUcnmENkUab3TfiLM1n3L62ZF3QsJS0ZoHpS1055U7Ez92ZlNP5XTxgFvFo2lNxKjejgArnfrZoFnHz2qAO0IO6ob5_X7ztS-eJe7rO0xAMYerAj2UIKvLdBaUecBAAEZKTHiHq2FJxHqOuwPyBZHoc-TljkKbrMDfM9HWQFTQeT4Ac5l3LjetHaTRE8-c884Am0mApVE7ybI06QVlXC_ImYVI54t4etbkQ')"></div>
+<div class="absolute inset-0 bg-gradient-to-b from-black/20 to-black/60"></div>
+<div class="absolute top-3 left-3 w-10 h-10 rounded-full border-4 border-primary overflow-hidden">
+<img alt="User" class="w-full h-full object-cover" data-alt="A young man wearing stylish sunglasses and a casual jacket outdoors in an urban setting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCpeOBqMi4XF7DAjw2t8OAiIuilWLUDBDJREX5IZ2veu31wnW7QQrWghnuoAIOXkIJRSfViloMhhYR8sFbg6o-W_qtYx9UIUGd__yKtbcmEfVITQrDG-fsshxw599DexRFKp_4wOl7eYhQj97vfhCynChtdlcx1ugf3zu-08ejZyfYTUNNNwlywIPd07UajNa1RQFCj2WQC4I1zmEVy5zAtq19C-1HpS6uErizW1EKjxuWLzFVSfLjs0CD466UtehlfEp-r52ojhg"/>
+</div>
+<span class="absolute bottom-3 left-3 font-label-sm text-label-sm text-white font-semibold line-clamp-1 pr-2">Tahsan Khan</span>
+</div>
+</div>
+<!-- Create Post Box -->
+<div class="bg-surface rounded-[16px] ambient-shadow-sm p-stack-md mx-margin-mobile md:mx-0">
+<div class="flex gap-3 mb-4">
+<img alt="User Avatar" class="w-10 h-10 rounded-full object-cover shrink-0" data-alt="A portrait of a young Bangladeshi professional smiling in a brightly lit modern office setting. Modern corporate style, warm lighting, approachable look." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDutd4ZCC0_Te-ifWQa3wYFS6m8wsIA-rtnLGbO8eR3z5M6_7HkPnktYXmBIS36qPpfjlShP1qdsr8lRKbWv6nR1ZTvra_JVaAyX9b-uMr0gNTewUdRTWm_WtKDRA3za89A1jCPC5pIItlW0CoGZCCMQpiJ_lfdecDnjunEOoiSFae3IErtQwhOgSxHj_P5aHChNyj22HppNFSjot3lTX9I95h0dAwg8dM14uNHzBKpdmCSzGuSi-3sZ9WGvP-RoXP4EjkPRy6cYA"/>
+<div class="w-full bg-[#f3f4f6] rounded-full px-4 py-2 flex items-center cursor-text hover:bg-surface-container-high transition-colors">
+<span class="text-on-surface-variant font-body-md">What's on your mind, Rafiqul?</span>
+</div>
+</div>
+<div class="h-px w-full bg-surface-container mb-3"></div>
+<div class="flex justify-between items-center px-2">
+<div class="flex gap-2 sm:gap-4">
+<button class="flex items-center gap-2 p-2 hover:bg-surface-container rounded-lg transition-colors text-on-surface-variant font-label-md">
+<span class="material-symbols-outlined text-[#22c55e]">photo_library</span>
+<span class="hidden sm:inline">Photo/Video</span>
+</button>
+<button class="flex items-center gap-2 p-2 hover:bg-surface-container rounded-lg transition-colors text-on-surface-variant font-label-md">
+<span class="material-symbols-outlined text-[#f59e0b]">mood</span>
+<span class="hidden sm:inline">Feeling</span>
+</button>
+<button class="flex items-center gap-2 p-2 hover:bg-surface-container rounded-lg transition-colors text-on-surface-variant font-label-md">
+<span class="material-symbols-outlined text-[#ef4444]">videocam</span>
+<span class="hidden sm:inline">Live</span>
+</button>
+</div>
+<button class="flex items-center gap-1.5 px-3 py-1.5 bg-[#fef2f2] hover:bg-[#fee2e2] text-[#ef4444] rounded-lg transition-colors font-label-sm font-bold border border-[#fca5a5]">
+<span class="material-symbols-outlined text-[18px]">emergency</span>
+                        Sahajjo Chai
+                    </button>
+</div>
+</div>
+<!-- Feed Post 1 -->
+<article class="bg-surface rounded-[16px] ambient-shadow-sm mx-margin-mobile md:mx-0 hover:shadow-lg transition-shadow duration-300">
+<div class="p-stack-md flex justify-between items-start">
+<div class="flex gap-3">
+<img alt="Author Avatar" class="w-10 h-10 rounded-full object-cover border-2 border-white" data-alt="Portrait of a young woman wearing a colorful scarf, smiling warmly outdoors." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDUJhQ2hqj90fH8vX8U_cxRm32WfyR-kabmk5WmF_v2rHqexBJfkjfsbqu24SS5xYFKJwWb3aOG6i1dq81aGuqJ7hVdeGlbsqQelRDBK2uWT9orAiaDlmPF7bafzvo0FJriVEs-1N-idAPDePTS7yPqHfhTv0V8zFwL6e8i5roBuv-7RgYbOkyCFVgcAZe-jqSiAllt2BegERwa-fmsKg04H3o11zBHM54xvWAguwc0BiJJAOgYnRx5EDKFu8rqiYn3Co3gPE3lgw"/>
+<div>
+<h4 class="font-label-md text-label-md text-on-surface font-semibold hover:underline cursor-pointer">Nusrat Jahan</h4>
+<div class="flex items-center gap-1 text-on-surface-variant font-label-sm text-[11px]">
+<span>2 hrs ago</span>
+<span>·</span>
+<span class="material-symbols-outlined text-[14px]">public</span>
+</div>
+</div>
+</div>
+<button class="text-on-surface-variant p-1 hover:bg-surface-container rounded-full transition-colors">
+<span class="material-symbols-outlined">more_horiz</span>
+</button>
+</div>
+<div class="px-stack-md pb-3 text-body-md text-on-surface">
+<p>Just discovered this amazing new cafe in Dhanmondi! The aesthetic is so calming and the coffee is perfect for a productive afternoon. ☕✨ <span class="text-primary hover:underline cursor-pointer">#DhakaDiaries</span> <span class="text-primary hover:underline cursor-pointer">#CafeCulture</span></p>
+</div>
+<div class="w-full">
+<img alt="Cafe interior" class="w-full h-[400px] object-cover" data-alt="A beautifully designed modern cafe interior in Dhaka, featuring wooden furniture, lush green plants, warm ambient lighting, and large windows." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD3FFrZGbj2NRm2gjRcm_vS6f-O3XxeGXU5DK2mtAiBAHWsHa3l9T-tl7rt6Bk-mfKdj7FEKEVFA8gl-3Hflpybog7MkLRnYynfDlFStwNKP7yhTORaxkRzLGme17lgqqrJ0VuUOnHVhqJ9Gf5MQM6-Qj--8zvkeN6-HsqndDfq_sf-iDJiztZgqWn0TxEPU10E8XXr1YNiDDRlhyvSPOFzpEKRSt8nIdFRtBAfsgqDkKbzjqaYYoExignUq7C8-gKeM5UObB16fg"/>
+</div>
+<div class="p-stack-md">
+<!-- Reaction counts -->
+<div class="flex justify-between items-center text-on-surface-variant font-label-sm pb-3 border-b border-surface-container">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">thumb_up</span>
+<span class="material-symbols-outlined text-[#f43f5e] -ml-2 border border-surface rounded-full bg-white" style="font-variation-settings: 'FILL' 1;">favorite</span>
+<span class="ml-1">248</span>
+</div>
+<div class="flex gap-3">
+<span class="hover:underline cursor-pointer">42 Comments</span>
+<span class="hover:underline cursor-pointer">12 Shares</span>
+</div>
+</div>
+<!-- Action buttons -->
+<div class="flex justify-between items-center py-1 mt-1">
+<button class="flex-1 flex items-center justify-center gap-2 py-2 text-on-surface-variant hover:bg-surface-container rounded-lg transition-colors font-label-md">
+<span class="material-symbols-outlined text-[20px]">thumb_up</span> Like
+                        </button>
+<button class="flex-1 flex items-center justify-center gap-2 py-2 text-on-surface-variant hover:bg-surface-container rounded-lg transition-colors font-label-md">
+<span class="material-symbols-outlined text-[20px]">chat_bubble_outline</span> Comment
+                        </button>
+<button class="flex-1 flex items-center justify-center gap-2 py-2 text-on-surface-variant hover:bg-surface-container rounded-lg transition-colors font-label-md">
+<span class="material-symbols-outlined text-[20px]">share</span> Share
+                        </button>
+</div>
+<!-- Comment Preview -->
+<div class="mt-3 flex gap-3">
+<img alt="Commenter Avatar" class="w-8 h-8 rounded-full object-cover" data-alt="Portrait of an older gentleman with glasses reading a book in a cozy cafe." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCsJ4UkUmJ2qEGcbw9HC7hbt3AvfxHmIdJPA4Yxn6Yp3eLJKVR4s8RNxcP7KAPaziqCHjDLSexbPYvhDhfBXu8BzQ_wx2YQx75IT6EdtlIrTOk88ZBbhTjGMjku3DwGOHiS3yJd88HpJ575fb6dSY3sWsCmHUdu-oTLH5mv5ibtbaN_A2fpCLhS22mVbGqhQuvQA-gCOMt8YIFwj-Rt6_7hhtb3G8tmiP5VKhuFIPcBYASv1CDq1CRa1EHpt1MhgVWSoZ0kn6eLJA"/>
+<div class="bg-surface-container-low rounded-2xl px-3 py-2 flex-1 relative">
+<div class="border-l-2 border-[#4e45d5] absolute left-0 top-2 bottom-2 rounded-l"></div>
+<span class="font-label-md text-label-md font-semibold text-on-surface block">Kamal Hossain</span>
+<span class="font-body-md text-sm text-on-surface block">Looks like a great spot! I need to check it out this weekend.</span>
+</div>
+</div>
+</div>
+</article>
+<!-- Feed Post 2 (Text only) -->
+<article class="bg-surface rounded-[16px] ambient-shadow-sm mx-margin-mobile md:mx-0 hover:shadow-lg transition-shadow duration-300">
+<div class="p-stack-md flex justify-between items-start">
+<div class="flex gap-3">
+<div class="w-10 h-10 rounded-full bg-secondary-fixed flex items-center justify-center text-on-secondary-fixed-variant font-bold text-lg">
+                            BD
+                        </div>
+<div>
+<h4 class="font-label-md text-label-md text-on-surface font-semibold hover:underline cursor-pointer">Bangladesh Developers Group</h4>
+<div class="flex items-center gap-1 text-on-surface-variant font-label-sm text-[11px]">
+<span>5 hrs ago</span>
+<span>·</span>
+<span class="material-symbols-outlined text-[14px]">group</span>
+</div>
+</div>
+</div>
+<button class="text-on-surface-variant p-1 hover:bg-surface-container rounded-full transition-colors">
+<span class="material-symbols-outlined">more_horiz</span>
+</button>
+</div>
+<div class="px-stack-md pb-4 text-body-lg text-on-surface font-medium leading-relaxed">
+<p>We are hosting our annual tech meetup next month! Looking for speakers on topics related to AI, Web3, and UI/UX Design. If you're interested, drop a comment below or send us a DM. Let's build the future together! 🚀💻</p>
+</div>
+<div class="px-stack-md pb-stack-md">
+<!-- Reaction counts -->
+<div class="flex justify-between items-center text-on-surface-variant font-label-sm pb-3 border-b border-surface-container">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">thumb_up</span>
+<span class="ml-1">1,024</span>
+</div>
+<div class="flex gap-3">
+<span class="hover:underline cursor-pointer">156 Comments</span>
+</div>
+</div>
+<!-- Action buttons -->
+<div class="flex justify-between items-center py-1 mt-1">
+<button class="flex-1 flex items-center justify-center gap-2 py-2 text-primary hover:bg-primary-container/20 rounded-lg transition-colors font-label-md font-semibold">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">thumb_up</span> Liked
+                        </button>
+<button class="flex-1 flex items-center justify-center gap-2 py-2 text-on-surface-variant hover:bg-surface-container rounded-lg transition-colors font-label-md">
+<span class="material-symbols-outlined text-[20px]">chat_bubble_outline</span> Comment
+                        </button>
+<button class="flex-1 flex items-center justify-center gap-2 py-2 text-on-surface-variant hover:bg-surface-container rounded-lg transition-colors font-label-md">
+<span class="material-symbols-outlined text-[20px]">share</span> Share
+                        </button>
+</div>
+</div>
+</article>
+</main>
+<!-- Right Sidebar (Desktop) -->
+<aside class="hidden lg:flex flex-col gap-stack-lg py-stack-lg w-80 sticky top-24 h-[calc(100vh-6rem)] overflow-y-auto no-scrollbar shrink-0">
+<!-- Friend Suggestions (Bento Style) -->
+<div class="bg-surface rounded-[16px] ambient-shadow-sm p-stack-md">
+<div class="flex justify-between items-center mb-4">
+<h3 class="font-title-lg text-title-lg text-on-surface">People You May Know</h3>
+<a class="text-primary text-sm hover:underline font-label-md" href="#">See All</a>
+</div>
+<div class="flex flex-col gap-4">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-3">
+<img alt="Suggestion 1" class="w-10 h-10 rounded-full object-cover" data-alt="A young man wearing stylish sunglasses and a casual jacket outdoors in an urban setting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAo2aOkl9lKNHKlpB-WcIuyUSoediEqFY01cyterhBhIac-wY3fthKr9t0fhFHJrtLMaPPit25RCvvmY_Jm6Fiw9FXMw75icErDHqdOCOd4YaC6YbnAfuM1hBumEChF0P43Y22yRJO5BldZZjeMMTnD3PVIUvdDkUinqH3Y_tV20u_f5oxYey1V-xqPCAPSk8KHxTcNH1lbLnztalGwsjLjSqaxY9ErcnCTyH9c3vQctXbUTiDaLHpkfi7XeYU2gFzEv73-ZRHAkw"/>
+<div>
+<span class="font-label-md text-label-md font-semibold text-on-surface block">Tahsan Khan</span>
+<span class="font-label-sm text-xs text-on-surface-variant block">12 mutual friends</span>
+</div>
+</div>
+<button class="w-8 h-8 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center hover:bg-primary hover:text-white transition-colors">
+<span class="material-symbols-outlined text-[18px]">person_add</span>
+</button>
+</div>
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-3">
+<img alt="Suggestion 2" class="w-10 h-10 rounded-full object-cover" data-alt="Portrait of a young female designer holding a tablet in a bright studio space." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDoZyHBBlKPP-qGIIFPQyrRBhHWcKmHieh2zNu0nl4wAyoREbKZyR2bXQEE9TlgQ8pJWXrRwEUrTaiNGeOzU3drvp2CO5XNBYYeUxHRaw84F0HTfiveJ5C_3ijQlndIoMonWLCEg6qww28_MypztBdzKnhsDuk0wGPOg7y6bBaP5iWx4OEAa9ESA8YHWMRCkQU85sLg0eKs5VKi89zHLgbUFJiMwciOGEqSyZtbAWt-Gu4vD4PqSagWCKMNBTDXQBQfTgU08uorYw"/>
+<div>
+<span class="font-label-md text-label-md font-semibold text-on-surface block">Sadia Afrin</span>
+<span class="font-label-sm text-xs text-on-surface-variant block">Works at TechCorp</span>
+</div>
+</div>
+<button class="w-8 h-8 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center hover:bg-primary hover:text-white transition-colors">
+<span class="material-symbols-outlined text-[18px]">person_add</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Trending -->
+<div class="bg-surface rounded-[16px] ambient-shadow-sm p-stack-md">
+<h3 class="font-title-lg text-title-lg text-on-surface mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-[#f43f5e]">trending_up</span> Trending Now
+                </h3>
+<div class="flex flex-wrap gap-2">
+<a class="px-3 py-1.5 bg-secondary-fixed text-on-secondary-fixed-variant rounded-full font-label-sm hover:bg-secondary-fixed-dim transition-colors" href="#">#DhakaTraffic</a>
+<a class="px-3 py-1.5 bg-primary-fixed text-on-primary-fixed-variant rounded-full font-label-sm hover:bg-primary-fixed-dim transition-colors" href="#">#CricketBD</a>
+<a class="px-3 py-1.5 bg-surface-container-high text-on-surface-variant rounded-full font-label-sm hover:bg-surface-variant transition-colors" href="#">#StartupDhaka</a>
+<a class="px-3 py-1.5 bg-surface-container-high text-on-surface-variant rounded-full font-label-sm hover:bg-surface-variant transition-colors" href="#">#Foodie</a>
+<a class="px-3 py-1.5 bg-surface-container-high text-on-surface-variant rounded-full font-label-sm hover:bg-surface-variant transition-colors" href="#">#TechTrends</a>
+</div>
+</div>
+<!-- Sponsored (Glassmorphism inspired card) -->
+<div class="relative rounded-[16px] overflow-hidden group cursor-pointer ambient-shadow-sm">
+<div class="absolute inset-0 bg-cover bg-center group-hover:scale-105 transition-transform duration-500" data-alt="A sleek, modern smart watch displayed on a minimalist glowing pedestal with soft blue lighting." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCow9DD2hEO4dSmTgqaR15tQ7KmBoJXQlq7PRfxPc4MzdleEhkxvDx_VRkSZth6KFLmkp4SwThhnaVV-hRJl8252g7lqxNMtwI3k5w7oeqx-rg7iIk3QNktXseAkUnQDdR5ke_fCsJP2TsKGoY0mAoE_3JNKNWCX6Po9MvYW2cnHEyRS27xcwh70aJsLbFlQfXjyr_uBDcq3PrLR7GNno2JY7nECmfX0llqK1GFdGKczlwLD_xzeu4gEpResVerQ1X2yBcWiQ932A')"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
+<div class="relative p-stack-md h-48 flex flex-col justify-end">
+<div class="flex justify-between items-end">
+<div>
+<span class="text-[10px] uppercase tracking-wider text-white/80 font-bold mb-1 block">Sponsored</span>
+<h4 class="font-label-md text-lg text-white font-semibold leading-tight">NextGen Smart Watch</h4>
+<p class="text-white/80 text-xs mt-1">Upgrade your lifestyle.</p>
+</div>
+<button class="px-3 py-1 bg-white/20 backdrop-blur-md text-white text-xs font-bold rounded-lg border border-white/30 hover:bg-white/30 transition-colors">Shop</button>
+</div>
+</div>
+</div>
+</aside>
+</div>
+<!-- BottomNavBar (Mobile) -->
+<nav class="fixed bottom-0 w-full rounded-t-xl z-50 md:hidden bg-surface shadow-[0_-4px_20px_rgba(0,0,0,0.04)] pb-safe">
+<div class="flex justify-around items-center px-4 py-2 w-full">
+<a class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-full p-2 w-12 h-12 transition-transform scale-110" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">home</span>
+<span class="font-label-sm text-[10px] mt-0.5 hidden">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant p-2 hover:bg-surface-container-high rounded-xl transition-all" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="font-label-sm text-[10px] mt-0.5">Friends</span>
+</a>
+<a class="flex flex-col items-center justify-center text-primary p-2 -mt-6 bg-surface rounded-full border-4 border-surface shadow-md hover:scale-105 transition-transform" href="#">
+<span class="material-symbols-outlined text-[32px]" style="font-variation-settings: 'FILL' 1;">add_circle</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant p-2 hover:bg-surface-container-high rounded-xl transition-all" href="#">
+<span class="material-symbols-outlined">groups</span>
+<span class="font-label-sm text-[10px] mt-0.5">Groups</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant p-2 hover:bg-surface-container-high rounded-xl transition-all" href="#">
+<span class="material-symbols-outlined">storefront</span>
+<span class="font-label-sm text-[10px] mt-0.5">Market</span>
+</a>
+</div>
+</nav>
+<!-- Support for safe area on mobile devices -->
+<style>
+        @supports (padding-bottom: env(safe-area-inset-bottom)) {
+            .pb-safe {
+                padding-bottom: env(safe-area-inset-bottom);
+            }
+        }
+    </style>
+</body></html>

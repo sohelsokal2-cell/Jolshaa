@@ -15,6 +15,7 @@ const initTransporter = () => {
     host: SMTP_HOST,
     port: parseInt(SMTP_PORT || '587'),
     secure: SMTP_PORT === '465',
+    requireTLS: true,
     auth: SMTP_USER ? { user: SMTP_USER, pass: SMTP_PASS } : undefined,
   });
   return transporter;

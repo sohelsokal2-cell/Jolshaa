@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { protect } = require('../middleware/auth');
+const { checkRestriction } = require('../middleware/checkRestriction');
 const upload = require('../middleware/upload');
 const {
   sendMessage,
@@ -18,7 +19,7 @@ const {
 
 router.use(protect);
 
-router.post('/', upload.single('media'), sendMessage);
+router.post('/', checkRestriction('message'), upload.single('media'), sendMessage);
 router.post('/forward', forwardMessage);
 router.get('/search/:conversationId', searchMessages);
 router.put('/:messageId/react', reactToMessage);

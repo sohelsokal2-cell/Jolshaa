@@ -73,7 +73,7 @@ exports.sendMessage = async (req, res) => {
     const messageData = {
       conversation: conversationId,
       sender: req.user._id,
-      text: text || '',
+      text: text ? String(text).substring(0, 2000) : '',
       media,
       mediaType,
       fileName,
@@ -187,7 +187,7 @@ exports.editMessage = async (req, res) => {
       });
     }
 
-    message.text = text;
+    message.text = String(text).substring(0, 2000);
     message.isEdited = true;
     await message.save();
 
@@ -261,6 +261,12 @@ exports.forwardMessage = async (req, res) => {
     }
     if (!targetConversationIds || targetConversationIds.length === 0) {
       return res.status(400).json({ message: 'No target conversations' });
+    }
+    if (messageIds.length > 20) {
+      return res.status(400).json({ message: 'Cannot forward more than 20 messages at once' });
+    }
+    if (targetConversationIds.length > 10) {
+      return res.status(400).json({ message: 'Cannot forward to more than 10 conversations at once' });
     }
 
     const originalMessages = await Message.find({ _id: { $in: messageIds } });
@@ -403,6 +409,9 @@ exports.searchMessages = async (req, res) => {
 exports.startWatchParty = async (req, res) => {
   try {
     const { videoUrl } = req.body;
+    if (!videoUrl || !/^https?:\/\//i.test(videoUrl)) {
+      return res.status(400).json({ message: 'Valid video URL is required' });
+    }
     const conversation = await Conversation.findOne({ _id: req.params.conversationId, participants: req.user._id });
     if (!conversation) return res.status(404).json({ message: 'Conversation not found' });
 

@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Jolshaa - Notifications</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "primary-fixed-dim": "#6bd8cb",
+                      "on-surface-variant": "#3d4947",
+                      "secondary-fixed-dim": "#c3c0ff",
+                      "primary-container": "#008378",
+                      "on-secondary": "#ffffff",
+                      "surface-tint": "#006a61",
+                      "inverse-surface": "#2c3130",
+                      "on-tertiary-container": "#fffbff",
+                      "primary": "#00685f",
+                      "inverse-on-surface": "#edf2f0",
+                      "secondary-fixed": "#e3dfff",
+                      "on-secondary-fixed": "#100069",
+                      "on-background": "#171d1c",
+                      "primary-fixed": "#89f5e7",
+                      "on-tertiary-fixed": "#370e00",
+                      "on-primary-fixed": "#00201d",
+                      "surface-container-lowest": "#ffffff",
+                      "on-secondary-fixed-variant": "#372abf",
+                      "secondary-container": "#6860ef",
+                      "surface-container-highest": "#dee4e1",
+                      "surface-container": "#eaefed",
+                      "tertiary": "#924628",
+                      "surface": "#f5faf8",
+                      "tertiary-fixed-dim": "#ffb59a",
+                      "outline": "#6d7a77",
+                      "surface-variant": "#dee4e1",
+                      "error-container": "#ffdad6",
+                      "background": "#f5faf8",
+                      "secondary": "#4e45d5",
+                      "on-secondary-container": "#fffbff",
+                      "surface-bright": "#f5faf8",
+                      "on-surface": "#171d1c",
+                      "surface-dim": "#d6dbd9",
+                      "on-error-container": "#93000a",
+                      "outline-variant": "#bcc9c6",
+                      "tertiary-fixed": "#ffdbce",
+                      "on-primary-fixed-variant": "#005049",
+                      "inverse-primary": "#6bd8cb",
+                      "on-error": "#ffffff",
+                      "tertiary-container": "#b05e3d",
+                      "on-tertiary": "#ffffff",
+                      "on-primary-container": "#f4fffc",
+                      "on-tertiary-fixed-variant": "#773215",
+                      "surface-container-low": "#f0f5f2",
+                      "surface-container-high": "#e4e9e7",
+                      "on-primary": "#ffffff",
+                      "error": "#ba1a1a"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "stack-md": "16px",
+                      "stack-lg": "32px",
+                      "stack-sm": "8px",
+                      "container-max": "1280px",
+                      "gutter": "24px",
+                      "unit": "4px",
+                      "margin-mobile": "16px",
+                      "margin-desktop": "40px"
+              },
+              "fontFamily": {
+                      "headline-md": [
+                              "Be Vietnam Pro"
+                      ],
+                      "display-lg": [
+                              "Be Vietnam Pro"
+                      ],
+                      "body-md": [
+                              "Inter"
+                      ],
+                      "title-lg": [
+                              "Inter"
+                      ],
+                      "headline-lg": [
+                              "Be Vietnam Pro"
+                      ],
+                      "label-sm": [
+                              "Inter"
+                      ],
+                      "label-md": [
+                              "Inter"
+                      ],
+                      "headline-lg-mobile": [
+                              "Be Vietnam Pro"
+                      ],
+                      "body-lg": [
+                              "Inter"
+                      ]
+              },
+              "fontSize": {
+                      "headline-md": [
+                              "24px",
+                              {
+                                      "lineHeight": "1.3",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "display-lg": [
+                              "48px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "1.6",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "title-lg": [
+                              "20px",
+                              {
+                                      "lineHeight": "1.5",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "headline-lg": [
+                              "32px",
+                              {
+                                      "lineHeight": "1.25",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "label-sm": [
+                              "12px",
+                              {
+                                      "lineHeight": "1.4",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "label-md": [
+                              "14px",
+                              {
+                                      "lineHeight": "1.4",
+                                      "letterSpacing": "0.01em",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "headline-lg-mobile": [
+                              "28px",
+                              {
+                                      "lineHeight": "1.25",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "1.6",
+                                      "fontWeight": "400"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+    </script>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen relative overflow-x-hidden">
+<!-- News Feed Background Context -->
+<div class="absolute inset-0 z-0">
+        {{DATA:SCREEN:SCREEN_10}}
+    </div>
+<div class="absolute inset-0 bg-on-background/20 z-10 backdrop-blur-[2px]"></div>
+<!-- TopNavBar -->
+<nav class="fixed top-0 w-full z-50 flex justify-between items-center px-margin-desktop h-16 shadow-sm bg-surface dark:bg-surface-dim relative">
+<div class="flex items-center gap-4">
+<span class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed-dim">Jolshaa</span>
+<!-- Search Bar placeholder area -->
+<div class="hidden md:flex items-center bg-surface-container-low rounded-full px-4 py-2 w-64 ml-8 border border-transparent focus-within:border-primary focus-within:bg-surface transition-all">
+<span class="material-symbols-outlined text-on-surface-variant mr-2">search</span>
+<input class="bg-transparent border-none focus:ring-0 outline-none w-full text-label-md font-label-md text-on-surface" placeholder="Search..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="w-10 h-10 rounded-full flex items-center justify-center text-primary font-bold border-b-2 border-primary hover:bg-surface-container-high transition-colors active:scale-95 duration-200 relative" id="notificationBtn">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full ring-2 ring-surface"></span>
+</button>
+<button class="w-10 h-10 rounded-full flex items-center justify-center text-on-surface-variant font-medium hover:bg-surface-container-high transition-colors active:scale-95 duration-200">
+<span class="material-symbols-outlined">chat_bubble</span>
+</button>
+<button class="w-10 h-10 rounded-full flex items-center justify-center text-on-surface-variant font-medium hover:bg-surface-container-high transition-colors active:scale-95 duration-200">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<div class="w-8 h-8 rounded-full overflow-hidden ml-2 cursor-pointer border-2 border-transparent hover:border-primary transition-all">
+<img alt="User profile" class="w-full h-full object-cover" data-alt="A close-up, brightly lit portrait of a young professional smiling naturally. The background is a soft, out-of-focus modern office setting with warm, ambient lighting. The color palette features light neutral tones and subtle teal accents, aligning with a clean, friendly corporate aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAXCKRa5JijLcnb1q_BEhxE3aKIvRVuHVxeTPEss3WOKi3kTXzawE3YDRmCtD78UJk2IEFLSthCsdPEv78hXHyYS4nVPxujZHo2DIYjLnPRnyubbEcv9Ummu9ZK7JqPKMjm3neaDBqNoghVlWCjo8hpQ6a9wudtIuyK5p8VBy-DJmDMqN1D80qBXdMD3hpP0uh5LoZ8RWEjyIL07RHz5yFLeWqRIjkKDssM4JGiCYqvVRwyha4OJGBvpCYb-2ywEDL3g-B11eoJJQ"/>
+</div>
+</div>
+<!-- Notifications Dropdown Panel -->
+<div class="absolute top-16 right-margin-desktop mt-2 w-[350px] bg-surface rounded-xl shadow-[0px_10px_30px_rgba(0,0,0,0.08)] z-50 overflow-hidden border border-surface-container-highest animate-fade-in-down" id="notificationDropdown">
+<!-- Header -->
+<div class="px-stack-md py-stack-sm flex justify-between items-center border-b border-surface-container-highest">
+<h3 class="font-title-lg text-title-lg text-on-surface">Notifications</h3>
+<button class="text-primary font-label-md text-label-md hover:underline bg-transparent border-none cursor-pointer">Mark all as read</button>
+</div>
+<!-- List -->
+<div class="max-h-[400px] overflow-y-auto">
+<!-- Unread Item: Like -->
+<a class="flex items-start p-stack-md gap-stack-sm bg-primary/5 border-l-4 border-primary hover:bg-surface-container-low transition-colors group" href="#">
+<div class="relative w-10 h-10 shrink-0">
+<img alt="User avatar" class="w-full h-full rounded-full object-cover border-2 border-surface" data-alt="A portrait of a woman with curly hair laughing outdoors in bright sunlight. The scene uses a modern, light-mode friendly color palette with soft natural lighting and warm skin tones, conveying joy and connection." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAQPcwXAumhmcOkEI4eTd7sL_ZimQFzuKjoOtnc0ZnyJngmSKYKBnrnkBVe5c9kXMYMdhCPiCmQ8DDl3G5K7BcfYqURUBW-lgHruNU4jlUGzm7jG3HBKk_8AT0BtASsBeWNzvOTlY1rekvidtxkP7NC8tf2E3abaTllf7Ld8vhqrX8QSGudVPhE_3AVDmbRPb3MwbcR52_S9p_Nwd0BVPoHHdVGM4svmRn1bYnOofwveqJpIu4kIC2pFgnyjjoay40Kn6L1SyYhyA"/>
+<div class="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-error flex items-center justify-center ring-2 ring-surface">
+<span class="material-symbols-outlined text-[12px] text-on-error" style="font-variation-settings: 'FILL' 1;">favorite</span>
+</div>
+</div>
+<div class="flex-1 min-w-0">
+<p class="font-body-md text-body-md text-on-surface line-clamp-2">
+<span class="font-semibold">Aisha Rahman</span> liked your photo in the <strong>Weekend Walkers</strong> group.
+                        </p>
+<span class="font-label-sm text-label-sm text-on-surface-variant block mt-1">2m ago</span>
+</div>
+</a>
+<!-- Unread Item: Comment -->
+<a class="flex items-start p-stack-md gap-stack-sm bg-primary/5 border-l-4 border-primary hover:bg-surface-container-low transition-colors group" href="#">
+<div class="relative w-10 h-10 shrink-0">
+<img alt="User avatar" class="w-full h-full rounded-full object-cover border-2 border-surface" data-alt="A portrait of a man in his 30s wearing glasses, looking thoughtful in a modern cafe setting. Soft natural light illuminates his face, set against a blurred, light-colored background that fits a clean, professional aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCPkLXEJbWVGtMbpYWzoI_EQbLbkslbfm5P442ctEzVdeLyXkoZJcVFwFNq8dkw8CWL5dSolSX47ODcZWYk7XKNDhfDpavvdwRV3nr2oJOnxfMHyBwzWFHlNIcdHzEl2mE2ku762v6i2bNqQZLKUJ7ypHwHfu-8JDaP8_xMDdp8Dy4VLnHnRS1RZla3xpMKq5HYRt9VyvfSKkrysWeenE_-NO7Dr0PqKSWwgkh8MI36H01oBGI27xRz9GzK0Cp1yruZXI9hIZnWvw"/>
+<div class="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-secondary flex items-center justify-center ring-2 ring-surface">
+<span class="material-symbols-outlined text-[12px] text-on-secondary" style="font-variation-settings: 'FILL' 1;">chat_bubble</span>
+</div>
+</div>
+<div class="flex-1 min-w-0">
+<p class="font-body-md text-body-md text-on-surface line-clamp-2">
+<span class="font-semibold">Fahim Ahmed</span> commented: "That looks like an amazing setup! Let's catch up soon."
+                        </p>
+<span class="font-label-sm text-label-sm text-on-surface-variant block mt-1">1h ago</span>
+</div>
+</a>
+<!-- Read Item: Friend Request -->
+<a class="flex items-start p-stack-md gap-stack-sm hover:bg-surface-container-low transition-colors group" href="#">
+<div class="relative w-10 h-10 shrink-0">
+<div class="w-full h-full rounded-full bg-surface-container-highest flex items-center justify-center text-on-surface-variant border-2 border-surface">
+<span class="material-symbols-outlined">person</span>
+</div>
+<div class="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-primary flex items-center justify-center ring-2 ring-surface">
+<span class="material-symbols-outlined text-[12px] text-on-primary" style="font-variation-settings: 'FILL' 1;">person_add</span>
+</div>
+</div>
+<div class="flex-1 min-w-0">
+<p class="font-body-md text-body-md text-on-surface line-clamp-2">
+<span class="font-semibold">Nadia Islam</span> sent you a friend request.
+                        </p>
+<div class="flex gap-2 mt-2">
+<button class="bg-primary text-on-primary px-3 py-1 rounded-md font-label-md text-label-md hover:bg-primary/90 transition-colors">Accept</button>
+<button class="bg-surface-container-highest text-on-surface px-3 py-1 rounded-md font-label-md text-label-md hover:bg-surface-container-highest/80 transition-colors">Decline</button>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant block mt-2">4h ago</span>
+</div>
+</a>
+<!-- Read Item: Group Activity -->
+<a class="flex items-start p-stack-md gap-stack-sm hover:bg-surface-container-low transition-colors group" href="#">
+<div class="relative w-10 h-10 shrink-0">
+<div class="w-full h-full rounded-md bg-secondary/10 flex items-center justify-center text-secondary border-2 border-surface">
+<span class="material-symbols-outlined">groups</span>
+</div>
+<div class="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-tertiary flex items-center justify-center ring-2 ring-surface">
+<span class="material-symbols-outlined text-[12px] text-on-tertiary" style="font-variation-settings: 'FILL' 1;">campaign</span>
+</div>
+</div>
+<div class="flex-1 min-w-0">
+<p class="font-body-md text-body-md text-on-surface line-clamp-2">
+<strong>Dhaka Tech Enthusiasts</strong> posted a new announcement: Upcoming Hackathon details inside!
+                        </p>
+<span class="font-label-sm text-label-sm text-on-surface-variant block mt-1">Yesterday</span>
+</div>
+</a>
+<!-- Read Item: System -->
+<a class="flex items-start p-stack-md gap-stack-sm hover:bg-surface-container-low transition-colors group" href="#">
+<div class="relative w-10 h-10 shrink-0">
+<div class="w-full h-full rounded-full bg-surface-container-highest flex items-center justify-center text-on-surface-variant border-2 border-surface">
+<span class="material-symbols-outlined">security</span>
+</div>
+</div>
+<div class="flex-1 min-w-0">
+<p class="font-body-md text-body-md text-on-surface line-clamp-2">
+                            Your recent login from a new device was successful.
+                        </p>
+<span class="font-label-sm text-label-sm text-on-surface-variant block mt-1">2 days ago</span>
+</div>
+</a>
+</div>
+<!-- Footer -->
+<div class="p-stack-sm border-t border-surface-container-highest text-center">
+<a class="font-label-md text-label-md text-primary hover:underline" href="#">View all notifications</a>
+</div>
+</div>
+</nav>
+<style>
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px) scale(0.98);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+        .animate-fade-in-down {
+            animation: fadeInDown 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            transform-origin: top right;
+        }
+    </style>
+</body></html>

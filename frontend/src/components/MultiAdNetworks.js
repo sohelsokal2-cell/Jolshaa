@@ -1,13 +1,18 @@
 import { useEffect, useRef, useState } from 'react';
 import API from '../api/axios';
+import { validateAdScript, safeSetInnerHTML } from '../utils/domPurify';
 
 // Inject ad script dynamically
 const injectScript = (script, id) => {
   if (!script) return;
   if (document.getElementById(id)) return;
+  
+  const validatedScript = validateAdScript(script);
+  if (!validatedScript) return;
+  
   const div = document.createElement('div');
   div.id = id;
-  div.innerHTML = script;
+  safeSetInnerHTML(div, validatedScript);
   document.body.appendChild(div);
 };
 
@@ -46,9 +51,12 @@ export const SocialBarAd = () => {
       if (!res.data.enabled || !containerRef.current) return;
       for (const [name, network] of Object.entries(res.data.networks || {})) {
         if (network.adFormats?.socialBar?.script) {
-          const div = document.createElement('div');
-          div.innerHTML = network.adFormats.socialBar.script;
-          containerRef.current.appendChild(div);
+          const validatedScript = validateAdScript(network.adFormats.socialBar.script);
+          if (validatedScript) {
+            const div = document.createElement('div');
+            safeSetInnerHTML(div, validatedScript);
+            containerRef.current.appendChild(div);
+          }
           break;
         }
       }
@@ -72,9 +80,12 @@ export const NativeBannerAd = ({ className = '', networkName = null }) => {
       for (const [name, network] of Object.entries(res.data.networks || {})) {
         if (networkName && name !== networkName) continue;
         if (network.adFormats?.nativeBanner?.script) {
-          const div = document.createElement('div');
-          div.innerHTML = network.adFormats.nativeBanner.script;
-          containerRef.current.appendChild(div);
+          const validatedScript = validateAdScript(network.adFormats.nativeBanner.script);
+          if (validatedScript) {
+            const div = document.createElement('div');
+            safeSetInnerHTML(div, validatedScript);
+            containerRef.current.appendChild(div);
+          }
           if (!networkName) break;
         }
       }
@@ -107,16 +118,18 @@ export const VideoAd = ({ onAdComplete, networkName = null }) => {
       for (const [name, network] of Object.entries(res.data.networks || {})) {
         if (networkName && name !== networkName) continue;
         if (network.adFormats?.video?.script) {
-          const div = document.createElement('div');
-          div.innerHTML = network.adFormats.video.script;
-          containerRef.current.appendChild(div);
+          const validatedScript = validateAdScript(network.adFormats.video.script);
+          if (validatedScript) {
+            const div = document.createElement('div');
+            safeSetInnerHTML(div, validatedScript);
+            containerRef.current.appendChild(div);
+          }
           setTimeout(() => {
             if (onAdComplete) onAdComplete();
           }, 30000);
           return;
         }
       }
-      // No ad found
       if (onAdComplete) onAdComplete();
     }).catch(() => {
       if (onAdComplete) onAdComplete();
@@ -144,9 +157,12 @@ export const InterstitialAd = ({ onClose }) => {
       if (!res.data.enabled || !containerRef.current) return;
       for (const [name, network] of Object.entries(res.data.networks || {})) {
         if (network.adFormats?.interstitial?.script) {
-          const div = document.createElement('div');
-          div.innerHTML = network.adFormats.interstitial.script;
-          containerRef.current.appendChild(div);
+          const validatedScript = validateAdScript(network.adFormats.interstitial.script);
+          if (validatedScript) {
+            const div = document.createElement('div');
+            safeSetInnerHTML(div, validatedScript);
+            containerRef.current.appendChild(div);
+          }
           break;
         }
       }
@@ -179,9 +195,12 @@ export const BannerAd = ({ size = '728x90', className = '' }) => {
       if (!res.data.enabled || !containerRef.current) return;
       for (const [name, network] of Object.entries(res.data.networks || {})) {
         if (network.adFormats?.banner?.script) {
-          const div = document.createElement('div');
-          div.innerHTML = network.adFormats.banner.script;
-          containerRef.current.appendChild(div);
+          const validatedScript = validateAdScript(network.adFormats.banner.script);
+          if (validatedScript) {
+            const div = document.createElement('div');
+            safeSetInnerHTML(div, validatedScript);
+            containerRef.current.appendChild(div);
+          }
           break;
         }
       }
@@ -242,27 +261,30 @@ export const MultiAdNetworks = () => {
 
 // Feed Ad - insert ad between posts
 export const FeedAd = ({ position = 0, frequency = 3 }) => {
-  const [adContent, setAdContent] = useState(null);
+  const containerRef = useRef(null);
+  const [hasAd, setHasAd] = useState(false);
 
   useEffect(() => {
-    // Only show ad at specified frequency intervals
     if ((position + 1) % frequency !== 0) return;
 
     API.get('/ad-networks/config').then(res => {
-      if (!res.data.enabled) return;
+      if (!res.data.enabled || !containerRef.current) return;
       for (const [name, network] of Object.entries(res.data.networks || {})) {
         if (network.adFormats?.nativeBanner?.script) {
-          setAdContent({
-            script: network.adFormats.nativeBanner.script,
-            network: name,
-          });
+          const validatedScript = validateAdScript(network.adFormats.nativeBanner.script);
+          if (validatedScript) {
+            const div = document.createElement('div');
+            safeSetInnerHTML(div, validatedScript);
+            containerRef.current.appendChild(div);
+            setHasAd(true);
+          }
           break;
         }
       }
     }).catch(() => {});
   }, [position, frequency]);
 
-  if (!adContent) return null;
+  if (!hasAd) return null;
 
   return (
     <div className="my-4 p-3 bg-white dark:bg-gray-800 rounded-lg border dark:border-gray-700">
@@ -270,7 +292,7 @@ export const FeedAd = ({ position = 0, frequency = 3 }) => {
         <span className="inline-block w-2 h-2 rounded-full bg-green-500"></span>
         Sponsored
       </div>
-      <div dangerouslySetInnerHTML={{ __html: adContent.script }} />
+      <div ref={containerRef} />
     </div>
   );
 };

@@ -388,7 +388,7 @@ const useWebRTC = ({ socket, currentUser }) => {
           );
         } catch (err) {
           // ICE candidate errors are usually non-fatal
-          console.warn('Failed to add ICE candidate:', err.message);
+          if (process.env.NODE_ENV === 'development') console.warn('Failed to add ICE candidate:', err.message);
         }
       }
     };

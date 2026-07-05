@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Jolshaa - Groups Hub</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-fixed": "#e3dfff",
+                        "secondary-container": "#6860ef",
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary-fixed-variant": "#773215",
+                        "surface-container": "#eaefed",
+                        "on-surface-variant": "#3d4947",
+                        "surface-dim": "#d6dbd9",
+                        "on-primary-fixed": "#00201d",
+                        "surface-container-high": "#e4e9e7",
+                        "primary": "#00685f",
+                        "tertiary-fixed-dim": "#ffb59a",
+                        "on-background": "#171d1c",
+                        "on-primary-fixed-variant": "#005049",
+                        "on-surface": "#171d1c",
+                        "secondary-fixed-dim": "#c3c0ff",
+                        "inverse-primary": "#6bd8cb",
+                        "surface-container-low": "#f0f5f2",
+                        "on-error": "#ffffff",
+                        "secondary": "#4e45d5",
+                        "outline": "#6d7a77",
+                        "background": "#f5faf8",
+                        "error-container": "#ffdad6",
+                        "surface-variant": "#dee4e1",
+                        "on-secondary-fixed-variant": "#372abf",
+                        "surface-container-highest": "#dee4e1",
+                        "error": "#ba1a1a",
+                        "on-primary": "#ffffff",
+                        "on-primary-container": "#f4fffc",
+                        "tertiary-container": "#b05e3d",
+                        "surface": "#f5faf8",
+                        "primary-fixed": "#89f5e7",
+                        "primary-fixed-dim": "#6bd8cb",
+                        "on-secondary": "#ffffff",
+                        "inverse-surface": "#2c3130",
+                        "on-secondary-container": "#fffbff",
+                        "primary-container": "#008378",
+                        "outline-variant": "#bcc9c6",
+                        "on-tertiary": "#ffffff",
+                        "tertiary-fixed": "#ffdbce",
+                        "on-tertiary-fixed": "#370e00",
+                        "on-error-container": "#93000a",
+                        "on-secondary-fixed": "#100069",
+                        "surface-tint": "#006a61",
+                        "inverse-on-surface": "#edf2f0",
+                        "on-tertiary-container": "#fffbff",
+                        "surface-bright": "#f5faf8",
+                        "tertiary": "#924628"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "gutter": "24px",
+                        "stack-lg": "32px",
+                        "stack-md": "16px",
+                        "unit": "4px",
+                        "margin-mobile": "16px",
+                        "stack-sm": "8px",
+                        "margin-desktop": "40px",
+                        "container-max": "1280px"
+                    },
+                    "fontFamily": {
+                        "headline-lg-mobile": ["Be Vietnam Pro"],
+                        "body-lg": ["Inter"],
+                        "title-lg": ["Inter"],
+                        "headline-md": ["Be Vietnam Pro"],
+                        "label-md": ["Inter"],
+                        "body-md": ["Inter"],
+                        "display-lg": ["Be Vietnam Pro"],
+                        "label-sm": ["Inter"],
+                        "headline-lg": ["Be Vietnam Pro"]
+                    },
+                    "fontSize": {
+                        "headline-lg-mobile": ["28px", { "lineHeight": "1.25", "fontWeight": "700" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "title-lg": ["20px", { "lineHeight": "1.5", "fontWeight": "600" }],
+                        "headline-md": ["24px", { "lineHeight": "1.3", "fontWeight": "600" }],
+                        "label-md": ["14px", { "lineHeight": "1.4", "letterSpacing": "0.01em", "fontWeight": "500" }],
+                        "body-md": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "display-lg": ["48px", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "label-sm": ["12px", { "lineHeight": "1.4", "fontWeight": "600" }],
+                        "headline-lg": ["32px", { "lineHeight": "1.25", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined.fill {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .soft-shadow {
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+        }
+        .overlay-shadow {
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body-md min-h-screen flex flex-col pt-16 pb-16 md:pb-0">
+<!-- TopNavBar -->
+<header class="bg-surface shadow-sm fixed top-0 w-full z-50 transition-colors duration-300 hidden md:block dark:bg-surface-dim dark:bg-surface-container">
+<div class="flex justify-between items-center px-margin-desktop h-16 w-full max-w-container-max mx-auto">
+<!-- Brand -->
+<div class="flex items-center gap-4">
+<span class="font-headline-lg text-headline-lg font-bold text-primary dark:text-primary-fixed cursor-pointer">Jolshaa</span>
+</div>
+<!-- Search -->
+<div class="flex-1 max-w-md mx-4">
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none group-focus-within:text-primary transition-colors">search</span>
+<input class="w-full bg-surface-container-low text-on-surface rounded-full py-2 pl-10 pr-4 outline-none border-2 border-transparent focus:bg-surface-container-lowest focus:border-primary transition-all font-body-md placeholder-on-surface-variant/70" placeholder="Search groups..." type="text"/>
+</div>
+</div>
+<!-- Actions -->
+<div class="flex items-center gap-2">
+<button aria-label="notifications" class="p-2 rounded-full text-on-surface-variant hover:bg-surface-container-low transition-colors cursor-pointer active:opacity-80">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button aria-label="chat" class="p-2 rounded-full text-on-surface-variant hover:bg-surface-container-low transition-colors cursor-pointer active:opacity-80">
+<span class="material-symbols-outlined">chat</span>
+</button>
+<button class="ml-2 w-8 h-8 rounded-full overflow-hidden border-2 border-transparent hover:border-primary transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2">
+<img alt="User profile" class="w-full h-full object-cover" data-alt="A portrait photograph of a young professional Bangladeshi woman smiling warmly, set against a blurred, vibrant outdoor cafe background. Modern, corporate-friendly aesthetic with high trust and clear lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCzIt_aDAYzvcWcAzRo5hE6cilr01vnF3hq-Zhuh8bL_V_YKnTUmpBkYQoe0rSlezFmUJD6WTybSWVMh4a6Mphar_zuIpSh6rIFwbDZQlbmJ9NONWc4VsTfuDHYFeT9g2xZy25Q5ciaENGwocEBKn-O_BpzL4v17rTsL2YeGSuW-xivAp2KqllthjHv5uEl5jNfHzF7I8iXXZzvbWMnes8YYJUM-vsQDatcHyolEePsPK4sGXKFsB2TiCQwhPw0TcbIV6-ThmIo0Q"/>
+</button>
+</div>
+</div>
+</header>
+<!-- Main Layout Container -->
+<div class="flex-1 w-full max-w-container-max mx-auto md:px-margin-desktop md:pt-margin-desktop flex flex-col md:flex-row gap-gutter">
+<!-- Left Sidebar (Navigation & Categories) - Desktop Only -->
+<aside class="hidden md:flex flex-col w-64 shrink-0 sticky top-[104px] self-start h-[calc(100vh-104px)] overflow-y-auto pb-stack-lg gap-stack-lg scrollbar-hide">
+<!-- Global Nav Mimic -->
+<nav class="flex flex-col gap-stack-sm bg-transparent">
+<a class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-high rounded-lg px-4 py-3 transition-all scale-95 active:scale-90 font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined">home</span> Home
+                </a>
+<a class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-high rounded-lg px-4 py-3 transition-all scale-95 active:scale-90 font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined">group</span> Friends
+                </a>
+<a class="flex items-center gap-3 bg-secondary-fixed text-on-secondary-fixed-variant font-bold rounded-lg px-4 py-3 transition-all scale-95 active:scale-90 font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined fill">groups</span> Groups
+                </a>
+<a class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-high rounded-lg px-4 py-3 transition-all scale-95 active:scale-90 font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined">storefront</span> Marketplace
+                </a>
+</nav>
+<hr class="border-outline-variant/30"/>
+<!-- Categories -->
+<div>
+<h3 class="font-title-lg text-title-lg text-on-surface mb-stack-md px-2">Categories</h3>
+<nav class="flex flex-col gap-unit">
+<a class="flex items-center justify-between px-3 py-2 rounded-lg text-on-surface hover:bg-surface-container-low transition-colors font-body-md" href="#">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary bg-primary-container/20 p-1.5 rounded-full text-[20px]">computer</span>
+<span>Tech &amp; Startup</span>
+</div>
+</a>
+<a class="flex items-center justify-between px-3 py-2 rounded-lg text-on-surface hover:bg-surface-container-low transition-colors font-body-md" href="#">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary bg-primary-container/20 p-1.5 rounded-full text-[20px]">restaurant</span>
+<span>Foodies Dhaka</span>
+</div>
+</a>
+<a class="flex items-center justify-between px-3 py-2 rounded-lg text-on-surface hover:bg-surface-container-low transition-colors font-body-md" href="#">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary bg-primary-container/20 p-1.5 rounded-full text-[20px]">palette</span>
+<span>Art &amp; Hobbies</span>
+</div>
+</a>
+<a class="flex items-center justify-between px-3 py-2 rounded-lg text-on-surface hover:bg-surface-container-low transition-colors font-body-md" href="#">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary bg-primary-container/20 p-1.5 rounded-full text-[20px]">map</span>
+<span>Local Events</span>
+</div>
+</a>
+</nav>
+</div>
+<button class="w-full mt-auto bg-primary text-on-primary py-3 rounded-lg font-label-md text-label-md flex items-center justify-center gap-2 hover:bg-primary/90 transition-colors overlay-shadow hover:scale-[1.02] active:scale-[0.98]">
+<span class="material-symbols-outlined text-[20px]">add</span> Create Group
+            </button>
+</aside>
+<!-- Main Content Canvas -->
+<main class="flex-1 flex flex-col gap-stack-lg min-w-0 px-margin-mobile md:px-0 pt-margin-mobile md:pt-0">
+<!-- Mobile Header / Search (Visible only on mobile) -->
+<div class="md:hidden flex flex-col gap-stack-md">
+<div class="flex justify-between items-center">
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">Groups</h1>
+<button class="p-2 bg-surface-container-low rounded-full text-primary">
+<span class="material-symbols-outlined">add</span>
+</button>
+</div>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="w-full bg-surface-container-low text-on-surface rounded-full py-2.5 pl-10 pr-4 outline-none border-2 border-transparent focus:bg-surface-container-lowest focus:border-primary transition-all font-body-md" placeholder="Search groups..." type="text"/>
+</div>
+<!-- Mobile Categories Pills -->
+<div class="flex overflow-x-auto gap-unit pb-2 scrollbar-hide -mx-margin-mobile px-margin-mobile snap-x">
+<button class="shrink-0 snap-start bg-primary-container text-on-primary-container px-4 py-1.5 rounded-full font-label-md text-label-md border border-primary/20">All</button>
+<button class="shrink-0 snap-start bg-surface-container-low text-on-surface-variant hover:bg-surface-container px-4 py-1.5 rounded-full font-label-md text-label-md border border-outline-variant/30 transition-colors">Tech</button>
+<button class="shrink-0 snap-start bg-surface-container-low text-on-surface-variant hover:bg-surface-container px-4 py-1.5 rounded-full font-label-md text-label-md border border-outline-variant/30 transition-colors">Food</button>
+<button class="shrink-0 snap-start bg-surface-container-low text-on-surface-variant hover:bg-surface-container px-4 py-1.5 rounded-full font-label-md text-label-md border border-outline-variant/30 transition-colors">Art</button>
+<button class="shrink-0 snap-start bg-surface-container-low text-on-surface-variant hover:bg-surface-container px-4 py-1.5 rounded-full font-label-md text-label-md border border-outline-variant/30 transition-colors">Local</button>
+</div>
+</div>
+<!-- Suggested Groups Bento -->
+<section>
+<div class="flex justify-between items-baseline mb-stack-md">
+<h2 class="font-headline-md text-headline-md text-on-surface">Suggested for You</h2>
+<a class="text-primary font-label-md text-label-md hover:underline" href="#">See all</a>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-stack-md">
+<!-- Group Card 1 -->
+<article class="bg-surface-container-lowest rounded-xl soft-shadow overflow-hidden flex flex-col group hover:overlay-shadow transition-shadow duration-300">
+<div class="h-32 w-full relative overflow-hidden">
+<div class="bg-cover bg-center w-full h-full group-hover:scale-105 transition-transform duration-500" data-alt="A brightly lit, modern co-working space in Dhaka filled with young professionals collaborating around laptops. Warm natural light streaming through large windows, modern corporate aesthetic, energetic and collaborative mood." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCNpzhQBPkOeR2B2Ewdn3u0eNRWFhhYLQRSqa9bNWNPs-lUXqdzkbJ4JHcZdg6ffaJrBKwBDl-PwWZhREoqLlys2KfNB1YmYtyNRsUGgWF4024fe3JgvGAyN8cnVYFIpBF867Tbp0t_zdzq5D4cyzYqYjhoyOPvcaEpBMWvru2Cpoach-oNdhJGrl-Xyi9sv6iTc1cCXm6-7kQ15WPxdX7rY-WypupPH0ldTRZ1XrbcEFwGrVoXMLs6E-pr3MM6LcY8QwiUTzVPJQ')"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+<span class="absolute bottom-3 left-4 text-white font-label-sm text-label-sm bg-black/30 backdrop-blur-sm px-2 py-1 rounded-full">Tech</span>
+</div>
+<div class="p-4 flex flex-col flex-1">
+<h3 class="font-title-lg text-title-lg text-on-surface mb-1 line-clamp-1">Dhaka Developers Hub</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-4 line-clamp-2 text-sm">Connecting software engineers, designers, and tech enthusiasts across Bangladesh.</p>
+<div class="mt-auto flex items-center justify-between">
+<div class="flex -space-x-2">
+<img class="w-8 h-8 rounded-full border-2 border-white object-cover" data-alt="Small circular avatar portrait of a smiling South Asian man." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCCs_Hklx9oxnALD4a0OOM-YB3b5uk71U8MPbyuqfeJJxh2YHN2_rBKWA78BwgSg6uNllhpLYSmXmCjvusruR8Wr0wmrQF0wiNq1liW6lmZdKgFx6DnIhshWV65t57wkKRzEgRcFuYsb2f64eJVjFSRfegi3-hg2VvEsVfoNsghoT-HKTF5H-vwkkl4RTNeIaadLc73lrJmWCvkIL99SwUfPh-ou_3q9LNMma8kItbN6icOkDKduc6FOmsLzjua8xFEueGG1qKDrA"/>
+<img class="w-8 h-8 rounded-full border-2 border-white object-cover" data-alt="Small circular avatar portrait of a confident South Asian woman." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBqA-wThqZbbyR_2DQlo6FguZl-bV2qlfFp0olh6627iiWBPv55mo21c9XUAxZ6m8AMMWSXC73WxMAdACv2TONbILX5ANt8bzSD5KMqehEMMrqNTIHhhe-y_J6MZI2vCKS_UJ5fdy4qzKn4PET-uTPWHJ6N7cCT9oLjt9bEMjb6dLV-KFNFg34rNpL411OcFoOG4mBiJWBqeSYy96gyjX9egaNNO4W8fI7kowe5L1Yb70gCm4BEhiAb4qqVJ00Ryq072k44d9DnlA"/>
+<div class="w-8 h-8 rounded-full border-2 border-white bg-surface-container-high flex items-center justify-center font-label-sm text-label-sm text-on-surface-variant z-10">+12k</div>
+</div>
+<button class="bg-primary-container/10 text-primary hover:bg-primary hover:text-white px-4 py-1.5 rounded-lg font-label-md text-label-md transition-colors">Join</button>
+</div>
+</div>
+</article>
+<!-- Group Card 2 -->
+<article class="bg-surface-container-lowest rounded-xl soft-shadow overflow-hidden flex flex-col group hover:overlay-shadow transition-shadow duration-300">
+<div class="h-32 w-full relative overflow-hidden">
+<div class="bg-cover bg-center w-full h-full group-hover:scale-105 transition-transform duration-500" data-alt="An overhead view of a beautifully arranged table featuring traditional and modern Bangladeshi street food. Vibrant colors, soft natural lighting, inviting and warm community dining atmosphere." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAXcDx_4yT3VgMA5TLr_kQWv1meii0kFNQnPSx9oGQvU5MHV_ubrMRVKaTW3pUYPqp1PecQuuszZcbsA4dSX_VjIS6RQ3jo0tAPPLdR8AL0DHTmLtzWr96NvTyqTWZOwwythgzWm6VXAVcaoEo9z__fPRWmxSZdf0kQ3bF0Mow7jwEyn9-Tt8waEaFLpWStCeDIgnmoWXPdAuyYXyERROt7SDXEu4jMtimCSVnN40Zlh5xco5SrlCI3g6vK6ZGbR2BiNKyUmRuhCA')"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+<span class="absolute bottom-3 left-4 text-white font-label-sm text-label-sm bg-black/30 backdrop-blur-sm px-2 py-1 rounded-full">Food</span>
+</div>
+<div class="p-4 flex flex-col flex-1">
+<h3 class="font-title-lg text-title-lg text-on-surface mb-1 line-clamp-1">BD Food Explorers</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-4 line-clamp-2 text-sm">Discovering hidden gems, reviewing new restaurants, and sharing recipes.</p>
+<div class="mt-auto flex items-center justify-between">
+<div class="flex -space-x-2">
+<img class="w-8 h-8 rounded-full border-2 border-white object-cover" data-alt="Small circular avatar portrait of a cheerful person wearing a chef hat." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAE_1v0o5C-N00RiCHsiVK09eH9MH2mnAVFERBL3A0KWlAZNeaXDU87Bvfdlvq7d67udULhq6k1mTPIhZy07Q6x4DA-HTaBtJgqDFafwO99iBxcCHg-2c23eTaQM6R-WCJpufEDr6Qgl_xAnxyih5TgHbz99EwyH_9sDSzRfNXkfU1Uz_RgS3cqHJ5JMKPYQt97Ga0Qn-AstpBX2P7E_9APiRZIHhTecyG8gpYctgARuaNnCuQmtmFLFRhTjj-bXGB6mnRocJD6iA"/>
+<img class="w-8 h-8 rounded-full border-2 border-white object-cover" data-alt="Small circular avatar portrait of a person holding a coffee cup." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDCWkkO0Gj0Egm-gaa6ZnMm2IN-edTIRfFPIL4M7J0-hG0w4tDvcdS1YfCv2zz-pEtWCQnFWqWCKyNs_0PKdn6Ub54uqcNH7PhKtevAllmxzUHH7g6OMHLpN8KERV4QgH6BGBBmbE0IRK_0vN6gpGJqCReJ3i5Az7x93usaih0BkNqNRyN9bmmqZI96D20TYihYxsBziGBC45vNFOekscR6RzMx2iZnXCjzwb3PdTylIjE1FKhiAerQe8x5_s80kOl4f1QHAlEpyQ"/>
+<div class="w-8 h-8 rounded-full border-2 border-white bg-surface-container-high flex items-center justify-center font-label-sm text-label-sm text-on-surface-variant z-10">+45k</div>
+</div>
+<button class="bg-primary-container/10 text-primary hover:bg-primary hover:text-white px-4 py-1.5 rounded-lg font-label-md text-label-md transition-colors">Join</button>
+</div>
+</div>
+</article>
+<!-- Group Card 3 -->
+<article class="bg-surface-container-lowest rounded-xl soft-shadow overflow-hidden flex flex-col group hover:overlay-shadow transition-shadow duration-300 md:hidden lg:flex">
+<div class="h-32 w-full relative overflow-hidden">
+<div class="bg-cover bg-center w-full h-full group-hover:scale-105 transition-transform duration-500" data-alt="A scenic photograph of a group of hikers on a trail in Sylhet, Bangladesh. Lush green tea gardens in the background, bright sunny morning, adventurous and active lifestyle mood." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBhlpu-wIoZlk-h24csJir_sB2h_9b0q5OchLdkr8GHeH2TxGtz-tQeuNtJJWIxIAT93ZKlkp840_GEPDXrpAmu1kj4F_vSxk46ycc_DOilXCZgIvT0Mb5yBdh090N3IDmxjf9BkiMCW4O2xIoj4GmHqUI2l3Djlif8PlNjAoX7MnTnY546b5Lg634K--vFWDjrPiUShbRXb-m4f-K4ySMY_7gE4aLKuY-vYHkx1ixTJWgs7tJfOPBzhrbLmlmEySAGrEKOVSqsJQ')"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+<span class="absolute bottom-3 left-4 text-white font-label-sm text-label-sm bg-black/30 backdrop-blur-sm px-2 py-1 rounded-full">Travel</span>
+</div>
+<div class="p-4 flex flex-col flex-1">
+<h3 class="font-title-lg text-title-lg text-on-surface mb-1 line-clamp-1">Wanderlust Bangladesh</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-4 line-clamp-2 text-sm">Planning trips, sharing itineraries, and organizing group tours across the country.</p>
+<div class="mt-auto flex items-center justify-between">
+<div class="flex -space-x-2">
+<img class="w-8 h-8 rounded-full border-2 border-white object-cover" data-alt="Small circular avatar portrait of a person wearing sunglasses and a backpack." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBc99NzRZmfs6kdAe2ahQDLxTwEdByEK4N1heHBY2QkWHWCLP6nqvJjfBV1oEuqAKrRHbtB05YndThtGm3u-44cU7R2siDGxW4ihDAmXRP3l_jIXg5O4nADTEzeQvAWR4MtZgdDm4mv_6F75HT8i_3kbxYv0kELUokFuma850oUvurHKIxZC0j8z3J-gKWt5yUjlBq7wgNrVbpt4hJDrOMzsBexafKzyXb4iba5fxPiMQ10_Glpz-WObURRJexKlFLAE6ipLt4F-Q"/>
+<img class="w-8 h-8 rounded-full border-2 border-white object-cover" data-alt="Small circular avatar portrait of a person holding a camera." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAG3SMOD_4oLLqd3niDmEg2fm2I_cjkHocG4rJB3hHBt9RuvoVLJAdWgR1XMRZL_zICGTEUGGlVJuGuu_30YQoNp7r0mFJjXBo52J11rgZ0GTXhi5UaApYLbKY0VDSsEHmbFqJJ_mtHDhFT36thRgdnZYtSfHN5tVXbdfboNErdPNxzKSxtUNcQDQuycwbNzaHoP93Cw-TXEa0k82YC2T9CQvJqhaaGttkAJwrB4mpyYvwrsNi5FUbtDJ3CWzQ2_a8ZDHxypvz3VQ"/>
+<div class="w-8 h-8 rounded-full border-2 border-white bg-surface-container-high flex items-center justify-center font-label-sm text-label-sm text-on-surface-variant z-10">+8k</div>
+</div>
+<button class="bg-primary-container/10 text-primary hover:bg-primary hover:text-white px-4 py-1.5 rounded-lg font-label-md text-label-md transition-colors">Join</button>
+</div>
+</div>
+</article>
+</div>
+</section>
+</main>
+<!-- Right Sidebar (Trending/Activity) - Large Desktop Only -->
+<aside class="hidden lg:block w-80 shrink-0 sticky top-[104px] self-start h-[calc(100vh-104px)] overflow-y-auto pb-stack-lg scrollbar-hide pl-gutter border-l border-outline-variant/20">
+<h3 class="font-title-lg text-title-lg text-on-surface mb-stack-md">Popular Discussions</h3>
+<div class="flex flex-col gap-4">
+<div class="bg-surface-container-lowest p-4 rounded-xl soft-shadow hover:overlay-shadow transition-shadow cursor-pointer">
+<p class="font-body-md text-body-md text-on-surface mb-2 font-medium">"Best budget laptops for CS students in 2024?"</p>
+<div class="flex items-center justify-between text-sm text-on-surface-variant">
+<span class="flex items-center gap-1 font-label-sm"><span class="material-symbols-outlined text-[16px]">forum</span> 124 replies</span>
+<span class="text-xs">in Dhaka Developers</span>
+</div>
+</div>
+</div>
+</aside>
+</div>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="fixed bottom-0 w-full rounded-t-xl z-50 md:hidden bg-surface dark:bg-surface-container-highest shadow-[0_-4px_20px_rgba(0,0,0,0.04)] shadow-lg">
+<div class="flex justify-around items-center px-4 py-2 w-full">
+<button class="flex flex-col items-center justify-center text-on-surface-variant p-2 active:bg-surface-container-high scale-110 active:scale-95 transition-transform">
+<span class="material-symbols-outlined">home</span>
+<span class="font-label-sm text-label-sm mt-1">Home</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant p-2 active:bg-surface-container-high scale-110 active:scale-95 transition-transform">
+<span class="material-symbols-outlined">group</span>
+<span class="font-label-sm text-label-sm mt-1">Friends</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant p-2 active:bg-surface-container-high scale-110 active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-primary text-3xl">add_circle</span>
+<span class="font-label-sm text-label-sm mt-1">Post</span>
+</button>
+<button class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-full p-2 w-16 h-16 -mt-6 shadow-md border-4 border-surface dark:border-surface-container-highest active:bg-surface-container-high scale-110 active:scale-95 transition-transform">
+<span class="material-symbols-outlined fill">groups</span>
+<span class="font-label-sm text-[10px] mt-0.5 leading-none">Groups</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant p-2 active:bg-surface-container-high scale-110 active:scale-95 transition-transform">
+<span class="material-symbols-outlined">storefront</span>
+<span class="font-label-sm text-label-sm mt-1">Market</span>
+</button>
+</div>
+</nav>
+<script>
+        // Simple script to handle bottom nav active state visualization (just for demo purposes in this static file)
+        // The HTML structure above already hardcodes 'Groups' as active based on semantic mapping.
+    </script>
+</body></html>

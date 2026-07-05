@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import ReactMarkdown from 'react-markdown';
 import API from '../api/axios';
 import { useAuth } from '../context/AuthContext';
 import Layout from '../components/layout/Layout';
@@ -101,17 +102,6 @@ const NotesPage = () => {
     setVisibility('public');
     setCoverImage(null);
     setCoverPreview('');
-  };
-
-  const renderMarkdown = (text) => {
-    return text
-      .replace(/### (.*)/g, '<h3 class="text-lg font-bold mt-4 mb-2">$1</h3>')
-      .replace(/## (.*)/g, '<h2 class="text-xl font-bold mt-4 mb-2">$1</h2>')
-      .replace(/# (.*)/g, '<h1 class="text-2xl font-bold mt-4 mb-2">$1</h1>')
-      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-      .replace(/\*(.*?)\*/g, '<em>$1</em>')
-      .replace(/`(.*?)`/g, '<code class="bg-neutral-100 dark:bg-neutral-700 px-1 rounded text-sm">$1</code>')
-      .replace(/\n/g, '<br/>');
   };
 
   return (
@@ -250,10 +240,9 @@ const NotesPage = () => {
                       </div>
                     )}
                   </div>
-                  <div
-                    className="text-sm text-neutral-700 dark:text-neutral-300 leading-relaxed line-clamp-4"
-                    dangerouslySetInnerHTML={{ __html: renderMarkdown(note.content.substring(0, 300) + (note.content.length > 300 ? '...' : '')) }}
-                  />
+                  <div className="text-sm text-neutral-700 dark:text-neutral-300 leading-relaxed line-clamp-4">
+                    <ReactMarkdown>{note.content.substring(0, 300) + (note.content.length > 300 ? '...' : '')}</ReactMarkdown>
+                  </div>
                   {note.tags?.length > 0 && (
                     <div className="flex gap-1.5 mt-3 flex-wrap">
                       {note.tags.map((tag, i) => (

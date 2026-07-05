@@ -14,6 +14,16 @@ exports.createReport = async (req, res) => {
       return res.status(400).json({ message: 'Invalid targetType' });
     }
 
+    // Validate and sanitize evidenceUrls
+    const safeEvidenceUrls = Array.isArray(evidenceUrls)
+      ? evidenceUrls
+          .filter(url => typeof url === 'string' && /^https?:\/\//i.test(url))
+          .slice(0, 5)
+      : [];
+
+    // Sanitize description
+    const safeDescription = description ? String(description).substring(0, 500) : '';
+
     const existing = await Report.findOne({
       reporter: req.user._id,
       targetType,
@@ -30,8 +40,8 @@ exports.createReport = async (req, res) => {
       targetType,
       targetId,
       reason,
-      description,
-      evidenceUrls: evidenceUrls || [],
+      description: safeDescription,
+      evidenceUrls: safeEvidenceUrls,
     });
 
     // Auto-escalate critical reasons

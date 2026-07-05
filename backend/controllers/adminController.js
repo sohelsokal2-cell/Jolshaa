@@ -313,6 +313,11 @@ exports.updateUserRole = async (req, res) => {
     const user = await User.findById(req.params.id);
     if (!user) return res.status(404).json({ message: 'User not found' });
 
+    // Prevent demoting another superadmin
+    if (user.role === 'superadmin') {
+      return res.status(403).json({ message: 'Cannot change superadmin role' });
+    }
+
     const oldRole = user.role;
     user.role = role;
     user.isAdmin = role === 'admin' || role === 'superadmin';

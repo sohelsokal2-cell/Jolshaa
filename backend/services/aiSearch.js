@@ -3,6 +3,8 @@ const User = require('../models/User');
 const Group = require('../models/Group');
 const Page = require('../models/Page');
 
+const escapeRegex = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
 class AISearch {
   static async search(query, userId, type = 'all') {
     if (!query || query.length < 2) {
@@ -11,14 +13,16 @@ class AISearch {
 
     const results = {};
     const lowerQuery = query.toLowerCase();
+    const escapedQuery = escapeRegex(lowerQuery);
 
-    const expandedTerms = this.expandQuery(lowerQuery);
+    const originalTerms = this.expandQuery(lowerQuery);
+    const escapedTerms = originalTerms.map(escapeRegex);
 
     if (type === 'all' || type === 'posts') {
       results.posts = await Post.find({
         $or: [
-          { text: { $regex: expandedTerms.join('|'), $options: 'i' } },
-          { hashtags: { $in: expandedTerms } },
+          { text: { $regex: escapedTerms.join('|'), $options: 'i' } },
+          { hashtags: { $in: originalTerms } },
         ],
         visibility: 'public',
       })
@@ -30,8 +34,8 @@ class AISearch {
     if (type === 'all' || type === 'people') {
       results.people = await User.find({
         $or: [
-          { name: { $regex: lowerQuery, $options: 'i' } },
-          { bio: { $regex: lowerQuery, $options: 'i' } },
+          { name: { $regex: escapedQuery, $options: 'i' } },
+          { bio: { $regex: escapedQuery, $options: 'i' } },
         ],
       })
         .select('name profilePhoto bio isCreator isVerified')
@@ -41,8 +45,8 @@ class AISearch {
     if (type === 'all' || type === 'groups') {
       results.groups = await Group.find({
         $or: [
-          { name: { $regex: lowerQuery, $options: 'i' } },
-          { description: { $regex: lowerQuery, $options: 'i' } },
+          { name: { $regex: escapedQuery, $options: 'i' } },
+          { description: { $regex: escapedQuery, $options: 'i' } },
         ],
         visibility: 'public',
       })
@@ -53,8 +57,8 @@ class AISearch {
     if (type === 'all' || type === 'pages') {
       results.pages = await Page.find({
         $or: [
-          { name: { $regex: lowerQuery, $options: 'i' } },
-          { description: { $regex: lowerQuery, $options: 'i' } },
+          { name: { $regex: escapedQuery, $options: 'i' } },
+          { description: { $regex: escapedQuery, $options: 'i' } },
         ],
       })
         .limit(20);

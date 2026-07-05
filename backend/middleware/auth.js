@@ -4,16 +4,31 @@ const { hasId } = require('../utils/id');
 
 const protect = async (req, res, next) => {
   try {
-    const token = req.headers.authorization?.startsWith('Bearer')
-      ? req.headers.authorization.split(' ')[1]
-      : null;
+    // Support both httpOnly cookie and Authorization header (for backwards compatibility)
+    const token = req.cookies?.token
+      || (req.headers.authorization?.startsWith('Bearer')
+        ? req.headers.authorization.split(' ')[1]
+        : null);
 
     if (!token) {
       return res.status(401).json({ message: 'Not authorized, no token' });
     }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = await User.findById(decoded.id);
+    if (!process.env.JWT_SECRET) {
+      return res.status(500).json({ message: 'Server configuration error' });
+    }
+
+    let decoded;
+    try {
+      decoded = jwt.verify(token, process.env.JWT_SECRET);
+    } catch (err) {
+      if (err.name === 'TokenExpiredError') {
+        return res.status(401).json({ message: 'Token expired, please login again' });
+      }
+      return res.status(401).json({ message: 'Not authorized, token failed' });
+    }
+
+    req.user = await User.findById(decoded.id).select('-password -sessions -loginHistory');
 
     if (!req.user) {
       return res.status(401).json({ message: 'Not authorized, user not found' });

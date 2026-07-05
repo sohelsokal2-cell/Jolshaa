@@ -1,6 +1,5 @@
 const express = require('express');
 const router = express.Router();
-const multer = require('multer');
 const {
   createEvent,
   getEvents,
@@ -13,8 +12,7 @@ const {
   getMyEvents
 } = require('../controllers/eventController');
 const { protect } = require('../middleware/auth');
-
-const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 10 * 1024 * 1024 } });
+const upload = require('../middleware/upload');
 
 router.use(protect);
 

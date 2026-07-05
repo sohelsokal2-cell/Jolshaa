@@ -14,7 +14,7 @@ exports.getUserOnlineStatus = async (req, res) => {
 
 exports.getUserById = async (req, res) => {
   try {
-    const user = await User.findById(req.params.id).select('-password -loginHistory -sessions +blockedUsers');
+    const user = await User.findById(req.params.id).select('-password -loginHistory -sessions -blockedUsers -trustedDevices');
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
@@ -233,11 +233,20 @@ exports.updateProfile = async (req, res) => {
       return res.status(403).json({ message: 'You can only update your own profile' });
     }
 
-    const allowedFields = ['name', 'phone', 'profilePhoto', 'coverPhoto', 'bio', 'dateOfBirth', 'gender', 'education', 'work', 'location'];
+    const allowedFields = ['name', 'phone', 'bio', 'dateOfBirth', 'gender', 'education', 'work', 'location'];
     const updates = {};
     allowedFields.forEach(field => {
       if (req.body[field] !== undefined) updates[field] = req.body[field];
     });
+
+    // Only allow cloudinary URLs for photos
+    const cloudinaryPattern = /^https:\/\/res\.cloudinary\.com\//;
+    if (req.body.profilePhoto && cloudinaryPattern.test(req.body.profilePhoto)) {
+      updates.profilePhoto = req.body.profilePhoto;
+    }
+    if (req.body.coverPhoto && cloudinaryPattern.test(req.body.coverPhoto)) {
+      updates.coverPhoto = req.body.coverPhoto;
+    }
 
     const user = await User.findByIdAndUpdate(req.params.id, updates, {
       new: true,

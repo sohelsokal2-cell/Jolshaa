@@ -1,14 +1,18 @@
 import { useEffect, useRef } from 'react';
 import API from '../api/axios';
+import { validateAdScript, safeSetInnerHTML } from '../utils/domPurify';
 
 // Dynamically inject ad scripts from Adsterra
 const injectScript = (script, id) => {
   if (!script) return;
-  // Check if already injected
   if (document.getElementById(id)) return;
+  
+  const validatedScript = validateAdScript(script);
+  if (!validatedScript) return;
+  
   const div = document.createElement('div');
   div.id = id;
-  div.innerHTML = script;
+  safeSetInnerHTML(div, validatedScript);
   document.body.appendChild(div);
 };
 
@@ -41,9 +45,12 @@ export const SocialBarAd = () => {
 
     API.get('/adsterra/config').then(res => {
       if (res.data.enabled && res.data.socialBar?.script && containerRef.current) {
-        const div = document.createElement('div');
-        div.innerHTML = res.data.socialBar.script;
-        containerRef.current.appendChild(div);
+        const validatedScript = validateAdScript(res.data.socialBar.script);
+        if (validatedScript) {
+          const div = document.createElement('div');
+          safeSetInnerHTML(div, validatedScript);
+          containerRef.current.appendChild(div);
+        }
       }
     }).catch(() => {});
   }, []);
@@ -62,9 +69,12 @@ export const NativeBannerAd = ({ className = '' }) => {
 
     API.get('/adsterra/config').then(res => {
       if (res.data.enabled && res.data.nativeBanner?.script && containerRef.current) {
-        const div = document.createElement('div');
-        div.innerHTML = res.data.nativeBanner.script;
-        containerRef.current.appendChild(div);
+        const validatedScript = validateAdScript(res.data.nativeBanner.script);
+        if (validatedScript) {
+          const div = document.createElement('div');
+          safeSetInnerHTML(div, validatedScript);
+          containerRef.current.appendChild(div);
+        }
       }
     }).catch(() => {});
   }, []);
@@ -89,15 +99,16 @@ export const VideoAd = ({ onAdComplete }) => {
 
     API.get('/adsterra/config').then(res => {
       if (res.data.enabled && res.data.video?.script && containerRef.current) {
-        const div = document.createElement('div');
-        div.innerHTML = res.data.video.script;
-        containerRef.current.appendChild(div);
-        // Notify parent when ad completes (after 30s timeout)
+        const validatedScript = validateAdScript(res.data.video.script);
+        if (validatedScript) {
+          const div = document.createElement('div');
+          safeSetInnerHTML(div, validatedScript);
+          containerRef.current.appendChild(div);
+        }
         setTimeout(() => {
           if (onAdComplete) onAdComplete();
         }, 30000);
       } else {
-        // No ad available, skip immediately
         if (onAdComplete) onAdComplete();
       }
     }).catch(() => {

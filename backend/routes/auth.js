@@ -5,6 +5,7 @@ const {
   login,
   logout,
   getMe,
+  getSocketToken,
   changePassword,
   getSessions,
   revokeSession,
@@ -20,11 +21,13 @@ const {
   removeTrustedDevice
 } = require('../controllers/authController');
 const { protect } = require('../middleware/auth');
+const { verifyTurnstile } = require('../middleware/verifyTurnstile');
 
-router.post('/signup', signup);
-router.post('/login', login);
+router.post('/signup', verifyTurnstile, signup);
+router.post('/login', verifyTurnstile, login);
 router.post('/logout', protect, logout);
 router.get('/me', protect, getMe);
+router.get('/socket-token', protect, getSocketToken);
 router.put('/change-password', protect, changePassword);
 router.get('/sessions', protect, getSessions);
 router.delete('/sessions/:id', protect, revokeSession);

@@ -12,10 +12,11 @@ const {
   checkStatus
 } = require('../controllers/friendController');
 const { protect } = require('../middleware/auth');
+const { checkRestriction } = require('../middleware/checkRestriction');
 
 router.use(protect);
 
-router.post('/request', sendRequest);
+router.post('/request', checkRestriction('friend_request'), sendRequest);
 router.get('/requests', getRequests);
 router.get('/suggested', getSuggested);
 router.get('/mutual/:userId', getMutualFriends);

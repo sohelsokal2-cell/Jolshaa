@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Jolshaa - Bangladesh-er Nijer Community</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Be+Vietnam+Pro:wght@600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-fixed": "#e3dfff",
+                        "on-surface": "#171d1c",
+                        "secondary-fixed-dim": "#c3c0ff",
+                        "secondary-container": "#6860ef",
+                        "on-primary-container": "#f4fffc",
+                        "inverse-primary": "#6bd8cb",
+                        "on-tertiary-container": "#fffbff",
+                        "surface-dim": "#d6dbd9",
+                        "error": "#ba1a1a",
+                        "on-background": "#171d1c",
+                        "surface-container-high": "#e4e9e7",
+                        "inverse-surface": "#2c3130",
+                        "on-error": "#ffffff",
+                        "on-primary": "#ffffff",
+                        "surface-container": "#eaefed",
+                        "tertiary-fixed-dim": "#ffb59a",
+                        "on-error-container": "#93000a",
+                        "outline-variant": "#bcc9c6",
+                        "on-surface-variant": "#3d4947",
+                        "surface-variant": "#dee4e1",
+                        "primary-container": "#008378",
+                        "primary": "#00685f",
+                        "tertiary-container": "#b05e3d",
+                        "tertiary-fixed": "#ffdbce",
+                        "on-tertiary-fixed": "#370e00",
+                        "surface-bright": "#f5faf8",
+                        "on-tertiary": "#ffffff",
+                        "on-secondary-fixed-variant": "#372abf",
+                        "on-primary-fixed-variant": "#005049",
+                        "surface": "#f5faf8",
+                        "on-tertiary-fixed-variant": "#773215",
+                        "surface-container-low": "#f0f5f2",
+                        "inverse-on-surface": "#edf2f0",
+                        "surface-container-lowest": "#ffffff",
+                        "on-secondary-fixed": "#100069",
+                        "secondary": "#4e45d5",
+                        "on-primary-fixed": "#00201d",
+                        "background": "#f5faf8",
+                        "primary-fixed-dim": "#6bd8cb",
+                        "tertiary": "#924628",
+                        "primary-fixed": "#89f5e7",
+                        "on-secondary-container": "#fffbff",
+                        "surface-tint": "#006a61",
+                        "surface-container-highest": "#dee4e1",
+                        "outline": "#6d7a77",
+                        "on-secondary": "#ffffff",
+                        "error-container": "#ffdad6"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-sm": "8px",
+                        "stack-lg": "32px",
+                        "margin-desktop": "40px",
+                        "gutter": "24px",
+                        "stack-md": "16px",
+                        "margin-mobile": "16px",
+                        "unit": "4px",
+                        "container-max": "1280px"
+                    },
+                    "fontFamily": {
+                        "title-lg": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "label-md": ["Inter"],
+                        "headline-lg-mobile": ["Be Vietnam Pro"],
+                        "headline-lg": ["Be Vietnam Pro"],
+                        "label-sm": ["Inter"],
+                        "body-md": ["Inter"],
+                        "display-lg": ["Be Vietnam Pro"],
+                        "headline-md": ["Be Vietnam Pro"]
+                    },
+                    "fontSize": {
+                        "title-lg": ["20px", { "lineHeight": "1.5", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "label-md": ["14px", { "lineHeight": "1.4", "letterSpacing": "0.01em", "fontWeight": "500" }],
+                        "headline-lg-mobile": ["28px", { "lineHeight": "1.25", "fontWeight": "700" }],
+                        "headline-lg": ["32px", { "lineHeight": "1.25", "fontWeight": "700" }],
+                        "label-sm": ["12px", { "lineHeight": "1.4", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "display-lg": ["48px", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "headline-md": ["24px", { "lineHeight": "1.3", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .shadow-ambient {
+            box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.04);
+        }
+        .shadow-ambient-hover:hover {
+            box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.08);
+        }
+    </style>
+</head>
+<body class="bg-surface font-body-md text-on-surface antialiased flex flex-col min-h-screen">
+<!-- TopNavBar -->
+<nav class="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-md shadow-sm">
+<div class="flex justify-between items-center px-margin-desktop py-4 max-w-container-max mx-auto">
+<a class="font-headline-md text-headline-md font-bold text-primary" href="#">Jolshaa</a>
+<!-- Desktop Nav -->
+<div class="hidden md:flex items-center gap-6">
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors duration-200" href="#">Explore</a>
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors duration-200" href="#">Community</a>
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors duration-200" href="#">Stories</a>
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors duration-200" href="#">About</a>
+</div>
+<div class="hidden md:flex items-center gap-4">
+<a class="font-label-md text-label-md text-primary hover:text-primary-container transition-colors" href="#">Log In</a>
+<a class="bg-primary text-on-primary font-label-md text-label-md px-4 py-2 rounded-lg hover:bg-primary-container transition-colors" href="#">Join Now</a>
+</div>
+<!-- Mobile Menu Button -->
+<button class="md:hidden text-on-surface">
+<span class="material-symbols-outlined">menu</span>
+</button>
+</div>
+</nav>
+<!-- Main Content Canvas -->
+<main class="flex-grow pt-[88px]"> <!-- Offset for fixed nav -->
+<!-- Hero Section -->
+<section class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-12 md:py-24">
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+<!-- Text Content -->
+<div class="flex flex-col gap-6 order-2 lg:order-1">
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile md:font-display-lg md:text-display-lg text-on-surface">
+                        Bangladesh-er Nijer Community.
+                    </h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-xl">
+                        Connect, share, and grow with the people who matter. Join Jolshaa today and be part of the most vibrant community in Bangladesh.
+                    </p>
+<div class="flex flex-col sm:flex-row gap-4 mt-4">
+<button class="bg-primary text-on-primary font-label-md text-label-md px-6 py-3 rounded-lg hover:bg-primary-container transition-colors w-full sm:w-auto text-center shadow-sm">
+                            Join Now
+                        </button>
+<button class="bg-secondary-fixed text-secondary font-label-md text-label-md px-6 py-3 rounded-lg hover:bg-secondary-fixed-dim transition-colors w-full sm:w-auto text-center shadow-sm">
+                            Learn More
+                        </button>
+</div>
+<!-- Social Proof / Small avatars -->
+<div class="mt-8 flex items-center gap-4">
+<div class="flex -space-x-3">
+<img class="w-10 h-10 rounded-full border-2 border-surface object-cover" data-alt="A portrait of a smiling young bangladeshi man in casual wear, bright modern lighting, confident look, part of a modern ui composition, high quality." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB9SxOodqYNFLTbJ8V3GWxfg3fnAJ7_62Aidy0rdq-IYOnlUxRsjtOuAEACKnK2Ej6hXXscPLUab48JjY6TaJbQOGoH2BRYMybUNoDghR9Pb-ECS9Fn_MfcDREXEmqvfC8MQxRJcJs5WifM1L9FoDx3sZFqOfQuygSRoOHc9sBsHcATCXdnCQ7d7d_5IR5Odch44xnZPUBpO6J7yegSxku8QDSQwQQXw88yzhdggDiAfTbO8B3gWgSsdxPATtZSuTcwyRMxfxL5Kg"/>
+<img class="w-10 h-10 rounded-full border-2 border-surface object-cover" data-alt="A portrait of a young bangladeshi woman in professional attire, smiling softly, bright modern lighting, part of a modern ui composition, high quality." src="https://lh3.googleusercontent.com/aida-public/AB6AXuABm8CVG5e9nLBisQ9hfq9bfodWkOTdV5IDo397tHdW3-_DA70RQO6ej1K4ijKboXrpRdJB8LUoVVaTBmELWLlFIRznIsBPxucaky8u0lIig_Hr8X53rKL6corYQotni79NlgEwmEknIl5einkcFDp_DW79L7ExEwLXnyLHhX8NCQIA9oBEM1CA-nPBEx1g-esD9Cn_D53Rr2aNRa60uQ4KMR8yY-DOHN_RYrROVT5sad4GShN2Yh27M9bOHUTx-I-lzuT6ED9E5A"/>
+<img class="w-10 h-10 rounded-full border-2 border-surface object-cover" data-alt="A portrait of an older bangladeshi man with glasses, looking friendly, bright modern lighting, part of a modern ui composition, high quality." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCzBlsl2fW9G7M8-VKKhGTHcTWnTkhDVjcfDCWS4qC1-7_D9a-A9VyVk31aOd4F020rauG21RsUGyWu4w5Gav5R4GH9Zz7MyY1jHcOVzYq2USXYy-P9TOXeFYkFMV-xXldAj6RPhr-34xXfnIboNItWK7VFePm6OiAmeEJptUN0rxFreL7RG960WBUvYVPt8MG5Dlsv0MFNR2NUw2HEGMJwf3-QBWNHWOMc63VKXWVOGXiT2monFWLXAuYWIZ878NyCfiv_zRIzBA"/>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Join 10,000+ members</span>
+</div>
+</div>
+<!-- Image Card -->
+<div class="order-1 lg:order-2 w-full">
+<div class="bg-surface-container-lowest rounded-[24px] p-2 shadow-ambient shadow-ambient-hover transition-shadow duration-300 transform rotate-1 md:rotate-2">
+<div class="rounded-[16px] overflow-hidden relative aspect-video lg:aspect-square">
+<img alt="Jolshaa Community Gathering" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCZtva23KurChWyo_Zm2vQ2T7mL46N07t3iRdUYV8aOgeIv5NO4I7ymRsgUFtC-tDco7oXsChioO1VXrmDsvQy8nv88cRRaS7T1xn-mE7d1v5eLVcAvLtY_5ChSrILNj37IrLG3VKQPnGiU3bo6lvcwYVU6iXZPgKJT9By5Eu4eTDY-l5gnQMxE2m9qU7A_iv65AcAy7fkqxv5zmBaAXVsYoTbRFdRXpl5rgxQw4vamYoMCK0_kB3F154AjtSpfuEW1SrRoTsT3MA"/>
+<!-- Gradient Overlay for subtle depth -->
+<div class="absolute inset-0 bg-gradient-to-tr from-black/20 to-transparent"></div>
+<!-- Floating Chip -->
+<div class="absolute bottom-6 right-6 bg-surface/90 backdrop-blur-sm px-4 py-2 rounded-full shadow-sm flex items-center gap-2">
+<span class="material-symbols-outlined text-tertiary-container text-sm">local_fire_department</span>
+<span class="font-label-sm text-label-sm text-on-surface">Trending Sessions</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Features Bento Grid (Adding value to landing page) -->
+<section class="bg-surface-container-low py-16 md:py-24">
+<div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop">
+<div class="text-center mb-12">
+<h2 class="font-headline-lg-mobile text-headline-lg-mobile md:font-headline-lg md:text-headline-lg text-on-surface mb-4">Why Choose Jolshaa?</h2>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-2xl mx-auto">Experience a platform built around meaningful connections and high-quality interactions.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+<!-- Card 1 -->
+<div class="bg-surface-container-lowest rounded-xl p-stack-md shadow-ambient">
+<div class="w-12 h-12 rounded-full bg-primary-container/10 flex items-center justify-center mb-4 text-primary">
+<span class="material-symbols-outlined">forum</span>
+</div>
+<h3 class="font-title-lg text-title-lg text-on-surface mb-2">Vibrant Discussions</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Engage in deep, meaningful conversations without the noise of traditional social media.</p>
+</div>
+<!-- Card 2 -->
+<div class="bg-surface-container-lowest rounded-xl p-stack-md shadow-ambient">
+<div class="w-12 h-12 rounded-full bg-secondary-container/10 flex items-center justify-center mb-4 text-secondary">
+<span class="material-symbols-outlined">groups</span>
+</div>
+<h3 class="font-title-lg text-title-lg text-on-surface mb-2">Local Communities</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Find and build groups based on your specific interests, right here in Bangladesh.</p>
+</div>
+<!-- Card 3 -->
+<div class="bg-surface-container-lowest rounded-xl p-stack-md shadow-ambient">
+<div class="w-12 h-12 rounded-full bg-tertiary-container/10 flex items-center justify-center mb-4 text-tertiary">
+<span class="material-symbols-outlined">verified</span>
+</div>
+<h3 class="font-title-lg text-title-lg text-on-surface mb-2">High Trust</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">A clean, breathable interface designed to foster intentional and safe interactions.</p>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="w-full py-stack-lg bg-surface-container-lowest border-t border-surface-variant/50">
+<div class="flex flex-col md:flex-row justify-between items-center px-margin-desktop max-w-container-max mx-auto gap-stack-md">
+<div class="flex flex-col items-center md:items-start gap-2">
+<span class="font-headline-md text-headline-md font-bold text-primary">Jolshaa</span>
+<p class="font-label-sm text-label-sm text-on-surface-variant">© 2024 Jolshaa. Connecting Bangladesh, one session at a time.</p>
+</div>
+<div class="flex flex-wrap justify-center gap-4">
+<a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-colors opacity-80 hover:opacity-100" href="#">Privacy Policy</a>
+<a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-colors opacity-80 hover:opacity-100" href="#">Terms of Service</a>
+<a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-colors opacity-80 hover:opacity-100" href="#">Help Center</a>
+<a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-colors opacity-80 hover:opacity-100" href="#">Contact Us</a>
+<a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-colors opacity-80 hover:opacity-100" href="#">Guidelines</a>
+</div>
+</div>
+</footer>
+</body></html>

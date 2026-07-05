@@ -20,7 +20,7 @@ const Signup = () => {
     e.preventDefault();
     const { name, email, password, confirmPassword } = formData;
     if (!name || !email || !password) return setError('All fields are required');
-    if (password.length < 6) return setError('Password must be at least 6 characters');
+    if (password.length < 8) return setError('Password must be at least 8 characters');
     if (password !== confirmPassword) return setError('Passwords do not match');
 
     setLoading(true);
@@ -77,7 +77,7 @@ const Signup = () => {
             <Input
               type="password"
               name="password"
-              placeholder="Password (min 6 characters)"
+              placeholder="Password (min 8 characters)"
               value={formData.password}
               onChange={handleChange}
               icon={

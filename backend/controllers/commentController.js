@@ -10,6 +10,10 @@ exports.addComment = async (req, res) => {
     const { text, parentComment } = req.body;
 
     if (!text) return res.status(400).json({ message: 'Comment text is required' });
+    if (typeof text !== 'string' || text.trim().length === 0) {
+      return res.status(400).json({ message: 'Comment text is required' });
+    }
+    const trimmedText = text.trim().substring(0, 1000);
 
     const commentRestricted = req.user.restrictions?.find(r => r.type === 'comment' && (!r.expiresAt || r.expiresAt > new Date()));
     if (commentRestricted) {
@@ -40,7 +44,7 @@ exports.addComment = async (req, res) => {
     const comment = await Comment.create({
       post: req.params.id,
       author: req.user._id,
-      text,
+      text: trimmedText,
       parentComment: parentComment || null
     });
 
@@ -90,7 +94,7 @@ exports.addComment = async (req, res) => {
 exports.getComments = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 20;
+    const limit = Math.min(parseInt(req.query.limit) || 20, 100);
     const skip = (page - 1) * limit;
 
     const comments = await Comment.find({

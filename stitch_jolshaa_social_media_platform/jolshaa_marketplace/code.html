@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Jolshaa Marketplace</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-fixed": "#e3dfff",
+                        "secondary-container": "#6860ef",
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary-fixed-variant": "#773215",
+                        "surface-container": "#eaefed",
+                        "on-surface-variant": "#3d4947",
+                        "surface-dim": "#d6dbd9",
+                        "on-primary-fixed": "#00201d",
+                        "surface-container-high": "#e4e9e7",
+                        "primary": "#00685f",
+                        "tertiary-fixed-dim": "#ffb59a",
+                        "on-background": "#171d1c",
+                        "on-primary-fixed-variant": "#005049",
+                        "on-surface": "#171d1c",
+                        "secondary-fixed-dim": "#c3c0ff",
+                        "inverse-primary": "#6bd8cb",
+                        "surface-container-low": "#f0f5f2",
+                        "on-error": "#ffffff",
+                        "secondary": "#4e45d5",
+                        "outline": "#6d7a77",
+                        "background": "#f5faf8",
+                        "error-container": "#ffdad6",
+                        "surface-variant": "#dee4e1",
+                        "on-secondary-fixed-variant": "#372abf",
+                        "surface-container-highest": "#dee4e1",
+                        "error": "#ba1a1a",
+                        "on-primary": "#ffffff",
+                        "on-primary-container": "#f4fffc",
+                        "tertiary-container": "#b05e3d",
+                        "surface": "#f5faf8",
+                        "primary-fixed": "#89f5e7",
+                        "primary-fixed-dim": "#6bd8cb",
+                        "on-secondary": "#ffffff",
+                        "inverse-surface": "#2c3130",
+                        "on-secondary-container": "#fffbff",
+                        "primary-container": "#008378",
+                        "outline-variant": "#bcc9c6",
+                        "on-tertiary": "#ffffff",
+                        "tertiary-fixed": "#ffdbce",
+                        "on-tertiary-fixed": "#370e00",
+                        "on-error-container": "#93000a",
+                        "on-secondary-fixed": "#100069",
+                        "surface-tint": "#006a61",
+                        "inverse-on-surface": "#edf2f0",
+                        "on-tertiary-container": "#fffbff",
+                        "surface-bright": "#f5faf8",
+                        "tertiary": "#924628"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "gutter": "24px",
+                        "stack-lg": "32px",
+                        "stack-md": "16px",
+                        "unit": "4px",
+                        "margin-mobile": "16px",
+                        "stack-sm": "8px",
+                        "margin-desktop": "40px",
+                        "container-max": "1280px"
+                    },
+                    "fontFamily": {
+                        "headline-lg-mobile": ["Be Vietnam Pro"],
+                        "body-lg": ["Inter"],
+                        "title-lg": ["Inter"],
+                        "headline-md": ["Be Vietnam Pro"],
+                        "label-md": ["Inter"],
+                        "body-md": ["Inter"],
+                        "display-lg": ["Be Vietnam Pro"],
+                        "label-sm": ["Inter"],
+                        "headline-lg": ["Be Vietnam Pro"]
+                    },
+                    "fontSize": {
+                        "headline-lg-mobile": ["28px", { "lineHeight": "1.25", "fontWeight": "700" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "title-lg": ["20px", { "lineHeight": "1.5", "fontWeight": "600" }],
+                        "headline-md": ["24px", { "lineHeight": "1.3", "fontWeight": "600" }],
+                        "label-md": ["14px", { "lineHeight": "1.4", "letterSpacing": "0.01em", "fontWeight": "500" }],
+                        "body-md": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "display-lg": ["48px", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "label-sm": ["12px", { "lineHeight": "1.4", "fontWeight": "600" }],
+                        "headline-lg": ["32px", { "lineHeight": "1.25", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .icon-fill {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        /* Soft ambient shadows for cards */
+        .card-shadow {
+            box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.04);
+        }
+        .card-hover-shadow:hover {
+            box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.08);
+            transform: translateY(-2px);
+        }
+        .card-transition {
+            transition: all 0.3s ease;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen flex flex-col pt-16 pb-20 md:pb-0">
+<!-- TopNavBar -->
+<header class="bg-surface dark:bg-surface-dim fixed top-0 w-full z-50 shadow-sm dark:bg-surface-container">
+<div class="flex justify-between items-center px-margin-desktop h-16 w-full max-w-container-max mx-auto">
+<div class="flex items-center gap-stack-md">
+<span class="font-headline-lg text-headline-lg font-bold text-primary dark:text-primary-fixed cursor-pointer">Jolshaa</span>
+</div>
+<div class="hidden md:flex flex-1 justify-center max-w-lg mx-gutter">
+<div class="relative w-full">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="w-full bg-surface-container-low border-transparent focus:border-primary focus:bg-surface-container-lowest focus:ring-0 rounded-full py-2 pl-10 pr-4 text-body-md transition-colors" placeholder="Search marketplace..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-stack-md">
+<span class="material-symbols-outlined text-primary dark:text-primary-fixed cursor-pointer active:opacity-80 p-2 hover:bg-surface-container-low rounded-full transition-colors">notifications</span>
+<span class="material-symbols-outlined text-primary dark:text-primary-fixed cursor-pointer active:opacity-80 p-2 hover:bg-surface-container-low rounded-full transition-colors">chat</span>
+<img alt="User profile" class="w-10 h-10 rounded-full border-2 border-surface-container-lowest cursor-pointer hover:opacity-90 object-cover" data-alt="A small circular profile picture of a young South Asian woman smiling brightly against a clean light background. Warm, inviting corporate modern style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB-oekkuHk6vumN6AAppAxyuFKqW75yc_Vg54xfxXNUC4YiW9BxFoCIlevvZBXyFn6sdsiZW-fIZ2uFyT0MO39HLxxiAeIkgF4-DZKgDcE8YkEu3yD41iXvfaGusJjJWfhQWRhVvxkAV0dt34ziZ_16VNZdwywKgRx4SNB-XkZSiLR7Kmzo1ZLgh5VYnRNjzDCFc9f29NgCr33qddKS6xoEI_ebq2p6KDxggFmfj5o3PSDE9k-qhs9ve1cJ1e5HpuFFxgFzCJGRfw"/>
+</div>
+</div>
+</header>
+<div class="flex-1 w-full max-w-container-max mx-auto flex flex-col md:flex-row relative">
+<!-- SideNavBar (Desktop) -->
+<nav class="hidden md:flex bg-transparent h-screen w-64 sticky top-16 flex-col gap-stack-md py-stack-lg px-gutter">
+<div class="mb-stack-md">
+<h2 class="font-headline-md text-headline-md text-primary">Jolshaa Community</h2>
+<p class="font-label-sm text-label-sm text-on-surface-variant mt-unit">Connect &amp; Share</p>
+</div>
+<div class="flex flex-col gap-unit">
+<a class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-high rounded-lg px-4 py-2 hover:bg-surface-container-high transition-all scale-95 active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="font-label-md text-label-md">Home</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-high rounded-lg px-4 py-2 hover:bg-surface-container-high transition-all scale-95 active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="font-label-md text-label-md">Friends</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-high rounded-lg px-4 py-2 hover:bg-surface-container-high transition-all scale-95 active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined">groups</span>
+<span class="font-label-md text-label-md">Groups</span>
+</a>
+<a class="flex items-center gap-3 bg-secondary-fixed text-on-secondary-fixed-variant font-bold rounded-lg px-4 py-2 scale-95 active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined icon-fill">storefront</span>
+<span class="font-label-md text-label-md">Marketplace</span>
+</a>
+</div>
+<button class="mt-stack-lg bg-primary text-on-primary font-label-md text-label-md py-3 px-6 rounded-lg hover:bg-primary-container hover:text-on-primary-container transition-colors w-full flex items-center justify-center gap-2 shadow-sm">
+<span class="material-symbols-outlined">add</span>
+                Create Post
+            </button>
+<div class="mt-auto flex flex-col gap-unit border-t border-surface-variant pt-stack-md">
+<a class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-high rounded-lg px-4 py-2 transition-all" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-md text-label-md">Settings</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-high rounded-lg px-4 py-2 transition-all" href="#">
+<span class="material-symbols-outlined">help</span>
+<span class="font-label-md text-label-md">Help</span>
+</a>
+</div>
+</nav>
+<!-- Main Content Area -->
+<main class="flex-1 px-margin-mobile md:px-gutter py-stack-lg max-w-full overflow-hidden">
+<!-- Marketplace Header & Actions -->
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-stack-lg gap-stack-md">
+<div>
+<h1 class="font-display-lg text-display-lg text-primary">Marketplace</h1>
+<p class="font-body-md text-body-md text-on-surface-variant mt-unit">Buy, sell, and discover items in your community.</p>
+</div>
+<button class="bg-[#F43F5E] text-white font-label-md text-label-md py-3 px-6 rounded-lg hover:bg-opacity-90 transition-colors flex items-center gap-2 shadow-md w-full md:w-auto justify-center shrink-0">
+<span class="material-symbols-outlined">sell</span>
+                    Sell Something
+                </button>
+</div>
+<!-- Mobile Search Bar (Only visible on mobile) -->
+<div class="md:hidden w-full mb-stack-md">
+<div class="relative w-full">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="w-full bg-surface-container-low border-transparent focus:border-primary focus:bg-surface-container-lowest focus:ring-0 rounded-full py-3 pl-10 pr-4 text-body-md transition-colors" placeholder="Search marketplace..." type="text"/>
+</div>
+</div>
+<!-- Two Column Layout: Categories & Grid -->
+<div class="flex flex-col lg:flex-row gap-gutter">
+<!-- Filters / Categories Sidebar -->
+<aside class="w-full lg:w-64 shrink-0 flex flex-col gap-stack-md">
+<div class="bg-surface-container-lowest rounded-xl p-stack-md card-shadow">
+<h3 class="font-title-lg text-title-lg mb-stack-sm text-on-surface">Categories</h3>
+<ul class="flex flex-col gap-unit">
+<li>
+<a class="flex items-center justify-between py-2 px-3 rounded-lg bg-surface-container-low text-primary font-label-md text-label-md" href="#">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[20px]">devices</span>
+                                        Electronics
+                                    </div>
+<span class="bg-primary-container text-on-primary-container text-xs py-0.5 px-2 rounded-full">124</span>
+</a>
+</li>
+<li>
+<a class="flex items-center justify-between py-2 px-3 rounded-lg hover:bg-surface-container-low text-on-surface-variant font-label-md text-label-md transition-colors" href="#">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[20px]">directions_car</span>
+                                        Vehicles
+                                    </div>
+<span class="bg-surface-container-high text-on-surface-variant text-xs py-0.5 px-2 rounded-full">89</span>
+</a>
+</li>
+<li>
+<a class="flex items-center justify-between py-2 px-3 rounded-lg hover:bg-surface-container-low text-on-surface-variant font-label-md text-label-md transition-colors" href="#">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[20px]">real_estate_agent</span>
+                                        Property
+                                    </div>
+<span class="bg-surface-container-high text-on-surface-variant text-xs py-0.5 px-2 rounded-full">42</span>
+</a>
+</li>
+<li>
+<a class="flex items-center justify-between py-2 px-3 rounded-lg hover:bg-surface-container-low text-on-surface-variant font-label-md text-label-md transition-colors" href="#">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[20px]">chair</span>
+                                        Furniture
+                                    </div>
+<span class="bg-surface-container-high text-on-surface-variant text-xs py-0.5 px-2 rounded-full">210</span>
+</a>
+</li>
+<li>
+<a class="flex items-center justify-between py-2 px-3 rounded-lg hover:bg-surface-container-low text-on-surface-variant font-label-md text-label-md transition-colors" href="#">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[20px]">apparel</span>
+                                        Clothing
+                                    </div>
+<span class="bg-surface-container-high text-on-surface-variant text-xs py-0.5 px-2 rounded-full">340</span>
+</a>
+</li>
+</ul>
+</div>
+<div class="bg-surface-container-lowest rounded-xl p-stack-md card-shadow hidden lg:block">
+<h3 class="font-title-lg text-title-lg mb-stack-sm text-on-surface">Price Range (BDT)</h3>
+<div class="flex flex-col gap-stack-sm">
+<div class="flex items-center justify-between gap-2">
+<input class="w-full bg-surface-container-low border-transparent focus:border-primary focus:bg-surface-container-lowest rounded-lg py-1.5 px-3 text-body-md" placeholder="Min" type="number"/>
+<span class="text-on-surface-variant">-</span>
+<input class="w-full bg-surface-container-low border-transparent focus:border-primary focus:bg-surface-container-lowest rounded-lg py-1.5 px-3 text-body-md" placeholder="Max" type="number"/>
+</div>
+<button class="bg-secondary-fixed text-on-secondary-fixed-variant font-label-md text-label-md py-2 rounded-lg hover:bg-secondary-fixed-dim transition-colors w-full mt-2">Apply Filter</button>
+</div>
+</div>
+</aside>
+<!-- Product Grid (Bento/Asymmetric style for variety) -->
+<div class="flex-1">
+<!-- Top Featured / Highlighted Row -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-gutter mb-gutter">
+<!-- Featured Card 1 -->
+<div class="bg-surface-container-lowest rounded-xl overflow-hidden card-shadow card-hover-shadow card-transition group relative col-span-1 md:col-span-2 lg:col-span-1">
+<div class="h-64 relative w-full overflow-hidden">
+<img alt="Smartphone" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A pristine, modern smartphone resting on a sleek white desk next to a small potted succulent. Soft natural lighting, highly detailed tech product shot, minimal background, bright and appealing." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAFhweTAbCWxIpEKaWwdckiY6NxurUBeD1cJ5Mv2BXVDl95UCI0ppHBaeU5nqsqS65k_PU4BTnZs061sEcY-8OZo7fM6o_Yo_BHaUUenjfEKGa46wqnjGd_BZtU555x9trovfKf_sSys90-b1ZzGklRXd8VX0bCOpzJcKHKdHF5HN_rvmgazaS1wgP6nEjnBhJ4Mh1fnOSGSTmpVP2_c1YRfOTlCK5XnCDhs33hDgU3a7_x_GuJt7EdAFQC4fthBjDrqCiJkNcE-A"/>
+<div class="absolute top-4 left-4 bg-primary text-on-primary font-label-sm text-label-sm py-1 px-3 rounded-full shadow-sm">
+                                    Featured
+                                </div>
+<button class="absolute top-4 right-4 p-2 rounded-full bg-surface-container-lowest/80 text-on-surface-variant hover:text-[#F43F5E] hover:bg-surface-container-lowest transition-colors shadow-sm backdrop-blur-sm">
+<span class="material-symbols-outlined">favorite</span>
+</button>
+</div>
+<div class="p-stack-md">
+<div class="flex justify-between items-start mb-2">
+<h3 class="font-title-lg text-title-lg text-on-surface truncate pr-4">iPhone 13 Pro - 256GB Excellent Condition</h3>
+<span class="font-headline-md text-headline-md text-primary whitespace-nowrap">৳ 75,000</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant mb-4 line-clamp-2">Barely used iPhone 13 Pro. No scratches, battery health at 98%. Comes with original box and cable. Meeting in Gulshan only.</p>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant">location_on</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Gulshan, Dhaka</span>
+</div>
+</div>
+</div>
+<!-- Featured Card 2 -->
+<div class="bg-surface-container-lowest rounded-xl overflow-hidden card-shadow card-hover-shadow card-transition group relative">
+<div class="h-64 relative w-full overflow-hidden">
+<img alt="Dining Table" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A stylish, minimalist wooden dining table with mid-century modern chairs in a bright, sunlit room with white walls and hardwood floors. Interior design photography style, clean and inviting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCithrhMWc44utap84siDbJE72WUJ6A81ydoLOf_MnXECMj1PgDhFZfL9bIL0X80tDTQu745u8fZqUUgMRcr-2mTIe3Bbw9jpsTuxw23YkYMzUPRKr_Jmpnt7CNJ7DzyvMGMXjZSQ6mjUgWHfl7KR1uZgf-fukQzeMd3skNFBDxwqGyvZ5EpAL9hIzGJIDgHa5cAWJ5NEHgtwBximodYEEn8EPMudWiNk3bEvGcPtmstinKLSfhnFCgFgF87X1ssFfooEQcu078Yg"/>
+<button class="absolute top-4 right-4 p-2 rounded-full bg-surface-container-lowest/80 text-on-surface-variant hover:text-[#F43F5E] hover:bg-surface-container-lowest transition-colors shadow-sm backdrop-blur-sm">
+<span class="material-symbols-outlined">favorite</span>
+</button>
+</div>
+<div class="p-stack-md">
+<div class="flex justify-between items-start mb-2">
+<h3 class="font-title-lg text-title-lg text-on-surface truncate pr-4">Minimalist Oak Dining Table</h3>
+<span class="font-headline-md text-headline-md text-primary whitespace-nowrap">৳ 22,000</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant mb-4 line-clamp-2">Beautiful solid oak dining table. Seats 6 comfortably. Perfect condition, selling due to moving. Buyer must arrange transport.</p>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant">location_on</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Banani, Dhaka</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Standard Grid -->
+<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-gutter">
+<!-- Item 1 -->
+<div class="bg-surface-container-lowest rounded-xl overflow-hidden card-shadow card-hover-shadow card-transition group flex flex-col">
+<div class="h-40 relative w-full overflow-hidden">
+<img alt="Headphones" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A pair of high-end over-ear noise cancelling headphones resting on a textured concrete surface. Studio lighting, sharp focus, professional product photography aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDWNUM2cFMAxw0CyxhRewgs6ZgmyzK8Ho5F71hckVGaGlN689km7kDuOj-NZDdohZdgvkMGBBxqHONdFc71CkSHTt19cjoNN2ry6GQvX1c9z4ko_pNtkqpjKogCZayL2QBE7jXZWXyr0tiEi6OLTx-dgkQ-a0X6CEbxe8HYhqofcSXr6jsEN2IdFJ_MeBkYyU1_L1v8S8usTQx0jWRfybN_xxvEdXAxSIrqvv0StWVJ0m5O0BAXKXtlMIunsrF_43vaj3nVix3L1Q"/>
+</div>
+<div class="p-3 flex flex-col flex-1">
+<h4 class="font-label-md text-label-md text-on-surface font-semibold mb-1 truncate">Sony WH-1000XM4</h4>
+<span class="font-title-lg text-title-lg text-primary mb-2">৳ 25,500</span>
+<div class="mt-auto flex items-center gap-1 text-on-surface-variant opacity-70">
+<span class="material-symbols-outlined text-[14px]">location_on</span>
+<span class="text-xs">Dhanmondi</span>
+</div>
+</div>
+</div>
+<!-- Item 2 -->
+<div class="bg-surface-container-lowest rounded-xl overflow-hidden card-shadow card-hover-shadow card-transition group flex flex-col">
+<div class="h-40 relative w-full overflow-hidden">
+<img alt="Camera" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A vintage film camera with a leather strap, placed on a slightly distressed wooden tabletop beside a stack of old photos. Warm, nostalgic lighting, soft shadows, lifestyle photography style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBZ6XeGidsFjoRKtMu3SZ9PXnCXh-NFNLQZXhUiVsIe8MQIIc1GXtPIGY_LPn6vx0z1uWx-T6_VcsMVFDohUErxdcnCAQEZg2yJ3Ko9n009ztbvv7h24bobveYEGD1k264zXMehsap9jgYS9Gq-P1WJJeGeBFQhzBa28AHXY_FI9euHVnoSzgicNhmoGcnneRKU8VjayNJXGOq7aijhIiBDCdcQVgQxSw7_SwuX_5tlIQpMVuLbRxFp3evt9YlsjwKJ9DPSKdVYLA"/>
+</div>
+<div class="p-3 flex flex-col flex-1">
+<h4 class="font-label-md text-label-md text-on-surface font-semibold mb-1 truncate">Vintage Canon AE-1</h4>
+<span class="font-title-lg text-title-lg text-primary mb-2">৳ 15,000</span>
+<div class="mt-auto flex items-center gap-1 text-on-surface-variant opacity-70">
+<span class="material-symbols-outlined text-[14px]">location_on</span>
+<span class="text-xs">Uttara</span>
+</div>
+</div>
+</div>
+<!-- Item 3 -->
+<div class="bg-surface-container-lowest rounded-xl overflow-hidden card-shadow card-hover-shadow card-transition group flex flex-col">
+<div class="h-40 relative w-full overflow-hidden">
+<img alt="Books" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A collection of hardcover fantasy novels stacked neatly. Bright, crisp lighting highlighting the colorful spines and titles. Clean library or bookstore setting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCQroMj9L4Xk1HCYjNpfagPZj39-EZKAEIkTCw9Ko-91ongnuhTz7GHRDx0AIJKUs_gRTR6Y5AxExPSR1UYFxtZgyZ3H_aGH47FmLbAJZ1-mhckHKkuexcHrijtoQdWzlX5mYrfZzklO0DRk0u72Ixqzs3Hx4FzjnpKc26evVMIYUXK1G81FHuCA4DHWByHIUlBTOtAglNjh70Yr5WJrkiC3gVYcB56r6IeoQIXtf52VYcm2ckJKyLZ2bNC214-cBkeZBotnmqP2g"/>
+</div>
+<div class="p-3 flex flex-col flex-1">
+<h4 class="font-label-md text-label-md text-on-surface font-semibold mb-1 line-clamp-2 leading-tight">Harry Potter Box Set (Hardcover)</h4>
+<span class="font-title-lg text-title-lg text-primary mb-2">৳ 4,500</span>
+<div class="mt-auto flex items-center gap-1 text-on-surface-variant opacity-70">
+<span class="material-symbols-outlined text-[14px]">location_on</span>
+<span class="text-xs">Mirpur</span>
+</div>
+</div>
+</div>
+<!-- Item 4 -->
+<div class="bg-surface-container-lowest rounded-xl overflow-hidden card-shadow card-hover-shadow card-transition group flex flex-col">
+<div class="h-40 relative w-full overflow-hidden">
+<img alt="Keyboard" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A sleek, modern mechanical keyboard with RGB lighting glowing softly against a dark grey desk mat. High contrast, tech-focused aesthetic, sharp details." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBT1lqIxmTrvI1QGeRLzHSnqiviv4bjAEA227_KCTKhmlo5llS2Ieq302CDcucIY4CnnRjQHM7GOzuehlL9ese9V27UbDjeWspLw03qCdRCplVHQWD9U6PSA35xS5xHWUNUaJFUdC00sHobCc2w0Au3ziqNRUNkjKarFXwh0ieCXnzpXCMBeJOHhYHmaBtTLuQrXFOZrJr9dSRBRceW5J62pkld9KhhJwGjxCf3PDahatNj4wSFFzytiB5RG5bkhc0cnVMHPR3BVA"/>
+</div>
+<div class="p-3 flex flex-col flex-1">
+<h4 class="font-label-md text-label-md text-on-surface font-semibold mb-1 truncate">Keychron K2 V2</h4>
+<span class="font-title-lg text-title-lg text-primary mb-2">৳ 7,200</span>
+<div class="mt-auto flex items-center gap-1 text-on-surface-variant opacity-70">
+<span class="material-symbols-outlined text-[14px]">location_on</span>
+<span class="text-xs">Mohakhali</span>
+</div>
+</div>
+</div>
+<!-- Item 5 -->
+<div class="bg-surface-container-lowest rounded-xl overflow-hidden card-shadow card-hover-shadow card-transition group flex flex-col">
+<div class="h-40 relative w-full overflow-hidden">
+<img alt="Plant" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A beautiful monstera plant in a white ceramic pot sitting on a minimalist wooden stool near a large window. Soft, diffused natural light, airy and fresh interior vibe." src="https://lh3.googleusercontent.com/aida-public/AB6AXuByJaABKyu-eFKicCDdi34DrPYKT_E-RpCMW8JK_5geH5LggIkZl2_w7x0iNCLGakGmfBwiSriOOSz-kSmBSCv0vR83GV4we81_mHUkKqmb6m3kAwakBa_Ac5bxwJmbyxVKi3KP90Q3gBKanGYsSGQVsUmautHoQ5DWRs-8JSkJTQjjS29Zibelm9YI4kseVA02gQ-RFRNjAC2fYcHDrkgSV5dkijknBEXsZwoM3Dccrtoc-fGyVz2l7i7wWUSNlsJ1p9IK1Wa1cg"/>
+</div>
+<div class="p-3 flex flex-col flex-1">
+<h4 class="font-label-md text-label-md text-on-surface font-semibold mb-1 truncate">Large Monstera Plant</h4>
+<span class="font-title-lg text-title-lg text-primary mb-2">৳ 1,500</span>
+<div class="mt-auto flex items-center gap-1 text-on-surface-variant opacity-70">
+<span class="material-symbols-outlined text-[14px]">location_on</span>
+<span class="text-xs">Bashundhara R/A</span>
+</div>
+</div>
+</div>
+<!-- Item 6 -->
+<div class="bg-surface-container-lowest rounded-xl overflow-hidden card-shadow card-hover-shadow card-transition group flex flex-col">
+<div class="h-40 relative w-full overflow-hidden">
+<img alt="Guitar" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A classic acoustic guitar resting against a brick wall. Warm, inviting lighting emphasizing the wood grain and textures. Artistic, indie musician mood." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC0r2u_V7uS3qRMNG_9x0a9NPQx22MjURRsamrAFyI0xr1iIl06y0LK1Oi8Y1jWhBe-V-8a9SK3vTf19ftpjouwJoKyv2dVLYWPg2qwbreerXuKy2QfZWttbtB8Y4g4NQ-CiSoUuhkgAgGxfIOYS_SVKa9WjMW1wYx8EVXm8H5wT2U2rOaxbfV1tfQ0UNP_mYqjYDNeI1m3wKdgF9vAqZjnres38OLmyBaAHCmumpKzPnYjZLNQ2YsHDnCye9jrjp9PSEM3WjkEzg"/>
+</div>
+<div class="p-3 flex flex-col flex-1">
+<h4 class="font-label-md text-label-md text-on-surface font-semibold mb-1 truncate">Yamaha Acoustic F310</h4>
+<span class="font-title-lg text-title-lg text-primary mb-2">৳ 11,000</span>
+<div class="mt-auto flex items-center gap-1 text-on-surface-variant opacity-70">
+<span class="material-symbols-outlined text-[14px]">location_on</span>
+<span class="text-xs">Badda</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+<!-- BottomNavBar (Mobile) -->
+<nav class="bg-surface dark:bg-surface-container-highest fixed bottom-0 w-full rounded-t-xl z-50 md:hidden shadow-[0_-4px_20px_rgba(0,0,0,0.04)]">
+<div class="flex justify-around items-center px-4 py-2 w-full">
+<a class="flex flex-col items-center justify-center text-on-surface-variant p-2 active:bg-surface-container-high scale-110 active:scale-95 transition-transform rounded-lg" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="font-label-sm text-label-sm mt-1">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant p-2 active:bg-surface-container-high scale-110 active:scale-95 transition-transform rounded-lg" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="font-label-sm text-label-sm mt-1">Friends</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant p-2 active:bg-surface-container-high scale-110 active:scale-95 transition-transform rounded-lg" href="#">
+<span class="material-symbols-outlined text-[28px] text-primary">add_circle</span>
+<span class="font-label-sm text-label-sm mt-1">Post</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant p-2 active:bg-surface-container-high scale-110 active:scale-95 transition-transform rounded-lg" href="#">
+<span class="material-symbols-outlined">groups</span>
+<span class="font-label-sm text-label-sm mt-1">Groups</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-full p-2 w-16 h-16 -mt-6 shadow-lg border-4 border-background" href="#">
+<span class="material-symbols-outlined icon-fill">storefront</span>
+<span class="font-label-sm text-label-sm mt-1 text-[10px]">Market</span>
+</a>
+</div>
+</nav>
+</body></html>

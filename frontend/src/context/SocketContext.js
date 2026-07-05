@@ -4,37 +4,46 @@ import { useAuth } from './AuthContext';
 
 const SocketContext = createContext(null);
 
-let audioContext = null;
-
-const playMessageSound = () => {
-  try {
-    if (!audioContext) {
-      audioContext = new (window.AudioContext || window.webkitAudioContext)();
-    }
-    if (audioContext.state === 'suspended') {
-      audioContext.resume();
-    }
-    const oscillator = audioContext.createOscillator();
-    const gainNode = audioContext.createGain();
-    oscillator.connect(gainNode);
-    gainNode.connect(audioContext.destination);
-    oscillator.type = 'sine';
-    oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
-    oscillator.frequency.setValueAtTime(600, audioContext.currentTime + 0.1);
-    gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
-    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.25);
-    oscillator.start(audioContext.currentTime);
-    oscillator.stop(audioContext.currentTime + 0.25);
-  } catch (e) { /* ignore */ }
-};
-
 export const SocketProvider = ({ children }) => {
-  const { user } = useAuth();
+  const { user, getToken } = useAuth();
   const [socket, setSocket] = useState(null);
   const [onlineUsers, setOnlineUsers] = useState(new Set());
   const [unreadMessageCount, setUnreadMessageCount] = useState(0);
   const socketRef = useRef(null);
   const activeChatRef = useRef(null);
+  const audioContextRef = useRef(null);
+
+  // Cleanup AudioContext on unmount
+  useEffect(() => {
+    return () => {
+      if (audioContextRef.current) {
+        audioContextRef.current.close().catch(() => {});
+        audioContextRef.current = null;
+      }
+    };
+  }, []);
+
+  const playMessageSound = useCallback(() => {
+    try {
+      if (!audioContextRef.current || audioContextRef.current.state === 'closed') {
+        audioContextRef.current = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioContextRef.current.state === 'suspended') {
+        audioContextRef.current.resume();
+      }
+      const oscillator = audioContextRef.current.createOscillator();
+      const gainNode = audioContextRef.current.createGain();
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContextRef.current.destination);
+      oscillator.type = 'sine';
+      oscillator.frequency.setValueAtTime(800, audioContextRef.current.currentTime);
+      oscillator.frequency.setValueAtTime(600, audioContextRef.current.currentTime + 0.1);
+      gainNode.gain.setValueAtTime(0.2, audioContextRef.current.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContextRef.current.currentTime + 0.25);
+      oscillator.start(audioContextRef.current.currentTime);
+      oscillator.stop(audioContextRef.current.currentTime + 0.25);
+    } catch (e) { /* ignore */ }
+  }, []);
 
   const setActiveChat = useCallback((convId) => {
     activeChatRef.current = convId;
@@ -52,7 +61,7 @@ export const SocketProvider = ({ children }) => {
       return;
     }
 
-    const token = localStorage.getItem('token');
+    const token = getToken();
     if (!token) return;
 
     const socketUrl = (process.env.REACT_APP_API_URL || 'http://localhost:5000/api').replace('/api', '');
@@ -68,7 +77,7 @@ export const SocketProvider = ({ children }) => {
     });
 
     newSocket.on('connect', () => {
-      console.log('Socket connected');
+      if (process.env.NODE_ENV === 'development') console.log('Socket connected');
     });
 
     newSocket.on('userOnline', (userId) => {

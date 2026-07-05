@@ -28,7 +28,7 @@ exports.createPost = async (req, res) => {
     }
 
     const { text, feeling, taggedUsers, visibility, postedInType, postedInRefId, contentWarning, communityLabel, footnotes } = req.body;
-    const trimmedText = typeof text === 'string' ? text.trim() : '';
+    const trimmedText = typeof text === 'string' ? text.trim().substring(0, 5000) : '';
 
     if (!trimmedText && (!req.files || req.files.length === 0)) {
       return res.status(400).json({ message: 'Post must have text or media' });
@@ -191,7 +191,7 @@ exports.updatePost = async (req, res) => {
     }
 
     const { text, feeling, visibility } = req.body;
-    if (text !== undefined) post.text = text;
+    if (text !== undefined) post.text = String(text).trim().substring(0, 5000);
     if (feeling !== undefined) post.feeling = feeling;
     if (visibility !== undefined) post.visibility = visibility;
     post.isEdited = true;
@@ -425,7 +425,11 @@ exports.toggleSavePost = async (req, res) => {
 exports.getSavedPosts = async (req, res) => {
   try {
     const User = require('../models/User');
-    const user = await User.findById(req.params.userId)
+    // Only allow fetching own saved posts
+    if (req.params.userId !== req.user._id.toString()) {
+      return res.status(403).json({ message: 'Not authorized' });
+    }
+    const user = await User.findById(req.user._id)
       .populate({
         path: 'savedPosts',
         populate: { path: 'author', select: 'name profilePhoto' },

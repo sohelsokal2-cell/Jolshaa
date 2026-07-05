@@ -125,7 +125,12 @@ exports.getAdminSessions = async (req, res) => {
     for (const admin of admins) {
       for (const session of (admin.sessions || [])) {
         allSessions.push({
-          ...session,
+          _id: session._id,
+          ip: session.ip,
+          userAgent: session.userAgent,
+          lastActive: session.lastActive,
+          createdAt: session.createdAt,
+          // token intentionally excluded
           adminId: admin._id,
           adminName: admin.name,
           adminEmail: admin.email,
@@ -309,66 +314,53 @@ exports.get2FAEnforcement = async (req, res) => {
 exports.getIPDeviceHistory = async (req, res) => {
   try {
     const { userId, limit = 100 } = req.query;
+    const safeLimit = Math.min(parseInt(limit) || 100, 500);
 
-    let query = {};
-    if (userId) query._id = userId;
+    // Require userId — returning all users' history is a data leak
+    if (!userId) {
+      return res.status(400).json({ message: 'userId is required' });
+    }
 
-    const users = await User.find(query)
+    const user = await User.findById(userId)
       .select('name email role loginHistory sessions')
       .lean();
 
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
     const history = [];
-    for (const user of users) {
-      for (const entry of (user.loginHistory || [])) {
-        history.push({
-          ...entry,
-          userId: user._id,
-          userName: user.name,
-          userEmail: user.email,
-          userRole: user.role,
-          type: 'login',
-        });
-      }
-      for (const session of (user.sessions || [])) {
-        history.push({
-          ip: session.ip,
-          userAgent: session.userAgent,
-          timestamp: session.createdAt,
-          lastActive: session.lastActive,
-          userId: user._id,
-          userName: user.name,
-          userEmail: user.email,
-          userRole: user.role,
-          type: 'session',
-        });
-      }
+    for (const entry of (user.loginHistory || [])) {
+      history.push({ ...entry, userId: user._id, userName: user.name, userEmail: user.email, userRole: user.role, type: 'login' });
+    }
+    for (const session of (user.sessions || [])) {
+      history.push({
+        ip: session.ip,
+        userAgent: session.userAgent,
+        timestamp: session.createdAt,
+        lastActive: session.lastActive,
+        userId: user._id,
+        userName: user.name,
+        userEmail: user.email,
+        userRole: user.role,
+        type: 'session',
+      });
     }
 
     history.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
 
-    // Aggregate unique IPs
     const ipSummary = {};
     for (const entry of history) {
       if (!entry.ip) continue;
-      if (!ipSummary[entry.ip]) {
-        ipSummary[entry.ip] = { ip: entry.ip, count: 0, users: new Set(), lastSeen: null };
-      }
+      if (!ipSummary[entry.ip]) ipSummary[entry.ip] = { ip: entry.ip, count: 0, lastSeen: null };
       ipSummary[entry.ip].count++;
-      ipSummary[entry.ip].users.add(entry.userName);
       if (!ipSummary[entry.ip].lastSeen || new Date(entry.timestamp) > new Date(ipSummary[entry.ip].lastSeen)) {
         ipSummary[entry.ip].lastSeen = entry.timestamp;
       }
     }
 
-    const ipList = Object.values(ipSummary).map(ip => ({
-      ...ip,
-      users: Array.from(ip.users),
-    })).sort((a, b) => b.count - a.count);
-
     res.json({
-      history: history.slice(0, parseInt(limit)),
+      history: history.slice(0, safeLimit),
       total: history.length,
-      ipSummary: ipList,
+      ipSummary: Object.values(ipSummary).sort((a, b) => b.count - a.count),
     });
   } catch (error) {
     res.status(500).json({ message: 'Server error' });
@@ -409,8 +401,8 @@ exports.adminResetPassword = async (req, res) => {
     const { userId } = req.params;
     const { newPassword } = req.body;
 
-    if (!newPassword || newPassword.length < 6) {
-      return res.status(400).json({ message: 'Password must be at least 6 characters' });
+    if (!newPassword || newPassword.length < 8) {
+      return res.status(400).json({ message: 'Password must be at least 8 characters' });
     }
 
     const user = await User.findById(userId);
@@ -485,42 +477,44 @@ exports.getRateLimitAbuse = async (req, res) => {
 // --- Data Export Restrictions ---
 exports.getDataExportRestrictions = async (req, res) => {
   try {
-    const User = require('../models/User');
-
-    // Get all users with their data size estimates
-    const users = await User.find({})
-      .select('name email role createdAt')
-      .lean();
-
     const Post = require('../models/Post');
     const Message = require('../models/Message');
     const Comment = require('../models/Comment');
-    const Story = require('../models/Story');
-    const Reel = require('../models/Reel');
 
-    const restrictions = [];
-    for (const user of users) {
-      const [postCount, messageCount, commentCount] = await Promise.all([
-        Post.countDocuments({ author: user._id }),
-        Message.countDocuments({ sender: user._id }),
-        Comment.countDocuments({ author: user._id }),
-      ]);
+    const users = await User.find({})
+      .select('name email role createdAt isAdmin')
+      .lean();
 
-      const estimatedSize = (postCount * 2) + (messageCount * 1) + (commentCount * 0.5);
+    const userIds = users.map(u => u._id);
 
-      restrictions.push({
+    const [postCounts, messageCounts, commentCounts] = await Promise.all([
+      Post.aggregate([{ $match: { author: { $in: userIds } } }, { $group: { _id: '$author', count: { $sum: 1 } } }]),
+      Message.aggregate([{ $match: { sender: { $in: userIds } } }, { $group: { _id: '$sender', count: { $sum: 1 } } }]),
+      Comment.aggregate([{ $match: { author: { $in: userIds } } }, { $group: { _id: '$author', count: { $sum: 1 } } }]),
+    ]);
+
+    const postMap = Object.fromEntries(postCounts.map(p => [p._id.toString(), p.count]));
+    const msgMap = Object.fromEntries(messageCounts.map(m => [m._id.toString(), m.count]));
+    const cmtMap = Object.fromEntries(commentCounts.map(c => [c._id.toString(), c.count]));
+
+    const restrictions = users.map(user => {
+      const uid = user._id.toString();
+      const pc = postMap[uid] || 0;
+      const mc = msgMap[uid] || 0;
+      const cc = cmtMap[uid] || 0;
+      return {
         userId: user._id,
         name: user.name,
         email: user.email,
         role: user.role,
         joinedAt: user.createdAt,
-        postCount,
-        messageCount,
-        commentCount,
-        estimatedSizeMB: Math.round(estimatedSize * 100) / 100,
+        postCount: pc,
+        messageCount: mc,
+        commentCount: cc,
+        estimatedSizeMB: Math.round((pc * 2 + mc + cc * 0.5) * 100) / 100,
         canExport: !user.isAdmin || req.user.role === 'superadmin',
-      });
-    }
+      };
+    });
 
     res.json({ restrictions, total: restrictions.length });
   } catch (error) {

@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { protect } = require('../middleware/auth');
+const { checkRestriction } = require('../middleware/checkRestriction');
 const upload = require('../middleware/upload');
 const {
   createPost,
@@ -40,7 +41,7 @@ router.use(protect);
 // Video upload — must be before /:id routes to avoid conflicts
 router.post('/video-upload', upload.single('video'), uploadVideo);
 
-router.post('/', upload.array('media', 5), createPost);
+router.post('/', checkRestriction('post'), upload.array('media', 5), createPost);
 router.get('/feed', getFeed);
 router.get('/saved/:userId', getSavedPosts);
 router.get('/memories', getMemories);

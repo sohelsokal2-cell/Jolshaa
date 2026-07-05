@@ -109,8 +109,9 @@ async function cacheDelPattern(pattern) {
       if (keys.length > 0) await redisClient.del(keys);
     } catch {}
   }
+  const prefix = pattern.replace(/\*.*$/, '');
   for (const key of memoryCache.keys()) {
-    if (key.startsWith(pattern.replace('*', ''))) {
+    if (key.startsWith(prefix)) {
       memoryCache.delete(key);
     }
   }

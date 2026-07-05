@@ -9,20 +9,9 @@ const auditLogSchema = new mongoose.Schema(
     action: {
       type: String,
       required: true,
-      enum: [
-        'user.login', 'user.logout', 'user.signup', 'user.delete', 'user.update',
-        'user.suspend', 'user.unsuspend', 'user.block', 'user.unblock',
-        'post.create', 'post.update', 'post.delete', 'post.report',
-        'comment.create', 'comment.delete',
-        'group.create', 'group.update', 'group.delete', 'group.join', 'group.leave',
-        'page.create', 'page.update', 'page.delete', 'page.like',
-        'admin.remove_post', 'admin.remove_comment', 'admin.verify_page',
-        'system.error', 'system.backup', 'system.retention',
-      ],
     },
     targetType: {
       type: String,
-      enum: ['User', 'Post', 'Comment', 'Group', 'Page', 'System', null],
       default: null,
     },
     targetId: {
@@ -76,7 +65,7 @@ class AuditService {
     return AuditLog.find(query)
       .populate('user', 'name email')
       .sort({ createdAt: -1 })
-      .limit(filters.limit || 100);
+      .limit(Math.min(filters.limit || 100, 500));
   }
 
   static async getStats(days = 7) {

@@ -606,13 +606,13 @@ exports.createRefund = async (req, res) => {
   try {
     const { userId, transactionId, amount, reason, description } = req.body;
 
-    if (!transactionId) {
+    if (!transactionId || typeof transactionId !== 'string') {
       return res.status(400).json({ message: 'Transaction ID is required' });
     }
     if (!amount || amount <= 0) {
       return res.status(400).json({ message: 'Refund amount must be greater than zero' });
     }
-    if (!reason) {
+    if (!reason || typeof reason !== 'string') {
       return res.status(400).json({ message: 'Refund reason is required' });
     }
 

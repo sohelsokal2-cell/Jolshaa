@@ -164,8 +164,9 @@ cleanupQueue.process(async (data) => {
       await Notification.deleteMany({ createdAt: { $lt: thirtyDaysAgo } });
     } else if (type === 'old_sessions') {
       const sevenDaysAgo = new Date(Date.now() - 7 * 86400000);
+      // Use $elemMatch to only update users who actually have old sessions
       await User.updateMany(
-        {},
+        { sessions: { $elemMatch: { lastActive: { $lt: sevenDaysAgo } } } },
         { $pull: { sessions: { lastActive: { $lt: sevenDaysAgo } } } }
       );
     }
