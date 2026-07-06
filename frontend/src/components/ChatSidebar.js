@@ -370,11 +370,11 @@ const ChatSidebar = ({ activeConversation, onSelectConversation, className = '' 
           placeholder="Search"
           className="w-full px-3 py-2 text-sm bg-jolshaa-surface-container rounded-full focus:outline-none focus:bg-jolshaa-surface-container-high transition"
         />
-        <div className="flex gap-1 mt-2">
+        <div className="flex gap-2 mt-3">
           {['all', 'unread', 'groups'].map(f => (
             <button key={f} onClick={() => setFilter(f)}
-              className={`px-3 py-1 text-xs rounded-full capitalize transition ${
-                filter === f ? 'bg-jolshaa-teal/20 text-jolshaa-teal-container font-medium' : 'text-jolshaa-on-surface-variant hover:bg-jolshaa-surface-container'
+              className={`px-3.5 py-1.5 text-xs rounded-full capitalize font-medium transition ${
+                filter === f ? 'bg-jolshaa-teal-container text-jolshaa-teal' : 'bg-jolshaa-surface-container text-jolshaa-on-surface-variant hover:bg-jolshaa-surface-container-high'
               }`}>{f}</button>
           ))}
         </div>
@@ -415,8 +415,8 @@ const ChatSidebar = ({ activeConversation, onSelectConversation, className = '' 
               <div key={conv._id} className="relative group">
                 <button
                   onClick={() => onSelectConversation(conv)}
-                  className={`w-full flex items-center gap-3 p-2.5 md:p-3 hover:bg-jolshaa-surface-container-low transition ${
-                    isActive ? 'bg-jolshaa-teal/10' : ''
+                  className={`w-full flex items-center gap-3 p-2.5 md:p-3 pl-2.5 md:pl-3 border-l-4 hover:bg-jolshaa-surface-container-low transition ${
+                    isActive ? 'border-jolshaa-teal bg-jolshaa-surface-container' : 'border-transparent'
                   }`}
                 >
                   <div className="relative flex-shrink-0">
@@ -456,7 +456,7 @@ const ChatSidebar = ({ activeConversation, onSelectConversation, className = '' 
                         </span>
                       </div>
                       {unread > 0 && (
-                        <span className="ml-2 bg-jolshaa-teal text-jolshaa-on-teal text-xs font-bold rounded-full min-w-[20px] h-5 flex items-center justify-center px-1.5">
+                        <span className="ml-2 bg-jolshaa-coral text-white text-xs font-bold rounded-full min-w-[20px] h-5 flex items-center justify-center px-1.5">
                           {unread > 99 ? '99+' : unread}
                         </span>
                       )}

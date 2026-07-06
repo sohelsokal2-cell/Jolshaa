@@ -402,7 +402,7 @@ const ChatWindow = ({ conversation, onBack, showInfoPanel, onToggleInfo, onStart
   return (
     <div className="flex-1 flex flex-col h-full bg-jolshaa-surface-container-lowest">
       {/* Header */}
-      <div className="px-3 py-2 border-b bg-jolshaa-surface-container-lowest flex items-center gap-3 flex-shrink-0">
+      <div className="px-3 h-[72px] border-b border-jolshaa-outline-variant bg-jolshaa-surface-container-lowest flex items-center gap-3 flex-shrink-0">
         {onBack && (
           <button onClick={onBack} className="p-1 -ml-1 text-jolshaa-on-surface-variant hover:text-jolshaa-on-surface md:hidden">
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
@@ -420,11 +420,18 @@ const ChatWindow = ({ conversation, onBack, showInfoPanel, onToggleInfo, onStart
         <div className="flex-1 min-w-0">
           <h3 className="font-display font-semibold text-sm truncate">{getHeaderName()}</h3>
           {typingUsers.length > 0 ? (
-            <p className="text-xs text-green-500 truncate">
-              {typingUsers.map(u => u.userName).join(', ')} {typingUsers.length === 1 ? 'is' : 'are'} typing...
-            </p>
+            <div className="flex items-center gap-1.5">
+              <span className="flex items-center gap-0.5">
+                <span className="w-1.5 h-1.5 bg-jolshaa-teal rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                <span className="w-1.5 h-1.5 bg-jolshaa-teal rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                <span className="w-1.5 h-1.5 bg-jolshaa-teal rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+              </span>
+              <p className="text-xs text-jolshaa-teal truncate">
+                {typingUsers.map(u => u.userName).join(', ')} {typingUsers.length === 1 ? 'is' : 'are'} typing
+              </p>
+            </div>
           ) : isOnlineUser() ? (
-            <p className="text-xs text-green-500">Active now</p>
+            <p className="text-xs text-jolshaa-teal">Active now</p>
           ) : convData?.isGroup ? (
             <p className="text-xs text-jolshaa-on-surface-variant">{convData.participants?.length} members</p>
           ) : null}
@@ -611,8 +618,8 @@ const ChatWindow = ({ conversation, onBack, showInfoPanel, onToggleInfo, onStart
                         ) : (
                           <div className={`px-3.5 py-2 rounded-2xl ${
                             isOwn
-                              ? 'bg-jolshaa-teal text-jolshaa-on-teal' + (isLastInGroup ? ' rounded-br-sm' : '')
-                              : 'bg-jolshaa-surface-container-high text-jolshaa-on-surface' + (isLastInGroup ? ' rounded-bl-sm' : '')
+                              ? 'bg-jolshaa-teal text-jolshaa-on-teal shadow-sm' + (isLastInGroup ? ' rounded-br-sm' : '')
+                              : 'bg-jolshaa-surface-container text-jolshaa-on-surface border border-jolshaa-outline-variant/40 shadow-sm' + (isLastInGroup ? ' rounded-bl-sm' : '')
                           }`}>
                             {msg.text && <p className="text-sm whitespace-pre-wrap break-words">{msg.text}</p>}
                             {msg.media && msg.mediaType === 'image' && (
@@ -771,16 +778,16 @@ const ChatWindow = ({ conversation, onBack, showInfoPanel, onToggleInfo, onStart
               value={text}
               onChange={(e) => { setText(e.target.value); handleTypingEmit(); }}
               onKeyDown={handleKeyPress}
-              placeholder="Message"
+              placeholder="Type your message..."
               rows={1}
-              className="w-full px-4 py-2 bg-jolshaa-surface-container rounded-full text-sm resize-none focus:outline-none focus:ring-2 focus:ring-jolshaa-teal max-h-32"
-              style={{ minHeight: '40px' }}
+              className="w-full px-4 py-2.5 bg-jolshaa-surface-container-low border border-jolshaa-outline-variant rounded-2xl text-sm resize-none focus:outline-none focus:ring-2 focus:ring-jolshaa-teal max-h-32"
+              style={{ minHeight: '42px' }}
             />
           </div>
 
           {text.trim() ? (
             <button onClick={handleSend}
-              className="p-2 bg-jolshaa-teal text-jolshaa-on-teal rounded-full hover:bg-jolshaa-teal-container transition">
+              className="p-2.5 bg-jolshaa-teal text-jolshaa-on-teal rounded-full shadow-ambient hover:bg-jolshaa-teal-container transition">
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" /></svg>
             </button>
           ) : (

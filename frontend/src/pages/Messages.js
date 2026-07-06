@@ -81,42 +81,44 @@ const Messages = () => {
     <div className="h-[100dvh] flex flex-col bg-jolshaa-surface">
       <TopNavbar />
 
-      <div className="flex-1 flex overflow-hidden pt-14">
-        <ChatSidebar
-          activeConversation={activeConversation}
-          onSelectConversation={handleSelectConversation}
-          className={`w-full md:w-80 lg:w-96 flex-shrink-0 ${
-            activeConversation ? 'hidden md:flex' : 'flex'
-          }`}
-        />
-
-        <div className={`flex-1 min-w-0 ${!activeConversation ? 'hidden md:flex' : 'flex'}`}>
-          <ChatWindow
-            conversation={activeConversation}
-            onBack={() => setActiveConversation(null)}
-            showInfoPanel={showInfoPanel}
-            onToggleInfo={() => setShowInfoPanel(!showInfoPanel)}
-            onStartCall={handleStartCall}
-            callStatus={callStatus}
+      <div className="flex-1 flex overflow-hidden pt-14 md:p-4">
+        <div className="flex-1 flex overflow-hidden bg-jolshaa-surface-container-lowest md:rounded-2xl md:border md:border-jolshaa-outline-variant md:shadow-ambient">
+          <ChatSidebar
+            activeConversation={activeConversation}
+            onSelectConversation={handleSelectConversation}
+            className={`w-full md:w-[350px] flex-shrink-0 ${
+              activeConversation ? 'hidden md:flex' : 'flex'
+            }`}
           />
-        </div>
 
-        {/* Info Panel - Desktop */}
-        {showInfoPanel && activeConversation && (
-          <>
-            {/* Mobile overlay */}
-            <div className="fixed inset-0 bg-black/50 z-30 md:hidden" onClick={handleCloseInfoPanel} />
-            <div className={`fixed right-0 top-14 bottom-0 z-40 md:relative md:z-auto ${
-              showInfoPanel ? 'flex' : 'hidden'
-            }`}>
-              <InfoPanel
-                conversation={activeConversation}
-                onClose={handleCloseInfoPanel}
-                onUpdateConversation={handleUpdateConversation}
-              />
-            </div>
-          </>
-        )}
+          <div className={`flex-1 min-w-0 ${!activeConversation ? 'hidden md:flex' : 'flex'}`}>
+            <ChatWindow
+              conversation={activeConversation}
+              onBack={() => setActiveConversation(null)}
+              showInfoPanel={showInfoPanel}
+              onToggleInfo={() => setShowInfoPanel(!showInfoPanel)}
+              onStartCall={handleStartCall}
+              callStatus={callStatus}
+            />
+          </div>
+
+          {/* Info Panel - Desktop */}
+          {showInfoPanel && activeConversation && (
+            <>
+              {/* Mobile overlay */}
+              <div className="fixed inset-0 bg-black/50 z-30 md:hidden" onClick={handleCloseInfoPanel} />
+              <div className={`fixed right-0 top-14 bottom-0 z-40 md:relative md:z-auto md:top-auto md:bottom-auto md:right-auto ${
+                showInfoPanel ? 'flex' : 'hidden'
+              }`}>
+                <InfoPanel
+                  conversation={activeConversation}
+                  onClose={handleCloseInfoPanel}
+                  onUpdateConversation={handleUpdateConversation}
+                />
+              </div>
+            </>
+          )}
+        </div>
       </div>
 
       <BottomNav />
