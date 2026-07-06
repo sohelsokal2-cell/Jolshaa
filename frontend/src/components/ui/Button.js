@@ -13,12 +13,13 @@ const Button = forwardRef(({
   const base = 'inline-flex items-center justify-center gap-2 rounded-lg font-medium transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed select-none';
 
   const variants = {
-    primary: 'bg-primary-600 text-white hover:bg-primary-700 active:bg-primary-800 focus:ring-primary-500',
-    secondary: 'bg-neutral-200 text-neutral-700 hover:bg-neutral-300 active:bg-neutral-400 focus:ring-neutral-400 dark:bg-neutral-700 dark:text-neutral-200 dark:hover:bg-neutral-600',
-    ghost: 'bg-transparent text-neutral-600 hover:bg-neutral-100 active:bg-neutral-200 focus:ring-neutral-400 dark:text-neutral-300 dark:hover:bg-neutral-800',
+    primary: 'bg-jolshaa-teal text-jolshaa-on-teal hover:bg-jolshaa-teal-container active:bg-jolshaa-teal-container focus:ring-jolshaa-teal',
+    secondary: 'bg-jolshaa-surface-container-low text-jolshaa-on-surface hover:bg-jolshaa-surface-container active:bg-jolshaa-surface-container-high focus:ring-jolshaa-outline',
+    ghost: 'bg-transparent text-jolshaa-on-surface-variant hover:bg-jolshaa-surface-container-low active:bg-jolshaa-surface-container focus:ring-jolshaa-outline',
     danger: 'bg-red-600 text-white hover:bg-red-700 active:bg-red-800 focus:ring-red-500',
-    success: 'bg-accent-600 text-white hover:bg-accent-700 active:bg-accent-800 focus:ring-accent-500',
-    outline: 'border border-neutral-300 bg-white text-neutral-700 hover:bg-neutral-50 active:bg-neutral-100 focus:ring-neutral-400 dark:border-neutral-600 dark:bg-neutral-800 dark:text-neutral-200',
+    warning: 'bg-amber-500 text-white hover:bg-amber-600 active:bg-amber-700 focus:ring-amber-400',
+    success: 'bg-green-600 text-white hover:bg-green-700 active:bg-green-800 focus:ring-green-500',
+    outline: 'border border-jolshaa-outline-variant bg-jolshaa-surface-container-lowest text-jolshaa-on-surface hover:bg-jolshaa-surface-container-low active:bg-jolshaa-surface-container focus:ring-jolshaa-outline',
   };
 
   const sizes = {

@@ -34,12 +34,12 @@ const AdminPanel = () => {
       <AdminLayout activeSection="dashboard" onSectionChange={setActiveTab} isSuperadmin={isSuperadmin}>
         <div className="flex items-center justify-center min-h-[60vh]">
           <div className="text-center">
-            <div className="w-16 h-16 bg-red-100 dark:bg-red-900/20 rounded-full flex items-center justify-center mx-auto mb-4">
+            <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <svg className="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
             </div>
-            <h2 className="text-xl font-bold text-neutral-900 dark:text-neutral-100 mb-1">Access Denied</h2>
-            <p className="text-sm text-neutral-500">You don't have admin privileges.</p>
-            <Link to="/feed" className="inline-block mt-4 text-sm text-primary-600 hover:underline">Go to Feed</Link>
+            <h2 className="text-xl font-bold font-display text-jolshaa-on-surface mb-1">Access Denied</h2>
+            <p className="text-sm text-jolshaa-on-surface-variant">You don't have admin privileges.</p>
+            <Link to="/feed" className="inline-block mt-4 text-sm text-jolshaa-teal hover:underline">Go to Feed</Link>
           </div>
         </div>
       </AdminLayout>
@@ -89,33 +89,33 @@ const DashboardTab = () => {
     API.get('/admin/stats').then(res => setStats(res.data)).finally(() => setLoading(false));
   }, []);
 
-  if (loading) return <div className="text-center py-8 text-neutral-500">Loading...</div>;
+  if (loading) return <div className="text-center py-8 text-jolshaa-on-surface-variant">Loading...</div>;
   if (!stats) return null;
 
   const priorityCards = [
-    { label: 'Pending Reports', value: stats.pendingReports, color: 'text-red-600', bg: 'bg-red-50 dark:bg-red-900/20', urgent: true },
-    { label: 'Pending Appeals', value: stats.pendingAppeals, color: 'text-amber-600', bg: 'bg-amber-50 dark:bg-amber-900/20', urgent: true },
-    { label: 'Pending Verifications', value: stats.pendingVerifications, color: 'text-blue-600', bg: 'bg-blue-50 dark:bg-blue-900/20', urgent: false },
-    { label: 'Suspended Users', value: stats.suspendedUsers, color: 'text-amber-600', bg: 'bg-amber-50 dark:bg-amber-900/20', urgent: false },
+    { label: 'Pending Reports', value: stats.pendingReports, color: 'text-red-600', bg: 'bg-red-50', urgent: true },
+    { label: 'Pending Appeals', value: stats.pendingAppeals, color: 'text-amber-600', bg: 'bg-amber-50', urgent: true },
+    { label: 'Pending Verifications', value: stats.pendingVerifications, color: 'text-blue-600', bg: 'bg-blue-50', urgent: false },
+    { label: 'Suspended Users', value: stats.suspendedUsers, color: 'text-amber-600', bg: 'bg-amber-50', urgent: false },
   ];
 
   const overviewCards = [
-    { label: 'Total Users', value: stats.totalUsers, color: 'text-primary-600', bg: 'bg-primary-50 dark:bg-primary-900/20' },
-    { label: 'Total Posts', value: stats.totalPosts, color: 'text-neutral-600', bg: 'bg-neutral-100 dark:bg-neutral-700' },
-    { label: 'Active Today', value: stats.activeToday, color: 'text-green-600', bg: 'bg-green-50 dark:bg-green-900/20' },
-    { label: 'Banned Users', value: stats.bannedUsers, color: 'text-red-700', bg: 'bg-red-50 dark:bg-red-900/20' },
-    { label: 'Groups', value: stats.totalGroups, color: 'text-blue-600', bg: 'bg-blue-50 dark:bg-blue-900/20' },
-    { label: 'Pages', value: stats.totalPages, color: 'text-purple-600', bg: 'bg-purple-50 dark:bg-purple-900/20' },
-    { label: 'Verified', value: stats.verifiedUsers, color: 'text-primary-600', bg: 'bg-primary-50 dark:bg-primary-900/20' },
-    { label: 'Admin Actions', value: stats.totalAdminActions, color: 'text-neutral-600', bg: 'bg-neutral-100 dark:bg-neutral-700' },
+    { label: 'Total Users', value: stats.totalUsers, color: 'text-jolshaa-teal', bg: 'bg-jolshaa-teal/10' },
+    { label: 'Total Posts', value: stats.totalPosts, color: 'text-jolshaa-on-surface', bg: 'bg-jolshaa-surface-container-low' },
+    { label: 'Active Today', value: stats.activeToday, color: 'text-green-600', bg: 'bg-green-50' },
+    { label: 'Banned Users', value: stats.bannedUsers, color: 'text-red-700', bg: 'bg-red-50' },
+    { label: 'Groups', value: stats.totalGroups, color: 'text-blue-600', bg: 'bg-blue-50' },
+    { label: 'Pages', value: stats.totalPages, color: 'text-jolshaa-indigo', bg: 'bg-jolshaa-indigo/10' },
+    { label: 'Verified', value: stats.verifiedUsers, color: 'text-jolshaa-teal', bg: 'bg-jolshaa-teal/10' },
+    { label: 'Admin Actions', value: stats.totalAdminActions, color: 'text-jolshaa-on-surface', bg: 'bg-jolshaa-surface-container-low' },
   ];
 
   return (
     <div className="space-y-6">
       {/* Page header */}
       <div>
-        <h1 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">Admin Dashboard</h1>
-        <p className="text-sm text-neutral-500 mt-1">Platform overview and things that need your attention</p>
+        <h1 className="text-2xl font-bold font-display text-jolshaa-on-surface">Admin Dashboard</h1>
+        <p className="text-sm text-jolshaa-on-surface-variant mt-1">Platform overview and things that need your attention</p>
       </div>
 
       {/* What needs attention now */}
@@ -124,13 +124,13 @@ const DashboardTab = () => {
           <svg className="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
           </svg>
-          <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">What needs attention now</h3>
+          <h3 className="text-sm font-semibold font-display text-jolshaa-on-surface">What needs attention now</h3>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {priorityCards.map(card => (
             <div key={card.label} className={`p-3 rounded-lg ${card.bg} flex items-center justify-between`}>
               <div>
-                <p className="text-xs font-medium text-neutral-500">{card.label}</p>
+                <p className="text-xs font-medium text-jolshaa-on-surface-variant">{card.label}</p>
                 <p className={`text-2xl font-bold ${card.color}`}>{card.value}</p>
               </div>
               {card.urgent && card.value > 0 && (
@@ -145,11 +145,11 @@ const DashboardTab = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Overview stats */}
         <div className="lg:col-span-2">
-          <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-3">Platform Overview</h3>
+          <h3 className="text-sm font-semibold font-display text-jolshaa-on-surface mb-3">Platform Overview</h3>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             {overviewCards.map(card => (
               <Card key={card.label} className={`${card.bg}`}>
-                <p className="text-xs font-medium text-neutral-500">{card.label}</p>
+                <p className="text-xs font-medium text-jolshaa-on-surface-variant">{card.label}</p>
                 <p className={`text-xl font-bold ${card.color}`}>{card.value}</p>
               </Card>
             ))}
@@ -158,7 +158,7 @@ const DashboardTab = () => {
 
         {/* Recent admin actions */}
         <div>
-          <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-3">Recent Actions</h3>
+          <h3 className="text-sm font-semibold font-display text-jolshaa-on-surface mb-3">Recent Actions</h3>
           <Card>
             {stats.recentActions?.length > 0 ? (
               <div className="space-y-3">
@@ -166,17 +166,17 @@ const DashboardTab = () => {
                   <div key={action._id} className="flex items-start gap-2 text-xs">
                     <Avatar src={action.admin?.profilePhoto} alt={action.admin?.name} size="xs" />
                     <div className="min-w-0">
-                      <p className="text-neutral-700 dark:text-neutral-300">
+                      <p className="text-jolshaa-on-surface">
                         <span className="font-medium">{action.admin?.name}</span>
                       </p>
-                      <p className="text-neutral-500 truncate">{action.action}</p>
-                      <p className="text-neutral-400 text-2xs">{new Date(action.createdAt).toLocaleString()}</p>
+                      <p className="text-jolshaa-on-surface-variant truncate">{action.action}</p>
+                      <p className="text-jolshaa-on-surface-variant/70 text-2xs">{new Date(action.createdAt).toLocaleString()}</p>
                     </div>
                   </div>
                 ))}
               </div>
             ) : (
-              <p className="text-sm text-neutral-500 text-center py-4">No recent actions</p>
+              <p className="text-sm text-jolshaa-on-surface-variant text-center py-4">No recent actions</p>
             )}
           </Card>
         </div>
@@ -184,7 +184,7 @@ const DashboardTab = () => {
 
       {/* Quick actions */}
       <Card>
-        <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-3">Quick Actions</h3>
+        <h3 className="text-sm font-semibold font-display text-jolshaa-on-surface mb-3">Quick Actions</h3>
         <div className="flex flex-wrap gap-2">
           <Button size="sm" variant="primary" onClick={() => window.location.hash = '#users'}>Manage Users</Button>
           <Button size="sm" variant="danger" onClick={() => window.location.hash = '#reports'}>Review Reports</Button>
@@ -317,8 +317,8 @@ const UsersTab = () => {
     <div className="space-y-4">
       {/* Page header */}
       <div>
-        <h1 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">Users</h1>
-        <p className="text-sm text-neutral-500 mt-1">Manage user accounts, roles, and restrictions</p>
+        <h1 className="text-2xl font-bold font-display text-jolshaa-on-surface">Users</h1>
+        <p className="text-sm text-jolshaa-on-surface-variant mt-1">Manage user accounts, roles, and restrictions</p>
       </div>
 
       {/* Filter bar */}
@@ -327,20 +327,20 @@ const UsersTab = () => {
           <div className="flex-1 min-w-[200px]">
             <Input placeholder="Search by name or email..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} onKeyDown={e => e.key === 'Enter' && fetchUsers()} />
           </div>
-          <select value={filter} onChange={e => setFilter(e.target.value)} className="text-sm border border-neutral-300 dark:border-neutral-600 rounded-lg px-3 py-2 bg-white dark:bg-neutral-800">
+          <select value={filter} onChange={e => setFilter(e.target.value)} className="text-sm border border-jolshaa-outline-variant rounded-lg px-3 py-2 bg-jolshaa-surface-container-lowest text-jolshaa-on-surface">
             <option value="">All Status</option>
             <option value="suspended">Suspended</option>
             <option value="banned">Banned</option>
             <option value="verified">Verified</option>
           </select>
-          <select value={roleFilter} onChange={e => setRoleFilter(e.target.value)} className="text-sm border border-neutral-300 dark:border-neutral-600 rounded-lg px-3 py-2 bg-white dark:bg-neutral-800">
+          <select value={roleFilter} onChange={e => setRoleFilter(e.target.value)} className="text-sm border border-jolshaa-outline-variant rounded-lg px-3 py-2 bg-jolshaa-surface-container-lowest text-jolshaa-on-surface">
             <option value="">All Roles</option>
             <option value="user">User</option>
             <option value="moderator">Moderator</option>
             <option value="admin">Admin</option>
             <option value="superadmin">Superadmin</option>
           </select>
-          <select value={sortBy} onChange={e => setSortBy(e.target.value)} className="text-sm border border-neutral-300 dark:border-neutral-600 rounded-lg px-3 py-2 bg-white dark:bg-neutral-800">
+          <select value={sortBy} onChange={e => setSortBy(e.target.value)} className="text-sm border border-jolshaa-outline-variant rounded-lg px-3 py-2 bg-jolshaa-surface-container-lowest text-jolshaa-on-surface">
             <option value="-createdAt">Newest</option>
             <option value="createdAt">Oldest</option>
             <option value="name">Name A-Z</option>
@@ -351,28 +351,28 @@ const UsersTab = () => {
 
       {/* User table */}
       {loading ? (
-        <div className="text-center py-8 text-neutral-500">Loading...</div>
+        <div className="text-center py-8 text-jolshaa-on-surface-variant">Loading...</div>
       ) : (
         <Card padding={false}>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-neutral-200 dark:border-neutral-700">
-                  <th className="text-left px-4 py-3 font-medium text-neutral-500">User</th>
-                  <th className="text-left px-4 py-3 font-medium text-neutral-500">Role</th>
-                  <th className="text-left px-4 py-3 font-medium text-neutral-500">Status</th>
-                  <th className="text-right px-4 py-3 font-medium text-neutral-500">Actions</th>
+                <tr className="border-b border-jolshaa-outline-variant">
+                  <th className="text-left px-4 py-3 font-medium text-jolshaa-on-surface-variant">User</th>
+                  <th className="text-left px-4 py-3 font-medium text-jolshaa-on-surface-variant">Role</th>
+                  <th className="text-left px-4 py-3 font-medium text-jolshaa-on-surface-variant">Status</th>
+                  <th className="text-right px-4 py-3 font-medium text-jolshaa-on-surface-variant">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-neutral-100 dark:divide-neutral-700">
+              <tbody className="divide-y divide-jolshaa-outline-variant">
                 {users.map(u => (
-                  <tr key={u._id} className="hover:bg-neutral-50 dark:hover:bg-neutral-700/50 group">
+                  <tr key={u._id} className="hover:bg-jolshaa-surface-container-low group">
                     <td className="px-4 py-3">
                       <button onClick={() => setDrawerUser(u)} className="flex items-center gap-3 text-left hover:opacity-80">
                         <Avatar src={u.profilePhoto} alt={u.name} size="sm" />
                         <div>
-                          <p className="font-medium text-neutral-900 dark:text-neutral-100">{u.name}</p>
-                          <p className="text-xs text-neutral-500">{u.email}</p>
+                          <p className="font-medium text-jolshaa-on-surface">{u.name}</p>
+                          <p className="text-xs text-jolshaa-on-surface-variant">{u.email}</p>
                         </div>
                       </button>
                     </td>
@@ -380,7 +380,7 @@ const UsersTab = () => {
                       <select
                         value={u.role || 'user'}
                         onChange={(e) => handleRoleChange(u._id, e.target.value)}
-                        className="text-xs border border-neutral-300 dark:border-neutral-600 rounded-lg px-2 py-1 bg-white dark:bg-neutral-800"
+                        className="text-xs border border-jolshaa-outline-variant rounded-lg px-2 py-1 bg-jolshaa-surface-container-lowest text-jolshaa-on-surface"
                         disabled={u.isAdmin}
                       >
                         <option value="user">User</option>
@@ -421,7 +421,7 @@ const UsersTab = () => {
               </tbody>
             </table>
           </div>
-          {users.length === 0 && <p className="text-center py-6 text-neutral-500 text-sm">No users found</p>}
+          {users.length === 0 && <p className="text-center py-6 text-jolshaa-on-surface-variant text-sm">No users found</p>}
         </Card>
       )}
 
@@ -433,8 +433,8 @@ const UsersTab = () => {
             <div className="flex items-center gap-4">
               <Avatar src={drawerUser.profilePhoto} alt={drawerUser.name} size="lg" />
               <div>
-                <h3 className="text-lg font-semibold text-neutral-900 dark:text-neutral-100">{drawerUser.name}</h3>
-                <p className="text-sm text-neutral-500">{drawerUser.email}</p>
+                <h3 className="text-lg font-semibold font-display text-jolshaa-on-surface">{drawerUser.name}</h3>
+                <p className="text-sm text-jolshaa-on-surface-variant">{drawerUser.email}</p>
                 <div className="flex gap-1 mt-1">
                   {drawerUser.isVerified && <Badge variant="primary" size="xs">Verified</Badge>}
                   {drawerUser.isSuspended && <Badge variant="warning" size="xs">Suspended</Badge>}
@@ -446,28 +446,28 @@ const UsersTab = () => {
 
             {/* Info grid */}
             <div className="grid grid-cols-2 gap-4">
-              <div className="p-3 bg-neutral-50 dark:bg-neutral-700/50 rounded-lg">
-                <p className="text-xs text-neutral-500">Role</p>
-                <p className="text-sm font-medium capitalize">{drawerUser.role || 'user'}</p>
+              <div className="p-3 bg-jolshaa-surface-container-low rounded-lg">
+                <p className="text-xs text-jolshaa-on-surface-variant">Role</p>
+                <p className="text-sm font-medium text-jolshaa-on-surface capitalize">{drawerUser.role || 'user'}</p>
               </div>
-              <div className="p-3 bg-neutral-50 dark:bg-neutral-700/50 rounded-lg">
-                <p className="text-xs text-neutral-500">Joined</p>
-                <p className="text-sm font-medium">{new Date(drawerUser.createdAt).toLocaleDateString()}</p>
+              <div className="p-3 bg-jolshaa-surface-container-low rounded-lg">
+                <p className="text-xs text-jolshaa-on-surface-variant">Joined</p>
+                <p className="text-sm font-medium text-jolshaa-on-surface">{new Date(drawerUser.createdAt).toLocaleDateString()}</p>
               </div>
-              <div className="p-3 bg-neutral-50 dark:bg-neutral-700/50 rounded-lg">
-                <p className="text-xs text-neutral-500">Creator</p>
-                <p className="text-sm font-medium">{drawerUser.isCreator ? 'Yes' : 'No'}</p>
+              <div className="p-3 bg-jolshaa-surface-container-low rounded-lg">
+                <p className="text-xs text-jolshaa-on-surface-variant">Creator</p>
+                <p className="text-sm font-medium text-jolshaa-on-surface">{drawerUser.isCreator ? 'Yes' : 'No'}</p>
               </div>
-              <div className="p-3 bg-neutral-50 dark:bg-neutral-700/50 rounded-lg">
-                <p className="text-xs text-neutral-500">Warnings</p>
-                <p className="text-sm font-medium">{drawerUser.warnings?.length || 0}</p>
+              <div className="p-3 bg-jolshaa-surface-container-low rounded-lg">
+                <p className="text-xs text-jolshaa-on-surface-variant">Warnings</p>
+                <p className="text-sm font-medium text-jolshaa-on-surface">{drawerUser.warnings?.length || 0}</p>
               </div>
             </div>
 
             {/* Quick actions */}
             {!drawerUser.isAdmin && (
               <div>
-                <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100 mb-3">Quick Actions</p>
+                <p className="text-sm font-medium text-jolshaa-on-surface mb-3">Quick Actions</p>
                 <div className="flex flex-wrap gap-2">
                   <Button size="sm" variant="ghost" onClick={() => { setSelectedUser(drawerUser); setShowWarnModal(true); }}>Warn</Button>
                   <Button size="sm" variant="ghost" onClick={() => { setSelectedUser(drawerUser); setShowRestrictModal(true); }}>Restrict</Button>
@@ -502,8 +502,8 @@ const UsersTab = () => {
       <Modal isOpen={showRestrictModal} onClose={() => setShowRestrictModal(false)} title={`Restrict ${selectedUser?.name || ''}`}>
         <div className="p-5 space-y-4">
           <div>
-            <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Restriction Type</label>
-            <select value={restrictType} onChange={e => setRestrictType(e.target.value)} className="w-full border border-neutral-300 dark:border-neutral-600 rounded-lg px-3 py-2 text-sm bg-white dark:bg-neutral-800">
+            <label className="block text-sm font-medium text-jolshaa-on-surface-variant mb-1">Restriction Type</label>
+            <select value={restrictType} onChange={e => setRestrictType(e.target.value)} className="w-full border border-jolshaa-outline-variant rounded-lg px-3 py-2 text-sm bg-jolshaa-surface-container-lowest text-jolshaa-on-surface">
               <option value="post">Cannot Post</option>
               <option value="comment">Cannot Comment</option>
               <option value="message">Cannot Message</option>
@@ -523,7 +523,7 @@ const UsersTab = () => {
       <Modal isOpen={showBanModal} onClose={() => setShowBanModal(false)} title={`${selectedUser?.isBanned ? 'Unban' : 'Ban'} ${selectedUser?.name || ''}`}>
         <div className="p-5 space-y-4">
           {selectedUser?.isBanned ? (
-            <p className="text-sm text-neutral-600 dark:text-neutral-400">Are you sure you want to unban this user?</p>
+            <p className="text-sm text-jolshaa-on-surface-variant">Are you sure you want to unban this user?</p>
           ) : (
             <Input label="Ban reason" value={banReason} onChange={e => setBanReason(e.target.value)} placeholder="Describe the reason for banning..." />
           )}
@@ -540,7 +540,7 @@ const UsersTab = () => {
       <Modal isOpen={showSuspendModal} onClose={() => setShowSuspendModal(false)} title={`${selectedUser?.isSuspended ? 'Unsuspend' : 'Suspend'} ${selectedUser?.name || ''}`}>
         <div className="p-5 space-y-4">
           {selectedUser?.isSuspended ? (
-            <p className="text-sm text-neutral-600 dark:text-neutral-400">Are you sure you want to unsuspend this user?</p>
+            <p className="text-sm text-jolshaa-on-surface-variant">Are you sure you want to unsuspend this user?</p>
           ) : (
             <Input label="Suspend reason" value={suspendReason} onChange={e => setSuspendReason(e.target.value)} placeholder="Describe the reason for suspension..." />
           )}

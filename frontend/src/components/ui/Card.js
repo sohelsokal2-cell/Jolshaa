@@ -1,8 +1,8 @@
 const Card = ({ children, className = '', hover, padding = true, ...props }) => {
   return (
     <div
-      className={`bg-white rounded-xl shadow-card dark:bg-neutral-800 transition-shadow duration-200 ${
-        hover ? 'hover:shadow-card-hover cursor-pointer' : ''
+      className={`bg-jolshaa-surface-container-lowest rounded-xl shadow-ambient transition-shadow duration-200 ${
+        hover ? 'hover:shadow-ambient-hover cursor-pointer' : ''
       } ${padding ? 'p-4' : ''} ${className}`}
       {...props}
     >
@@ -18,7 +18,7 @@ export const CardHeader = ({ children, className = '' }) => (
 );
 
 export const CardTitle = ({ children, className = '' }) => (
-  <h3 className={`text-base font-semibold text-neutral-900 dark:text-neutral-100 ${className}`}>
+  <h3 className={`text-base font-semibold font-display text-jolshaa-on-surface ${className}`}>
     {children}
   </h3>
 );

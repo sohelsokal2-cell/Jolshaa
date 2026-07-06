@@ -389,22 +389,22 @@ const ChatWindow = ({ conversation, onBack, showInfoPanel, onToggleInfo, onStart
 
   if (!convId) {
     return (
-      <div className="flex-1 flex items-center justify-center text-gray-500">
+      <div className="flex-1 flex items-center justify-center text-jolshaa-on-surface-variant">
         <div className="text-center">
           <div className="text-6xl mb-4">💬</div>
           <p className="text-lg font-medium">Select a conversation</p>
-          <p className="text-sm text-gray-400">Choose from your existing chats or start a new one</p>
+          <p className="text-sm text-jolshaa-on-surface-variant">Choose from your existing chats or start a new one</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="flex-1 flex flex-col h-full bg-white">
+    <div className="flex-1 flex flex-col h-full bg-jolshaa-surface-container-lowest">
       {/* Header */}
-      <div className="px-3 py-2 border-b bg-white flex items-center gap-3 flex-shrink-0">
+      <div className="px-3 py-2 border-b bg-jolshaa-surface-container-lowest flex items-center gap-3 flex-shrink-0">
         {onBack && (
-          <button onClick={onBack} className="p-1 -ml-1 text-gray-600 hover:text-gray-900 md:hidden">
+          <button onClick={onBack} className="p-1 -ml-1 text-jolshaa-on-surface-variant hover:text-jolshaa-on-surface md:hidden">
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
           </button>
         )}
@@ -414,7 +414,7 @@ const ChatWindow = ({ conversation, onBack, showInfoPanel, onToggleInfo, onStart
             alt="" className="w-10 h-10 rounded-full object-cover"
           />
           {isOnlineUser() && (
-            <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white" />
+            <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-jolshaa-surface-container-lowest" />
           )}
         </div>
         <div className="flex-1 min-w-0">
@@ -426,7 +426,7 @@ const ChatWindow = ({ conversation, onBack, showInfoPanel, onToggleInfo, onStart
           ) : isOnlineUser() ? (
             <p className="text-xs text-green-500">Active now</p>
           ) : convData?.isGroup ? (
-            <p className="text-xs text-gray-400">{convData.participants?.length} members</p>
+            <p className="text-xs text-jolshaa-on-surface-variant">{convData.participants?.length} members</p>
           ) : null}
         </div>
         <CallButtons
@@ -442,7 +442,7 @@ const ChatWindow = ({ conversation, onBack, showInfoPanel, onToggleInfo, onStart
         />
         <button
           onClick={onToggleInfo}
-          className={`p-2 rounded-full transition ${showInfoPanel ? 'bg-blue-100 text-blue-600' : 'text-gray-500 hover:bg-gray-100'}`}
+          className={`p-2 rounded-full transition ${showInfoPanel ? 'bg-jolshaa-teal/20 text-jolshaa-teal' : 'text-jolshaa-on-surface-variant hover:bg-jolshaa-surface-container'}`}
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
         </button>
@@ -452,24 +452,24 @@ const ChatWindow = ({ conversation, onBack, showInfoPanel, onToggleInfo, onStart
       <div ref={messagesContainerRef} className="flex-1 overflow-y-auto px-4 py-2 space-y-1">
         {loading ? (
           <div className="flex items-center justify-center h-full">
-            <div className="text-center text-gray-500">
-              <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-2" />
+            <div className="text-center text-jolshaa-on-surface-variant">
+              <div className="w-8 h-8 border-4 border-jolshaa-teal border-t-transparent rounded-full animate-spin mx-auto mb-2" />
               Loading messages...
             </div>
           </div>
         ) : messages.length === 0 ? (
           <div className="flex items-center justify-center h-full">
-            <div className="text-center text-gray-500">
+            <div className="text-center text-jolshaa-on-surface-variant">
               <div className="text-4xl mb-2">👋</div>
               <p className="font-medium">No messages yet</p>
-              <p className="text-sm text-gray-400">Say hello to start the conversation!</p>
+              <p className="text-sm text-jolshaa-on-surface-variant">Say hello to start the conversation!</p>
             </div>
           </div>
         ) : (
           <>
             {loadingMore && (
               <div className="text-center py-2">
-                <div className="w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto" />
+                <div className="w-6 h-6 border-2 border-jolshaa-teal border-t-transparent rounded-full animate-spin mx-auto" />
               </div>
             )}
             {messages.map((msg, idx) => {
@@ -503,10 +503,10 @@ const ChatWindow = ({ conversation, onBack, showInfoPanel, onToggleInfo, onStart
                   statusIcon = <svg className={`${iconClass} text-red-500`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>;
                   statusText = 'Declined call';
                 } else if (msg.status === 'cancelled') {
-                  statusIcon = <svg className={`${iconClass} text-gray-400`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>;
+                  statusIcon = <svg className={`${iconClass} text-jolshaa-on-surface-variant`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>;
                   statusText = 'Call cancelled';
                 } else {
-                  statusIcon = <svg className={`${iconClass} text-gray-400`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>;
+                  statusIcon = <svg className={`${iconClass} text-jolshaa-on-surface-variant`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>;
                   statusText = 'Call ended';
                 }
 
@@ -514,13 +514,13 @@ const ChatWindow = ({ conversation, onBack, showInfoPanel, onToggleInfo, onStart
                   <div key={msg._id}>
                     {showDate && (
                       <div className="flex items-center justify-center my-4">
-                        <div className="bg-gray-100 text-gray-500 text-xs px-3 py-1 rounded-full font-medium">
+                        <div className="bg-jolshaa-surface-container text-jolshaa-on-surface-variant text-xs px-3 py-1 rounded-full font-medium">
                           {formatDate(msg.createdAt)}
                         </div>
                       </div>
                     )}
                     <div className="flex justify-center my-2">
-                      <div className="flex items-center gap-1.5 text-xs text-gray-500 bg-gray-50 px-3 py-1 rounded-full">
+                      <div className="flex items-center gap-1.5 text-xs text-jolshaa-on-surface-variant bg-jolshaa-surface-container-low px-3 py-1 rounded-full">
                         {statusIcon}
                         <span>{statusText}</span>
                       </div>
@@ -542,7 +542,7 @@ const ChatWindow = ({ conversation, onBack, showInfoPanel, onToggleInfo, onStart
                   {/* Date separator */}
                   {showDate && (
                     <div className="flex items-center justify-center my-4">
-                      <div className="bg-gray-100 text-gray-500 text-xs px-3 py-1 rounded-full font-medium">
+                      <div className="bg-jolshaa-surface-container text-jolshaa-on-surface-variant text-xs px-3 py-1 rounded-full font-medium">
                         {formatDate(msg.createdAt)}
                       </div>
                     </div>
@@ -552,7 +552,7 @@ const ChatWindow = ({ conversation, onBack, showInfoPanel, onToggleInfo, onStart
                   {isDeleted ? (
                     <div className={`flex ${isOwn ? 'justify-end' : 'justify-start'} mb-1`}>
                       <div className={`px-4 py-2 rounded-2xl text-sm italic ${
-                        isOwn ? 'bg-gray-100 text-gray-400' : 'bg-gray-50 text-gray-400'
+                        isOwn ? 'bg-jolshaa-surface-container text-jolshaa-on-surface-variant' : 'bg-jolshaa-surface-container-low text-jolshaa-on-surface-variant'
                       }`}>
                         This message was deleted
                       </div>
@@ -567,30 +567,30 @@ const ChatWindow = ({ conversation, onBack, showInfoPanel, onToggleInfo, onStart
                               src={msg.sender?.profilePhoto || 'https://ui-avatars.com/api/?name=U&background=494454&color=dae2fd&size=128'}
                               alt="" className="w-6 h-6 rounded-full object-cover"
                             />
-                            <span className="text-xs font-medium text-gray-600">{msg.sender?.name}</span>
+                            <span className="text-xs font-medium text-jolshaa-on-surface-variant">{msg.sender?.name}</span>
                           </div>
                         )}
 
                         {/* Reply preview */}
                         {msg.replyTo && (
                           <div className={`px-3 py-1.5 mb-0.5 rounded-t-2xl text-xs border-l-2 ${
-                            isOwn ? 'bg-blue-50 border-blue-300' : 'bg-gray-50 border-gray-300'
+                            isOwn ? 'bg-jolshaa-teal/10 border-jolshaa-teal/40' : 'bg-jolshaa-surface-container-low border-jolshaa-outline-variant'
                           }`}>
-                            <p className="font-medium text-gray-600 truncate">{msg.replyTo.sender?.name || 'Message'}</p>
-                            <p className="text-gray-500 truncate">{msg.replyTo.text || 'Media'}</p>
+                            <p className="font-medium text-jolshaa-on-surface-variant truncate">{msg.replyTo.sender?.name || 'Message'}</p>
+                            <p className="text-jolshaa-on-surface-variant truncate">{msg.replyTo.text || 'Media'}</p>
                           </div>
                         )}
 
                         {/* Forwarded indicator */}
                         {msg.forwardedFrom && (
-                          <div className={`text-xs text-gray-400 mb-0.5 ${isOwn ? 'text-right' : 'ml-1'}`}>
+                          <div className={`text-xs text-jolshaa-on-surface-variant mb-0.5 ${isOwn ? 'text-right' : 'ml-1'}`}>
                             ↪ Forwarded
                           </div>
                         )}
 
                         {/* Message bubble */}
                         {isEditing ? (
-                          <div className="flex gap-1 p-1 bg-white border rounded-2xl shadow-sm">
+                          <div className="flex gap-1 p-1 bg-jolshaa-surface-container-lowest border rounded-2xl shadow-sm">
                             <input
                               type="text" value={editText}
                               onChange={(e) => setEditText(e.target.value)}
@@ -598,21 +598,21 @@ const ChatWindow = ({ conversation, onBack, showInfoPanel, onToggleInfo, onStart
                                 if (e.key === 'Enter') handleEditMessage(msg);
                                 if (e.key === 'Escape') setEditingMsg(null);
                               }}
-                              className="flex-1 px-3 py-1.5 text-sm border rounded-full focus:outline-none focus:ring-1 focus:ring-blue-500"
+                              className="flex-1 px-3 py-1.5 text-sm border rounded-full focus:outline-none focus:ring-1 focus:ring-jolshaa-teal"
                               autoFocus
                             />
-                            <button onClick={() => handleEditMessage(msg)} className="p-2 text-blue-600 hover:bg-blue-50 rounded-full">
+                            <button onClick={() => handleEditMessage(msg)} className="p-2 text-jolshaa-teal hover:bg-jolshaa-teal/10 rounded-full">
                               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
                             </button>
-                            <button onClick={() => setEditingMsg(null)} className="p-2 text-gray-400 hover:bg-gray-50 rounded-full">
+                            <button onClick={() => setEditingMsg(null)} className="p-2 text-jolshaa-on-surface-variant hover:bg-jolshaa-surface-container-low rounded-full">
                               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
                             </button>
                           </div>
                         ) : (
                           <div className={`px-3.5 py-2 rounded-2xl ${
                             isOwn
-                              ? 'bg-blue-600 text-white' + (isLastInGroup ? ' rounded-br-sm' : '')
-                              : 'bg-gray-200 text-gray-800' + (isLastInGroup ? ' rounded-bl-sm' : '')
+                              ? 'bg-jolshaa-teal text-jolshaa-on-teal' + (isLastInGroup ? ' rounded-br-sm' : '')
+                              : 'bg-jolshaa-surface-container-high text-jolshaa-on-surface' + (isLastInGroup ? ' rounded-bl-sm' : '')
                           }`}>
                             {msg.text && <p className="text-sm whitespace-pre-wrap break-words">{msg.text}</p>}
                             {msg.media && msg.mediaType === 'image' && (
@@ -635,7 +635,7 @@ const ChatWindow = ({ conversation, onBack, showInfoPanel, onToggleInfo, onStart
                             )}
                             {msg.media && msg.mediaType === 'file' && (
                               <a href={msg.media} target="_blank" rel="noopener noreferrer"
-                                className={`flex items-center gap-2 mt-1 p-2 rounded-lg ${isOwn ? 'bg-blue-700 hover:bg-blue-800' : 'bg-gray-300 hover:bg-gray-400'} transition`}>
+                                className={`flex items-center gap-2 mt-1 p-2 rounded-lg ${isOwn ? 'bg-jolshaa-teal-container hover:bg-jolshaa-teal-container' : 'bg-jolshaa-surface-container-high hover:bg-jolshaa-outline-variant'} transition`}>
                                 <span className="text-lg">📎</span>
                                 <span className="text-sm truncate">{msg.fileName || 'File'}</span>
                               </a>
@@ -653,10 +653,10 @@ const ChatWindow = ({ conversation, onBack, showInfoPanel, onToggleInfo, onStart
                                 <button key={emoji}
                                   onClick={() => handleReaction(msg._id, emoji)}
                                   className={`text-xs border rounded-full px-1.5 py-0.5 flex items-center gap-0.5 transition ${
-                                    iReacted ? 'bg-blue-50 border-blue-200' : 'bg-white border-gray-200 hover:bg-gray-50'
+                                    iReacted ? 'bg-jolshaa-teal/10 border-jolshaa-teal/30' : 'bg-jolshaa-surface-container-lowest border-jolshaa-outline-variant hover:bg-jolshaa-surface-container-low'
                                   }`}>
                                   <span>{emoji}</span>
-                                  {count > 1 && <span className="text-gray-500">{count}</span>}
+                                  {count > 1 && <span className="text-jolshaa-on-surface-variant">{count}</span>}
                                 </button>
                               );
                             })}
@@ -665,13 +665,13 @@ const ChatWindow = ({ conversation, onBack, showInfoPanel, onToggleInfo, onStart
 
                         {/* Timestamp & read receipts */}
                         {isLastInGroup && (
-                          <div className={`text-[10px] text-gray-400 mt-0.5 flex items-center gap-1 ${isOwn ? 'justify-end mr-1' : 'ml-1'}`}>
+                          <div className={`text-[10px] text-jolshaa-on-surface-variant mt-0.5 flex items-center gap-1 ${isOwn ? 'justify-end mr-1' : 'ml-1'}`}>
                             <span>{formatTime(msg.createdAt)}</span>
                             {msg.isEdited && <span className="italic">(edited)</span>}
                             {isOwn && (
                               msg.readBy?.length > 1
-                                ? <span className="text-blue-500">✓✓</span>
-                                : <span className="text-gray-400">✓</span>
+                                ? <span className="text-jolshaa-teal">✓✓</span>
+                                : <span className="text-jolshaa-on-surface-variant">✓</span>
                             )}
                           </div>
                         )}
@@ -679,29 +679,29 @@ const ChatWindow = ({ conversation, onBack, showInfoPanel, onToggleInfo, onStart
                         {/* Action buttons (hover) */}
                         {!isEditing && !isDeleted && (
                           <div
-                            className={`absolute top-0 -translate-y-1 flex items-center gap-0.5 bg-white border rounded-lg shadow-sm px-0.5 py-0.5 z-10 ${
+                            className={`absolute top-0 -translate-y-1 flex items-center gap-0.5 bg-jolshaa-surface-container-lowest border rounded-lg shadow-sm px-0.5 py-0.5 z-10 ${
                               selectedMsg === msg._id ? 'flex' : 'hidden group-hover:flex'
                             }`}
                             style={{ [isOwn ? 'right' : 'left']: '0' }}
                             onClick={(e) => e.stopPropagation()}
                           >
                             <button onClick={() => setShowEmojiPicker(showEmojiPicker === msg._id ? null : msg._id)}
-                              className="p-1 hover:bg-gray-100 rounded text-sm" title="React">😊</button>
+                              className="p-1 hover:bg-jolshaa-surface-container rounded text-sm" title="React">😊</button>
                             <button onClick={() => { setReplyTo(msg); setSelectedMsg(null); }}
-                              className="p-1 hover:bg-gray-100 rounded text-sm" title="Reply">↩️</button>
+                              className="p-1 hover:bg-jolshaa-surface-container rounded text-sm" title="Reply">↩️</button>
                             <button onClick={() => openForwardModal(msg)}
-                              className="p-1 hover:bg-gray-100 rounded text-sm" title="Forward">↪️</button>
+                              className="p-1 hover:bg-jolshaa-surface-container rounded text-sm" title="Forward">↪️</button>
                             {isOwn && isWithinEditWindow(msg.createdAt) && (
                               <button onClick={() => { setEditingMsg(msg); setEditText(msg.text || ''); setSelectedMsg(null); }}
-                                className="p-1 hover:bg-gray-100 rounded text-sm" title="Edit">✏️</button>
+                                className="p-1 hover:bg-jolshaa-surface-container rounded text-sm" title="Edit">✏️</button>
                             )}
                             {isOwn && isWithinDeleteWindow(msg.createdAt) && (
                               <button onClick={() => setShowDeleteModal(msg)}
-                                className="p-1 hover:bg-gray-100 rounded text-sm text-red-500" title="Delete">🗑</button>
+                                className="p-1 hover:bg-jolshaa-surface-container rounded text-sm text-red-500" title="Delete">🗑</button>
                             )}
                             {!isOwn && (
                               <button onClick={() => setShowDeleteModal(msg)}
-                                className="p-1 hover:bg-gray-100 rounded text-sm text-red-500" title="Delete for me">🗑</button>
+                                className="p-1 hover:bg-jolshaa-surface-container rounded text-sm text-red-500" title="Delete for me">🗑</button>
                             )}
                           </div>
                         )}
@@ -710,12 +710,12 @@ const ChatWindow = ({ conversation, onBack, showInfoPanel, onToggleInfo, onStart
                         {showEmojiPicker === msg._id && (
                           <>
                             <div className="fixed inset-0 z-10" onClick={() => setShowEmojiPicker(null)} />
-                            <div className={`absolute z-20 bg-white border rounded-xl shadow-xl p-1.5 flex gap-0.5 ${
+                            <div className={`absolute z-20 bg-jolshaa-surface-container-lowest border rounded-xl shadow-xl p-1.5 flex gap-0.5 ${
                               isOwn ? 'right-0' : 'left-0'
                             }`} style={{ bottom: '100%', marginBottom: '4px' }}>
                               {EMOJI_OPTIONS.map(emoji => (
                                 <button key={emoji} onClick={() => handleReaction(msg._id, emoji)}
-                                  className="p-1.5 hover:bg-gray-100 rounded-lg text-lg transition hover:scale-110">{emoji}</button>
+                                  className="p-1.5 hover:bg-jolshaa-surface-container rounded-lg text-lg transition hover:scale-110">{emoji}</button>
                               ))}
                             </div>
                           </>
@@ -733,35 +733,35 @@ const ChatWindow = ({ conversation, onBack, showInfoPanel, onToggleInfo, onStart
 
       {/* Reply preview bar */}
       {replyTo && (
-        <div className="px-4 py-2 bg-blue-50 border-t border-blue-100 flex items-center gap-2">
+        <div className="px-4 py-2 bg-jolshaa-teal/10 border-t border-jolshaa-teal/20 flex items-center gap-2">
           <div className="flex-1 min-w-0">
-            <p className="text-xs font-medium text-blue-700">Replying to {replyTo.sender?.name || 'message'}</p>
-            <p className="text-xs text-gray-500 truncate">{replyTo.text || 'Media'}</p>
+            <p className="text-xs font-medium text-jolshaa-teal-container">Replying to {replyTo.sender?.name || 'message'}</p>
+            <p className="text-xs text-jolshaa-on-surface-variant truncate">{replyTo.text || 'Media'}</p>
           </div>
-          <button onClick={() => setReplyTo(null)} className="p-1 text-gray-400 hover:text-gray-600">
+          <button onClick={() => setReplyTo(null)} className="p-1 text-jolshaa-on-surface-variant hover:text-jolshaa-on-surface-variant">
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
           </button>
         </div>
       )}
 
       {/* Input area */}
-      <div className="px-3 py-2 border-t bg-white flex-shrink-0">
+      <div className="px-3 py-2 border-t bg-jolshaa-surface-container-lowest flex-shrink-0">
         {uploadingFile && (
           <div className="text-center py-2">
-            <div className="w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto" />
+            <div className="w-6 h-6 border-2 border-jolshaa-teal border-t-transparent rounded-full animate-spin mx-auto" />
           </div>
         )}
         <div className="flex items-end gap-1.5">
           <input ref={imageInputRef} type="file" accept="image/*" className="hidden" onChange={(e) => handleFileUpload(e, 'image')} />
           <button onClick={() => imageInputRef.current?.click()}
-            className="p-2 text-gray-500 hover:text-blue-600 rounded-full hover:bg-gray-100 transition"
+            className="p-2 text-jolshaa-on-surface-variant hover:text-jolshaa-teal rounded-full hover:bg-jolshaa-surface-container transition"
             title="Send image">
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
           </button>
 
           <input ref={fileInputRef} type="file" accept="video/*,audio/*,.pdf,.doc,.docx,.txt,.zip" className="hidden" onChange={(e) => handleFileUpload(e, 'file')} />
           <button onClick={() => fileInputRef.current?.click()}
-            className="p-2 text-gray-500 hover:text-blue-600 rounded-full hover:bg-gray-100 transition"
+            className="p-2 text-jolshaa-on-surface-variant hover:text-jolshaa-teal rounded-full hover:bg-jolshaa-surface-container transition"
             title="Attach file">
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" /></svg>
           </button>
@@ -773,14 +773,14 @@ const ChatWindow = ({ conversation, onBack, showInfoPanel, onToggleInfo, onStart
               onKeyDown={handleKeyPress}
               placeholder="Message"
               rows={1}
-              className="w-full px-4 py-2 bg-gray-100 rounded-full text-sm resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 max-h-32"
+              className="w-full px-4 py-2 bg-jolshaa-surface-container rounded-full text-sm resize-none focus:outline-none focus:ring-2 focus:ring-jolshaa-teal max-h-32"
               style={{ minHeight: '40px' }}
             />
           </div>
 
           {text.trim() ? (
             <button onClick={handleSend}
-              className="p-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition">
+              className="p-2 bg-jolshaa-teal text-jolshaa-on-teal rounded-full hover:bg-jolshaa-teal-container transition">
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" /></svg>
             </button>
           ) : (
@@ -796,12 +796,12 @@ const ChatWindow = ({ conversation, onBack, showInfoPanel, onToggleInfo, onStart
       {showDeleteModal && (
         <>
           <div className="fixed inset-0 bg-black/50 z-30" onClick={() => setShowDeleteModal(null)} />
-          <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-40 bg-white rounded-2xl shadow-2xl p-6 w-80">
+          <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-40 bg-jolshaa-surface-container-lowest rounded-2xl shadow-2xl p-6 w-80">
             <h3 className="font-bold text-lg mb-4">Delete Message</h3>
             {showDeleteModal.sender?._id === user.id && isWithinDeleteWindow(showDeleteModal.createdAt) ? (
               <div className="space-y-3">
                 <button onClick={() => handleDeleteMessage(showDeleteModal._id, false)}
-                  className="w-full text-left px-4 py-3 text-sm hover:bg-gray-50 rounded-lg border">
+                  className="w-full text-left px-4 py-3 text-sm hover:bg-jolshaa-surface-container-low rounded-lg border">
                   Delete for me
                 </button>
                 <button onClick={() => handleDeleteMessage(showDeleteModal._id, true)}
@@ -811,12 +811,12 @@ const ChatWindow = ({ conversation, onBack, showInfoPanel, onToggleInfo, onStart
               </div>
             ) : (
               <button onClick={() => handleDeleteMessage(showDeleteModal._id, false)}
-                className="w-full px-4 py-2.5 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700">
+                className="w-full px-4 py-2.5 bg-jolshaa-teal text-jolshaa-on-teal text-sm rounded-lg hover:bg-jolshaa-teal-container">
                 Delete for me
               </button>
             )}
             <button onClick={() => setShowDeleteModal(null)}
-              className="w-full mt-3 px-4 py-2 text-sm text-gray-500 hover:bg-gray-50 rounded-lg">
+              className="w-full mt-3 px-4 py-2 text-sm text-jolshaa-on-surface-variant hover:bg-jolshaa-surface-container-low rounded-lg">
               Cancel
             </button>
           </div>
@@ -827,10 +827,10 @@ const ChatWindow = ({ conversation, onBack, showInfoPanel, onToggleInfo, onStart
       {showForwardModal && (
         <>
           <div className="fixed inset-0 bg-black/50 z-30" onClick={() => setShowForwardModal(false)} />
-          <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-40 bg-white rounded-2xl shadow-2xl w-96 max-h-[70vh] flex flex-col">
-            <div className="p-4 border-b flex items-center justify-between">
+          <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-40 bg-jolshaa-surface-container-lowest rounded-2xl shadow-2xl w-96 max-h-[70vh] flex flex-col">
+            <div className="p-4 border-b border-jolshaa-outline-variant flex items-center justify-between">
               <h3 className="font-bold">Forward to</h3>
-              <button onClick={() => setShowForwardModal(false)} className="text-gray-400 hover:text-gray-600">
+              <button onClick={() => setShowForwardModal(false)} className="text-jolshaa-on-surface-variant hover:text-jolshaa-on-surface-variant">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
               </button>
             </div>
@@ -845,11 +845,11 @@ const ChatWindow = ({ conversation, onBack, showInfoPanel, onToggleInfo, onStart
                         isSelected ? prev.filter(id => id !== conv._id) : [...prev, conv._id]
                       );
                     }}
-                    className="w-full flex items-center gap-3 p-3 hover:bg-gray-50 transition text-left">
+                    className="w-full flex items-center gap-3 p-3 hover:bg-jolshaa-surface-container-low transition text-left">
                     <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
-                      isSelected ? 'bg-blue-600 border-blue-600' : 'border-gray-300'
+                      isSelected ? 'bg-jolshaa-teal border-jolshaa-teal' : 'border-jolshaa-outline-variant'
                     }`}>
-                      {isSelected && <span className="text-white text-xs">&#10003;</span>}
+                      {isSelected && <span className="text-jolshaa-on-teal text-xs">&#10003;</span>}
                     </div>
                     <img
                       src={conv.isGroup ? conv.groupPhoto : other?.profilePhoto || 'https://ui-avatars.com/api/?name=U&background=494454&color=dae2fd&size=128'}
@@ -861,9 +861,9 @@ const ChatWindow = ({ conversation, onBack, showInfoPanel, onToggleInfo, onStart
               })}
             </div>
             {selectedForwardConvs.length > 0 && (
-              <div className="p-3 border-t">
+              <div className="p-3 border-t border-jolshaa-outline-variant">
                 <button onClick={handleForward}
-                  className="w-full py-2 bg-blue-600 text-white text-sm rounded-full hover:bg-blue-700 transition">
+                  className="w-full py-2 bg-jolshaa-teal text-jolshaa-on-teal text-sm rounded-full hover:bg-jolshaa-teal-container transition">
                   Forward ({selectedForwardConvs.length})
                 </button>
               </div>
@@ -876,7 +876,7 @@ const ChatWindow = ({ conversation, onBack, showInfoPanel, onToggleInfo, onStart
       {showMediaPreview && (
         <>
           <div className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center" onClick={() => setShowMediaPreview(null)}>
-            <button className="absolute top-4 right-4 text-white p-2 hover:bg-white/10 rounded-full">
+            <button className="absolute top-4 right-4 text-jolshaa-on-teal p-2 hover:bg-jolshaa-surface-container-lowest/10 rounded-full">
               <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
             </button>
             {showMediaPreview.type === 'image' && (

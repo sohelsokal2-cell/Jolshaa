@@ -91,9 +91,9 @@ const FriendRequests = () => {
 
   return (
     <Layout>
-      <div className="max-w-2xl mx-auto mt-4 px-4 pb-8">
-        <div className="card rounded-lg shadow-sm p-4 mb-4">
-          <h1 className="text-xl font-bold text-on-surface">Friends</h1>
+      <div className="mt-2 pb-8">
+        <div className="bg-jolshaa-surface-container-lowest rounded-xl shadow-ambient p-4 mb-4">
+          <h1 className="text-xl font-bold font-display text-jolshaa-on-surface">Friends</h1>
         </div>
 
         <div className="flex gap-2 mb-4">
@@ -101,10 +101,10 @@ const FriendRequests = () => {
             <button
               key={tab.key}
               onClick={() => setActiveTab(tab.key)}
-              className={`px-4 py-2 rounded-lg text-sm font-medium ${
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                 activeTab === tab.key
-                  ? 'btn-primary'
-                  : 'card text-on-surface-variant hover:bg-surface-high'
+                  ? 'bg-jolshaa-teal text-jolshaa-on-teal'
+                  : 'bg-jolshaa-surface-container-lowest text-jolshaa-on-surface-variant hover:bg-jolshaa-surface-container-low'
               }`}
             >
               {tab.label}
@@ -113,25 +113,25 @@ const FriendRequests = () => {
         </div>
 
         {error && (
-          <div className="bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 px-4 py-2 rounded-lg text-sm mb-4">
+          <div className="bg-red-50 text-red-600 px-4 py-2 rounded-lg text-sm mb-4">
             {error}
           </div>
         )}
 
         {loading ? (
-          <div className="text-center py-8 text-on-surface-variant">Loading...</div>
+          <div className="text-center py-8 text-jolshaa-on-surface-variant">Loading...</div>
         ) : (
           <>
             {/* Incoming Requests */}
             {activeTab === 'requests' && (
               <div className="space-y-3">
                 {incoming.length === 0 ? (
-                  <div className="card rounded-lg shadow-sm p-6 text-center text-on-surface-variant text-sm">
+                  <div className="bg-jolshaa-surface-container-lowest rounded-xl shadow-ambient p-6 text-center text-jolshaa-on-surface-variant text-sm">
                     No pending friend requests
                   </div>
                 ) : (
                   incoming.map((request) => (
-                    <div key={request._id} className="card rounded-lg shadow-sm p-4 flex items-center gap-4">
+                    <div key={request._id} className="bg-jolshaa-surface-container-lowest rounded-xl shadow-ambient p-4 flex items-center gap-4">
                       <Link to={`/profile/${request.from?._id}`}>
                         <img
                           src={request.from?.profilePhoto || 'https://ui-avatars.com/api/?name=U&background=494454&color=dae2fd&size=128'}
@@ -140,23 +140,23 @@ const FriendRequests = () => {
                         />
                       </Link>
                       <div className="flex-1">
-                        <Link to={`/profile/${request.from?._id}`} className="font-semibold text-on-surface hover:underline">
+                        <Link to={`/profile/${request.from?._id}`} className="font-semibold text-jolshaa-on-surface hover:underline">
                           {request.from?.name}
                         </Link>
                         {request.from?.bio && (
-                          <p className="text-on-surface-variant text-sm truncate">{request.from.bio}</p>
+                          <p className="text-jolshaa-on-surface-variant text-sm truncate">{request.from.bio}</p>
                         )}
                       </div>
                       <div className="flex gap-2">
                         <button
                           onClick={() => handleAccept(request._id)}
-                          className="px-4 py-2 bg-primary-600 text-white rounded-lg text-sm font-medium hover:bg-primary-700"
+                          className="px-4 py-2 bg-jolshaa-teal text-jolshaa-on-teal rounded-lg text-sm font-medium hover:bg-jolshaa-teal-container transition-colors"
                         >
                           Accept
                         </button>
                         <button
                           onClick={() => handleReject(request._id)}
-                          className="px-4 py-2 bg-surface-high text-on-surface-variant rounded-lg text-sm font-medium hover:bg-surface-highest"
+                          className="px-4 py-2 bg-jolshaa-surface-container-low text-jolshaa-on-surface-variant rounded-lg text-sm font-medium hover:bg-jolshaa-surface-container transition-colors"
                         >
                           Reject
                         </button>
@@ -171,12 +171,12 @@ const FriendRequests = () => {
             {activeTab === 'sent' && (
               <div className="space-y-3">
                 {outgoing.length === 0 ? (
-                  <div className="card rounded-lg shadow-sm p-6 text-center text-on-surface-variant text-sm">
+                  <div className="bg-jolshaa-surface-container-lowest rounded-xl shadow-ambient p-6 text-center text-jolshaa-on-surface-variant text-sm">
                     No outgoing friend requests
                   </div>
                 ) : (
                     outgoing.map((request) => (
-                    <div key={request._id} className="card rounded-lg shadow-sm p-4 flex items-center gap-4">
+                    <div key={request._id} className="bg-jolshaa-surface-container-lowest rounded-xl shadow-ambient p-4 flex items-center gap-4">
                       <Link to={`/profile/${request.to?._id}`}>
                         <img
                           src={request.to?.profilePhoto || 'https://ui-avatars.com/api/?name=U&background=494454&color=dae2fd&size=128'}
@@ -185,14 +185,14 @@ const FriendRequests = () => {
                         />
                       </Link>
                       <div className="flex-1">
-                        <Link to={`/profile/${request.to?._id}`} className="font-semibold text-on-surface hover:underline">
+                        <Link to={`/profile/${request.to?._id}`} className="font-semibold text-jolshaa-on-surface hover:underline">
                           {request.to?.name}
                         </Link>
-                        <p className="text-on-surface-variant text-xs">Request pending</p>
+                        <p className="text-jolshaa-on-surface-variant text-xs">Request pending</p>
                       </div>
                       <button
                         onClick={() => handleCancelRequest(request._id)}
-                        className="px-4 py-2 bg-surface-high text-on-surface-variant rounded-lg text-sm font-medium hover:bg-surface-highest"
+                        className="px-4 py-2 bg-jolshaa-surface-container-low text-jolshaa-on-surface-variant rounded-lg text-sm font-medium hover:bg-jolshaa-surface-container transition-colors"
                       >
                         Cancel
                       </button>
@@ -211,17 +211,17 @@ const FriendRequests = () => {
                     placeholder="Search friends..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full card border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 text-on-surface"
+                    className="w-full bg-jolshaa-surface-container-lowest border border-jolshaa-outline-variant rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-jolshaa-teal text-jolshaa-on-surface"
                   />
                 </div>
                 <div className="space-y-3">
                   {filteredFriends.length === 0 ? (
-                    <div className="card rounded-lg shadow-sm p-6 text-center text-on-surface-variant text-sm">
+                    <div className="bg-jolshaa-surface-container-lowest rounded-xl shadow-ambient p-6 text-center text-jolshaa-on-surface-variant text-sm">
                       {friends.length === 0 ? 'No friends yet' : 'No friends match your search'}
                     </div>
                   ) : (
                       filteredFriends.map((friend) => (
-                      <div key={friend._id} className="card rounded-lg shadow-sm p-4 flex items-center gap-4">
+                      <div key={friend._id} className="bg-jolshaa-surface-container-lowest rounded-xl shadow-ambient p-4 flex items-center gap-4">
                         <Link to={`/profile/${friend._id}`}>
                           <img
                             src={friend.profilePhoto || 'https://ui-avatars.com/api/?name=U&background=494454&color=dae2fd&size=128'}
@@ -230,11 +230,11 @@ const FriendRequests = () => {
                           />
                         </Link>
                         <div className="flex-1">
-                          <Link to={`/profile/${friend._id}`} className="font-semibold text-on-surface hover:underline">
+                          <Link to={`/profile/${friend._id}`} className="font-semibold text-jolshaa-on-surface hover:underline">
                             {friend.name}
                           </Link>
                           {friend.bio && (
-                            <p className="text-on-surface-variant text-sm truncate">{friend.bio}</p>
+                            <p className="text-jolshaa-on-surface-variant text-sm truncate">{friend.bio}</p>
                           )}
                         </div>
                         <button

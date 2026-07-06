@@ -92,18 +92,18 @@ const AdminSidebar = ({ activeSection, onSectionChange, isSuperadmin, isOpen, on
       )}
 
       <aside
-        className={`fixed top-14 left-0 w-64 h-[calc(100vh-56px)] bg-white dark:bg-neutral-800 border-r border-neutral-200 dark:border-neutral-700 z-50 transition-transform duration-200 ease-in-out overflow-y-auto
+        className={`fixed top-14 left-0 w-64 h-[calc(100vh-56px)] bg-jolshaa-surface-container-lowest border-r border-jolshaa-outline-variant z-50 transition-transform duration-200 ease-in-out overflow-y-auto
           ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
         `}
         style={{ scrollbarWidth: 'thin', scrollbarColor: 'rgb(204 204 204) transparent' }}
       >
         <div className="p-4">
           {/* Admin profile mini */}
-          <div className="flex items-center gap-3 mb-4 pb-4 border-b border-neutral-100 dark:border-neutral-700">
+          <div className="flex items-center gap-3 mb-4 pb-4 border-b border-jolshaa-outline-variant">
             <Avatar src={user?.profilePhoto} alt={user?.name} size="md" />
             <div className="min-w-0">
-              <p className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 truncate">{user?.name}</p>
-              <p className="text-xs text-primary-600 dark:text-primary-400 capitalize">{user?.role}</p>
+              <p className="text-sm font-semibold text-jolshaa-on-surface truncate">{user?.name}</p>
+              <p className="text-xs text-jolshaa-teal capitalize">{user?.role}</p>
             </div>
           </div>
 
@@ -114,7 +114,7 @@ const AdminSidebar = ({ activeSection, onSectionChange, isSuperadmin, isOpen, on
               .map((section, idx) => (
               <div key={idx}>
                 {section.label && (
-                  <p className="text-2xs font-semibold text-neutral-400 dark:text-neutral-500 uppercase tracking-wider mb-2 px-2">
+                  <p className="text-2xs font-semibold text-jolshaa-on-surface-variant uppercase tracking-wider mb-2 px-2">
                     {section.label}
                   </p>
                 )}
@@ -125,16 +125,16 @@ const AdminSidebar = ({ activeSection, onSectionChange, isSuperadmin, isOpen, on
                       onClick={() => onSectionChange(item.key)}
                       className={`w-full flex items-center gap-3 px-2.5 py-2 rounded-lg text-sm font-medium transition-colors ${
                         activeSection === item.key
-                          ? 'bg-primary-50 text-primary-600 dark:bg-primary-900/20 dark:text-primary-400'
-                          : 'text-neutral-600 hover:bg-neutral-50 dark:text-neutral-400 dark:hover:bg-neutral-700/50'
+                          ? 'bg-jolshaa-teal/10 text-jolshaa-teal'
+                          : 'text-jolshaa-on-surface-variant hover:bg-jolshaa-surface-container-low'
                       }`}
                     >
                       <Icon
                         path={item.icon}
                         className={`w-5 h-5 flex-shrink-0 ${
                           activeSection === item.key
-                            ? 'text-primary-600 dark:text-primary-400'
-                            : 'text-neutral-400 dark:text-neutral-500'
+                            ? 'text-jolshaa-teal'
+                            : 'text-jolshaa-outline'
                         }`}
                       />
                       {item.label}
@@ -147,10 +147,10 @@ const AdminSidebar = ({ activeSection, onSectionChange, isSuperadmin, isOpen, on
         </div>
 
         {/* Footer */}
-        <div className="p-4 border-t border-neutral-100 dark:border-neutral-700">
+        <div className="p-4 border-t border-jolshaa-outline-variant">
           <Link
             to="/feed"
-            className="flex items-center gap-2 text-sm text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300 transition-colors"
+            className="flex items-center gap-2 text-sm text-jolshaa-on-surface-variant hover:text-jolshaa-on-surface transition-colors"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />

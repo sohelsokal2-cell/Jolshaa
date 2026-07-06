@@ -13,7 +13,7 @@ const Avatar = ({ src, alt, size = 'md', className = '' }) => {
 
   if (!src) {
     return (
-      <div className={`${sizes[size]} rounded-full bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center text-primary-600 dark:text-primary-400 font-semibold flex-shrink-0 ${className}`}>
+      <div className={`${sizes[size]} rounded-full bg-jolshaa-teal/10 flex items-center justify-center text-jolshaa-teal font-semibold flex-shrink-0 ${className}`}>
         {size === 'xs' || size === 'sm' ? (
           <span className="text-xs">{fallbackInitial}</span>
         ) : (
@@ -27,7 +27,7 @@ const Avatar = ({ src, alt, size = 'md', className = '' }) => {
     <img
       src={src}
       alt={alt || ''}
-      className={`${sizes[size]} rounded-full object-cover bg-neutral-200 dark:bg-neutral-700 flex-shrink-0 ${className}`}
+      className={`${sizes[size]} rounded-full object-cover bg-jolshaa-surface-container-low flex-shrink-0 ${className}`}
       loading="lazy"
     />
   );

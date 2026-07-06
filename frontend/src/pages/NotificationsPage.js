@@ -73,9 +73,9 @@ const NotificationsPage = () => {
 
   return (
     <Layout>
-      <div className="max-w-2xl mx-auto py-6 px-4">
+      <div className="mt-2 pb-8">
         <div className="flex items-center justify-between gap-3 mb-6">
-          <h1 className="text-xl sm:text-2xl font-bold text-neutral-900 dark:text-neutral-100">Notifications</h1>
+          <h1 className="text-xl sm:text-2xl font-bold font-display text-jolshaa-on-surface">Notifications</h1>
           {notifications.some(n => !n.isRead) && (
             <Button size="sm" variant="ghost" onClick={markAllAsRead}>Mark all read</Button>
           )}
@@ -84,21 +84,21 @@ const NotificationsPage = () => {
         {loading ? (
           <div className="space-y-3">
             {[1,2,3,4,5].map(i => (
-              <div key={i} className="flex items-center gap-3 p-4 bg-white dark:bg-neutral-800 rounded-lg animate-pulse">
-                <div className="w-10 h-10 bg-neutral-200 dark:bg-neutral-700 rounded-full" />
+              <div key={i} className="flex items-center gap-3 p-4 bg-jolshaa-surface-container-lowest rounded-lg animate-pulse">
+                <div className="w-10 h-10 bg-jolshaa-surface-container-low rounded-full" />
                 <div className="flex-1 space-y-2">
-                  <div className="h-4 bg-neutral-200 dark:bg-neutral-700 rounded w-3/4" />
-                  <div className="h-3 bg-neutral-200 dark:bg-neutral-700 rounded w-1/2" />
+                  <div className="h-4 bg-jolshaa-surface-container-low rounded w-3/4" />
+                  <div className="h-3 bg-jolshaa-surface-container-low rounded w-1/2" />
                 </div>
               </div>
             ))}
           </div>
         ) : notifications.length === 0 ? (
           <div className="text-center py-12">
-            <div className="w-16 h-16 bg-neutral-100 dark:bg-neutral-800 rounded-full flex items-center justify-center mx-auto mb-4">
+            <div className="w-16 h-16 bg-jolshaa-surface-container-low rounded-full flex items-center justify-center mx-auto mb-4">
               <span className="text-2xl">🔔</span>
             </div>
-            <p className="text-neutral-500">No notifications yet</p>
+            <p className="text-jolshaa-on-surface-variant">No notifications yet</p>
           </div>
         ) : (
           <div className="space-y-2">
@@ -109,28 +109,28 @@ const NotificationsPage = () => {
                 onClick={() => !n.isRead && markAsRead(n._id)}
                 className={`flex items-start gap-3 p-4 rounded-lg transition-colors ${
                   n.isRead
-                    ? 'bg-white dark:bg-neutral-800 hover:bg-neutral-50 dark:hover:bg-neutral-700/50'
-                    : 'bg-primary-50 dark:bg-primary-900/20 hover:bg-primary-100 dark:hover:bg-primary-900/30'
+                    ? 'bg-jolshaa-surface-container-lowest hover:bg-jolshaa-surface-container-low'
+                    : 'bg-jolshaa-teal/10 hover:bg-jolshaa-teal/20'
                 }`}
               >
                 {n.sender ? (
                   <Avatar src={n.sender.profilePhoto} alt={n.sender.name} size="md" />
                 ) : (
-                  <div className="w-10 h-10 bg-neutral-100 dark:bg-neutral-700 rounded-full flex items-center justify-center">
+                  <div className="w-10 h-10 bg-jolshaa-surface-container-low rounded-full flex items-center justify-center">
                     <span>{getNotificationIcon(n.type)}</span>
                   </div>
                 )}
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm text-neutral-900 dark:text-neutral-100">
+                  <p className="text-sm text-jolshaa-on-surface">
                     <span className="font-semibold">{n.sender?.name || 'System'}</span>{' '}
                     {n.message || n.text || `${n.type} notification`}
                   </p>
-                  <p className="text-xs text-neutral-500 mt-0.5">
+                  <p className="text-xs text-jolshaa-on-surface-variant mt-0.5">
                     {new Date(n.createdAt).toLocaleString()}
                   </p>
                 </div>
                 {!n.isRead && (
-                  <div className="w-2.5 h-2.5 bg-primary-500 rounded-full flex-shrink-0 mt-1.5" />
+                  <div className="w-2.5 h-2.5 bg-jolshaa-teal rounded-full flex-shrink-0 mt-1.5" />
                 )}
               </Link>
             ))}

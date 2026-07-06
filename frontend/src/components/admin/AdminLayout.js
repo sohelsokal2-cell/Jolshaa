@@ -6,7 +6,7 @@ const AdminLayout = ({ children, activeSection, onSectionChange, isSuperadmin })
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-neutral-100 dark:bg-neutral-900">
+    <div className="min-h-screen bg-jolshaa-surface">
       <AdminTopBar onMenuToggle={() => setSidebarOpen(!sidebarOpen)} />
 
       <div className="flex pt-14">

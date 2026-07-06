@@ -50,12 +50,12 @@ const SearchResults = () => {
 
   return (
     <Layout>
-      <div className="max-w-2xl mx-auto mt-4 px-4">
-        <div className="card rounded-lg shadow-sm p-4 mb-4">
-          <h2 className="text-lg font-semibold text-on-surface mb-1">
+      <div className="mt-2 pb-8">
+        <div className="bg-jolshaa-surface-container-lowest rounded-xl shadow-ambient p-4 mb-4">
+          <h2 className="text-lg font-semibold font-display text-jolshaa-on-surface mb-1">
             Search results for "{query}"
           </h2>
-          <p className="text-on-surface-variant text-sm">{totalResults} results found</p>
+          <p className="text-jolshaa-on-surface-variant text-sm">{totalResults} results found</p>
         </div>
 
         <div className="flex gap-2 mb-4 overflow-x-auto">
@@ -63,10 +63,10 @@ const SearchResults = () => {
             <button
               key={tab.key}
               onClick={() => setActiveTab(tab.key)}
-              className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap ${
+              className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
                 activeTab === tab.key
-                  ? 'bg-primary-600 text-white'
-                  : 'bg-surface text-on-surface-variant hover:bg-white/5'
+                  ? 'bg-jolshaa-teal text-jolshaa-on-teal'
+                  : 'bg-jolshaa-surface-container-lowest text-jolshaa-on-surface-variant hover:bg-jolshaa-surface-container-low'
               }`}
             >
               {tab.label}
@@ -80,18 +80,18 @@ const SearchResults = () => {
         </div>
 
         {loading ? (
-          <div className="text-center py-8 text-on-surface-variant">Searching...</div>
+          <div className="text-center py-8 text-jolshaa-on-surface-variant">Searching...</div>
         ) : totalResults === 0 ? (
-          <div className="text-center py-8 text-on-surface-variant">No results found</div>
+          <div className="text-center py-8 text-jolshaa-on-surface-variant">No results found</div>
         ) : (
           <div className="space-y-4">
             {/* Users */}
             {filteredResults.users && filteredResults.users.length > 0 && (
-              <div className="bg-surface rounded-lg shadow-sm p-4">
-                <h3 className="font-semibold text-on-surface mb-3">Users</h3>
+              <div className="bg-jolshaa-surface-container-lowest rounded-xl shadow-ambient p-4">
+                <h3 className="font-semibold font-display text-jolshaa-on-surface mb-3">Users</h3>
                 <div className="space-y-3">
                   {filteredResults.users.map((u) => (
-                    <div key={u._id} className="flex items-center gap-3 p-2 rounded-lg hover:bg-white/5">
+                    <div key={u._id} className="flex items-center gap-3 p-2 rounded-lg hover:bg-jolshaa-surface-container-low transition-colors">
                       <Link to={`/profile/${u._id}`}>
                         <img
                           src={u.profilePhoto || 'https://ui-avatars.com/api/?name=U&background=494454&color=dae2fd&size=128'}
@@ -100,11 +100,11 @@ const SearchResults = () => {
                         />
                       </Link>
                       <div className="flex-1 min-w-0">
-                        <Link to={`/profile/${u._id}`} className="font-medium text-on-surface hover:underline">
+                        <Link to={`/profile/${u._id}`} className="font-medium text-jolshaa-on-surface hover:underline">
                           {u.name}
                         </Link>
                         {u.bio && (
-                          <p className="text-on-surface-variant text-sm truncate">{u.bio}</p>
+                          <p className="text-jolshaa-on-surface-variant text-sm truncate">{u.bio}</p>
                         )}
                       </div>
                       {u._id !== user.id && (
@@ -122,23 +122,23 @@ const SearchResults = () => {
 
             {/* Posts */}
             {filteredResults.posts && filteredResults.posts.length > 0 && (
-              <div className="bg-surface rounded-lg shadow-sm p-4">
-                <h3 className="font-semibold text-on-surface mb-3">Posts</h3>
+              <div className="bg-jolshaa-surface-container-lowest rounded-xl shadow-ambient p-4">
+                <h3 className="font-semibold font-display text-jolshaa-on-surface mb-3">Posts</h3>
                 <div className="space-y-3">
                   {filteredResults.posts.map((post) => (
-                    <div key={post._id} className="p-3 bg-surface-high/50 rounded-lg">
+                    <div key={post._id} className="p-3 bg-jolshaa-surface-container-low rounded-lg">
                       <div className="flex items-center gap-2 mb-2">
                         <img
                           src={post.author?.profilePhoto || 'https://ui-avatars.com/api/?name=U&background=494454&color=dae2fd&size=128'}
                           alt={`${post.author?.name}'s avatar`}
                           className="w-8 h-8 rounded-full object-cover"
                         />
-                        <span className="font-medium text-sm text-on-surface">{post.author?.name}</span>
-                        <span className="text-on-surface-variant/60 text-xs">
+                        <span className="font-medium text-sm text-jolshaa-on-surface">{post.author?.name}</span>
+                        <span className="text-jolshaa-on-surface-variant text-xs">
                           {new Date(post.createdAt).toLocaleDateString()}
                         </span>
                       </div>
-                      <p className="text-on-surface text-sm line-clamp-3">{post.text}</p>
+                      <p className="text-jolshaa-on-surface text-sm line-clamp-3">{post.text}</p>
                     </div>
                   ))}
                 </div>
@@ -147,23 +147,23 @@ const SearchResults = () => {
 
             {/* Groups */}
             {filteredResults.groups && filteredResults.groups.length > 0 && (
-              <div className="bg-surface rounded-lg shadow-sm p-4">
-                <h3 className="font-semibold text-on-surface mb-3">Groups</h3>
+              <div className="bg-jolshaa-surface-container-lowest rounded-xl shadow-ambient p-4">
+                <h3 className="font-semibold font-display text-jolshaa-on-surface mb-3">Groups</h3>
                 <div className="space-y-3">
                   {filteredResults.groups.map((group) => (
                     <Link
                       key={group._id}
                       to={`/groups/${group._id}`}
-                      className="flex items-center gap-3 p-2 rounded-lg hover:bg-white/5"
+                      className="flex items-center gap-3 p-2 rounded-lg hover:bg-jolshaa-surface-container-low transition-colors"
                     >
-                      <div className="w-12 h-12 rounded-lg bg-primary-600/20 flex items-center justify-center">
-                        <span className="text-primary-400 font-bold text-lg">
+                      <div className="w-12 h-12 rounded-lg bg-jolshaa-teal/10 flex items-center justify-center">
+                        <span className="text-jolshaa-teal font-bold text-lg">
                           {group.name.charAt(0)}
                         </span>
                       </div>
                       <div>
-                        <p className="font-medium text-on-surface">{group.name}</p>
-                        <p className="text-on-surface-variant text-sm">
+                        <p className="font-medium text-jolshaa-on-surface">{group.name}</p>
+                        <p className="text-jolshaa-on-surface-variant text-sm">
                           {group.privacy} · {group.members?.length || 0} members
                         </p>
                       </div>
@@ -175,30 +175,30 @@ const SearchResults = () => {
 
             {/* Pages */}
             {filteredResults.pages && filteredResults.pages.length > 0 && (
-              <div className="bg-surface rounded-lg shadow-sm p-4">
-                <h3 className="font-semibold text-on-surface mb-3">Pages</h3>
+              <div className="bg-jolshaa-surface-container-lowest rounded-xl shadow-ambient p-4">
+                <h3 className="font-semibold font-display text-jolshaa-on-surface mb-3">Pages</h3>
                 <div className="space-y-3">
                   {filteredResults.pages.map((page) => (
                     <Link
                       key={page._id}
                       to={`/pages/${page._id}`}
-                      className="flex items-center gap-3 p-2 rounded-lg hover:bg-white/5"
+                      className="flex items-center gap-3 p-2 rounded-lg hover:bg-jolshaa-surface-container-low transition-colors"
                     >
-                      <div className="w-12 h-12 rounded-lg bg-purple-600/20 flex items-center justify-center">
-                        <span className="text-purple-400 font-bold text-lg">
+                      <div className="w-12 h-12 rounded-lg bg-jolshaa-indigo/10 flex items-center justify-center">
+                        <span className="text-jolshaa-indigo font-bold text-lg">
                           {page.name.charAt(0)}
                         </span>
                       </div>
                       <div>
-                        <p className="font-medium text-on-surface flex items-center gap-1">
+                        <p className="font-medium text-jolshaa-on-surface flex items-center gap-1">
                           {page.name}
                           {page.isVerified && (
-                            <span className="inline-flex items-center justify-center w-4 h-4 bg-primary-500 text-white rounded-full text-[10px]">
+                            <span className="inline-flex items-center justify-center w-4 h-4 bg-jolshaa-teal text-jolshaa-on-teal rounded-full text-[10px]">
                               <svg className="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" /></svg>
                             </span>
                           )}
                         </p>
-                        <p className="text-on-surface-variant text-sm">
+                        <p className="text-jolshaa-on-surface-variant text-sm">
                           {page.category} · {page.followers?.length || 0} followers
                         </p>
                       </div>

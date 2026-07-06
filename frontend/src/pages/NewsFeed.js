@@ -38,11 +38,11 @@ const AdCard = ({ ad, onImpression }) => {
   };
 
   return (
-    <div ref={ref} className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-xl overflow-hidden">
-      <div className="flex items-center gap-2 px-4 py-2 bg-neutral-50 dark:bg-neutral-800 border-b border-neutral-200 dark:border-neutral-700">
-        <span className="text-[10px] font-semibold uppercase tracking-wider text-amber-600">Sponsored</span>
+    <div ref={ref} className="bg-jolshaa-surface-container-lowest border border-jolshaa-outline-variant rounded-xl overflow-hidden shadow-ambient">
+      <div className="flex items-center gap-2 px-4 py-2 bg-jolshaa-surface-container-low border-b border-jolshaa-outline-variant">
+        <span className="text-[10px] font-semibold uppercase tracking-wider text-jolshaa-coral">Sponsored</span>
         {ad.advertiser?.name && (
-          <span className="text-[10px] text-neutral-400">by {ad.advertiser.name}</span>
+          <span className="text-[10px] text-jolshaa-on-surface-variant">by {ad.advertiser.name}</span>
         )}
       </div>
       {ad.imageUrl && (
@@ -54,15 +54,15 @@ const AdCard = ({ ad, onImpression }) => {
         />
       )}
       <div className="p-4">
-        <h4 className="font-semibold text-sm text-neutral-900 dark:text-neutral-100 mb-1 cursor-pointer hover:underline" onClick={handleClick}>
+        <h4 className="font-semibold text-sm text-jolshaa-on-surface mb-1 cursor-pointer hover:underline" onClick={handleClick}>
           {ad.title}
         </h4>
         {ad.description && (
-          <p className="text-xs text-neutral-500 mb-3 line-clamp-2">{ad.description}</p>
+          <p className="text-xs text-jolshaa-on-surface-variant mb-3 line-clamp-2">{ad.description}</p>
         )}
         <button
           onClick={handleClick}
-          className="text-xs font-medium text-primary-600 hover:text-primary-700 dark:text-primary-400"
+          className="text-xs font-medium text-jolshaa-teal hover:text-jolshaa-teal-container"
         >
           Learn more →
         </button>
@@ -156,9 +156,9 @@ const NewsFeed = () => {
       <CreatePostBox onPostCreated={handlePostCreated} />
 
       {error && (
-        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-4 mb-4 text-center">
-          <p className="text-red-600 dark:text-red-400 text-sm">{error}</p>
-          <button onClick={() => { setError(null); fetchPosts(1); }} className="text-xs text-red-700 dark:text-red-300 font-medium mt-1 hover:underline">
+        <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-4 text-center">
+          <p className="text-red-600 text-sm">{error}</p>
+          <button onClick={() => { setError(null); fetchPosts(1); }} className="text-xs text-red-700 font-medium mt-1 hover:underline">
             Try again
           </button>
         </div>
@@ -170,14 +170,14 @@ const NewsFeed = () => {
         </div>
       ) : posts.length === 0 ? (
         <div className="text-center py-12">
-          <div className="w-16 h-16 bg-neutral-200 dark:bg-neutral-700 rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg className="w-8 h-8 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="w-16 h-16 bg-jolshaa-surface-container rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg className="w-8 h-8 text-jolshaa-outline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
             </svg>
           </div>
-          <h3 className="text-lg font-semibold text-neutral-900 dark:text-neutral-100 mb-1">No posts yet</h3>
-          <p className="text-sm text-neutral-500 mb-4">Be the first to share something with your friends!</p>
-          <Link to="/feed" className="inline-flex items-center gap-2 bg-primary-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-primary-700 transition-colors">
+          <h3 className="text-lg font-semibold font-display text-jolshaa-on-surface mb-1">No posts yet</h3>
+          <p className="text-sm text-jolshaa-on-surface-variant mb-4">Be the first to share something with your friends!</p>
+          <Link to="/feed" className="inline-flex items-center gap-2 bg-jolshaa-teal text-jolshaa-on-teal px-4 py-2 rounded-lg text-sm font-medium hover:bg-jolshaa-teal-container transition-colors shadow-ambient">
             Create your first post
           </Link>
         </div>
@@ -198,15 +198,15 @@ const NewsFeed = () => {
 
           {loading && (
             <div className="flex justify-center py-4">
-              <div className="flex items-center gap-2 text-sm text-neutral-500">
-                <div className="w-4 h-4 border-2 border-primary-600 border-t-transparent rounded-full animate-spin" />
+              <div className="flex items-center gap-2 text-sm text-jolshaa-on-surface-variant">
+                <div className="w-4 h-4 border-2 border-jolshaa-teal border-t-transparent rounded-full animate-spin" />
                 Loading more...
               </div>
             </div>
           )}
 
           {page >= totalPages && posts.length > 0 && (
-            <div className="text-center py-6 text-neutral-400 text-sm">You're all caught up!</div>
+            <div className="text-center py-6 text-jolshaa-on-surface-variant/70 text-sm">You're all caught up!</div>
           )}
         </>
       )}

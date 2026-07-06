@@ -38,12 +38,12 @@ const Groups = () => {
 
   return (
     <Layout>
-      <div className="max-w-4xl mx-auto mt-6 px-4">
+      <div className="mt-2">
         <div className="flex items-center justify-between mb-6">
-          <h1 className="text-2xl font-bold">Groups</h1>
+          <h1 className="text-2xl font-bold font-display text-jolshaa-on-surface">Groups</h1>
           <Link
             to="/groups/create"
-            className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700 transition"
+            className="bg-jolshaa-teal text-jolshaa-on-teal px-4 py-2 rounded-lg text-sm font-medium hover:bg-jolshaa-teal-container transition-colors shadow-ambient"
           >
             Create Group
           </Link>
@@ -55,20 +55,20 @@ const Groups = () => {
             placeholder="Search groups..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="flex-1 px-4 py-2 bg-jolshaa-surface-container-lowest border border-jolshaa-outline-variant rounded-lg text-jolshaa-on-surface focus:outline-none focus:ring-2 focus:ring-jolshaa-teal"
           />
           <button
             type="submit"
-            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+            className="bg-jolshaa-teal text-jolshaa-on-teal px-4 py-2 rounded-lg text-sm font-medium hover:bg-jolshaa-teal-container transition-colors"
           >
             Search
           </button>
         </form>
 
         {loading ? (
-          <div className="text-center py-8 text-gray-500">Loading groups...</div>
+          <div className="text-center py-8 text-jolshaa-on-surface-variant">Loading groups...</div>
         ) : groups.length === 0 ? (
-          <div className="text-center py-8 text-gray-500">
+          <div className="text-center py-8 text-jolshaa-on-surface-variant">
             No groups found. Create the first one!
           </div>
         ) : (
@@ -84,15 +84,15 @@ const Groups = () => {
                 <button
                   onClick={() => setPage(p => Math.max(1, p - 1))}
                   disabled={page === 1}
-                  className="px-3 py-1 rounded border disabled:opacity-50"
+                  className="px-3 py-1 rounded-lg border border-jolshaa-outline-variant text-jolshaa-on-surface hover:bg-jolshaa-surface-container-low disabled:opacity-50 transition-colors"
                 >
                   Previous
                 </button>
-                <span className="px-3 py-1">Page {page} of {totalPages}</span>
+                <span className="px-3 py-1 text-jolshaa-on-surface-variant">Page {page} of {totalPages}</span>
                 <button
                   onClick={() => setPage(p => Math.min(totalPages, p + 1))}
                   disabled={page === totalPages}
-                  className="px-3 py-1 rounded border disabled:opacity-50"
+                  className="px-3 py-1 rounded-lg border border-jolshaa-outline-variant text-jolshaa-on-surface hover:bg-jolshaa-surface-container-low disabled:opacity-50 transition-colors"
                 >
                   Next
                 </button>

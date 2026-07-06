@@ -215,18 +215,18 @@ const ChatSidebar = ({ activeConversation, onSelectConversation, className = '' 
   );
 
   return (
-    <div className={`bg-white border-r h-full flex flex-col relative ${className}`}>
+    <div className={`bg-jolshaa-surface-container-lowest border-r border-jolshaa-outline-variant h-full flex flex-col relative ${className}`}>
       {/* New Chat Panel */}
       {showNewChat && (
-        <div className="absolute inset-0 z-20 bg-white flex flex-col">
-          <div className="p-3 border-b flex items-center gap-2">
-            <button onClick={() => setShowNewChat(false)} className="text-gray-500 hover:text-gray-700">
+        <div className="absolute inset-0 z-20 bg-jolshaa-surface-container-lowest flex flex-col">
+          <div className="p-3 border-b border-jolshaa-outline-variant flex items-center gap-2">
+            <button onClick={() => setShowNewChat(false)} className="text-jolshaa-on-surface-variant hover:text-jolshaa-on-surface">
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
             </button>
             <h3 className="font-semibold text-sm">New Message</h3>
             <button
               onClick={() => { setShowGroupModal(true); setShowNewChat(false); }}
-              className="ml-auto text-xs text-blue-600 hover:underline"
+              className="ml-auto text-xs text-jolshaa-teal hover:underline"
             >
               Create Group
             </button>
@@ -237,7 +237,7 @@ const ChatSidebar = ({ activeConversation, onSelectConversation, className = '' 
               value={friendSearch}
               onChange={(e) => setFriendSearch(e.target.value)}
               placeholder="Search friends..."
-              className="w-full px-3 py-2 text-sm border rounded-full focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="w-full px-3 py-2 text-sm border border-jolshaa-outline-variant rounded-full focus:outline-none focus:ring-1 focus:ring-jolshaa-teal"
             />
           </div>
           <div className="flex-1 overflow-y-auto">
@@ -245,13 +245,13 @@ const ChatSidebar = ({ activeConversation, onSelectConversation, className = '' 
               <div className="p-4 space-y-3">
                 {[1,2,3].map(i => (
                   <div key={i} className="flex items-center gap-3 animate-pulse">
-                    <div className="w-10 h-10 bg-gray-200 rounded-full" />
-                    <div className="h-4 bg-gray-200 rounded w-1/2" />
+                    <div className="w-10 h-10 bg-jolshaa-surface-container-high rounded-full" />
+                    <div className="h-4 bg-jolshaa-surface-container-high rounded w-1/2" />
                   </div>
                 ))}
               </div>
             ) : filteredFriends.length === 0 ? (
-              <div className="p-4 text-center text-gray-500 text-sm">
+              <div className="p-4 text-center text-jolshaa-on-surface-variant text-sm">
                 {friendSearch ? 'No friends match' : 'No friends yet'}
               </div>
             ) : (
@@ -259,7 +259,7 @@ const ChatSidebar = ({ activeConversation, onSelectConversation, className = '' 
                 <button
                   key={friend._id}
                   onClick={() => startConversation(friend._id)}
-                  className="w-full flex items-center gap-3 p-3 hover:bg-gray-50 transition text-left"
+                  className="w-full flex items-center gap-3 p-3 hover:bg-jolshaa-surface-container-low transition text-left"
                 >
                   <div className="relative">
                     <img
@@ -267,12 +267,12 @@ const ChatSidebar = ({ activeConversation, onSelectConversation, className = '' 
                       alt="" className="w-10 h-10 rounded-full object-cover"
                     />
                     {onlineUsers.has(friend._id) && (
-                      <div className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 rounded-full border-2 border-white" />
+                      <div className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 rounded-full border-2 border-jolshaa-surface-container-lowest" />
                     )}
                   </div>
                   <div>
                     <span className="font-medium text-sm block">{friend.name}</span>
-                    <span className="text-xs text-gray-400">
+                    <span className="text-xs text-jolshaa-on-surface-variant">
                       {onlineUsers.has(friend._id) ? 'Active now' : ''}
                     </span>
                   </div>
@@ -285,20 +285,20 @@ const ChatSidebar = ({ activeConversation, onSelectConversation, className = '' 
 
       {/* Group Creation Modal */}
       {showGroupModal && (
-        <div className="absolute inset-0 z-20 bg-white flex flex-col">
-          <div className="p-3 border-b flex items-center gap-2">
-            <button onClick={() => { setShowGroupModal(false); setShowNewChat(true); }} className="text-gray-500 hover:text-gray-700">
+        <div className="absolute inset-0 z-20 bg-jolshaa-surface-container-lowest flex flex-col">
+          <div className="p-3 border-b border-jolshaa-outline-variant flex items-center gap-2">
+            <button onClick={() => { setShowGroupModal(false); setShowNewChat(true); }} className="text-jolshaa-on-surface-variant hover:text-jolshaa-on-surface">
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
             </button>
             <h3 className="font-semibold text-sm">New Group</h3>
           </div>
-          <div className="p-3 border-b">
+          <div className="p-3 border-b border-jolshaa-outline-variant">
             <input
               type="text"
               value={groupName}
               onChange={(e) => setGroupName(e.target.value)}
               placeholder="Group name"
-              className="w-full px-3 py-2 text-sm border rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="w-full px-3 py-2 text-sm border border-jolshaa-outline-variant rounded-lg focus:outline-none focus:ring-1 focus:ring-jolshaa-teal"
             />
           </div>
           <div className="p-2">
@@ -307,7 +307,7 @@ const ChatSidebar = ({ activeConversation, onSelectConversation, className = '' 
               value={friendSearch}
               onChange={(e) => setFriendSearch(e.target.value)}
               placeholder="Search friends..."
-              className="w-full px-3 py-2 text-sm border rounded-full focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="w-full px-3 py-2 text-sm border border-jolshaa-outline-variant rounded-full focus:outline-none focus:ring-1 focus:ring-jolshaa-teal"
             />
           </div>
           <div className="flex-1 overflow-y-auto">
@@ -321,12 +321,12 @@ const ChatSidebar = ({ activeConversation, onSelectConversation, className = '' 
                       selected ? prev.filter(f => f._id !== friend._id) : [...prev, friend]
                     );
                   }}
-                  className="w-full flex items-center gap-3 p-3 hover:bg-gray-50 transition text-left"
+                  className="w-full flex items-center gap-3 p-3 hover:bg-jolshaa-surface-container-low transition text-left"
                 >
                   <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
-                    selected ? 'bg-blue-600 border-blue-600' : 'border-gray-300'
+                    selected ? 'bg-jolshaa-teal border-jolshaa-teal' : 'border-jolshaa-outline-variant'
                   }`}>
-                    {selected && <span className="text-white text-xs">&#10003;</span>}
+                    {selected && <span className="text-jolshaa-on-teal text-xs">&#10003;</span>}
                   </div>
                   <img
                     src={friend.profilePhoto || 'https://ui-avatars.com/api/?name=U&background=494454&color=dae2fd&size=128'}
@@ -338,11 +338,11 @@ const ChatSidebar = ({ activeConversation, onSelectConversation, className = '' 
             })}
           </div>
           {selectedFriends.length >= 2 && (
-            <div className="p-3 border-t">
+            <div className="p-3 border-t border-jolshaa-outline-variant">
               <button
                 onClick={startGroupChat}
                 disabled={!groupName.trim()}
-                className="w-full py-2 bg-blue-600 text-white text-sm rounded-full hover:bg-blue-700 disabled:opacity-50 transition"
+                className="w-full py-2 bg-jolshaa-teal text-jolshaa-on-teal text-sm rounded-full hover:bg-jolshaa-teal-container disabled:opacity-50 transition"
               >
                 Create Group ({selectedFriends.length} members)
               </button>
@@ -352,12 +352,12 @@ const ChatSidebar = ({ activeConversation, onSelectConversation, className = '' 
       )}
 
       {/* Header */}
-      <div className="p-3 md:p-4 border-b">
+      <div className="p-3 md:p-4 border-b border-jolshaa-outline-variant">
         <div className="flex items-center justify-between mb-3">
           <h2 className="text-lg md:text-xl font-bold">Chats</h2>
           <button
             onClick={openNewChat}
-            className="w-8 h-8 flex items-center justify-center bg-blue-600 text-white rounded-full hover:bg-blue-700 transition"
+            className="w-8 h-8 flex items-center justify-center bg-jolshaa-teal text-jolshaa-on-teal rounded-full hover:bg-jolshaa-teal-container transition"
             title="New message"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
@@ -368,13 +368,13 @@ const ChatSidebar = ({ activeConversation, onSelectConversation, className = '' 
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder="Search"
-          className="w-full px-3 py-2 text-sm bg-gray-100 rounded-full focus:outline-none focus:bg-gray-200 transition"
+          className="w-full px-3 py-2 text-sm bg-jolshaa-surface-container rounded-full focus:outline-none focus:bg-jolshaa-surface-container-high transition"
         />
         <div className="flex gap-1 mt-2">
           {['all', 'unread', 'groups'].map(f => (
             <button key={f} onClick={() => setFilter(f)}
               className={`px-3 py-1 text-xs rounded-full capitalize transition ${
-                filter === f ? 'bg-blue-100 text-blue-700 font-medium' : 'text-gray-500 hover:bg-gray-100'
+                filter === f ? 'bg-jolshaa-teal/20 text-jolshaa-teal-container font-medium' : 'text-jolshaa-on-surface-variant hover:bg-jolshaa-surface-container'
               }`}>{f}</button>
           ))}
         </div>
@@ -386,20 +386,20 @@ const ChatSidebar = ({ activeConversation, onSelectConversation, className = '' 
           <div className="p-4 space-y-3">
             {[1,2,3,4,5].map(i => (
               <div key={i} className="flex items-center gap-3 animate-pulse">
-                <div className="w-12 h-12 bg-gray-200 rounded-full" />
+                <div className="w-12 h-12 bg-jolshaa-surface-container-high rounded-full" />
                 <div className="flex-1 space-y-2">
-                  <div className="h-4 bg-gray-200 rounded w-1/2" />
-                  <div className="h-3 bg-gray-200 rounded w-3/4" />
+                  <div className="h-4 bg-jolshaa-surface-container-high rounded w-1/2" />
+                  <div className="h-3 bg-jolshaa-surface-container-high rounded w-3/4" />
                 </div>
               </div>
             ))}
           </div>
         ) : filteredConversations.length === 0 ? (
-          <div className="p-4 text-center text-gray-500 text-sm">
+          <div className="p-4 text-center text-jolshaa-on-surface-variant text-sm">
             {searchQuery ? 'No matching conversations' : (
               <div>
                 <p className="mb-2">No conversations yet</p>
-                <button onClick={openNewChat} className="text-blue-600 hover:underline">
+                <button onClick={openNewChat} className="text-jolshaa-teal hover:underline">
                   Start a conversation
                 </button>
               </div>
@@ -415,8 +415,8 @@ const ChatSidebar = ({ activeConversation, onSelectConversation, className = '' 
               <div key={conv._id} className="relative group">
                 <button
                   onClick={() => onSelectConversation(conv)}
-                  className={`w-full flex items-center gap-3 p-2.5 md:p-3 hover:bg-gray-50 transition ${
-                    isActive ? 'bg-blue-50' : ''
+                  className={`w-full flex items-center gap-3 p-2.5 md:p-3 hover:bg-jolshaa-surface-container-low transition ${
+                    isActive ? 'bg-jolshaa-teal/10' : ''
                   }`}
                 >
                   <div className="relative flex-shrink-0">
@@ -425,7 +425,7 @@ const ChatSidebar = ({ activeConversation, onSelectConversation, className = '' 
                       alt="" className="w-12 h-12 rounded-full object-cover"
                     />
                     {isOnline(conv) && (
-                      <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white" />
+                      <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-jolshaa-surface-container-lowest" />
                     )}
                   </div>
                   <div className="flex-1 text-left min-w-0">
@@ -434,16 +434,16 @@ const ChatSidebar = ({ activeConversation, onSelectConversation, className = '' 
                         {getConversationName(conv)}
                       </span>
                       {lastMsg && (
-                        <span className={`text-xs flex-shrink-0 ml-2 ${unread > 0 ? 'text-blue-600 font-medium' : 'text-gray-400'}`}>
+                        <span className={`text-xs flex-shrink-0 ml-2 ${unread > 0 ? 'text-jolshaa-teal font-medium' : 'text-jolshaa-on-surface-variant'}`}>
                           {formatTime(lastMsg.createdAt)}
                         </span>
                       )}
                     </div>
                     <div className="flex items-center justify-between mt-0.5">
                       <div className="flex items-center gap-1 min-w-0 flex-1">
-                        {conv.isMuted && <span className="text-gray-400 text-xs">🔇</span>}
-                        {conv.isPinned && <span className="text-gray-400 text-xs">📌</span>}
-                        <span className={`text-xs truncate ${unread > 0 ? 'text-gray-800 font-medium' : 'text-gray-500'}`}>
+                        {conv.isMuted && <span className="text-jolshaa-on-surface-variant text-xs">🔇</span>}
+                        {conv.isPinned && <span className="text-jolshaa-on-surface-variant text-xs">📌</span>}
+                        <span className={`text-xs truncate ${unread > 0 ? 'text-jolshaa-on-surface font-medium' : 'text-jolshaa-on-surface-variant'}`}>
                           {lastMsg?.sender?._id === user.id && 'You: '}
                           {lastMsg?.deletedForEveryone ? 'Message deleted' :
                            lastMsg?.text ? lastMsg.text :
@@ -456,7 +456,7 @@ const ChatSidebar = ({ activeConversation, onSelectConversation, className = '' 
                         </span>
                       </div>
                       {unread > 0 && (
-                        <span className="ml-2 bg-blue-600 text-white text-xs font-bold rounded-full min-w-[20px] h-5 flex items-center justify-center px-1.5">
+                        <span className="ml-2 bg-jolshaa-teal text-jolshaa-on-teal text-xs font-bold rounded-full min-w-[20px] h-5 flex items-center justify-center px-1.5">
                           {unread > 99 ? '99+' : unread}
                         </span>
                       )}
@@ -467,7 +467,7 @@ const ChatSidebar = ({ activeConversation, onSelectConversation, className = '' 
                 {/* Context Menu Button */}
                 <button
                   onClick={(e) => { e.stopPropagation(); setMenuOpen(menuOpen === conv._id ? null : conv._id); }}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 text-gray-400 hover:text-gray-600 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 text-jolshaa-on-surface-variant hover:text-jolshaa-on-surface-variant rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
                 >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 5v.01M12 12v.01M12 19v.01" /></svg>
                 </button>
@@ -476,25 +476,25 @@ const ChatSidebar = ({ activeConversation, onSelectConversation, className = '' 
                 {menuOpen === conv._id && (
                   <>
                     <div className="fixed inset-0 z-10" onClick={() => setMenuOpen(null)} />
-                    <div className="absolute right-2 top-12 z-20 bg-white border rounded-xl shadow-xl py-1 min-w-[160px]">
+                    <div className="absolute right-2 top-12 z-20 bg-jolshaa-surface-container-lowest border rounded-xl shadow-xl py-1 min-w-[160px]">
                       <button onClick={(e) => handlePin(conv._id, e)}
-                        className="w-full text-left px-4 py-2.5 text-sm hover:bg-gray-50 flex items-center gap-2">
+                        className="w-full text-left px-4 py-2.5 text-sm hover:bg-jolshaa-surface-container-low flex items-center gap-2">
                         <span>{conv.isPinned ? '📌' : '📍'}</span>
                         {conv.isPinned ? 'Unpin' : 'Pin to top'}
                       </button>
                       <button onClick={(e) => handleMute(conv._id, e)}
-                        className="w-full text-left px-4 py-2.5 text-sm hover:bg-gray-50 flex items-center gap-2">
+                        className="w-full text-left px-4 py-2.5 text-sm hover:bg-jolshaa-surface-container-low flex items-center gap-2">
                         <span>{conv.isMuted ? '🔔' : '🔕'}</span>
                         {conv.isMuted ? 'Unmute' : 'Mute'}
                       </button>
                       <button onClick={(e) => handleArchive(conv._id, e)}
-                        className="w-full text-left px-4 py-2.5 text-sm hover:bg-gray-50 flex items-center gap-2">
+                        className="w-full text-left px-4 py-2.5 text-sm hover:bg-jolshaa-surface-container-low flex items-center gap-2">
                         <span>📦</span>
                         Archive
                       </button>
                       <hr className="my-1" />
                       <button onClick={(e) => handleDelete(conv._id, e)}
-                        className="w-full text-left px-4 py-2.5 text-sm hover:bg-gray-50 text-red-600 flex items-center gap-2">
+                        className="w-full text-left px-4 py-2.5 text-sm hover:bg-jolshaa-surface-container-low text-red-600 flex items-center gap-2">
                         <span>🗑</span>
                         Delete
                       </button>

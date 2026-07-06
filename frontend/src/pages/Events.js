@@ -39,12 +39,12 @@ const Events = () => {
 
   return (
     <Layout>
-      <div className="max-w-2xl mx-auto mt-4 px-4 pb-8">
+      <div className="mt-2 pb-8">
         <div className="flex items-center justify-between mb-4">
-          <h1 className="text-xl font-bold text-on-surface">Events</h1>
+          <h1 className="text-2xl font-bold font-display text-jolshaa-on-surface">Events</h1>
           <Link
             to="/events/create"
-            className="px-4 py-2 bg-primary-600 text-white rounded-lg text-sm font-medium hover:bg-primary-700"
+            className="px-4 py-2 bg-jolshaa-coral text-jolshaa-on-teal rounded-lg text-sm font-medium hover:bg-jolshaa-coral-container transition-colors shadow-ambient"
           >
             Create Event
           </Link>
@@ -55,10 +55,10 @@ const Events = () => {
             <button
               key={tab.key}
               onClick={() => setActiveTab(tab.key)}
-              className={`px-4 py-2 rounded-lg text-sm font-medium ${
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                 activeTab === tab.key
-                  ? 'bg-primary-600 text-white'
-                  : 'bg-white/10 text-on-surface-variant hover:bg-white/5'
+                  ? 'bg-jolshaa-coral text-jolshaa-on-teal'
+                  : 'bg-jolshaa-surface-container-low text-jolshaa-on-surface-variant hover:bg-jolshaa-surface-container'
               }`}
             >
               {tab.label}
@@ -67,9 +67,9 @@ const Events = () => {
         </div>
 
         {loading ? (
-          <div className="text-center py-8 text-on-surface-variant">Loading events...</div>
+          <div className="text-center py-8 text-jolshaa-on-surface-variant">Loading events...</div>
         ) : events.length === 0 ? (
-          <div className="text-center py-8 text-on-surface-variant">
+          <div className="text-center py-8 text-jolshaa-on-surface-variant">
             {activeTab === 'my' ? 'You have no events' : `No ${activeTab} events`}
           </div>
         ) : (

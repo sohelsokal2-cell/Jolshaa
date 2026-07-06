@@ -42,7 +42,7 @@ const StoriesBar = () => {
 
   if (loading) {
     return (
-      <div className="bg-white dark:bg-neutral-800 rounded-xl shadow-card p-4 mb-4">
+      <div className="bg-jolshaa-surface-container-lowest rounded-xl shadow-ambient p-4 mb-4">
         <div className="flex gap-4 overflow-x-auto scrollbar-hide">
           {[1, 2, 3, 4, 5].map((i) => (
             <div key={i} className="flex-shrink-0 text-center">
@@ -57,7 +57,7 @@ const StoriesBar = () => {
 
   return (
     <>
-      <div className="bg-white dark:bg-neutral-800 rounded-xl shadow-card p-4 mb-4">
+      <div className="bg-jolshaa-surface-container-lowest rounded-xl shadow-ambient p-4 mb-4">
         <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-1">
           {/* Your Story */}
           <button
@@ -65,12 +65,12 @@ const StoriesBar = () => {
             className="flex-shrink-0 text-center group"
           >
             <div className="relative w-16 h-16">
-              <Avatar src={user.profilePhoto} alt={user.name} size="lg" className="ring-2 ring-neutral-200 dark:ring-neutral-600 group-hover:ring-primary-500 transition-all" />
-              <div className="absolute -bottom-0.5 -right-0.5 w-5 h-5 bg-primary-600 rounded-full border-2 border-white dark:border-neutral-800 flex items-center justify-center">
-                <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" /></svg>
+              <Avatar src={user.profilePhoto} alt={user.name} size="lg" className="ring-2 ring-jolshaa-outline-variant group-hover:ring-jolshaa-teal transition-all" />
+              <div className="absolute -bottom-0.5 -right-0.5 w-5 h-5 bg-jolshaa-teal rounded-full border-2 border-jolshaa-surface-container-lowest flex items-center justify-center">
+                <svg className="w-3 h-3 text-jolshaa-on-teal" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" /></svg>
               </div>
             </div>
-            <span className="text-2xs text-neutral-600 dark:text-neutral-400 mt-1 block truncate w-16">
+            <span className="text-2xs text-jolshaa-on-surface-variant mt-1 block truncate w-16">
               Your Story
             </span>
           </button>
@@ -85,17 +85,17 @@ const StoriesBar = () => {
               <div
                 className={`w-16 h-16 rounded-full p-0.5 ${
                   group.stories.some((s) => !s.hasViewed)
-                    ? 'bg-gradient-to-br from-primary-500 to-accent-500'
-                    : 'bg-neutral-300 dark:bg-neutral-600'
+                    ? 'bg-gradient-to-br from-jolshaa-teal to-jolshaa-indigo'
+                    : 'bg-jolshaa-outline-variant'
                 }`}
               >
                 <img
                   src={group.author.profilePhoto || 'https://ui-avatars.com/api/?name=U&background=494454&color=dae2fd&size=128'}
                   alt={group.author.name}
-                  className="w-full h-full rounded-full object-cover border-2 border-white dark:border-neutral-800"
+                  className="w-full h-full rounded-full object-cover border-2 border-jolshaa-surface-container-lowest"
                 />
               </div>
-              <span className="text-2xs text-neutral-600 dark:text-neutral-400 mt-1 block truncate w-16">
+              <span className="text-2xs text-jolshaa-on-surface-variant mt-1 block truncate w-16">
                 {group.author.name?.split(' ')[0]}
               </span>
             </button>

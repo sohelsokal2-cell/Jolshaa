@@ -29,14 +29,14 @@ const Modal = ({ isOpen, onClose, title, children, size = 'md', className = '' }
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 animate-fade-in" onClick={onClose}>
       <div
-        className={`bg-white rounded-2xl shadow-modal w-full ${sizes[size]} max-h-[90vh] overflow-hidden animate-scale-in dark:bg-neutral-800 ${className}`}
+        className={`bg-jolshaa-surface-container-lowest rounded-2xl shadow-ambient-hover w-full ${sizes[size]} max-h-[90vh] overflow-hidden animate-scale-in ${className}`}
         onClick={(e) => e.stopPropagation()}
       >
         {title && (
-          <div className="flex items-center justify-between px-5 py-4 border-b border-neutral-100 dark:border-neutral-700">
-            <h2 className="text-lg font-semibold text-neutral-900 dark:text-neutral-100">{title}</h2>
-            <button onClick={onClose} className="p-1.5 rounded-full hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors">
-              <svg className="w-5 h-5 text-neutral-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="flex items-center justify-between px-5 py-4 border-b border-jolshaa-outline-variant">
+            <h2 className="text-lg font-semibold font-display text-jolshaa-on-surface">{title}</h2>
+            <button onClick={onClose} className="p-1.5 rounded-full hover:bg-jolshaa-surface-container-low transition-colors">
+              <svg className="w-5 h-5 text-jolshaa-on-surface-variant" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
@@ -55,7 +55,7 @@ export const ModalBody = ({ children, className = '' }) => (
 );
 
 export const ModalFooter = ({ children, className = '' }) => (
-  <div className={`flex items-center justify-end gap-3 px-5 py-4 border-t border-neutral-100 dark:border-neutral-700 ${className}`}>
+  <div className={`flex items-center justify-end gap-3 px-5 py-4 border-t border-jolshaa-outline-variant ${className}`}>
     {children}
   </div>
 );

@@ -43,26 +43,26 @@ const AdminTopBar = ({ onMenuToggle }) => {
   };
 
   return (
-    <nav className="fixed top-0 left-0 right-0 bg-white dark:bg-neutral-800 shadow-nav z-50 h-14">
+    <nav className="fixed top-0 left-0 right-0 bg-jolshaa-surface-container-lowest shadow-ambient z-50 h-14 border-b border-jolshaa-outline-variant">
       <div className="h-full px-4 flex items-center justify-between">
         {/* Left: Menu toggle + Logo */}
         <div className="flex items-center gap-3">
           <button
             onClick={onMenuToggle}
-            className="lg:hidden p-2 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors"
+            className="lg:hidden p-2 rounded-lg hover:bg-jolshaa-surface-container-low transition-colors"
           >
-            <svg className="w-5 h-5 text-neutral-600 dark:text-neutral-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-5 h-5 text-jolshaa-on-surface-variant" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
             </svg>
           </button>
 
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-sm">J</span>
+            <div className="w-8 h-8 bg-jolshaa-teal rounded-lg flex items-center justify-center">
+              <span className="text-jolshaa-on-teal font-bold text-sm">J</span>
             </div>
             <div className="hidden sm:block">
-              <span className="text-lg font-bold text-primary-600 dark:text-primary-400">Jolshaa</span>
-              <span className="ml-2 text-xs font-medium text-neutral-500 bg-neutral-100 dark:bg-neutral-700 px-2 py-0.5 rounded-full">Admin</span>
+              <span className="text-lg font-bold font-display text-jolshaa-teal">Jolshaa</span>
+              <span className="ml-2 text-xs font-medium text-jolshaa-on-surface-variant bg-jolshaa-surface-container-low px-2 py-0.5 rounded-full">Admin</span>
             </div>
           </div>
         </div>
@@ -79,14 +79,14 @@ const AdminTopBar = ({ onMenuToggle }) => {
               }}
               onFocus={() => setShowSearch(true)}
               placeholder="Search users, posts, reports..."
-              className="w-full bg-neutral-100 dark:bg-neutral-700 rounded-lg px-4 py-2 pl-10 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/30 focus:bg-white dark:focus:bg-neutral-600 transition-all"
+              className="w-full bg-jolshaa-surface-container-low rounded-lg px-4 py-2 pl-10 text-sm text-jolshaa-on-surface focus:outline-none focus:ring-2 focus:ring-jolshaa-teal/30 focus:bg-jolshaa-surface-container-lowest transition-all"
             />
-            <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-jolshaa-on-surface-variant" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
             {searchQuery && (
               <button type="button" onClick={() => { setSearchQuery(''); setSearchResults(null); }} className="absolute right-3 top-1/2 -translate-y-1/2">
-                <svg className="w-4 h-4 text-neutral-400 hover:text-neutral-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4 text-jolshaa-on-surface-variant hover:text-jolshaa-on-surface" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>
@@ -95,16 +95,16 @@ const AdminTopBar = ({ onMenuToggle }) => {
 
           {/* Search dropdown */}
           {showSearch && searchResults && (
-            <div className="absolute top-full left-0 right-0 sm:left-auto sm:right-auto sm:w-full mt-1 bg-white dark:bg-neutral-800 rounded-xl shadow-dropdown border border-neutral-100 dark:border-neutral-700 z-50 py-2 max-h-96 overflow-y-auto">
+            <div className="absolute top-full left-0 right-0 sm:left-auto sm:right-auto sm:w-full mt-1 bg-jolshaa-surface-container-lowest rounded-xl shadow-ambient-hover border border-jolshaa-outline-variant z-50 py-2 max-h-96 overflow-y-auto">
               {searchResults.users?.data?.length > 0 && (
                 <div className="px-3 pb-2">
-                  <p className="text-xs font-semibold text-neutral-400 uppercase mb-1">Users</p>
+                  <p className="text-xs font-semibold text-jolshaa-on-surface-variant uppercase mb-1">Users</p>
                   {searchResults.users.data.slice(0, 3).map(u => (
-                    <button key={u._id} onClick={() => { setShowSearch(false); setSearchResults(null); }} className="w-full flex items-center gap-2 p-2 rounded-lg hover:bg-neutral-50 dark:hover:bg-neutral-700 text-left">
+                    <button key={u._id} onClick={() => { setShowSearch(false); setSearchResults(null); }} className="w-full flex items-center gap-2 p-2 rounded-lg hover:bg-jolshaa-surface-container-low text-left">
                       <Avatar src={u.profilePhoto} size="sm" />
                       <div>
-                        <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100">{u.name}</p>
-                        <p className="text-xs text-neutral-500">{u.email}</p>
+                        <p className="text-sm font-medium text-jolshaa-on-surface">{u.name}</p>
+                        <p className="text-xs text-jolshaa-on-surface-variant">{u.email}</p>
                       </div>
                     </button>
                   ))}
@@ -112,26 +112,26 @@ const AdminTopBar = ({ onMenuToggle }) => {
               )}
               {searchResults.posts?.data?.length > 0 && (
                 <div className="px-3 pb-2">
-                  <p className="text-xs font-semibold text-neutral-400 uppercase mb-1">Posts</p>
+                  <p className="text-xs font-semibold text-jolshaa-on-surface-variant uppercase mb-1">Posts</p>
                   {searchResults.posts.data.slice(0, 3).map(p => (
-                    <button key={p._id} onClick={() => { setShowSearch(false); setSearchResults(null); }} className="w-full p-2 rounded-lg hover:bg-neutral-50 dark:hover:bg-neutral-700 text-left">
-                      <p className="text-sm text-neutral-900 dark:text-neutral-100 line-clamp-2">{p.text}</p>
+                    <button key={p._id} onClick={() => { setShowSearch(false); setSearchResults(null); }} className="w-full p-2 rounded-lg hover:bg-jolshaa-surface-container-low text-left">
+                      <p className="text-sm text-jolshaa-on-surface line-clamp-2">{p.text}</p>
                     </button>
                   ))}
                 </div>
               )}
               {searchResults.reports?.data?.length > 0 && (
                 <div className="px-3 pb-2">
-                  <p className="text-xs font-semibold text-neutral-400 uppercase mb-1">Reports</p>
+                  <p className="text-xs font-semibold text-jolshaa-on-surface-variant uppercase mb-1">Reports</p>
                   {searchResults.reports.data.slice(0, 3).map(r => (
-                    <button key={r._id} onClick={() => { setShowSearch(false); setSearchResults(null); }} className="w-full p-2 rounded-lg hover:bg-neutral-50 dark:hover:bg-neutral-700 text-left">
-                      <p className="text-sm text-neutral-900 dark:text-neutral-100">{r.reason} - {r.targetType}</p>
+                    <button key={r._id} onClick={() => { setShowSearch(false); setSearchResults(null); }} className="w-full p-2 rounded-lg hover:bg-jolshaa-surface-container-low text-left">
+                      <p className="text-sm text-jolshaa-on-surface">{r.reason} - {r.targetType}</p>
                     </button>
                   ))}
                 </div>
               )}
-              <div className="px-3 pt-1 border-t border-neutral-100 dark:border-neutral-700">
-                <button onClick={handleSearch} className="w-full text-center text-sm text-primary-600 hover:text-primary-700 py-2">
+              <div className="px-3 pt-1 border-t border-jolshaa-outline-variant">
+                <button onClick={handleSearch} className="w-full text-center text-sm text-jolshaa-teal hover:underline py-2">
                   See all results
                 </button>
               </div>
@@ -145,15 +145,15 @@ const AdminTopBar = ({ onMenuToggle }) => {
 
           <button
             onClick={toggleDark}
-            className="p-2 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors"
+            className="p-2 rounded-lg hover:bg-jolshaa-surface-container-low transition-colors"
             title={isDark ? 'Light mode' : 'Dark mode'}
           >
             {isDark ? (
-              <svg className="w-5 h-5 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-5 h-5 text-jolshaa-on-surface-variant" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
               </svg>
             ) : (
-              <svg className="w-5 h-5 text-neutral-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-5 h-5 text-jolshaa-on-surface-variant" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
               </svg>
             )}
@@ -163,22 +163,22 @@ const AdminTopBar = ({ onMenuToggle }) => {
           <div className="relative" ref={profileRef}>
             <button
               onClick={() => setShowProfileMenu(!showProfileMenu)}
-              className="flex items-center gap-2 p-1.5 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors"
+              className="flex items-center gap-2 p-1.5 rounded-lg hover:bg-jolshaa-surface-container-low transition-colors"
             >
               <Avatar src={user?.profilePhoto} alt={user?.name} size="sm" />
-              <svg className="w-4 h-4 text-neutral-500 hidden sm:block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4 text-jolshaa-on-surface-variant hidden sm:block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
               </svg>
             </button>
 
             {showProfileMenu && (
-              <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-neutral-800 rounded-xl shadow-dropdown border border-neutral-100 dark:border-neutral-700 z-50 py-2 animate-scale-in">
-                <div className="px-4 py-3 border-b border-neutral-100 dark:border-neutral-700">
-                  <p className="font-semibold text-neutral-900 dark:text-neutral-100 text-sm">{user?.name}</p>
-                  <p className="text-xs text-primary-600 dark:text-primary-400 capitalize">{user?.role}</p>
+              <div className="absolute right-0 mt-2 w-56 bg-jolshaa-surface-container-lowest rounded-xl shadow-ambient-hover border border-jolshaa-outline-variant z-50 py-2 animate-scale-in">
+                <div className="px-4 py-3 border-b border-jolshaa-outline-variant">
+                  <p className="font-semibold text-jolshaa-on-surface text-sm">{user?.name}</p>
+                  <p className="text-xs text-jolshaa-teal capitalize">{user?.role}</p>
                 </div>
                 <div className="py-1">
-                  <button onClick={() => { logout(); setShowProfileMenu(false); }} className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/10">
+                  <button onClick={() => { logout(); setShowProfileMenu(false); }} className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50">
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                     </svg>

@@ -78,7 +78,7 @@ const Messages = () => {
   };
 
   return (
-    <div className="h-[100dvh] flex flex-col" style={{ backgroundColor: '#0b1326' }}>
+    <div className="h-[100dvh] flex flex-col bg-jolshaa-surface">
       <TopNavbar />
 
       <div className="flex-1 flex overflow-hidden pt-14">

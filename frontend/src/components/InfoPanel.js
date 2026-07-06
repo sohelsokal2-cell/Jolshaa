@@ -163,10 +163,10 @@ const InfoPanel = ({ conversation, onClose, onUpdateConversation }) => {
   if (!conversation) return null;
 
   return (
-    <div className="w-80 border-l bg-white h-full flex flex-col flex-shrink-0">
+    <div className="w-80 border-l border-jolshaa-outline-variant bg-jolshaa-surface-container-lowest h-full flex flex-col flex-shrink-0">
       {/* Header */}
-      <div className="p-3 border-b flex items-center justify-between">
-        <button onClick={onClose} className="p-1 text-gray-500 hover:text-gray-700">
+      <div className="p-3 border-b border-jolshaa-outline-variant flex items-center justify-between">
+        <button onClick={onClose} className="p-1 text-jolshaa-on-surface-variant hover:text-jolshaa-on-surface">
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
         </button>
         <h3 className="font-semibold text-sm">
@@ -176,11 +176,11 @@ const InfoPanel = ({ conversation, onClose, onUpdateConversation }) => {
       </div>
 
       {/* Tabs */}
-      <div className="flex border-b">
+      <div className="flex border-b border-jolshaa-outline-variant">
         {['info', 'media', 'pinned'].map(tab => (
           <button key={tab} onClick={() => setActiveTab(tab)}
             className={`flex-1 py-2.5 text-xs font-medium capitalize transition ${
-              activeTab === tab ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500 hover:bg-gray-50'
+              activeTab === tab ? 'text-jolshaa-teal border-b-2 border-jolshaa-teal' : 'text-jolshaa-on-surface-variant hover:bg-jolshaa-surface-container-low'
             }`}>
             {tab}
           </button>
@@ -201,7 +201,7 @@ const InfoPanel = ({ conversation, onClose, onUpdateConversation }) => {
                   alt="" className="w-20 h-20 rounded-full object-cover"
                 />
                 {!isGroup && onlineUsers.has(otherUser?._id) && (
-                  <div className="absolute bottom-1 right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white" />
+                  <div className="absolute bottom-1 right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-jolshaa-surface-container-lowest" />
                 )}
               </div>
               {isGroup ? (
@@ -209,21 +209,21 @@ const InfoPanel = ({ conversation, onClose, onUpdateConversation }) => {
                   {showEditGroup ? (
                     <div className="space-y-2 w-full">
                       <input type="text" value={groupName} onChange={e => setGroupName(e.target.value)}
-                        className="w-full px-3 py-1.5 text-sm border rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500" />
+                        className="w-full px-3 py-1.5 text-sm border rounded-lg focus:outline-none focus:ring-1 focus:ring-jolshaa-teal" />
                       <div className="flex gap-2">
                         <button onClick={handleUpdateGroupName}
-                          className="flex-1 py-1.5 bg-blue-600 text-white text-xs rounded-lg hover:bg-blue-700">Save</button>
+                          className="flex-1 py-1.5 bg-jolshaa-teal text-jolshaa-on-teal text-xs rounded-lg hover:bg-jolshaa-teal-container">Save</button>
                         <button onClick={() => setShowEditGroup(false)}
-                          className="flex-1 py-1.5 bg-gray-100 text-gray-600 text-xs rounded-lg hover:bg-gray-200">Cancel</button>
+                          className="flex-1 py-1.5 bg-jolshaa-surface-container text-jolshaa-on-surface-variant text-xs rounded-lg hover:bg-jolshaa-surface-container-high">Cancel</button>
                       </div>
                     </div>
                   ) : (
                     <>
                       <h4 className="font-semibold">{conversation.groupName || 'Group Chat'}</h4>
-                      <p className="text-xs text-gray-400">{conversation.participants?.length} members</p>
+                      <p className="text-xs text-jolshaa-on-surface-variant">{conversation.participants?.length} members</p>
                       {isCreator && (
                         <button onClick={() => { setGroupName(conversation.groupName || ''); setShowEditGroup(true); }}
-                          className="text-xs text-blue-600 hover:underline mt-1">Edit group name</button>
+                          className="text-xs text-jolshaa-teal hover:underline mt-1">Edit group name</button>
                       )}
                     </>
                   )}
@@ -231,7 +231,7 @@ const InfoPanel = ({ conversation, onClose, onUpdateConversation }) => {
               ) : (
                 <>
                   <h4 className="font-semibold">{otherUser?.name}</h4>
-                  <p className="text-xs text-gray-400">{getMemberStatus(otherUser)}</p>
+                  <p className="text-xs text-jolshaa-on-surface-variant">{getMemberStatus(otherUser)}</p>
                 </>
               )}
             </div>
@@ -239,12 +239,12 @@ const InfoPanel = ({ conversation, onClose, onUpdateConversation }) => {
             {/* Group management (admin only) */}
             {isGroup && isCreator && (
               <div className="space-y-2">
-                <label className="text-xs font-medium text-gray-500 uppercase tracking-wide">Group Management</label>
+                <label className="text-xs font-medium text-jolshaa-on-surface-variant uppercase tracking-wide">Group Management</label>
 
                 {/* Group photo upload */}
                 <div className="flex items-center gap-3">
-                  <label className="flex-1 flex items-center gap-2 px-3 py-2 text-sm bg-gray-50 rounded-lg hover:bg-gray-100 cursor-pointer transition">
-                    <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                  <label className="flex-1 flex items-center gap-2 px-3 py-2 text-sm bg-jolshaa-surface-container-low rounded-lg hover:bg-jolshaa-surface-container cursor-pointer transition">
+                    <svg className="w-4 h-4 text-jolshaa-on-surface-variant" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
                     {uploadingPhoto ? 'Uploading...' : 'Change photo'}
                     <input type="file" accept="image/*" className="hidden" onChange={handleUpdateGroupPhoto} />
                   </label>
@@ -252,8 +252,8 @@ const InfoPanel = ({ conversation, onClose, onUpdateConversation }) => {
 
                 {/* Add members */}
                 <button onClick={() => setShowAddMembers(true)}
-                  className="w-full flex items-center gap-2 px-3 py-2 text-sm bg-gray-50 rounded-lg hover:bg-gray-100 transition">
-                  <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" /></svg>
+                  className="w-full flex items-center gap-2 px-3 py-2 text-sm bg-jolshaa-surface-container-low rounded-lg hover:bg-jolshaa-surface-container transition">
+                  <svg className="w-4 h-4 text-jolshaa-on-surface-variant" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" /></svg>
                   Add members
                 </button>
               </div>
@@ -262,45 +262,45 @@ const InfoPanel = ({ conversation, onClose, onUpdateConversation }) => {
             {/* Members list */}
             {isGroup && (
               <div>
-                <label className="text-xs font-medium text-gray-500 uppercase tracking-wide block mb-2">
+                <label className="text-xs font-medium text-jolshaa-on-surface-variant uppercase tracking-wide block mb-2">
                   Members ({conversation.participants?.length})
                 </label>
                 <div className="space-y-1">
                   {conversation.participants?.map(member => {
                     const isAdmin = conversation.admins?.some(a => (a._id || a) === member._id);
                     return (
-                      <div key={member._id} className="flex items-center gap-2.5 p-2 rounded-lg hover:bg-gray-50 group relative">
+                      <div key={member._id} className="flex items-center gap-2.5 p-2 rounded-lg hover:bg-jolshaa-surface-container-low group relative">
                         <div className="relative">
                           <img src={member.profilePhoto || 'https://ui-avatars.com/api/?name=U&background=494454&color=dae2fd&size=128'}
                             alt="" className="w-9 h-9 rounded-full object-cover" />
                           {onlineUsers.has(member._id) && (
-                            <div className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 rounded-full border-2 border-white" />
+                            <div className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 rounded-full border-2 border-jolshaa-surface-container-lowest" />
                           )}
                         </div>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-1">
                             <span className="text-sm font-medium truncate">{member.name}</span>
-                            {member._id === user.id && <span className="text-xs text-gray-400">(You)</span>}
-                            {isAdmin && <span className="text-xs bg-blue-100 text-blue-600 px-1.5 rounded">Admin</span>}
+                            {member._id === user.id && <span className="text-xs text-jolshaa-on-surface-variant">(You)</span>}
+                            {isAdmin && <span className="text-xs bg-jolshaa-teal/20 text-jolshaa-teal px-1.5 rounded">Admin</span>}
                           </div>
-                          <span className="text-xs text-gray-400">{getMemberStatus(member)}</span>
+                          <span className="text-xs text-jolshaa-on-surface-variant">{getMemberStatus(member)}</span>
                         </div>
                         {isCreator && member._id !== user.id && (
                           <button onClick={() => setShowMemberMenu(showMemberMenu === member._id ? null : member._id)}
-                            className="p-1 text-gray-400 hover:text-gray-600 opacity-0 group-hover:opacity-100">
+                            className="p-1 text-jolshaa-on-surface-variant hover:text-jolshaa-on-surface-variant opacity-0 group-hover:opacity-100">
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 5v.01M12 12v.01M12 19v.01" /></svg>
                           </button>
                         )}
                         {showMemberMenu === member._id && (
                           <>
                             <div className="fixed inset-0 z-10" onClick={() => setShowMemberMenu(null)} />
-                            <div className="absolute right-0 top-10 z-20 bg-white border rounded-xl shadow-xl py-1 min-w-[140px]">
+                            <div className="absolute right-0 top-10 z-20 bg-jolshaa-surface-container-lowest border rounded-xl shadow-xl py-1 min-w-[140px]">
                               <button onClick={() => handleToggleAdmin(member._id)}
-                                className="w-full text-left px-4 py-2 text-sm hover:bg-gray-50">
+                                className="w-full text-left px-4 py-2 text-sm hover:bg-jolshaa-surface-container-low">
                                 {isAdmin ? 'Remove admin' : 'Make admin'}
                               </button>
                               <button onClick={() => handleRemoveMember(member._id)}
-                                className="w-full text-left px-4 py-2 text-sm hover:bg-gray-50 text-red-600">
+                                className="w-full text-left px-4 py-2 text-sm hover:bg-jolshaa-surface-container-low text-red-600">
                                 Remove from group
                               </button>
                             </div>
@@ -315,17 +315,17 @@ const InfoPanel = ({ conversation, onClose, onUpdateConversation }) => {
 
             {/* Actions */}
             <div className="space-y-2">
-              <label className="text-xs font-medium text-gray-500 uppercase tracking-wide">Actions</label>
+              <label className="text-xs font-medium text-jolshaa-on-surface-variant uppercase tracking-wide">Actions</label>
               <button onClick={handleMute}
-                className="w-full flex items-center gap-2 px-3 py-2 text-sm bg-gray-50 rounded-lg hover:bg-gray-100 transition">
+                className="w-full flex items-center gap-2 px-3 py-2 text-sm bg-jolshaa-surface-container-low rounded-lg hover:bg-jolshaa-surface-container transition">
                 {conversation.isMuted ? '🔔 Unmute' : '🔕 Mute'}
               </button>
               <button onClick={handlePin}
-                className="w-full flex items-center gap-2 px-3 py-2 text-sm bg-gray-50 rounded-lg hover:bg-gray-100 transition">
+                className="w-full flex items-center gap-2 px-3 py-2 text-sm bg-jolshaa-surface-container-low rounded-lg hover:bg-jolshaa-surface-container transition">
                 {conversation.isPinned ? '📍 Unpin' : '📌 Pin to top'}
               </button>
               <button onClick={handleArchive}
-                className="w-full flex items-center gap-2 px-3 py-2 text-sm bg-gray-50 rounded-lg hover:bg-gray-100 transition">
+                className="w-full flex items-center gap-2 px-3 py-2 text-sm bg-jolshaa-surface-container-low rounded-lg hover:bg-jolshaa-surface-container transition">
                 📦 Archive
               </button>
               {isGroup && !isCreator && (
@@ -353,25 +353,25 @@ const InfoPanel = ({ conversation, onClose, onUpdateConversation }) => {
         {activeTab === 'pinned' && (
           <div className="p-4">
             {loadingPinned ? (
-              <div className="text-center py-8 text-gray-400">
-                <div className="w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto" />
+              <div className="text-center py-8 text-jolshaa-on-surface-variant">
+                <div className="w-6 h-6 border-2 border-jolshaa-teal border-t-transparent rounded-full animate-spin mx-auto" />
               </div>
             ) : pinnedMessages.length === 0 ? (
-              <div className="text-center py-8 text-gray-400">
+              <div className="text-center py-8 text-jolshaa-on-surface-variant">
                 <p className="text-sm">No pinned messages</p>
               </div>
             ) : (
               <div className="space-y-2">
                 {pinnedMessages.map(msg => (
-                  <div key={msg._id} className="p-3 bg-gray-50 rounded-lg">
+                  <div key={msg._id} className="p-3 bg-jolshaa-surface-container-low rounded-lg">
                     <div className="flex items-center gap-2 mb-1">
                       <img src={msg.sender?.profilePhoto || 'https://ui-avatars.com/api/?name=U&background=494454&color=dae2fd&size=128'}
                         alt="" className="w-6 h-6 rounded-full" />
                       <span className="text-xs font-medium">{msg.sender?.name}</span>
-                      <span className="text-xs text-gray-400">{new Date(msg.pinnedAt || msg.createdAt).toLocaleDateString()}</span>
+                      <span className="text-xs text-jolshaa-on-surface-variant">{new Date(msg.pinnedAt || msg.createdAt).toLocaleDateString()}</span>
                     </div>
-                    <p className="text-sm text-gray-700">{msg.text}</p>
-                    {msg.media && <p className="text-xs text-gray-400 mt-1">📎 Media</p>}
+                    <p className="text-sm text-jolshaa-on-surface">{msg.text}</p>
+                    {msg.media && <p className="text-xs text-jolshaa-on-surface-variant mt-1">📎 Media</p>}
                   </div>
                 ))}
               </div>
@@ -384,16 +384,16 @@ const InfoPanel = ({ conversation, onClose, onUpdateConversation }) => {
       {showAddMembers && (
         <>
           <div className="fixed inset-0 bg-black/50 z-30" onClick={() => setShowAddMembers(false)} />
-          <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-40 bg-white rounded-2xl shadow-2xl w-80 max-h-[70vh] flex flex-col">
-            <div className="p-4 border-b flex items-center justify-between">
+          <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-40 bg-jolshaa-surface-container-lowest rounded-2xl shadow-2xl w-80 max-h-[70vh] flex flex-col">
+            <div className="p-4 border-b border-jolshaa-outline-variant flex items-center justify-between">
               <h3 className="font-bold text-sm">Add Members</h3>
-              <button onClick={() => setShowAddMembers(false)} className="text-gray-400 hover:text-gray-600">
+              <button onClick={() => setShowAddMembers(false)} className="text-jolshaa-on-surface-variant hover:text-jolshaa-on-surface-variant">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
               </button>
             </div>
             <div className="p-2">
               <input type="text" value={friendSearch} onChange={e => setFriendSearch(e.target.value)}
-                placeholder="Search friends..." className="w-full px-3 py-2 text-sm bg-gray-100 rounded-full focus:outline-none" />
+                placeholder="Search friends..." className="w-full px-3 py-2 text-sm bg-jolshaa-surface-container rounded-full focus:outline-none" />
             </div>
             <div className="flex-1 overflow-y-auto">
               {filteredFriends.map(friend => {
@@ -403,11 +403,11 @@ const InfoPanel = ({ conversation, onClose, onUpdateConversation }) => {
                     onClick={() => setSelectedFriends(prev =>
                       selected ? prev.filter(f => f._id !== friend._id) : [...prev, friend]
                     )}
-                    className="w-full flex items-center gap-3 p-3 hover:bg-gray-50 transition text-left">
+                    className="w-full flex items-center gap-3 p-3 hover:bg-jolshaa-surface-container-low transition text-left">
                     <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
-                      selected ? 'bg-blue-600 border-blue-600' : 'border-gray-300'
+                      selected ? 'bg-jolshaa-teal border-jolshaa-teal' : 'border-jolshaa-outline-variant'
                     }`}>
-                      {selected && <span className="text-white text-xs">&#10003;</span>}
+                      {selected && <span className="text-jolshaa-on-teal text-xs">&#10003;</span>}
                     </div>
                     <img src={friend.profilePhoto || 'https://ui-avatars.com/api/?name=U&background=494454&color=dae2fd&size=128'}
                       alt="" className="w-9 h-9 rounded-full object-cover" />
@@ -417,9 +417,9 @@ const InfoPanel = ({ conversation, onClose, onUpdateConversation }) => {
               })}
             </div>
             {selectedFriends.length > 0 && (
-              <div className="p-3 border-t">
+              <div className="p-3 border-t border-jolshaa-outline-variant">
                 <button onClick={handleAddMembers}
-                  className="w-full py-2 bg-blue-600 text-white text-sm rounded-full hover:bg-blue-700 transition">
+                  className="w-full py-2 bg-jolshaa-teal text-jolshaa-on-teal text-sm rounded-full hover:bg-jolshaa-teal-container transition">
                   Add {selectedFriends.length} member{selectedFriends.length > 1 ? 's' : ''}
                 </button>
               </div>

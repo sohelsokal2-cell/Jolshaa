@@ -45,12 +45,12 @@ const Pages = () => {
 
   return (
     <Layout>
-      <div className="max-w-4xl mx-auto mt-6 px-4">
+      <div className="mt-2">
         <div className="flex items-center justify-between mb-6">
-          <h1 className="text-2xl font-bold">Pages</h1>
+          <h1 className="text-2xl font-bold font-display text-jolshaa-on-surface">Pages</h1>
           <Link
             to="/pages/create"
-            className="bg-purple-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-purple-700 transition"
+            className="bg-jolshaa-indigo text-jolshaa-on-indigo-fixed px-4 py-2 rounded-lg text-sm font-medium hover:bg-jolshaa-indigo-container transition-colors shadow-ambient"
           >
             Create Page
           </Link>
@@ -62,12 +62,12 @@ const Pages = () => {
             placeholder="Search pages..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+            className="flex-1 px-4 py-2 bg-jolshaa-surface-container-lowest border border-jolshaa-outline-variant rounded-lg text-jolshaa-on-surface focus:outline-none focus:ring-2 focus:ring-jolshaa-indigo"
           />
           <select
             value={category}
             onChange={(e) => { setCategory(e.target.value); setPage(1); }}
-            className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+            className="px-4 py-2 bg-jolshaa-surface-container-lowest border border-jolshaa-outline-variant rounded-lg text-jolshaa-on-surface focus:outline-none focus:ring-2 focus:ring-jolshaa-indigo"
           >
             <option value="">All Categories</option>
             {CATEGORIES.map(cat => (
@@ -76,16 +76,16 @@ const Pages = () => {
           </select>
           <button
             type="submit"
-            className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700"
+            className="bg-jolshaa-indigo text-jolshaa-on-indigo-fixed px-4 py-2 rounded-lg text-sm font-medium hover:bg-jolshaa-indigo-container transition-colors"
           >
             Search
           </button>
         </form>
 
         {loading ? (
-          <div className="text-center py-8 text-gray-500">Loading pages...</div>
+          <div className="text-center py-8 text-jolshaa-on-surface-variant">Loading pages...</div>
         ) : pages.length === 0 ? (
-          <div className="text-center py-8 text-gray-500">
+          <div className="text-center py-8 text-jolshaa-on-surface-variant">
             No pages found. Create the first one!
           </div>
         ) : (
@@ -101,15 +101,15 @@ const Pages = () => {
                 <button
                   onClick={() => setPage(p => Math.max(1, p - 1))}
                   disabled={page === 1}
-                  className="px-3 py-1 rounded border disabled:opacity-50"
+                  className="px-3 py-1 rounded-lg border border-jolshaa-outline-variant text-jolshaa-on-surface hover:bg-jolshaa-surface-container-low disabled:opacity-50 transition-colors"
                 >
                   Previous
                 </button>
-                <span className="px-3 py-1">Page {page} of {totalPages}</span>
+                <span className="px-3 py-1 text-jolshaa-on-surface-variant">Page {page} of {totalPages}</span>
                 <button
                   onClick={() => setPage(p => Math.min(totalPages, p + 1))}
                   disabled={page === totalPages}
-                  className="px-3 py-1 rounded border disabled:opacity-50"
+                  className="px-3 py-1 rounded-lg border border-jolshaa-outline-variant text-jolshaa-on-surface hover:bg-jolshaa-surface-container-low disabled:opacity-50 transition-colors"
                 >
                   Next
                 </button>

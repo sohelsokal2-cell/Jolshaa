@@ -95,9 +95,9 @@ const NotificationBell = () => {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="relative p-2 rounded-full hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors"
+        className="relative p-2 rounded-full hover:bg-jolshaa-surface-container-low transition-colors"
       >
-        <svg className="w-5 h-5 text-neutral-600 dark:text-neutral-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg className="w-5 h-5 text-jolshaa-on-surface-variant" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
         </svg>
         {unreadCount > 0 && (
@@ -108,11 +108,11 @@ const NotificationBell = () => {
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 top-full mt-2 w-[calc(100vw-2rem)] max-w-80 bg-white dark:bg-neutral-800 rounded-xl shadow-dropdown border border-neutral-100 dark:border-neutral-700 z-50 animate-scale-in">
-          <div className="flex items-center justify-between px-4 py-3 border-b border-neutral-100 dark:border-neutral-700">
-            <h3 className="font-semibold text-neutral-900 dark:text-neutral-100">Notifications</h3>
+        <div className="absolute right-0 top-full mt-2 w-[calc(100vw-2rem)] max-w-80 bg-jolshaa-surface-container-lowest rounded-xl shadow-ambient-hover border border-jolshaa-outline-variant z-50 animate-scale-in">
+          <div className="flex items-center justify-between px-4 py-3 border-b border-jolshaa-outline-variant">
+            <h3 className="font-semibold font-display text-jolshaa-on-surface">Notifications</h3>
             {unreadCount > 0 && (
-              <button onClick={markAllAsRead} className="text-xs text-primary-600 hover:text-primary-700 font-medium">
+              <button onClick={markAllAsRead} className="text-xs text-jolshaa-teal hover:underline font-medium">
                 Mark all read
               </button>
             )}
@@ -120,32 +120,32 @@ const NotificationBell = () => {
           <div className="max-h-96 overflow-y-auto">
             {notifications.length === 0 ? (
               <div className="p-6 text-center">
-                <div className="w-12 h-12 bg-neutral-100 dark:bg-neutral-700 rounded-full flex items-center justify-center mx-auto mb-2">
-                  <svg className="w-6 h-6 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" /></svg>
+                <div className="w-12 h-12 bg-jolshaa-surface-container-low rounded-full flex items-center justify-center mx-auto mb-2">
+                  <svg className="w-6 h-6 text-jolshaa-on-surface-variant" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" /></svg>
                 </div>
-                <p className="text-sm text-neutral-500">No notifications yet</p>
+                <p className="text-sm text-jolshaa-on-surface-variant">No notifications yet</p>
               </div>
             ) : (
               notifications.map(notif => (
                 <button
                   key={notif._id}
                   onClick={() => handleNotificationClick(notif)}
-                  className={`w-full flex items-start gap-3 px-4 py-3 hover:bg-neutral-50 dark:hover:bg-neutral-700/50 transition text-left ${
-                    !notif.isRead ? 'bg-primary-50/50 dark:bg-primary-900/10' : ''
+                  className={`w-full flex items-start gap-3 px-4 py-3 hover:bg-jolshaa-surface-container-low transition text-left ${
+                    !notif.isRead ? 'bg-jolshaa-teal/10' : ''
                   }`}
                 >
                   <Avatar src={notif.sender?.profilePhoto} alt={notif.sender?.name} size="md" />
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm text-neutral-700 dark:text-neutral-200">
+                    <p className="text-sm text-jolshaa-on-surface">
                       <span className="font-semibold">{notif.sender?.name}</span>{' '}
                       {getNotificationText(notif)}
                     </p>
-                    <p className="text-2xs text-neutral-400 mt-0.5">
+                    <p className="text-2xs text-jolshaa-on-surface-variant mt-0.5">
                       {new Date(notif.createdAt).toLocaleString()}
                     </p>
                   </div>
                   {!notif.isRead && (
-                    <div className="w-2 h-2 bg-primary-500 rounded-full mt-2 flex-shrink-0" />
+                    <div className="w-2 h-2 bg-jolshaa-teal rounded-full mt-2 flex-shrink-0" />
                   )}
                 </button>
               ))
