@@ -16,7 +16,7 @@ const Layout = ({ children, showSidebar = true }) => {
           <div
             className={`mx-auto ${
               showSidebar
-                ? 'max-w-[680px] px-4 py-4 pb-20 lg:pb-4'
+                ? 'max-w-[680px] lg:max-w-[760px] xl:max-w-[860px] 2xl:max-w-[960px] px-4 py-4 pb-20 lg:pb-4'
                 : 'max-w-4xl px-4 py-4 pb-20 lg:pb-4'
             }`}
           >
