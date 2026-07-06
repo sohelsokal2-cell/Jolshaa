@@ -14,10 +14,10 @@ const {
 
 router.use(protect);
 
-router.post('/schedule', upload.array('media', 5), createScheduledPost);
+router.post('/schedule', upload.array('media', 5), upload.checkMediaSize, createScheduledPost);
 router.get('/schedule', getScheduledPosts);
 router.delete('/schedule/:id', cancelScheduled);
-router.post('/drafts', upload.array('media', 5), createDraft);
+router.post('/drafts', upload.array('media', 5), upload.checkMediaSize, createDraft);
 router.get('/drafts', getDrafts);
 router.put('/drafts/:id', updateDraft);
 router.delete('/drafts/:id', deleteDraft);

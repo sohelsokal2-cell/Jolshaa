@@ -4,11 +4,12 @@ import { useDataSaver } from '../context/DataSaverContext';
 import API from '../api/axios';
 
 const ShortsPlayer = ({ post, isActive, onLike, onComment }) => {
-  const { dataSaver } = useDataSaver();
+  const { dataSaver, addSavedMB } = useDataSaver();
   const videoRef = useRef(null);
   const progressRef = useRef(null);
   const lastTapRef = useRef(0);
   const hideControlsTimerRef = useRef(null);
+  const savingsCountedRef = useRef(false);
 
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
@@ -55,12 +56,16 @@ const ShortsPlayer = ({ post, isActive, onLike, onComment }) => {
         vid.play().catch(() => {});
       } else {
         vid.pause();
+        if (!savingsCountedRef.current) {
+          savingsCountedRef.current = true;
+          addSavedMB(2.5);
+        }
       }
     } else {
       vid.pause();
       vid.currentTime = 0;
     }
-  }, [isActive, dataSaver, sourceLoaded, video.url]);
+  }, [isActive, dataSaver, sourceLoaded, video.url, addSavedMB]);
 
   // Video event listeners
   useEffect(() => {

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useSocket } from '../context/SocketContext';
+import { useLanguage } from '../context/LanguageContext';
 import API from '../api/axios';
 import Layout from '../components/layout/Layout';
 import HelpRequestCard from '../components/HelpRequestCard';
@@ -9,10 +10,13 @@ import { PostSkeleton } from '../components/ui/Skeleton';
 
 const FILTER_OPTIONS = [
   { value: 'all', label: 'All', icon: '📋' },
+  { value: 'blood', label: 'Blood', icon: '🩸' },
   { value: 'medical', label: 'Medical', icon: '🏥' },
   { value: 'flood', label: 'Flood', icon: '🌊' },
   { value: 'fire', label: 'Fire', icon: '🔥' },
   { value: 'lost_person', label: 'Lost Person', icon: '🔍' },
+  { value: 'lost_item', label: 'Lost & Found', icon: '🎒' },
+  { value: 'giveaway', label: 'Giveaway', icon: '🎁' },
   { value: 'food', label: 'Food', icon: '🍲' },
   { value: 'shelter', label: 'Shelter', icon: '🏠' },
   { value: 'financial', label: 'Financial', icon: '💰' },
@@ -27,6 +31,7 @@ const SORT_OPTIONS = [
 const HelpFeed = () => {
   const { user } = useAuth();
   const { socket } = useSocket();
+  const { t } = useLanguage();
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('all');
@@ -102,7 +107,7 @@ const HelpFeed = () => {
         <div className="max-w-2xl mx-auto px-4 py-12 text-center">
           <div className="text-6xl mb-4">🆘</div>
           <h2 className="font-display text-xl font-bold text-jolshaa-on-surface mb-2">
-            Request Help
+            {t('help.request')}
           </h2>
           <p className="text-sm text-jolshaa-on-surface-variant mb-4">
             Set your location to see help requests in your area.
@@ -122,7 +127,7 @@ const HelpFeed = () => {
         <div className="flex items-start justify-between gap-3 mb-4">
           <div className="min-w-0">
             <h1 className="font-display text-lg sm:text-xl font-bold text-jolshaa-on-surface">
-              🆘               Request Help
+              🆘 {t('help.title')}
             </h1>
             <p className="text-xs text-jolshaa-on-surface-variant mt-0.5 truncate">{district} — Active help requests</p>
           </div>

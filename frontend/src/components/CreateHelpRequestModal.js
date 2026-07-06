@@ -2,10 +2,13 @@ import { useState } from 'react';
 import API from '../api/axios';
 
 const HELP_TYPES = [
+  { value: 'blood', label: '🩸 Blood Donation' },
   { value: 'medical', label: '🏥 Medical' },
-  { value: 'flood', label: '🌊 Flood' },
+  { value: 'flood', label: '🌊 Flood / Disaster' },
   { value: 'fire', label: '🔥 Fire' },
   { value: 'lost_person', label: '🔍 Lost Person' },
+  { value: 'lost_item', label: '🎒 Lost & Found' },
+  { value: 'giveaway', label: '🎁 Free Giveaway' },
   { value: 'food', label: '🍲 Food' },
   { value: 'shelter', label: '🏠 Shelter' },
   { value: 'financial', label: '💰 Financial' },

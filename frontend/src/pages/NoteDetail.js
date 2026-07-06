@@ -4,12 +4,14 @@ import ReactMarkdown from 'react-markdown';
 import API from '../api/axios';
 import { useAuth } from '../context/AuthContext';
 import Layout from '../components/layout/Layout';
+import ReportModal from '../components/ReportModal';
 
 const NoteDetail = () => {
   const { id } = useParams();
   const { user } = useAuth();
   const [note, setNote] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [showReport, setShowReport] = useState(false);
 
   useEffect(() => {
     fetchNote();
@@ -142,9 +144,20 @@ const NoteDetail = () => {
               </svg>
               {note.bookmarkCount || 0}
             </button>
+            {note.author?._id !== user?._id && (
+              <button
+                onClick={() => setShowReport(true)}
+                className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-jolshaa-on-surface-variant hover:bg-jolshaa-surface-container-low transition-colors ml-auto"
+              >
+                Report
+              </button>
+            )}
           </div>
         </article>
       </div>
+      {showReport && (
+        <ReportModal targetType="note" targetId={note._id} onClose={() => setShowReport(false)} />
+      )}
     </Layout>
   );
 };

@@ -26,6 +26,16 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password, turnstileToken = '') => {
     const res = await API.post('/auth/login', { email, password, turnstileToken });
+    if (res.data.requires2FA) {
+      return res.data;
+    }
+    tokenRef.current = res.data.token; // Store in memory for socket.io
+    setUser(res.data.user);
+    return res.data;
+  };
+
+  const verifyLogin2FA = async (userId, code) => {
+    const res = await API.post('/auth/login/2fa', { userId, code });
     tokenRef.current = res.data.token; // Store in memory for socket.io
     setUser(res.data.user);
     return res.data;
@@ -56,7 +66,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, signup, logout, updateUser, getToken }}>
+    <AuthContext.Provider value={{ user, loading, login, verifyLogin2FA, signup, logout, updateUser, getToken }}>
       {children}
     </AuthContext.Provider>
   );

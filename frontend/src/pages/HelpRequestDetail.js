@@ -6,9 +6,11 @@ import Layout from '../components/layout/Layout';
 import Avatar from '../components/ui/Avatar';
 import Button from '../components/ui/Button';
 import HelpCoordinationChat from '../components/HelpCoordinationChat';
+import ReportModal from '../components/ReportModal';
 
 const HELP_TYPE_ICONS = {
-  medical: '🏥', flood: '🌊', fire: '🔥', lost_person: '🔍',
+  blood: '🩸', medical: '🏥', flood: '🌊', fire: '🔥', lost_person: '🔍',
+  lost_item: '🎒', giveaway: '🎁',
   food: '🍲', shelter: '🏠', financial: '💰', other: '🆘',
 };
 
@@ -24,6 +26,7 @@ const HelpRequestDetail = () => {
   const [showResolve, setShowResolve] = useState(false);
   const [showChat, setShowChat] = useState(false);
   const [myConversation, setMyConversation] = useState(null);
+  const [showReport, setShowReport] = useState(false);
 
   useEffect(() => { fetchRequest(); }, [id]);
 
@@ -94,9 +97,23 @@ const HelpRequestDetail = () => {
   return (
     <Layout>
       <div className="max-w-2xl mx-auto px-4 py-4">
-        <Link to="/help" className="text-sm text-jolshaa-teal hover:underline mb-4 inline-flex items-center gap-1">
-          ← Help Feed
-        </Link>
+        <div className="flex items-center justify-between mb-4">
+          <Link to="/help" className="text-sm text-jolshaa-teal hover:underline inline-flex items-center gap-1">
+            ← Help Feed
+          </Link>
+          {!isOwner && (
+            <button
+              onClick={() => setShowReport(true)}
+              className="text-xs text-jolshaa-on-surface-variant hover:text-red-600"
+            >
+              Report
+            </button>
+          )}
+        </div>
+
+        {showReport && (
+          <ReportModal targetType="help_request" targetId={request._id} onClose={() => setShowReport(false)} />
+        )}
 
         {/* Status banner */}
         {request.status === 'resolved' && (

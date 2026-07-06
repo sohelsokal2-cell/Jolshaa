@@ -3,6 +3,8 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import { SocketProvider } from './context/SocketContext';
 import { DarkModeProvider } from './context/DarkModeContext';
 import { DataSaverProvider } from './context/DataSaverContext';
+import { LanguageProvider } from './context/LanguageContext';
+import { FestivalThemeProvider } from './context/FestivalThemeContext';
 import { ToastProvider } from './components/ui/Toast';
 import ProtectedRoute from './components/ProtectedRoute';
 import Signup from './pages/Signup';
@@ -51,6 +53,12 @@ import HelpFeed from './pages/HelpFeed';
 import HelpRequestDetail from './pages/HelpRequestDetail';
 import { MultiAdNetworks } from './components/MultiAdNetworks';
 import AdNetworksManager from './pages/AdNetworksManager';
+import ContactUs from './pages/ContactUs';
+import SupportTickets from './pages/SupportTickets';
+import SupportTicketDetail from './pages/SupportTicketDetail';
+import FeedbackPage from './pages/FeedbackPage';
+import AppealPage from './pages/AppealPage';
+import VerificationRequestPage from './pages/VerificationRequestPage';
 
 const PublicRoute = ({ children }) => {
   const { user, loading } = useAuth();
@@ -112,6 +120,12 @@ const AppContent = () => {
         <Route path="/payment/fail" element={<PaymentFail />} />
         <Route path="/help" element={<ProtectedRoute><HelpFeed /></ProtectedRoute>} />
         <Route path="/help/:id" element={<ProtectedRoute><HelpRequestDetail /></ProtectedRoute>} />
+        <Route path="/contact" element={<ProtectedRoute><ContactUs /></ProtectedRoute>} />
+        <Route path="/support/tickets" element={<ProtectedRoute><SupportTickets /></ProtectedRoute>} />
+        <Route path="/support/tickets/:id" element={<ProtectedRoute><SupportTicketDetail /></ProtectedRoute>} />
+        <Route path="/feedback" element={<ProtectedRoute><FeedbackPage /></ProtectedRoute>} />
+        <Route path="/appeal" element={<ProtectedRoute><AppealPage /></ProtectedRoute>} />
+        <Route path="/verification" element={<ProtectedRoute><VerificationRequestPage /></ProtectedRoute>} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
       <MultiAdNetworks />
@@ -122,15 +136,19 @@ const AppContent = () => {
 function App() {
   return (
     <DarkModeProvider>
-      <DataSaverProvider>
-        <AuthProvider>
-          <SocketProvider>
-            <ToastProvider>
-              <AppContent />
-            </ToastProvider>
-          </SocketProvider>
-        </AuthProvider>
-      </DataSaverProvider>
+      <FestivalThemeProvider>
+        <LanguageProvider>
+          <DataSaverProvider>
+            <AuthProvider>
+              <SocketProvider>
+                <ToastProvider>
+                  <AppContent />
+                </ToastProvider>
+              </SocketProvider>
+            </AuthProvider>
+          </DataSaverProvider>
+        </LanguageProvider>
+      </FestivalThemeProvider>
     </DarkModeProvider>
   );
 }

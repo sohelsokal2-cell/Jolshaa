@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
+import { useLanguage } from '../context/LanguageContext';
 
 const features = [
   {
@@ -75,6 +76,7 @@ const testimonials = [
 ];
 
 const Landing = () => {
+  const { t } = useLanguage();
   const [email, setEmail] = useState('');
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
 
@@ -94,7 +96,7 @@ const Landing = () => {
             <span className="font-display text-xl font-bold text-jolshaa-teal">Jolshaa</span>
             <div className="hidden sm:flex items-center gap-3">
               <Link to="/login" className="px-4 py-2 text-sm font-medium text-jolshaa-teal hover:text-jolshaa-teal-container transition-colors">
-                Log In
+                {t('landing.cta.login')}
               </Link>
               <Link to="/signup" className="px-5 py-2.5 text-sm font-semibold text-white bg-jolshaa-teal rounded-lg hover:bg-jolshaa-teal-container transition-colors shadow-sm">
                 Join Now
@@ -114,19 +116,16 @@ const Landing = () => {
             {/* Left — Copy */}
             <div className="space-y-6">
               <h1 className="font-display text-4xl sm:text-5xl font-bold text-jolshaa-on-surface leading-[1.2] tracking-tight">
-                Where Every Voice{' '}
-                <span className="text-jolshaa-teal">
-                  Finds Its Stage
-                </span>
+                {t('landing.title')}
               </h1>
 
               <p className="text-lg text-jolshaa-on-surface-variant max-w-lg leading-relaxed">
-                Jolshaa is the social platform built for creators, communities, and conversations. Share your story, grow your audience, and earn from your passion.
+                {t('landing.subtitle')}
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 pt-2">
                 <Link to="/signup" className="inline-flex items-center justify-center gap-2 px-6 py-3 text-base font-semibold text-white bg-jolshaa-teal rounded-lg hover:bg-jolshaa-teal-container transition-colors shadow-sm">
-                  Get Started — It's Free
+                  {t('landing.cta.signup')}
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
                 </Link>
                 <a href="#features" className="inline-flex items-center justify-center gap-2 px-6 py-3 text-base font-semibold text-jolshaa-indigo bg-jolshaa-indigo-fixed rounded-lg hover:bg-jolshaa-indigo-fixed-dim transition-colors shadow-sm">

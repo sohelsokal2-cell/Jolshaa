@@ -3,6 +3,7 @@ const router = express.Router();
 const { protect } = require('../middleware/auth');
 const { checkRestriction } = require('../middleware/checkRestriction');
 const upload = require('../middleware/upload');
+const { postLimiter, commentLimiter } = require('../middleware/rateLimiter');
 const {
   createPost,
   getFeed,
@@ -41,7 +42,7 @@ router.use(protect);
 // Video upload — must be before /:id routes to avoid conflicts
 router.post('/video-upload', upload.single('video'), uploadVideo);
 
-router.post('/', checkRestriction('post'), upload.array('media', 5), createPost);
+router.post('/', postLimiter, checkRestriction('post'), upload.array('media', 5), upload.checkMediaSize, createPost);
 router.get('/feed', getFeed);
 router.get('/saved/:userId', getSavedPosts);
 router.get('/memories', getMemories);
@@ -53,7 +54,7 @@ router.delete('/:id', deletePost);
 router.post('/:id/react', reactToPost);
 router.post('/:id/share', sharePost);
 router.put('/:id/save', toggleSavePost);
-router.post('/:id/comments', addComment);
+router.post('/:id/comments', commentLimiter, addComment);
 router.get('/:id/comments', getComments);
 router.put('/:id/schedule', schedulePost);
 router.post('/:id/collaborators', inviteCollaborator);

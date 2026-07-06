@@ -1,17 +1,22 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useDataSaver } from '../context/DataSaverContext';
+import { useLanguage } from '../context/LanguageContext';
 import Button from '../components/ui/Button';
 import Input from '../components/ui/Input';
 import TurnstileCaptcha from '../components/ui/TurnstileCaptcha';
 
 const Signup = () => {
+  const { t } = useLanguage();
   const [formData, setFormData] = useState({ name: '', email: '', password: '', confirmPassword: '' });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [turnstileToken, setTurnstileToken] = useState('');
   const [captchaError, setCaptchaError] = useState('');
+  const [wantsDataSaver, setWantsDataSaver] = useState(false);
   const { signup } = useAuth();
+  const { setDataSaverEnabled } = useDataSaver();
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -35,6 +40,7 @@ const Signup = () => {
     setCaptchaError('');
     try {
       await signup(name, email, password, turnstileToken);
+      setDataSaverEnabled(wantsDataSaver);
       navigate('/feed');
     } catch (err) {
       setError(err.response?.data?.message || 'Signup failed');
@@ -50,8 +56,8 @@ const Signup = () => {
           <div className="w-16 h-16 bg-jolshaa-teal rounded-2xl flex items-center justify-center mx-auto mb-4">
             <span className="text-white font-bold text-3xl">J</span>
           </div>
-          <h1 className="font-display text-2xl font-bold text-jolshaa-on-surface">Create Account</h1>
-          <p className="text-sm text-jolshaa-on-surface-variant mt-1">Join Jolshaa today</p>
+          <h1 className="font-display text-2xl font-bold text-jolshaa-on-surface">{t('signup.title')}</h1>
+          <p className="text-sm text-jolshaa-on-surface-variant mt-1">{t('signup.subtitle')}</p>
         </div>
 
         <div className="bg-jolshaa-surface-container-lowest rounded-2xl shadow-ambient p-6 space-y-5">
@@ -66,7 +72,7 @@ const Signup = () => {
             <Input
               type="text"
               name="name"
-              placeholder="Full name"
+              placeholder={t('signup.name')}
               value={formData.name}
               onChange={handleChange}
               icon={
@@ -76,7 +82,7 @@ const Signup = () => {
             <Input
               type="email"
               name="email"
-              placeholder="Email address"
+              placeholder={t('signup.email')}
               value={formData.email}
               onChange={handleChange}
               icon={
@@ -86,7 +92,7 @@ const Signup = () => {
             <Input
               type="password"
               name="password"
-              placeholder="Password (min 8 characters)"
+              placeholder={t('signup.password')}
               value={formData.password}
               onChange={handleChange}
               icon={
@@ -96,7 +102,7 @@ const Signup = () => {
             <Input
               type="password"
               name="confirmPassword"
-              placeholder="Confirm password"
+              placeholder={t('signup.confirmPassword')}
               value={formData.confirmPassword}
               onChange={handleChange}
               icon={
@@ -109,15 +115,39 @@ const Signup = () => {
                 {captchaError && <p className="text-xs text-red-600">{captchaError}</p>}
               </div>
             )}
+
+            <button
+              type="button"
+              onClick={() => setWantsDataSaver((prev) => !prev)}
+              className={`w-full flex items-center justify-between gap-3 p-3 rounded-xl border-2 transition-all text-left ${
+                wantsDataSaver
+                  ? 'border-green-500 bg-green-50'
+                  : 'border-jolshaa-outline-variant hover:border-jolshaa-outline'
+              }`}
+            >
+              <div className="flex items-center gap-2">
+                <svg className={`w-5 h-5 flex-shrink-0 ${wantsDataSaver ? 'text-green-600' : 'text-jolshaa-on-surface-variant'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+                <div>
+                  <p className="text-sm font-medium text-jolshaa-on-surface">{t('signup.dataSaver.title')}</p>
+                  <p className="text-xs text-jolshaa-on-surface-variant">{t('signup.dataSaver.desc')}</p>
+                </div>
+              </div>
+              <div className={`w-10 h-6 rounded-full flex-shrink-0 flex items-center px-0.5 transition-colors ${wantsDataSaver ? 'bg-green-500 justify-end' : 'bg-jolshaa-outline-variant justify-start'}`}>
+                <div className="w-5 h-5 rounded-full bg-white shadow" />
+              </div>
+            </button>
+
             <Button type="submit" fullWidth loading={loading} size="lg">
-              Sign Up
+              {t('signup.submit')}
             </Button>
           </form>
         </div>
 
         <p className="text-center text-sm text-jolshaa-on-surface-variant">
-          Already have an account?{' '}
-          <Link to="/login" className="text-jolshaa-teal hover:text-jolshaa-teal-container font-medium">Log in</Link>
+          {t('signup.haveAccount')}{' '}
+          <Link to="/login" className="text-jolshaa-teal hover:text-jolshaa-teal-container font-medium">{t('signup.login')}</Link>
         </p>
       </div>
     </div>

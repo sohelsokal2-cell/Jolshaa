@@ -18,7 +18,7 @@ router.post('/archive/:id', archiveStory);
 router.get('/archive', getArchivedStories);
 router.delete('/archive/:id', deleteArchivedStory);
 
-router.post('/highlights', upload.single('coverImage'), createHighlight);
+router.post('/highlights', upload.single('coverImage'), upload.checkMediaSize, createHighlight);
 router.get('/highlights/:userId', getHighlights);
 router.post('/highlights/:highlightId/add/:storyArchiveId', addToHighlight);
 router.delete('/highlights/:id', deleteHighlight);

@@ -16,11 +16,11 @@ const upload = require('../middleware/upload');
 
 router.use(protect);
 
-router.post('/', upload.single('coverPhoto'), createEvent);
+router.post('/', upload.single('coverPhoto'), upload.checkMediaSize, createEvent);
 router.get('/my', getMyEvents);
 router.get('/', getEvents);
 router.get('/:id', getEvent);
-router.put('/:id', upload.single('coverPhoto'), updateEvent);
+router.put('/:id', upload.single('coverPhoto'), upload.checkMediaSize, updateEvent);
 router.delete('/:id', deleteEvent);
 router.post('/:id/rsvp', rsvpEvent);
 router.post('/:id/invite', inviteUsers);

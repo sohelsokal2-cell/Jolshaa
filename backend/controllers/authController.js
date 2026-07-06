@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
+const speakeasy = require('speakeasy');
 const User = require('../models/User');
 
 const safeCompare = (a, b) => {
@@ -109,38 +110,85 @@ exports.login = async (req, res) => {
       return res.status(403).json({ message: 'Account suspended', suspended: true, suspendedAt: user.suspendedAt, suspendedReason: user.suspendedReason });
     }
 
-    const token = generateToken(user._id);
-    const ip = req.ip || req.connection?.remoteAddress || '';
-    const userAgent = req.headers['user-agent'] || '';
+    if (user.twoFactorEnabled) {
+      return res.json({ requires2FA: true, userId: user._id });
+    }
 
-    // Track login
-    user.loginHistory.push({ ip, userAgent, timestamp: new Date(), success: true });
-    if (user.loginHistory.length > 50) user.loginHistory = user.loginHistory.slice(-50);
-
-    // Track session
-    user.sessions.push({ token, ip, userAgent, lastActive: new Date(), createdAt: new Date() });
-    if (user.sessions.length > 10) user.sessions = user.sessions.slice(-10);
-
-    await user.save();
-
-    // Check if new device (for login alert)
-    const previousLogins = user.loginHistory.filter(l => l.success && l._id.toString() !== user.loginHistory[user.loginHistory.length - 1]._id.toString());
-    const isNewDevice = previousLogins.length === 0 || !previousLogins.some(l => l.userAgent === userAgent);
-
-    setTokenCookie(res, token);
-
-    res.json({
-      token, // Returned for socket.io auth (stored in memory, not localStorage)
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        profilePhoto: user.profilePhoto
-      },
-      isNewDevice
-    });
+    await completeLogin(req, res, user);
   } catch (error) {
     console.error('Login error:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+const completeLogin = async (req, res, user) => {
+  const token = generateToken(user._id);
+  const ip = req.ip || req.connection?.remoteAddress || '';
+  const userAgent = req.headers['user-agent'] || '';
+
+  // Track login
+  user.loginHistory.push({ ip, userAgent, timestamp: new Date(), success: true });
+  if (user.loginHistory.length > 50) user.loginHistory = user.loginHistory.slice(-50);
+
+  // Track session
+  user.sessions.push({ token, ip, userAgent, lastActive: new Date(), createdAt: new Date() });
+  if (user.sessions.length > 10) user.sessions = user.sessions.slice(-10);
+
+  await user.save();
+
+  // Check if new device (for login alert)
+  const previousLogins = user.loginHistory.filter(l => l.success && l._id.toString() !== user.loginHistory[user.loginHistory.length - 1]._id.toString());
+  const isNewDevice = previousLogins.length === 0 || !previousLogins.some(l => l.userAgent === userAgent);
+
+  setTokenCookie(res, token);
+
+  res.json({
+    token, // Returned for socket.io auth (stored in memory, not localStorage)
+    user: {
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      profilePhoto: user.profilePhoto
+    },
+    isNewDevice
+  });
+};
+
+exports.loginVerify2FA = async (req, res) => {
+  try {
+    const { userId, code } = req.body;
+    if (!userId || !code) {
+      return res.status(400).json({ message: 'userId and code are required' });
+    }
+
+    const user = await User.findById(userId).select('+twoFactorSecret +twoFactorBackupCodes');
+    if (!user || !user.twoFactorEnabled) {
+      return res.status(400).json({ message: 'Invalid request' });
+    }
+
+    if (user.isBanned || user.isSuspended) {
+      return res.status(403).json({ message: 'Account is not active' });
+    }
+
+    const isValidTotp = speakeasy.totp.verify({
+      secret: user.twoFactorSecret,
+      encoding: 'base32',
+      token: code,
+      window: 1,
+    });
+    const isBackupCode = user.twoFactorBackupCodes.includes(code.toUpperCase());
+
+    if (!isValidTotp && !isBackupCode) {
+      return res.status(401).json({ message: 'Invalid 2FA code' });
+    }
+
+    if (isBackupCode) {
+      user.twoFactorBackupCodes = user.twoFactorBackupCodes.filter(c => c !== code.toUpperCase());
+    }
+
+    await completeLogin(req, res, user);
+  } catch (error) {
+    console.error('2FA login verify error:', error);
     res.status(500).json({ message: 'Server error' });
   }
 };

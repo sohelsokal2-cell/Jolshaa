@@ -6,7 +6,7 @@ const cookieParser = require('cookie-parser');
 const dotenv = require('dotenv');
 const connectDB = require('./config/db');
 const { initSocket } = require('./socket');
-const { authLimiter, postLimiter, commentLimiter, reportLimiter, messageLimiter, generalLimiter } = require('./middleware/rateLimiter');
+const { authLimiter, reportLimiter, messageLimiter, generalLimiter } = require('./middleware/rateLimiter');
 const { performanceMonitor } = require('./services/performanceMonitor');
 const { errorHandler } = require('./services/errorMonitor');
 const { startBackgroundJobs } = require('./services/backgroundJobs');
@@ -71,8 +71,8 @@ app.use(maintenanceCheck);
 
 app.use('/api/auth', authLimiter, require('./routes/auth'));
 app.use('/api/users', require('./routes/users'));
-app.use('/api/posts', postLimiter, require('./routes/posts'));
-app.use('/api/comments', commentLimiter, require('./routes/comments'));
+app.use('/api/posts', require('./routes/posts'));
+app.use('/api/comments', require('./routes/comments'));
 app.use('/api/conversations', messageLimiter, require('./routes/conversations'));
 app.use('/api/messages', messageLimiter, require('./routes/messages'));
 app.use('/api/notifications', require('./routes/notifications'));
@@ -112,6 +112,8 @@ app.use('/api/payments', require('./routes/payment'));
 app.use('/api/payouts', require('./routes/payouts'));
 app.use('/api/adsterra', require('./routes/adsterra'));
 app.use('/api/ad-networks', require('./routes/adNetwork'));
+app.use('/api/support', require('./routes/support'));
+app.use('/api/security', require('./routes/security'));
 
 app.use(errorHandler);
 

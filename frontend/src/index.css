@@ -33,6 +33,22 @@
   --glow-sm:      rgba(139, 92, 246, 0.15);
 }
 
+[data-festival="pohela-boishakh"] {
+  --primary:           #d21f3c;
+  --primary-container: #b3122b;
+  --on-primary:        #ffffff;
+  --glow-primary:      rgba(210, 31, 60, 0.25);
+  --glow-sm:           rgba(210, 31, 60, 0.15);
+}
+
+[data-festival="eid"] {
+  --primary:           #1f8a5f;
+  --primary-container: #146245;
+  --on-primary:        #ffffff;
+  --glow-primary:      rgba(212, 175, 55, 0.25);
+  --glow-sm:           rgba(212, 175, 55, 0.15);
+}
+
 @layer base {
   * {
     -webkit-tap-highlight-color: transparent;

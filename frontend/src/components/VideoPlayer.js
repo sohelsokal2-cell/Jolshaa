@@ -15,7 +15,7 @@ const VideoPlayer = ({
   onPause,
   className = '',
 }) => {
-  const { dataSaver } = useDataSaver();
+  const { dataSaver, addSavedMB } = useDataSaver();
   const videoRef = useRef(null);
   const containerRef = useRef(null);
   const progressRef = useRef(null);
@@ -24,6 +24,7 @@ const VideoPlayer = ({
   const lastTapRef = useRef(0);
   const adEligibilityRef = useRef(null);
   const midRollAdShownRef = useRef(false);
+  const savingsCountedRef = useRef(false);
 
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(initialMuted);
@@ -110,6 +111,9 @@ const VideoPlayer = ({
           // Data saver: don't autoplay when enabled
           if (autoplay && !dataSaver) {
             video.play().catch(() => {});
+          } else if (autoplay && dataSaver && !savingsCountedRef.current) {
+            savingsCountedRef.current = true;
+            addSavedMB(2.5);
           }
         } else {
           video.pause();
@@ -120,7 +124,7 @@ const VideoPlayer = ({
 
     observer.observe(container);
     return () => observer.disconnect();
-  }, [autoplay, dataSaver, src, sourceLoaded]);
+  }, [autoplay, dataSaver, src, sourceLoaded, addSavedMB]);
 
   // View tracking
   useEffect(() => {

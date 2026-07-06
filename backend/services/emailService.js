@@ -32,11 +32,11 @@ const templates = {
     </div>`,
   }),
   tip_received: (data) => ({
-    subject: `You received a $${data.amount} tip!`,
+    subject: `You received a ৳${data.amount} tip!`,
     html: `<div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:20px">
       <h2>New Tip Received!</h2>
       <p>Hi ${data.recipientName},</p>
-      <p><strong>${data.senderName}</strong> sent you a <strong>$${data.amount}</strong> tip${data.message ? `: "${data.message}"` : ''}.</p>
+      <p><strong>${data.senderName}</strong> sent you a <strong>৳${data.amount}</strong> tip${data.message ? `: "${data.message}"` : ''}.</p>
       <a href="${process.env.CLIENT_URL || 'http://localhost:3000'}/creator/earnings" style="display:inline-block;padding:12px 24px;background:#10b981;color:#fff;text-decoration:none;border-radius:8px;margin-top:12px">View Earnings</a>
     </div>`,
   }),

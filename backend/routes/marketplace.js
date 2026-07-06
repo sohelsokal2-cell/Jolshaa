@@ -18,7 +18,7 @@ router.get('/:id', protect, getListing);
 
 router.use(protect);
 
-router.post('/', upload.array('images', 10), createListing);
+router.post('/', upload.array('images', 10), upload.checkMediaSize, createListing);
 router.put('/:id', updateListing);
 router.delete('/:id', deleteListing);
 router.put('/:id/interested', markInterested);

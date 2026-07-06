@@ -3,6 +3,8 @@ const AdminAction = require('../models/AdminAction');
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
+const speakeasy = require('speakeasy');
+const qrcode = require('qrcode');
 
 const logAction = async (admin, action, details = {}) => {
   try {
@@ -196,7 +198,7 @@ exports.revokeAllAdminSessions = async (req, res) => {
 exports.get2FAStatus = async (req, res) => {
   try {
     const user = await User.findById(req.user._id)
-      .select('twoFactorEnabled twoFactorBackupCodes')
+      .select('twoFactorEnabled +twoFactorBackupCodes')
       .lean();
 
     res.json({
@@ -208,52 +210,63 @@ exports.get2FAStatus = async (req, res) => {
   }
 };
 
-// --- Enable 2FA ---
+// --- Enable 2FA (step 1: generate secret + QR, not yet active) ---
 exports.enable2FA = async (req, res) => {
   try {
-    const secret = crypto.randomBytes(20).toString('hex');
+    const secret = speakeasy.generateSecret({
+      name: `Jolshaa (${req.user.email})`,
+      length: 20,
+    });
     const backupCodes = Array.from({ length: 8 }, () =>
       crypto.randomBytes(4).toString('hex').toUpperCase()
     );
 
     await User.findByIdAndUpdate(req.user._id, {
-      twoFactorSecret: secret,
+      twoFactorSecret: secret.base32,
       twoFactorBackupCodes: backupCodes,
       twoFactorEnabled: false,
     });
 
+    const qrDataUrl = await qrcode.toDataURL(secret.otpauth_url);
+
     await logAction(req.user._id, 'security.2fa.setup');
 
-    res.json({ secret, backupCodes, message: 'Scan the QR code or enter the secret in your authenticator app' });
+    res.json({
+      secret: secret.base32,
+      qrCode: qrDataUrl,
+      backupCodes,
+      message: 'Scan the QR code or enter the secret in your authenticator app, then verify with a code to activate',
+    });
   } catch (error) {
     res.status(500).json({ message: 'Server error' });
   }
 };
 
-// --- Verify & Activate 2FA ---
+// --- Verify & Activate 2FA (step 2) ---
 exports.verify2FA = async (req, res) => {
   try {
     const { code } = req.body;
-    const user = await User.findById(req.user._id).select('+twoFactorSecret');
+    if (!code) return res.status(400).json({ message: 'Code is required' });
+
+    const user = await User.findById(req.user._id).select('+twoFactorSecret +twoFactorBackupCodes');
 
     if (!user.twoFactorSecret) {
       return res.status(400).json({ message: '2FA not set up' });
     }
 
-    // Simple TOTP verification (time-based, 30s window)
-    const time = Math.floor(Date.now() / 30000);
-    const expectedCode = crypto
-      .createHmac('sha1', Buffer.from(user.twoFactorSecret, 'hex'))
-      .update(Buffer.alloc(8, time))
-      .digest('base64')
-      .replace(/[^0-9]/g, '')
-      .slice(0, 6);
+    const isValidTotp = speakeasy.totp.verify({
+      secret: user.twoFactorSecret,
+      encoding: 'base32',
+      token: code,
+      window: 1,
+    });
+    const isBackupCode = user.twoFactorBackupCodes.includes(code.toUpperCase());
 
-    if (code === expectedCode || user.twoFactorBackupCodes.includes(code)) {
+    if (isValidTotp || isBackupCode) {
       await User.findByIdAndUpdate(req.user._id, {
         twoFactorEnabled: true,
-        ...(user.twoFactorBackupCodes.includes(code) ? {
-          twoFactorBackupCodes: user.twoFactorBackupCodes.filter(c => c !== code),
+        ...(isBackupCode ? {
+          twoFactorBackupCodes: user.twoFactorBackupCodes.filter(c => c !== code.toUpperCase()),
         } : {}),
       });
 
@@ -523,23 +536,23 @@ exports.getDataExportRestrictions = async (req, res) => {
 };
 
 // --- Export User Data ---
-exports.exportUserData = async (req, res) => {
-  try {
-    const { userId } = req.params;
-    const Post = require('../models/Post');
-    const Message = require('../models/Message');
-    const Comment = require('../models/Comment');
+const buildUserExport = async (userId) => {
+  const Post = require('../models/Post');
+  const Message = require('../models/Message');
+  const Comment = require('../models/Comment');
 
-    const user = await User.findById(userId).lean();
-    if (!user) return res.status(404).json({ message: 'User not found' });
+  const user = await User.findById(userId).lean();
+  if (!user) return null;
 
-    const [posts, messages, comments] = await Promise.all([
-      Post.find({ author: userId }).lean(),
-      Message.find({ sender: userId }).lean(),
-      Comment.find({ author: userId }).lean(),
-    ]);
+  const [posts, messages, comments] = await Promise.all([
+    Post.find({ author: userId }).lean(),
+    Message.find({ sender: userId }).lean(),
+    Comment.find({ author: userId }).lean(),
+  ]);
 
-    const exportData = {
+  return {
+    user,
+    exportData: {
       profile: {
         name: user.name,
         email: user.email,
@@ -564,15 +577,40 @@ exports.exportUserData = async (req, res) => {
         createdAt: c.createdAt,
       })),
       exportedAt: new Date().toISOString(),
-    };
+    },
+    counts: { posts: posts.length, messages: messages.length, comments: comments.length },
+  };
+};
+
+exports.exportUserData = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const result = await buildUserExport(userId);
+    if (!result) return res.status(404).json({ message: 'User not found' });
+    const { user, exportData, counts } = result;
 
     await logAction(req.user._id, 'security.data_export', {
       targetUser: user.name,
       targetEmail: user.email,
-      postsExported: posts.length,
-      messagesExported: messages.length,
-      commentsExported: comments.length,
+      postsExported: counts.posts,
+      messagesExported: counts.messages,
+      commentsExported: counts.comments,
     });
+
+    res.setHeader('Content-Type', 'application/json');
+    res.setHeader('Content-Disposition', `attachment; filename="${user.name.replace(/\s+/g, '_')}_export.json"`);
+    res.json(exportData);
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+// Self-service export for regular users (no admin action, no target-user log)
+exports.exportMyData = async (req, res) => {
+  try {
+    const result = await buildUserExport(req.user._id);
+    if (!result) return res.status(404).json({ message: 'User not found' });
+    const { user, exportData } = result;
 
     res.setHeader('Content-Type', 'application/json');
     res.setHeader('Content-Disposition', `attachment; filename="${user.name.replace(/\s+/g, '_')}_export.json"`);

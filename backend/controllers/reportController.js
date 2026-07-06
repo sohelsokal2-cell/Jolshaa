@@ -10,7 +10,7 @@ exports.createReport = async (req, res) => {
       return res.status(400).json({ message: 'targetType, targetId, and reason are required' });
     }
 
-    if (!['post', 'comment', 'user', 'story', 'message', 'reel', 'group_post', 'listing'].includes(targetType)) {
+    if (!['post', 'comment', 'user', 'story', 'message', 'reel', 'group_post', 'listing', 'note', 'poll', 'qa', 'help_request'].includes(targetType)) {
       return res.status(400).json({ message: 'Invalid targetType' });
     }
 

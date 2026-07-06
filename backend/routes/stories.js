@@ -15,7 +15,7 @@ const {
 
 router.use(protect);
 
-router.post('/', upload.single('media'), createStory);
+router.post('/', upload.single('media'), upload.checkMediaSize, createStory);
 router.get('/feed', getStoriesFeed);
 router.get('/user/:userId', getUserStories);
 router.put('/:id/view', viewStory);

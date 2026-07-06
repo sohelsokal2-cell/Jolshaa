@@ -198,6 +198,19 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
+  twoFactorEnabled: {
+    type: Boolean,
+    default: false
+  },
+  twoFactorSecret: {
+    type: String,
+    select: false
+  },
+  twoFactorBackupCodes: {
+    type: [String],
+    select: false,
+    default: []
+  },
   creatorSettings: {
     tipsEnabled: { type: Boolean, default: false },
     subscriptionPrice: { type: Number, default: 0 },

@@ -26,7 +26,7 @@ exports.sendTip = async (req, res) => {
       recipient: recipient._id,
       sender: req.user._id,
       type: 'tip',
-      message: `Tipped $${amount}${message ? ': ' + message : ''}`,
+      message: `Tipped ৳${amount}${message ? ': ' + message : ''}`,
     });
 
     const { getIO } = require('../socket');

@@ -3,6 +3,7 @@ const router = express.Router();
 const {
   signup,
   login,
+  loginVerify2FA,
   logout,
   getMe,
   getSocketToken,
@@ -25,6 +26,7 @@ const { verifyTurnstile } = require('../middleware/verifyTurnstile');
 
 router.post('/signup', verifyTurnstile, signup);
 router.post('/login', verifyTurnstile, login);
+router.post('/login/2fa', loginVerify2FA);
 router.post('/logout', protect, logout);
 router.get('/me', protect, getMe);
 router.get('/socket-token', protect, getSocketToken);

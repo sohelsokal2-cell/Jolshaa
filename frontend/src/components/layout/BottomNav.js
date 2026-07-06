@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useSocket } from '../../context/SocketContext';
+import { useLanguage } from '../../context/LanguageContext';
 import API from '../../api/axios';
 
 const useIsMobile = () => {
@@ -15,7 +16,7 @@ const useIsMobile = () => {
 
 const navItems = [
   {
-    path: '/feed', label: 'Home',
+    path: '/feed', label: 'Home', labelKey: 'nav.home',
     ariaLabel: 'Home feed',
     icon: (active) => (
       <svg className="w-6 h-6" fill={active ? 'currentColor' : 'none'} stroke="currentColor" viewBox="0 0 24 24">
@@ -24,7 +25,7 @@ const navItems = [
     ),
   },
   {
-    path: '/search', label: 'Search',
+    path: '/search', label: 'Search', labelKey: 'nav.search',
     ariaLabel: 'Search',
     hideOnMobile: true,
     icon: (active) => (
@@ -46,7 +47,7 @@ const navItems = [
     ),
   },
   {
-    path: '/messages', label: 'Chat',
+    path: '/messages', label: 'Chat', labelKey: 'nav.chat',
     ariaLabel: 'Messages',
     hasMessageBadge: true,
     icon: (active, msgCount) => (
@@ -63,7 +64,7 @@ const navItems = [
     ),
   },
   {
-    path: '/reels', label: 'Reels',
+    path: '/reels', label: 'Reels', labelKey: 'nav.reels',
     ariaLabel: 'Reels',
     hideOnMobile: true,
     icon: (active) => (
@@ -73,9 +74,8 @@ const navItems = [
     ),
   },
   {
-    path: '/help', label: 'Help',
+    path: '/help', label: 'Help', labelKey: 'nav.help',
     ariaLabel: 'Help requests',
-    hideOnMobile: true,
     icon: (active) => (
       <span className="relative">
         <svg className="w-6 h-6" fill={active ? 'currentColor' : 'none'} stroke="currentColor" viewBox="0 0 24 24">
@@ -85,7 +85,7 @@ const navItems = [
     ),
   },
   {
-    path: '/notifications', label: 'Alerts',
+    path: '/notifications', label: 'Alerts', labelKey: 'nav.alerts',
     ariaLabel: 'Notifications',
     hasBadge: true,
     icon: (active, unreadCount) => (
@@ -102,7 +102,7 @@ const navItems = [
     ),
   },
   {
-    path: '/notes', label: 'Notes',
+    path: '/notes', label: 'Notes', labelKey: 'nav.notes',
     ariaLabel: 'Notes',
     hideOnMobile: true,
     icon: (active) => (
@@ -112,7 +112,7 @@ const navItems = [
     ),
   },
   {
-    path: '/profile', label: 'Profile',
+    path: '/profile', label: 'Profile', labelKey: 'nav.profile',
     ariaLabel: 'View profile',
     icon: (active) => (
       <svg className="w-6 h-6" fill={active ? 'currentColor' : 'none'} stroke="currentColor" viewBox="0 0 24 24">
@@ -125,6 +125,7 @@ const navItems = [
 const BottomNav = () => {
   const location = useLocation();
   const { socket, unreadMessageCount } = useSocket();
+  const { t } = useLanguage();
   const [unreadCount, setUnreadCount] = useState(0);
   const isMobile = useIsMobile();
 
@@ -199,7 +200,7 @@ const BottomNav = () => {
                   active ? 'text-jolshaa-teal' : 'text-jolshaa-on-surface-variant'
                 }`}
               >
-                {item.label}
+                {t(item.labelKey)}
               </span>
               {active && (
                 <span className="absolute bottom-1 w-1 h-1 rounded-full bg-jolshaa-teal shadow-[0_0_6px_rgba(0,104,95,0.6)]" />

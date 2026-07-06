@@ -17,10 +17,10 @@ router.get('/public', getPublicNotes);
 
 router.use(protect);
 
-router.post('/', upload.single('coverImage'), createNote);
+router.post('/', upload.single('coverImage'), upload.checkMediaSize, createNote);
 router.get('/', getNotes);
 router.get('/:id', getNote);
-router.put('/:id', upload.single('coverImage'), updateNote);
+router.put('/:id', upload.single('coverImage'), upload.checkMediaSize, updateNote);
 router.delete('/:id', deleteNote);
 router.put('/:id/like', toggleLikeNote);
 router.put('/:id/bookmark', toggleBookmarkNote);

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import API from '../api/axios';
+import ReportModal from './ReportModal';
 
 const QAPost = ({ postId, isOwner }) => {
   const [qa, setQa] = useState(null);
@@ -8,6 +9,7 @@ const QAPost = ({ postId, isOwner }) => {
   const [isAnonymous, setIsAnonymous] = useState(false);
   const [answerText, setAnswerText] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showReport, setShowReport] = useState(false);
 
   useEffect(() => {
     fetchQA();
@@ -115,6 +117,17 @@ const QAPost = ({ postId, isOwner }) => {
             Answer
           </button>
         </div>
+        {!isOwner && (
+          <button
+            onClick={() => setShowReport(true)}
+            className="text-xs text-jolshaa-on-surface-variant hover:text-red-600 mt-2"
+          >
+            Report
+          </button>
+        )}
+        {showReport && (
+          <ReportModal targetType="qa" targetId={qa._id} onClose={() => setShowReport(false)} />
+        )}
       </div>
     );
   }

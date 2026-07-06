@@ -9,7 +9,7 @@ const reportSchema = new mongoose.Schema(
     },
     targetType: {
       type: String,
-      enum: ['post', 'comment', 'user', 'story', 'message', 'reel', 'group_post', 'listing'],
+      enum: ['post', 'comment', 'user', 'story', 'message', 'reel', 'group_post', 'listing', 'note', 'poll', 'qa', 'help_request'],
       required: true
     },
     targetId: {

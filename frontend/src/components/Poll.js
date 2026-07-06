@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import API from '../api/axios';
+import ReportModal from './ReportModal';
 
 const Poll = ({ postId, isOwner }) => {
   const [poll, setPoll] = useState(null);
@@ -8,6 +9,7 @@ const Poll = ({ postId, isOwner }) => {
   const [options, setOptions] = useState(['', '']);
   const [expiresIn, setExpiresIn] = useState('24');
   const [loading, setLoading] = useState(false);
+  const [showReport, setShowReport] = useState(false);
 
   useEffect(() => {
     fetchPoll();
@@ -84,7 +86,20 @@ const Poll = ({ postId, isOwner }) => {
             </button>
           ))}
         </div>
-        <p className="text-xs text-jolshaa-on-surface-variant mt-2">{poll.totalVotes} votes</p>
+        <div className="flex items-center justify-between mt-2">
+          <p className="text-xs text-jolshaa-on-surface-variant">{poll.totalVotes} votes</p>
+          {!isOwner && (
+            <button
+              onClick={() => setShowReport(true)}
+              className="text-xs text-jolshaa-on-surface-variant hover:text-red-600"
+            >
+              Report
+            </button>
+          )}
+        </div>
+        {showReport && (
+          <ReportModal targetType="poll" targetId={poll._id} onClose={() => setShowReport(false)} />
+        )}
       </div>
     );
   }

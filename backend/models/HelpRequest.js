@@ -23,7 +23,7 @@ const helpRequestSchema = new mongoose.Schema({
   },
   helpType: {
     type: String,
-    enum: ['medical', 'flood', 'fire', 'lost_person', 'food', 'shelter', 'financial', 'other'],
+    enum: ['medical', 'blood', 'flood', 'fire', 'lost_person', 'lost_item', 'giveaway', 'food', 'shelter', 'financial', 'other'],
     required: true
   },
   location: {

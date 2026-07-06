@@ -25,7 +25,23 @@ const fileFilter = (req, file, cb) => {
 const upload = multer({
   storage,
   fileFilter,
-  limits: { fileSize: 100 * 1024 * 1024 }, // 100MB max
+  limits: { fileSize: 100 * 1024 * 1024 }, // 100MB max (video ceiling)
 });
 
+const IMAGE_MAX_BYTES = 25 * 1024 * 1024; // 25MB max for images
+
+const checkMediaSize = (req, res, next) => {
+  const files = req.files
+    ? (Array.isArray(req.files) ? req.files : Object.values(req.files).flat())
+    : (req.file ? [req.file] : []);
+
+  for (const file of files) {
+    if (IMAGE_TYPES.includes(file.mimetype) && file.size > IMAGE_MAX_BYTES) {
+      return res.status(400).json({ message: 'Image files must be under 25MB' });
+    }
+  }
+  next();
+};
+
 module.exports = upload;
+module.exports.checkMediaSize = checkMediaSize;

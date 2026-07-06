@@ -4,7 +4,8 @@ import API from '../api/axios';
 import Avatar from './ui/Avatar';
 
 const HELP_TYPE_ICONS = {
-  medical: '🏥', flood: '🌊', fire: '🔥', lost_person: '🔍',
+  blood: '🩸', medical: '🏥', flood: '🌊', fire: '🔥', lost_person: '🔍',
+  lost_item: '🎒', giveaway: '🎁',
   food: '🍲', shelter: '🏠', financial: '💰', other: '🆘',
 };
 

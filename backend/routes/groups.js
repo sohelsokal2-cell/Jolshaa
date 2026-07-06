@@ -24,10 +24,10 @@ const {
 
 router.use(protect);
 
-router.post('/', upload.single('coverPhoto'), createGroup);
+router.post('/', upload.single('coverPhoto'), upload.checkMediaSize, createGroup);
 router.get('/', getGroups);
 router.get('/:id', getGroup);
-router.put('/:id', upload.single('coverPhoto'), updateGroup);
+router.put('/:id', upload.single('coverPhoto'), upload.checkMediaSize, updateGroup);
 router.delete('/:id', deleteGroup);
 router.put('/:id/join', checkRestriction('group_join'), joinGroup);
 router.put('/:id/approve/:userId', approveRequest);
@@ -39,6 +39,6 @@ router.delete('/:id/moderator/:userId', removeModerator);
 router.put('/:id/pin/:postId', pinPost);
 router.put('/:id/rules', updateRules);
 router.get('/:id/feed', getGroupFeed);
-router.post('/:id/posts', upload.array('media', 5), createGroupPost);
+router.post('/:id/posts', upload.array('media', 5), upload.checkMediaSize, createGroupPost);
 
 module.exports = router;

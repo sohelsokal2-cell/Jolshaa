@@ -19,7 +19,7 @@ const {
 
 router.use(protect);
 
-router.post('/', checkRestriction('message'), upload.single('media'), sendMessage);
+router.post('/', checkRestriction('message'), upload.single('media'), upload.checkMediaSize, sendMessage);
 router.post('/forward', forwardMessage);
 router.get('/search/:conversationId', searchMessages);
 router.put('/:messageId/react', reactToMessage);
