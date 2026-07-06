@@ -11,7 +11,6 @@ const ChatSidebar = ({ activeConversation, onSelectConversation, className = '' 
   const [searchQuery, setSearchQuery] = useState('');
   const [menuOpen, setMenuOpen] = useState(null);
   const [filter, setFilter] = useState('all');
-  const [showNewChat, setShowNewChat] = useState(false);
   const [friends, setFriends] = useState([]);
   const [friendsLoading, setFriendsLoading] = useState(false);
   const [friendSearch, setFriendSearch] = useState('');
@@ -77,7 +76,8 @@ const ChatSidebar = ({ activeConversation, onSelectConversation, className = '' 
     };
   }, [socket, user?.id]);
 
-  const fetchFriends = async () => {
+  const fetchFriends = useCallback(async () => {
+    if (!user?.id) return;
     setFriendsLoading(true);
     try {
       const res = await API.get(`/friends/${user.id}`);
@@ -87,12 +87,9 @@ const ChatSidebar = ({ activeConversation, onSelectConversation, className = '' 
     } finally {
       setFriendsLoading(false);
     }
-  };
+  }, [user?.id]);
 
-  const openNewChat = () => {
-    setShowNewChat(true);
-    if (friends.length === 0) fetchFriends();
-  };
+  useEffect(() => { fetchFriends(); }, [fetchFriends]);
 
   const startConversation = async (friendId) => {
     try {
@@ -104,7 +101,6 @@ const ChatSidebar = ({ activeConversation, onSelectConversation, className = '' 
         return [conv, ...prev];
       });
       onSelectConversation(conv);
-      setShowNewChat(false);
     } catch (err) {
       console.error('Failed to start conversation');
     }
@@ -214,80 +210,23 @@ const ChatSidebar = ({ activeConversation, onSelectConversation, className = '' 
     f.name.toLowerCase().includes(friendSearch.toLowerCase())
   );
 
+  const conversationFriendIds = new Set(
+    conversations.filter(c => !c.isGroup).map(c => getOtherParticipant(c)?._id).filter(Boolean)
+  );
+
+  const friendsWithoutConversation = filter === 'all'
+    ? friends
+        .filter(f => !conversationFriendIds.has(f._id))
+        .filter(f => searchQuery ? f.name.toLowerCase().includes(searchQuery.toLowerCase()) : true)
+    : [];
+
   return (
     <div className={`bg-jolshaa-surface-container-lowest border-r border-jolshaa-outline-variant h-full flex flex-col relative ${className}`}>
-      {/* New Chat Panel */}
-      {showNewChat && (
-        <div className="absolute inset-0 z-20 bg-jolshaa-surface-container-lowest flex flex-col">
-          <div className="p-3 border-b border-jolshaa-outline-variant flex items-center gap-2">
-            <button onClick={() => setShowNewChat(false)} className="text-jolshaa-on-surface-variant hover:text-jolshaa-on-surface">
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
-            </button>
-            <h3 className="font-display font-semibold text-sm">New Message</h3>
-            <button
-              onClick={() => { setShowGroupModal(true); setShowNewChat(false); }}
-              className="ml-auto text-xs text-jolshaa-teal hover:underline"
-            >
-              Create Group
-            </button>
-          </div>
-          <div className="p-2">
-            <input
-              type="text"
-              value={friendSearch}
-              onChange={(e) => setFriendSearch(e.target.value)}
-              placeholder="Search friends..."
-              className="w-full px-3 py-2 text-sm border border-jolshaa-outline-variant rounded-full focus:outline-none focus:ring-1 focus:ring-jolshaa-teal"
-            />
-          </div>
-          <div className="flex-1 overflow-y-auto">
-            {friendsLoading ? (
-              <div className="p-4 space-y-3">
-                {[1,2,3].map(i => (
-                  <div key={i} className="flex items-center gap-3 animate-pulse">
-                    <div className="w-10 h-10 bg-jolshaa-surface-container-high rounded-full" />
-                    <div className="h-4 bg-jolshaa-surface-container-high rounded w-1/2" />
-                  </div>
-                ))}
-              </div>
-            ) : filteredFriends.length === 0 ? (
-              <div className="p-4 text-center text-jolshaa-on-surface-variant text-sm">
-                {friendSearch ? 'No friends match' : 'No friends yet'}
-              </div>
-            ) : (
-              filteredFriends.map(friend => (
-                <button
-                  key={friend._id}
-                  onClick={() => startConversation(friend._id)}
-                  className="w-full flex items-center gap-3 p-3 hover:bg-jolshaa-surface-container-low transition text-left"
-                >
-                  <div className="relative">
-                    <img
-                      src={friend.profilePhoto || 'https://ui-avatars.com/api/?name=U&background=494454&color=dae2fd&size=128'}
-                      alt="" className="w-10 h-10 rounded-full object-cover"
-                    />
-                    {onlineUsers.has(friend._id) && (
-                      <div className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 rounded-full border-2 border-jolshaa-surface-container-lowest" />
-                    )}
-                  </div>
-                  <div>
-                    <span className="font-medium text-sm block">{friend.name}</span>
-                    <span className="text-xs text-jolshaa-on-surface-variant">
-                      {onlineUsers.has(friend._id) ? 'Active now' : ''}
-                    </span>
-                  </div>
-                </button>
-              ))
-            )}
-          </div>
-        </div>
-      )}
-
       {/* Group Creation Modal */}
       {showGroupModal && (
         <div className="absolute inset-0 z-20 bg-jolshaa-surface-container-lowest flex flex-col">
           <div className="p-3 border-b border-jolshaa-outline-variant flex items-center gap-2">
-            <button onClick={() => { setShowGroupModal(false); setShowNewChat(true); }} className="text-jolshaa-on-surface-variant hover:text-jolshaa-on-surface">
+            <button onClick={() => setShowGroupModal(false)} className="text-jolshaa-on-surface-variant hover:text-jolshaa-on-surface">
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
             </button>
             <h3 className="font-display font-semibold text-sm">New Group</h3>
@@ -356,11 +295,11 @@ const ChatSidebar = ({ activeConversation, onSelectConversation, className = '' 
         <div className="flex items-center justify-between mb-3">
           <h2 className="font-display text-lg md:text-xl font-bold">Chats</h2>
           <button
-            onClick={openNewChat}
-            className="w-8 h-8 flex items-center justify-center bg-jolshaa-teal text-jolshaa-on-teal rounded-full hover:bg-jolshaa-teal-container transition"
-            title="New message"
+            onClick={() => setShowGroupModal(true)}
+            className="w-8 h-8 flex items-center justify-center text-jolshaa-on-surface-variant hover:bg-jolshaa-surface-container rounded-full transition"
+            title="New group"
           >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a4 4 0 00-3-3.87M9 20H4v-2a4 4 0 013-3.87m6-1.13a4 4 0 10-4-4 4 4 0 004 4zm6 0a4 4 0 10-2.5-7.13" /></svg>
           </button>
         </div>
         <input
@@ -394,19 +333,13 @@ const ChatSidebar = ({ activeConversation, onSelectConversation, className = '' 
               </div>
             ))}
           </div>
-        ) : filteredConversations.length === 0 ? (
+        ) : filteredConversations.length === 0 && friendsWithoutConversation.length === 0 ? (
           <div className="p-4 text-center text-jolshaa-on-surface-variant text-sm">
-            {searchQuery ? 'No matching conversations' : (
-              <div>
-                <p className="mb-2">No conversations yet</p>
-                <button onClick={openNewChat} className="text-jolshaa-teal hover:underline">
-                  Start a conversation
-                </button>
-              </div>
-            )}
+            {searchQuery ? 'No matching conversations' : 'No conversations yet'}
           </div>
         ) : (
-          filteredConversations.map(conv => {
+          <>
+          {filteredConversations.map(conv => {
             const isActive = activeConversation?._id === conv._id;
             const unread = conv.unreadCount || 0;
             const lastMsg = conv.lastMessage;
@@ -503,7 +436,32 @@ const ChatSidebar = ({ activeConversation, onSelectConversation, className = '' 
                 )}
               </div>
             );
-          })
+          })}
+
+          {friendsWithoutConversation.map(friend => (
+            <button
+              key={friend._id}
+              onClick={() => startConversation(friend._id)}
+              className="w-full flex items-center gap-3 p-2.5 md:p-3 pl-2.5 md:pl-3 border-l-4 border-transparent hover:bg-jolshaa-surface-container-low transition text-left"
+            >
+              <div className="relative flex-shrink-0">
+                <img
+                  src={friend.profilePhoto || 'https://ui-avatars.com/api/?name=U&background=494454&color=dae2fd&size=128'}
+                  alt="" className="w-12 h-12 rounded-full object-cover"
+                />
+                {onlineUsers.has(friend._id) && (
+                  <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-jolshaa-surface-container-lowest" />
+                )}
+              </div>
+              <div className="flex-1 text-left min-w-0">
+                <span className="text-sm font-medium truncate block">{friend.name}</span>
+                <span className="text-xs text-jolshaa-on-surface-variant">
+                  {onlineUsers.has(friend._id) ? 'Active now' : 'Friend · Say hello'}
+                </span>
+              </div>
+            </button>
+          ))}
+          </>
         )}
       </div>
     </div>
