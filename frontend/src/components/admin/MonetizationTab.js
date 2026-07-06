@@ -53,16 +53,16 @@ const AdsManagementPanel = () => {
 
   useEffect(() => { fetchData(); }, []);
 
-  if (loading) return <div className="text-center py-8 text-neutral-500">Loading...</div>;
+  if (loading) return <div className="text-center py-8 text-jolshaa-on-surface-variant">Loading...</div>;
   if (!data) return null;
 
   const cards = [
-    { label: 'Total Ads', value: data.totalAds, color: 'text-blue-600', bg: 'bg-blue-50 dark:bg-blue-900/20' },
-    { label: 'Active Ads', value: data.activeAds, color: 'text-green-600', bg: 'bg-green-50 dark:bg-green-900/20' },
-    { label: 'Total Revenue', value: `$${data.totalRevenue.toFixed(2)}`, color: 'text-emerald-600', bg: 'bg-emerald-50 dark:bg-emerald-900/20' },
-    { label: 'Total Impressions', value: data.totalImpressions.toLocaleString(), color: 'text-purple-600', bg: 'bg-purple-50 dark:bg-purple-900/20' },
-    { label: 'Total Clicks', value: data.totalClicks.toLocaleString(), color: 'text-amber-600', bg: 'bg-amber-50 dark:bg-amber-900/20' },
-    { label: 'Avg CTR', value: `${data.avgCTR}%`, color: 'text-red-600', bg: 'bg-red-50 dark:bg-red-900/20' },
+    { label: 'Total Ads', value: data.totalAds, color: 'text-blue-600', bg: 'bg-blue-50' },
+    { label: 'Active Ads', value: data.activeAds, color: 'text-green-600', bg: 'bg-green-50' },
+    { label: 'Total Revenue', value: `$${data.totalRevenue.toFixed(2)}`, color: 'text-emerald-600', bg: 'bg-emerald-50' },
+    { label: 'Total Impressions', value: data.totalImpressions.toLocaleString(), color: 'text-purple-600', bg: 'bg-purple-50' },
+    { label: 'Total Clicks', value: data.totalClicks.toLocaleString(), color: 'text-amber-600', bg: 'bg-amber-50' },
+    { label: 'Avg CTR', value: `${data.avgCTR}%`, color: 'text-red-600', bg: 'bg-red-50' },
   ];
 
   return (
@@ -70,7 +70,7 @@ const AdsManagementPanel = () => {
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
         {cards.map(c => (
           <Card key={c.label} className={c.bg}>
-            <p className="text-xs font-medium text-neutral-500">{c.label}</p>
+            <p className="text-xs font-medium text-jolshaa-on-surface-variant">{c.label}</p>
             <p className={`text-xl font-bold ${c.color}`}>{c.value}</p>
           </Card>
         ))}
@@ -78,7 +78,7 @@ const AdsManagementPanel = () => {
 
       <Card>
         <div className="flex items-center justify-between mb-4">
-          <h3 className="font-semibold text-neutral-900 dark:text-neutral-100">All Ads</h3>
+          <h3 className="text-sm font-semibold font-display text-jolshaa-on-surface">All Ads</h3>
           <select value={filter} onChange={e => setFilter(e.target.value)} className="text-sm border rounded px-2 py-1">
             <option value="">All Status</option>
             <option value="active">Active</option>
@@ -90,7 +90,7 @@ const AdsManagementPanel = () => {
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b text-left text-neutral-500">
+              <tr className="border-b text-left text-jolshaa-on-surface-variant">
                 <th className="pb-2">Title</th>
                 <th className="pb-2">Advertiser</th>
                 <th className="pb-2">Budget</th>
@@ -152,7 +152,7 @@ const BoostedPostsPanel = () => {
 
   useEffect(() => { fetchData(); }, []);
 
-  if (loading) return <div className="text-center py-8 text-neutral-500">Loading...</div>;
+  if (loading) return <div className="text-center py-8 text-jolshaa-on-surface-variant">Loading...</div>;
   if (!data) return null;
 
   const active = data.posts.filter(p => new Date(p.boostEndsAt) > new Date());
@@ -162,23 +162,23 @@ const BoostedPostsPanel = () => {
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-3 gap-3">
-        <Card className="bg-blue-50 dark:bg-blue-900/20">
-          <p className="text-xs text-neutral-500">Total Boosted</p>
+        <Card className="bg-blue-50">
+          <p className="text-xs text-jolshaa-on-surface-variant">Total Boosted</p>
           <p className="text-2xl font-bold text-blue-600">{data.posts.length}</p>
         </Card>
-        <Card className="bg-green-50 dark:bg-green-900/20">
-          <p className="text-xs text-neutral-500">Active</p>
+        <Card className="bg-green-50">
+          <p className="text-xs text-jolshaa-on-surface-variant">Active</p>
           <p className="text-2xl font-bold text-green-600">{active.length}</p>
         </Card>
-        <Card className="bg-red-50 dark:bg-red-900/20">
-          <p className="text-xs text-neutral-500">Expired</p>
+        <Card className="bg-red-50">
+          <p className="text-xs text-jolshaa-on-surface-variant">Expired</p>
           <p className="text-2xl font-bold text-red-600">{expired.length}</p>
         </Card>
       </div>
 
       <Card>
         <div className="flex items-center justify-between mb-4">
-          <h3 className="font-semibold">Boosted Posts</h3>
+          <h3 className="text-sm font-semibold font-display text-jolshaa-on-surface">Boosted Posts</h3>
           <select value={filter} onChange={e => setFilter(e.target.value)} className="text-sm border rounded px-2 py-1">
             <option value="">All</option>
             <option value="active">Active</option>
@@ -187,12 +187,12 @@ const BoostedPostsPanel = () => {
         </div>
         <div className="space-y-3">
           {shown.map(post => (
-            <div key={post._id} className="flex items-center justify-between p-3 bg-neutral-50 dark:bg-neutral-800 rounded-lg">
+            <div key={post._id} className="flex items-center justify-between p-3 bg-jolshaa-surface-container-low rounded-lg">
               <div className="flex items-center gap-3">
                 {post.author?.profilePhoto && <img src={post.author.profilePhoto} className="w-8 h-8 rounded-full" alt="" />}
                 <div>
                   <p className="text-sm font-medium">{post.author?.name}</p>
-                  <p className="text-xs text-neutral-500 truncate max-w-md">{post.text || 'No text'}</p>
+                  <p className="text-xs text-jolshaa-on-surface-variant truncate max-w-md">{post.text || 'No text'}</p>
                 </div>
               </div>
               <div className="flex items-center gap-2">
@@ -223,36 +223,36 @@ const CreatorPayoutsPanel = () => {
 
   useEffect(() => { fetchData(); }, []);
 
-  if (loading) return <div className="text-center py-8 text-neutral-500">Loading...</div>;
+  if (loading) return <div className="text-center py-8 text-jolshaa-on-surface-variant">Loading...</div>;
   if (!data) return null;
 
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <Card className="bg-blue-50 dark:bg-blue-900/20">
-          <p className="text-xs text-neutral-500">Total Creators</p>
+        <Card className="bg-blue-50">
+          <p className="text-xs text-jolshaa-on-surface-variant">Total Creators</p>
           <p className="text-2xl font-bold text-blue-600">{data.totalCreators}</p>
         </Card>
-        <Card className="bg-amber-50 dark:bg-amber-900/20">
-          <p className="text-xs text-neutral-500">Pending Payouts</p>
+        <Card className="bg-amber-50">
+          <p className="text-xs text-jolshaa-on-surface-variant">Pending Payouts</p>
           <p className="text-2xl font-bold text-amber-600">{data.pendingPayouts}</p>
         </Card>
-        <Card className="bg-green-50 dark:bg-green-900/20">
-          <p className="text-xs text-neutral-500">Completed</p>
+        <Card className="bg-green-50">
+          <p className="text-xs text-jolshaa-on-surface-variant">Completed</p>
           <p className="text-2xl font-bold text-green-600">{data.completedPayouts}</p>
         </Card>
-        <Card className="bg-emerald-50 dark:bg-emerald-900/20">
-          <p className="text-xs text-neutral-500">Total Paid Out</p>
+        <Card className="bg-emerald-50">
+          <p className="text-xs text-jolshaa-on-surface-variant">Total Paid Out</p>
           <p className="text-2xl font-bold text-emerald-600">${data.totalPaidOut.toFixed(2)}</p>
         </Card>
       </div>
 
       <Card>
-        <h3 className="font-semibold mb-4">Recent Payouts</h3>
+        <h3 className="text-sm font-semibold font-display text-jolshaa-on-surface mb-4">Recent Payouts</h3>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b text-left text-neutral-500">
+              <tr className="border-b text-left text-jolshaa-on-surface-variant">
                 <th className="pb-2">Creator</th>
                 <th className="pb-2">Amount</th>
                 <th className="pb-2">Period</th>
@@ -303,34 +303,34 @@ const SubscriptionsPanel = () => {
     API.get('/admin/monetization/subscriptions/dashboard').then(res => setData(res.data)).finally(() => setLoading(false));
   }, []);
 
-  if (loading) return <div className="text-center py-8 text-neutral-500">Loading...</div>;
+  if (loading) return <div className="text-center py-8 text-jolshaa-on-surface-variant">Loading...</div>;
   if (!data) return null;
 
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-3 gap-3">
-        <Card className="bg-blue-50 dark:bg-blue-900/20">
-          <p className="text-xs text-neutral-500">Active Plans</p>
+        <Card className="bg-blue-50">
+          <p className="text-xs text-jolshaa-on-surface-variant">Active Plans</p>
           <p className="text-2xl font-bold text-blue-600">{data.totalPlans}</p>
         </Card>
-        <Card className="bg-green-50 dark:bg-green-900/20">
-          <p className="text-xs text-neutral-500">Total Subscribers</p>
+        <Card className="bg-green-50">
+          <p className="text-xs text-jolshaa-on-surface-variant">Total Subscribers</p>
           <p className="text-2xl font-bold text-green-600">{data.totalSubscribers}</p>
         </Card>
-        <Card className="bg-emerald-50 dark:bg-emerald-900/20">
-          <p className="text-xs text-neutral-500">Monthly Revenue</p>
+        <Card className="bg-emerald-50">
+          <p className="text-xs text-jolshaa-on-surface-variant">Monthly Revenue</p>
           <p className="text-2xl font-bold text-emerald-600">${data.monthlyRevenue.toFixed(2)}</p>
         </Card>
       </div>
 
       <Card>
-        <h3 className="font-semibold mb-4">Top Subscription Plans</h3>
+        <h3 className="text-sm font-semibold font-display text-jolshaa-on-surface mb-4">Top Subscription Plans</h3>
         <div className="space-y-3">
           {data.topPlans.map(plan => (
-            <div key={plan._id} className="flex items-center justify-between p-3 bg-neutral-50 dark:bg-neutral-800 rounded-lg">
+            <div key={plan._id} className="flex items-center justify-between p-3 bg-jolshaa-surface-container-low rounded-lg">
               <div>
                 <p className="font-medium">{plan.name} - {plan.creator?.name}</p>
-                <p className="text-xs text-neutral-500">${plan.price}/{plan.interval} &middot; {plan.subscriberCount} subscribers</p>
+                <p className="text-xs text-jolshaa-on-surface-variant">${plan.price}/{plan.interval} &middot; {plan.subscriberCount} subscribers</p>
               </div>
               <div className="text-right">
                 <p className="text-sm font-medium text-green-600">${plan.totalRevenue.toFixed(2)}</p>
@@ -352,32 +352,32 @@ const TipsDonationsPanel = () => {
     API.get('/admin/monetization/tips/dashboard').then(res => setData(res.data)).finally(() => setLoading(false));
   }, []);
 
-  if (loading) return <div className="text-center py-8 text-neutral-500">Loading...</div>;
+  if (loading) return <div className="text-center py-8 text-jolshaa-on-surface-variant">Loading...</div>;
   if (!data) return null;
 
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-2 gap-3">
-        <Card className="bg-blue-50 dark:bg-blue-900/20">
-          <p className="text-xs text-neutral-500">Total Tips</p>
+        <Card className="bg-blue-50">
+          <p className="text-xs text-jolshaa-on-surface-variant">Total Tips</p>
           <p className="text-2xl font-bold text-blue-600">{data.totalTips}</p>
         </Card>
-        <Card className="bg-emerald-50 dark:bg-emerald-900/20">
-          <p className="text-xs text-neutral-500">Total Amount</p>
+        <Card className="bg-emerald-50">
+          <p className="text-xs text-jolshaa-on-surface-variant">Total Amount</p>
           <p className="text-2xl font-bold text-emerald-600">${data.totalAmount.toFixed(2)}</p>
         </Card>
       </div>
 
       <Card>
-        <h3 className="font-semibold mb-4">Top Recipients</h3>
+        <h3 className="text-sm font-semibold font-display text-jolshaa-on-surface mb-4">Top Recipients</h3>
         <div className="space-y-2">
           {data.topRecipients.map((r, i) => (
-            <div key={i} className="flex items-center justify-between p-3 bg-neutral-50 dark:bg-neutral-800 rounded-lg">
+            <div key={i} className="flex items-center justify-between p-3 bg-jolshaa-surface-container-low rounded-lg">
               <div className="flex items-center gap-3">
                 {r._id?.profilePhoto && <img src={r._id.profilePhoto} className="w-8 h-8 rounded-full" alt="" />}
                 <div>
                   <p className="font-medium text-sm">{r._id?.name}</p>
-                  <p className="text-xs text-neutral-500">{r.count} tips received</p>
+                  <p className="text-xs text-jolshaa-on-surface-variant">{r.count} tips received</p>
                 </div>
               </div>
               <p className="font-bold text-green-600">${r.totalTips.toFixed(2)}</p>
@@ -404,7 +404,7 @@ const TransactionsPanel = () => {
 
   useEffect(() => { fetchData(); }, [page, typeFilter]);
 
-  if (loading) return <div className="text-center py-8 text-neutral-500">Loading...</div>;
+  if (loading) return <div className="text-center py-8 text-jolshaa-on-surface-variant">Loading...</div>;
   if (!data) return null;
 
   const typeColors = {
@@ -416,7 +416,7 @@ const TransactionsPanel = () => {
     <div className="space-y-4">
       <Card>
         <div className="flex items-center justify-between mb-4">
-          <h3 className="font-semibold">All Transactions ({data.total})</h3>
+          <h3 className="text-sm font-semibold font-display text-jolshaa-on-surface">All Transactions ({data.total})</h3>
           <div className="flex gap-2">
             <select value={typeFilter} onChange={e => setTypeFilter(e.target.value)} className="text-sm border rounded px-2 py-1">
               <option value="">All Types</option>
@@ -439,7 +439,7 @@ const TransactionsPanel = () => {
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b text-left text-neutral-500">
+              <tr className="border-b text-left text-jolshaa-on-surface-variant">
                 <th className="pb-2">ID</th>
                 <th className="pb-2">User</th>
                 <th className="pb-2">Type</th>
@@ -460,7 +460,7 @@ const TransactionsPanel = () => {
                       {tx.status}
                     </Badge>
                   </td>
-                  <td className="py-2 text-xs text-neutral-500">{new Date(tx.createdAt).toLocaleDateString()}</td>
+                  <td className="py-2 text-xs text-jolshaa-on-surface-variant">{new Date(tx.createdAt).toLocaleDateString()}</td>
                 </tr>
               ))}
             </tbody>
@@ -469,7 +469,7 @@ const TransactionsPanel = () => {
         {data.pages > 1 && (
           <div className="flex justify-center gap-2 mt-4">
             <Button size="sm" disabled={page === 1} onClick={() => setPage(p => p - 1)}>Prev</Button>
-            <span className="text-sm text-neutral-500 py-1">Page {page} of {data.pages}</span>
+            <span className="text-sm text-jolshaa-on-surface-variant py-1">Page {page} of {data.pages}</span>
             <Button size="sm" disabled={page >= data.pages} onClick={() => setPage(p => p + 1)}>Next</Button>
           </div>
         )}
@@ -506,40 +506,40 @@ const RefundsPanel = () => {
     fetchData();
   };
 
-  if (loading) return <div className="text-center py-8 text-neutral-500">Loading...</div>;
+  if (loading) return <div className="text-center py-8 text-jolshaa-on-surface-variant">Loading...</div>;
   if (!data) return null;
 
   return (
     <div className="space-y-4">
-      <Card className="border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-900/20">
+      <Card className="border-amber-200 bg-amber-50">
         <div className="flex items-center gap-2">
           <svg className="w-4 h-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
-          <p className="text-xs font-medium text-amber-700 dark:text-amber-400">Refund actions are irreversible. Always verify before approving.</p>
+          <p className="text-xs font-medium text-amber-700">Refund actions are irreversible. Always verify before approving.</p>
         </div>
       </Card>
 
       <div className="grid grid-cols-2 gap-3">
-        <Card className="border-amber-200 dark:border-amber-800">
-          <p className="text-[10px] font-medium text-neutral-500 uppercase tracking-wider">Pending Refunds</p>
+        <Card className="border-amber-200">
+          <p className="text-[10px] font-medium text-jolshaa-on-surface-variant uppercase tracking-wider">Pending Refunds</p>
           <p className="text-2xl font-bold text-amber-600 mt-1">{data.pendingRefunds}</p>
         </Card>
-        <Card className="border-red-200 dark:border-red-800">
-          <p className="text-[10px] font-medium text-neutral-500 uppercase tracking-wider">Total Refunded</p>
+        <Card className="border-red-200">
+          <p className="text-[10px] font-medium text-jolshaa-on-surface-variant uppercase tracking-wider">Total Refunded</p>
           <p className="text-2xl font-bold text-red-600 mt-1">${data.totalRefunded?.toFixed(2)}</p>
         </Card>
       </div>
 
       <Card>
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">Recent Refunds</h3>
+          <h3 className="text-sm font-semibold font-display text-jolshaa-on-surface">Recent Refunds</h3>
           <Button size="sm" variant={showCreate ? 'ghost' : 'primary'} onClick={() => setShowCreate(!showCreate)}>{showCreate ? 'Cancel' : 'Create Refund'}</Button>
         </div>
 
         {showCreate && (
-          <div className="p-4 bg-neutral-50 dark:bg-neutral-800 rounded-lg mb-4 space-y-3 border border-neutral-200 dark:border-neutral-700">
+          <div className="p-4 bg-jolshaa-surface-container-low rounded-lg mb-4 space-y-3 border border-jolshaa-outline-variant">
             <Input placeholder="Transaction ID" value={formData.transactionId} onChange={e => setFormData(p => ({ ...p, transactionId: e.target.value }))} />
             <Input placeholder="Amount" type="number" value={formData.amount} onChange={e => setFormData(p => ({ ...p, amount: e.target.value }))} />
-            <select value={formData.reason} onChange={e => setFormData(p => ({ ...p, reason: e.target.value }))} className="w-full text-sm border border-neutral-300 dark:border-neutral-600 rounded-lg px-3 py-2 bg-white dark:bg-neutral-800">
+            <select value={formData.reason} onChange={e => setFormData(p => ({ ...p, reason: e.target.value }))} className="w-full text-sm border border-jolshaa-outline-variant rounded-lg px-3 py-2 bg-jolshaa-surface-container-lowest">
               <option value="fraud">Fraud</option>
               <option value="dispute">Dispute</option>
               <option value="technical">Technical</option>
@@ -553,10 +553,10 @@ const RefundsPanel = () => {
 
         <div className="space-y-2">
           {data.recentRefunds?.map(refund => (
-            <div key={refund._id} className={`flex items-center justify-between p-3 rounded-lg ${refund.status === 'pending' ? 'bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800' : 'bg-neutral-50 dark:bg-neutral-800'}`}>
+            <div key={refund._id} className={`flex items-center justify-between p-3 rounded-lg ${refund.status === 'pending' ? 'bg-amber-50 border border-amber-200' : 'bg-jolshaa-surface-container-low'}`}>
               <div>
-                <p className="font-medium text-sm text-neutral-900 dark:text-neutral-100">{refund.user?.name} - ${refund.amount?.toFixed(2)}</p>
-                <p className="text-xs text-neutral-500">Reason: {refund.reason}</p>
+                <p className="font-medium text-sm text-jolshaa-on-surface">{refund.user?.name} - ${refund.amount?.toFixed(2)}</p>
+                <p className="text-xs text-jolshaa-on-surface-variant">Reason: {refund.reason}</p>
               </div>
               <div className="flex items-center gap-2">
                 <Badge variant={refund.status === 'processed' ? 'success' : refund.status === 'approved' ? 'info' : refund.status === 'rejected' ? 'danger' : 'warning'} size="xs">{refund.status}</Badge>
@@ -578,13 +578,13 @@ const RefundsPanel = () => {
       }>
         <div className="p-5 space-y-4">
           {confirmModal?.type === 'create' && (
-            <p className="text-sm text-neutral-600">Are you sure you want to create a refund of <span className="font-bold text-red-600">${parseFloat(confirmModal.data.amount)?.toFixed(2)}</span> for transaction {confirmModal.data.transactionId}? This action cannot be undone.</p>
+            <p className="text-sm text-jolshaa-on-surface-variant">Are you sure you want to create a refund of <span className="font-bold text-red-600">${parseFloat(confirmModal.data.amount)?.toFixed(2)}</span> for transaction {confirmModal.data.transactionId}? This action cannot be undone.</p>
           )}
           {confirmModal?.type === 'approve' && (
-            <p className="text-sm text-neutral-600">Are you sure you want to approve this refund? The amount will be returned to the user.</p>
+            <p className="text-sm text-jolshaa-on-surface-variant">Are you sure you want to approve this refund? The amount will be returned to the user.</p>
           )}
           {confirmModal?.type === 'reject' && (
-            <p className="text-sm text-neutral-600">Are you sure you want to reject this refund? The user will not receive a refund.</p>
+            <p className="text-sm text-jolshaa-on-surface-variant">Are you sure you want to reject this refund? The user will not receive a refund.</p>
           )}
           <div className="flex justify-end gap-2">
             <Button variant="secondary" onClick={() => setConfirmModal(null)}>Cancel</Button>
@@ -628,7 +628,7 @@ const CreatorApplicationsPanel = () => {
     fetchData();
   };
 
-  if (loading) return <div className="text-center py-8 text-neutral-500">Loading...</div>;
+  if (loading) return <div className="text-center py-8 text-jolshaa-on-surface-variant">Loading...</div>;
   if (!data) return null;
 
   const apps = data.applications || [];
@@ -637,27 +637,27 @@ const CreatorApplicationsPanel = () => {
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <Card className="bg-blue-50 dark:bg-blue-900/20">
-          <p className="text-xs text-neutral-500">Total Applications</p>
+        <Card className="bg-blue-50">
+          <p className="text-xs text-jolshaa-on-surface-variant">Total Applications</p>
           <p className="text-2xl font-bold text-blue-600">{apps.length}</p>
         </Card>
-        <Card className="bg-amber-50 dark:bg-amber-900/20">
-          <p className="text-xs text-neutral-500">Pending Review</p>
+        <Card className="bg-amber-50">
+          <p className="text-xs text-jolshaa-on-surface-variant">Pending Review</p>
           <p className="text-2xl font-bold text-amber-600">{apps.filter(a => a.monetization?.verificationStatus === 'pending').length}</p>
         </Card>
-        <Card className="bg-green-50 dark:bg-green-900/20">
-          <p className="text-xs text-neutral-500">Approved</p>
+        <Card className="bg-green-50">
+          <p className="text-xs text-jolshaa-on-surface-variant">Approved</p>
           <p className="text-2xl font-bold text-green-600">{apps.filter(a => a.monetization?.verificationStatus === 'approved').length}</p>
         </Card>
-        <Card className="bg-red-50 dark:bg-red-900/20">
-          <p className="text-xs text-neutral-500">Rejected</p>
+        <Card className="bg-red-50">
+          <p className="text-xs text-jolshaa-on-surface-variant">Rejected</p>
           <p className="text-2xl font-bold text-red-600">{apps.filter(a => a.monetization?.verificationStatus === 'rejected').length}</p>
         </Card>
       </div>
 
       <Card>
         <div className="flex items-center justify-between mb-4">
-          <h3 className="font-semibold text-neutral-900 dark:text-neutral-100">Creator Applications</h3>
+          <h3 className="text-sm font-semibold font-display text-jolshaa-on-surface">Creator Applications</h3>
           <select value={filter} onChange={e => setFilter(e.target.value)} className="text-sm border rounded px-2 py-1">
             <option value="">All Status</option>
             <option value="pending">Pending</option>
@@ -667,18 +667,18 @@ const CreatorApplicationsPanel = () => {
           </select>
         </div>
         {shown.length === 0 ? (
-          <p className="text-center py-8 text-neutral-500 text-sm">No applications found</p>
+          <p className="text-center py-8 text-jolshaa-on-surface-variant text-sm">No applications found</p>
         ) : (
           <div className="space-y-3">
             {shown.map(app => (
-              <div key={app._id} className="p-4 bg-neutral-50 dark:bg-neutral-800 rounded-lg border border-neutral-200 dark:border-neutral-700">
+              <div key={app._id} className="p-4 bg-jolshaa-surface-container-low rounded-lg border border-jolshaa-outline-variant">
                 <div className="flex items-start justify-between">
                   <div className="flex items-center gap-3">
                     {app.profilePhoto && <img src={app.profilePhoto} className="w-10 h-10 rounded-full" alt="" />}
                     <div>
-                      <p className="font-medium text-neutral-900 dark:text-neutral-100">{app.name}</p>
-                      <p className="text-xs text-neutral-500">{app.email}</p>
-                      <div className="flex gap-3 mt-1 text-xs text-neutral-500">
+                      <p className="font-medium text-jolshaa-on-surface">{app.name}</p>
+                      <p className="text-xs text-jolshaa-on-surface-variant">{app.email}</p>
+                      <div className="flex gap-3 mt-1 text-xs text-jolshaa-on-surface-variant">
                         <span>{app.followers?.length || 0} followers</span>
                         <span>Applied {app.monetization?.appliedAt ? new Date(app.monetization.appliedAt).toLocaleDateString() : 'N/A'}</span>
                       </div>
@@ -707,21 +707,21 @@ const CreatorApplicationsPanel = () => {
                 {reviewModal.profilePhoto && <img src={reviewModal.profilePhoto} className="w-12 h-12 rounded-full" alt="" />}
                 <div>
                   <p className="font-medium">{reviewModal.name}</p>
-                  <p className="text-sm text-neutral-500">{reviewModal.email}</p>
+                  <p className="text-sm text-jolshaa-on-surface-variant">{reviewModal.email}</p>
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-3 text-center">
-                <div className="bg-neutral-50 dark:bg-neutral-800 rounded-lg p-3">
+                <div className="bg-jolshaa-surface-container-low rounded-lg p-3">
                   <p className="text-lg font-bold text-blue-600">{reviewModal.followers?.length || 0}</p>
-                  <p className="text-xs text-neutral-500">Followers</p>
+                  <p className="text-xs text-jolshaa-on-surface-variant">Followers</p>
                 </div>
-                <div className="bg-neutral-50 dark:bg-neutral-800 rounded-lg p-3">
+                <div className="bg-jolshaa-surface-container-low rounded-lg p-3">
                   <p className="text-lg font-bold text-purple-600">{reviewModal.monetization?.appliedAt ? Math.floor((Date.now() - new Date(reviewModal.createdAt).getTime()) / (1000 * 60 * 60 * 24)) : 0}</p>
-                  <p className="text-xs text-neutral-500">Account Age (days)</p>
+                  <p className="text-xs text-jolshaa-on-surface-variant">Account Age (days)</p>
                 </div>
               </div>
               <textarea
-                className="w-full border rounded-lg px-3 py-2 text-sm bg-white dark:bg-neutral-800 border-neutral-300 dark:border-neutral-600"
+                className="w-full border rounded-lg px-3 py-2 text-sm bg-jolshaa-surface-container-lowest border-jolshaa-outline-variant"
                 rows={3}
                 placeholder="Add a note (optional)"
                 value={note}
@@ -760,7 +760,7 @@ const AdReviewQueuePanel = () => {
     fetchData();
   };
 
-  if (loading) return <div className="text-center py-8 text-neutral-500">Loading...</div>;
+  if (loading) return <div className="text-center py-8 text-jolshaa-on-surface-variant">Loading...</div>;
   if (!data) return null;
 
   const campaigns = data.campaigns || [];
@@ -769,20 +769,20 @@ const AdReviewQueuePanel = () => {
     <div className="space-y-4">
       <Card>
         <div className="flex items-center justify-between mb-4">
-          <h3 className="font-semibold text-neutral-900 dark:text-neutral-100">Ad Campaign Review Queue</h3>
-          <span className="text-sm text-neutral-500">{campaigns.length} pending review</span>
+          <h3 className="text-sm font-semibold font-display text-jolshaa-on-surface">Ad Campaign Review Queue</h3>
+          <span className="text-sm text-jolshaa-on-surface-variant">{campaigns.length} pending review</span>
         </div>
         {campaigns.length === 0 ? (
-          <p className="text-center py-8 text-neutral-500 text-sm">No campaigns pending review</p>
+          <p className="text-center py-8 text-jolshaa-on-surface-variant text-sm">No campaigns pending review</p>
         ) : (
           <div className="space-y-3">
             {campaigns.map(campaign => (
-              <div key={campaign._id} className="p-4 bg-neutral-50 dark:bg-neutral-800 rounded-lg border border-neutral-200 dark:border-neutral-700">
+              <div key={campaign._id} className="p-4 bg-jolshaa-surface-container-low rounded-lg border border-jolshaa-outline-variant">
                 <div className="flex items-start justify-between">
                   <div>
-                    <p className="font-medium text-neutral-900 dark:text-neutral-100">{campaign.title || 'Untitled Campaign'}</p>
-                    <p className="text-xs text-neutral-500">by {campaign.advertiser?.name} &middot; {campaign.postType === 'video' ? 'Video' : 'Photo'} Post</p>
-                    <div className="flex gap-3 mt-1 text-xs text-neutral-500">
+                    <p className="font-medium text-jolshaa-on-surface">{campaign.title || 'Untitled Campaign'}</p>
+                    <p className="text-xs text-jolshaa-on-surface-variant">by {campaign.advertiser?.name} &middot; {campaign.postType === 'video' ? 'Video' : 'Photo'} Post</p>
+                    <div className="flex gap-3 mt-1 text-xs text-jolshaa-on-surface-variant">
                       <span>Budget: {campaign.budget} BDT</span>
                       <span>Spent: {campaign.spent?.toFixed(2) || '0.00'} BDT</span>
                       <span>Impressions: {(campaign.impressions || 0).toLocaleString()}</span>
@@ -827,7 +827,7 @@ const PayoutRequestsPanel = () => {
     fetchData();
   };
 
-  if (loading) return <div className="text-center py-8 text-neutral-500">Loading...</div>;
+  if (loading) return <div className="text-center py-8 text-jolshaa-on-surface-variant">Loading...</div>;
   if (!data) return null;
 
   const payouts = data.payouts || [];
@@ -836,27 +836,27 @@ const PayoutRequestsPanel = () => {
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <Card className="bg-amber-50 dark:bg-amber-900/20">
-          <p className="text-xs text-neutral-500">Pending</p>
+        <Card className="bg-amber-50">
+          <p className="text-xs text-jolshaa-on-surface-variant">Pending</p>
           <p className="text-2xl font-bold text-amber-600">{data.total || 0}</p>
         </Card>
-        <Card className="bg-blue-50 dark:bg-blue-900/20">
-          <p className="text-xs text-neutral-500">Total Requests</p>
+        <Card className="bg-blue-50">
+          <p className="text-xs text-jolshaa-on-surface-variant">Total Requests</p>
           <p className="text-2xl font-bold text-blue-600">{data.total || 0}</p>
         </Card>
       </div>
 
       <Card>
         <div className="flex items-center justify-between mb-4">
-          <h3 className="font-semibold text-neutral-900 dark:text-neutral-100">Payout Requests</h3>
+          <h3 className="text-sm font-semibold font-display text-jolshaa-on-surface">Payout Requests</h3>
         </div>
         {payouts.length === 0 ? (
-          <p className="text-center py-8 text-neutral-500 text-sm">No pending payout requests</p>
+          <p className="text-center py-8 text-jolshaa-on-surface-variant text-sm">No pending payout requests</p>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b text-left text-neutral-500">
+                <tr className="border-b text-left text-jolshaa-on-surface-variant">
                   <th className="pb-2">Creator</th>
                   <th className="pb-2">Amount</th>
                   <th className="pb-2">Method</th>
@@ -879,7 +879,7 @@ const PayoutRequestsPanel = () => {
                     <td className="py-2 capitalize">{req.paymentMethod}</td>
                     <td className="py-2 font-mono text-xs">{req.accountDetails}</td>
                     <td className="py-2"><Badge variant={statusColors[req.status]}>{req.status}</Badge></td>
-                    <td className="py-2 text-xs text-neutral-500">{new Date(req.createdAt).toLocaleDateString()}</td>
+                    <td className="py-2 text-xs text-jolshaa-on-surface-variant">{new Date(req.createdAt).toLocaleDateString()}</td>
                     <td className="py-2">
                       {req.status === 'pending' && (
                         <div className="flex gap-1">
@@ -900,14 +900,14 @@ const PayoutRequestsPanel = () => {
         <div className="p-5 space-y-4">
           {processModal && (
             <>
-              <p className="text-sm text-neutral-600">
+              <p className="text-sm text-jolshaa-on-surface-variant">
                 {processModal.action === 'completed'
                   ? `Confirm payout of ${processModal.amount} BDT to ${processModal.user?.name} via ${processModal.paymentMethod}?`
                   : `Reject payout request of ${processModal.amount} BDT from ${processModal.user?.name}?`
                 }
               </p>
               <textarea
-                className="w-full border rounded-lg px-3 py-2 text-sm bg-white dark:bg-neutral-800 border-neutral-300 dark:border-neutral-600"
+                className="w-full border rounded-lg px-3 py-2 text-sm bg-jolshaa-surface-container-lowest border-jolshaa-outline-variant"
                 rows={2}
                 placeholder="Admin note (optional)"
                 value={adminNote}
@@ -936,55 +936,55 @@ const PlatformRevenuePanel = () => {
     API.get('/payouts/admin/platform-revenue').then(res => setData(res.data)).finally(() => setLoading(false));
   }, []);
 
-  if (loading) return <div className="text-center py-8 text-neutral-500">Loading...</div>;
+  if (loading) return <div className="text-center py-8 text-jolshaa-on-surface-variant">Loading...</div>;
   if (!data) return null;
 
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-        <Card className="bg-emerald-50 dark:bg-emerald-900/20">
-          <p className="text-xs text-neutral-500">This Month Revenue</p>
+        <Card className="bg-emerald-50">
+          <p className="text-xs text-jolshaa-on-surface-variant">This Month Revenue</p>
           <p className="text-2xl font-bold text-emerald-600">{data.thisMonthRevenue?.toFixed(2) || '0.00'} BDT</p>
         </Card>
-        <Card className="bg-blue-50 dark:bg-blue-900/20">
-          <p className="text-xs text-neutral-500">Last Month Revenue</p>
+        <Card className="bg-blue-50">
+          <p className="text-xs text-jolshaa-on-surface-variant">Last Month Revenue</p>
           <p className="text-2xl font-bold text-blue-600">{data.lastMonthRevenue?.toFixed(2) || '0.00'} BDT</p>
         </Card>
-        <Card className="bg-purple-50 dark:bg-purple-900/20">
-          <p className="text-xs text-neutral-500">Revenue Change</p>
+        <Card className="bg-purple-50">
+          <p className="text-xs text-jolshaa-on-surface-variant">Revenue Change</p>
           <p className="text-2xl font-bold text-purple-600">{data.revenueChange || 0}%</p>
         </Card>
       </div>
 
       <div className="grid grid-cols-2 gap-3">
-        <Card className="bg-amber-50 dark:bg-amber-900/20">
-          <p className="text-xs text-neutral-500">Total Paid Out</p>
+        <Card className="bg-amber-50">
+          <p className="text-xs text-jolshaa-on-surface-variant">Total Paid Out</p>
           <p className="text-2xl font-bold text-amber-600">{data.totalPaidOut?.toFixed(2) || '0.00'} BDT</p>
         </Card>
-        <Card className="bg-red-50 dark:bg-red-900/20">
-          <p className="text-xs text-neutral-500">Pending Payout Liability</p>
+        <Card className="bg-red-50">
+          <p className="text-xs text-jolshaa-on-surface-variant">Pending Payout Liability</p>
           <p className="text-2xl font-bold text-red-600">{data.pendingPayoutLiability?.toFixed(2) || '0.00'} BDT</p>
         </Card>
       </div>
 
       <Card>
-        <h3 className="font-semibold text-neutral-900 dark:text-neutral-100 mb-4">Top Earning Creators</h3>
+        <h3 className="text-sm font-semibold font-display text-jolshaa-on-surface mb-4">Top Earning Creators</h3>
         <div className="space-y-3">
           {(data.topCreators || []).map((creator, i) => (
-            <div key={creator._id} className="flex items-center justify-between p-3 bg-neutral-50 dark:bg-neutral-800 rounded-lg">
+            <div key={creator._id} className="flex items-center justify-between p-3 bg-jolshaa-surface-container-low rounded-lg">
               <div className="flex items-center gap-3">
-                <span className="text-sm font-bold text-neutral-400 w-6">#{i + 1}</span>
+                <span className="text-sm font-bold text-jolshaa-on-surface-variant w-6">#{i + 1}</span>
                 {creator.profilePhoto && <img src={creator.profilePhoto} className="w-8 h-8 rounded-full" alt="" />}
                 <div>
                   <p className="font-medium text-sm">{creator.name}</p>
-                  <p className="text-xs text-neutral-500">Balance: {creator.monetization?.availableBalance?.toFixed(2) || '0.00'} BDT</p>
+                  <p className="text-xs text-jolshaa-on-surface-variant">Balance: {creator.monetization?.availableBalance?.toFixed(2) || '0.00'} BDT</p>
                 </div>
               </div>
               <p className="font-bold text-emerald-600">{creator.monetization?.totalEarnings?.toFixed(2) || '0.00'} BDT</p>
             </div>
           ))}
           {(!data.topCreators || data.topCreators.length === 0) && (
-            <p className="text-center py-4 text-neutral-500 text-sm">No creator data yet</p>
+            <p className="text-center py-4 text-jolshaa-on-surface-variant text-sm">No creator data yet</p>
           )}
         </div>
       </Card>
@@ -1018,47 +1018,47 @@ const FraudDetectionPanel = () => {
     setScanning(false);
   };
 
-  if (loading) return <div className="text-center py-8 text-neutral-500">Loading...</div>;
+  if (loading) return <div className="text-center py-8 text-jolshaa-on-surface-variant">Loading...</div>;
   if (!data) return null;
 
   const severityColors = { low: 'info', medium: 'warning', high: 'danger', critical: 'danger' };
-  const severityBg = { low: 'bg-blue-50 dark:bg-blue-900/20', medium: 'bg-amber-50 dark:bg-amber-900/20', high: 'bg-red-50 dark:bg-red-900/20', critical: 'bg-red-100 dark:bg-red-900/40' };
+  const severityBg = { low: 'bg-blue-50', medium: 'bg-amber-50', high: 'bg-red-50', critical: 'bg-red-100' };
   const statusColors = { open: 'warning', investigating: 'info', resolved: 'success', dismissed: 'neutral' };
 
   return (
     <div className="space-y-4">
-      <Card className="border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/20">
+      <Card className="border-red-200 bg-red-50">
         <div className="flex items-center gap-2">
           <svg className="w-4 h-4 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
-          <p className="text-xs font-medium text-red-700 dark:text-red-400">Fraud detection requires careful review. Verify evidence before taking action.</p>
+          <p className="text-xs font-medium text-red-700">Fraud detection requires careful review. Verify evidence before taking action.</p>
         </div>
       </Card>
 
       <div className="grid grid-cols-2 gap-3">
-        <Card className="border-amber-200 dark:border-amber-800">
-          <p className="text-[10px] font-medium text-neutral-500 uppercase tracking-wider">Open Alerts</p>
+        <Card className="border-amber-200">
+          <p className="text-[10px] font-medium text-jolshaa-on-surface-variant uppercase tracking-wider">Open Alerts</p>
           <p className="text-2xl font-bold text-amber-600 mt-1">{data.openAlerts}</p>
         </Card>
-        <Card className="border-red-200 dark:border-red-800">
-          <p className="text-[10px] font-medium text-neutral-500 uppercase tracking-wider">Critical Alerts</p>
+        <Card className="border-red-200">
+          <p className="text-[10px] font-medium text-jolshaa-on-surface-variant uppercase tracking-wider">Critical Alerts</p>
           <p className={`text-2xl font-bold mt-1 ${data.criticalAlerts > 0 ? 'text-red-600' : 'text-green-600'}`}>{data.criticalAlerts}</p>
         </Card>
       </div>
 
       <Card>
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">Fraud Alerts</h3>
+          <h3 className="text-sm font-semibold font-display text-jolshaa-on-surface">Fraud Alerts</h3>
           <Button size="sm" variant="ghost" onClick={handleScan} disabled={scanning}>{scanning ? 'Scanning...' : 'Run Auto-Scan'}</Button>
         </div>
         <div className="space-y-2">
           {data.recentAlerts?.length === 0 ? (
-            <div className="text-center py-8 text-neutral-500 text-sm">No fraud alerts</div>
+            <div className="text-center py-8 text-jolshaa-on-surface-variant text-sm">No fraud alerts</div>
           ) : data.recentAlerts?.map(alert => (
-            <div key={alert._id} className={`p-3 rounded-lg border ${severityBg[alert.severity] || 'bg-neutral-50 dark:bg-neutral-800'} ${alert.severity === 'critical' ? 'border-red-300 dark:border-red-700' : 'border-neutral-200 dark:border-neutral-700'}`}>
+            <div key={alert._id} className={`p-3 rounded-lg border ${severityBg[alert.severity] || 'bg-jolshaa-surface-container-low'} ${alert.severity === 'critical' ? 'border-red-300' : 'border-jolshaa-outline-variant'}`}>
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="font-medium text-sm text-neutral-900 dark:text-neutral-100">{alert.user?.name}</p>
-                  <p className="text-xs text-neutral-500">{alert.description}</p>
+                  <p className="font-medium text-sm text-jolshaa-on-surface">{alert.user?.name}</p>
+                  <p className="text-xs text-jolshaa-on-surface-variant">{alert.description}</p>
                 </div>
                 <div className="flex items-center gap-2">
                   <Badge variant={severityColors[alert.severity]} size="xs">{alert.severity}</Badge>
@@ -1082,8 +1082,8 @@ const FraudDetectionPanel = () => {
         confirmModal?.type === 'resolve' ? 'Resolve Alert' : 'Dismiss Alert'
       }>
         <div className="p-5 space-y-4">
-          {confirmModal?.type === 'investigate' && <p className="text-sm text-neutral-600">Mark this fraud alert as under investigation?</p>}
-          {confirmModal?.type === 'resolve' && <p className="text-sm text-neutral-600">Mark this fraud alert as resolved? This indicates the issue has been addressed.</p>}
+          {confirmModal?.type === 'investigate' && <p className="text-sm text-jolshaa-on-surface-variant">Mark this fraud alert as under investigation?</p>}
+          {confirmModal?.type === 'resolve' && <p className="text-sm text-jolshaa-on-surface-variant">Mark this fraud alert as resolved? This indicates the issue has been addressed.</p>}
           {confirmModal?.type === 'dismiss' && <p className="text-sm text-red-600 font-medium">Dismiss this fraud alert? This action indicates the alert was a false positive.</p>}
           <div className="flex justify-end gap-2">
             <Button variant="secondary" onClick={() => setConfirmModal(null)}>Cancel</Button>

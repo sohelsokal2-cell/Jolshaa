@@ -51,8 +51,8 @@ const InviteFriendsModal = ({ eventId, onClose }) => {
     <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
       <div className="bg-white rounded-xl max-w-md w-full overflow-hidden">
         <div className="flex items-center justify-between p-4 border-b">
-          <h3 className="font-semibold text-gray-800">Invite Friends</h3>
-          <button onClick={onClose} className="text-gray-500 hover:text-gray-700 text-xl">&times;</button>
+          <h3 className="font-display font-semibold text-jolshaa-on-surface">Invite Friends</h3>
+          <button onClick={onClose} className="text-jolshaa-on-surface-variant hover:text-jolshaa-on-surface text-xl">&times;</button>
         </div>
 
         <div className="p-4">
@@ -63,8 +63,8 @@ const InviteFriendsModal = ({ eventId, onClose }) => {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
               </div>
-              <p className="font-medium text-gray-800">Invitations Sent!</p>
-              <p className="text-gray-500 text-sm mt-1">{selected.length} friend{selected.length !== 1 ? 's' : ''} invited</p>
+              <p className="font-medium text-jolshaa-on-surface">Invitations Sent!</p>
+              <p className="text-jolshaa-on-surface-variant text-sm mt-1">{selected.length} friend{selected.length !== 1 ? 's' : ''} invited</p>
               <button onClick={onClose} className="mt-4 px-6 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700">Done</button>
             </div>
           ) : (
@@ -74,18 +74,18 @@ const InviteFriendsModal = ({ eventId, onClose }) => {
                 placeholder="Search friends..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm mb-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full border border-jolshaa-outline-variant rounded-lg px-3 py-2 text-sm mb-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
 
               {loading ? (
-                <p className="text-center text-gray-500 text-sm py-4">Loading friends...</p>
+                <p className="text-center text-jolshaa-on-surface-variant text-sm py-4">Loading friends...</p>
               ) : (
                 <div className="max-h-64 overflow-y-auto space-y-2">
                   {filtered.map((friend) => (
                     <label
                       key={friend._id}
                       className={`flex items-center gap-3 p-2 rounded-lg cursor-pointer transition-colors ${
-                        selected.includes(friend._id) ? 'bg-blue-50 border border-blue-300' : 'hover:bg-gray-50 border border-transparent'
+                        selected.includes(friend._id) ? 'bg-blue-50 border border-blue-300' : 'hover:bg-jolshaa-surface-container-low border border-transparent'
                       }`}
                     >
                       <input
@@ -99,17 +99,17 @@ const InviteFriendsModal = ({ eventId, onClose }) => {
                         alt=""
                         className="w-8 h-8 rounded-full object-cover"
                       />
-                      <span className="text-sm font-medium text-gray-700">{friend.name}</span>
+                      <span className="text-sm font-medium text-jolshaa-on-surface">{friend.name}</span>
                     </label>
                   ))}
                   {filtered.length === 0 && (
-                    <p className="text-center text-gray-500 text-sm py-4">No friends found</p>
+                    <p className="text-center text-jolshaa-on-surface-variant text-sm py-4">No friends found</p>
                   )}
                 </div>
               )}
 
               <div className="flex gap-3 mt-4">
-                <button onClick={onClose} className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50">
+                <button onClick={onClose} className="flex-1 px-4 py-2 border border-jolshaa-outline-variant text-jolshaa-on-surface rounded-lg font-medium hover:bg-jolshaa-surface-container-low">
                   Cancel
                 </button>
                 <button

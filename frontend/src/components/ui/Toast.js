@@ -26,11 +26,11 @@ export const ToastProvider = ({ children }) => {
         {toasts.map(toast => (
           <div
             key={toast.id}
-            className={`pointer-events-auto flex items-center gap-3 px-4 py-3 rounded-xl shadow-dropdown text-sm font-medium animate-slide-up ${
-              toast.type === 'success' ? 'bg-accent-600 text-white' :
+            className={`pointer-events-auto flex items-center gap-3 px-4 py-3 rounded-xl shadow-ambient-hover text-sm font-medium animate-slide-up ${
+              toast.type === 'success' ? 'bg-jolshaa-teal text-white' :
               toast.type === 'error' ? 'bg-red-600 text-white' :
               toast.type === 'warning' ? 'bg-amber-500 text-white' :
-              'bg-neutral-800 text-white dark:bg-neutral-700'
+              'bg-jolshaa-surface-container-highest text-jolshaa-on-surface'
             }`}
             onClick={() => removeToast(toast.id)}
           >

@@ -25,7 +25,7 @@ const StoryHighlights = ({ userId }) => {
 
   return (
     <div className="bg-white rounded-lg shadow-sm p-4 mt-4">
-      <h3 className="font-semibold text-gray-800 mb-3 text-sm">Story Highlights</h3>
+      <h3 className="font-display font-semibold text-jolshaa-on-surface mb-3 text-sm">Story Highlights</h3>
       <div className="flex gap-4 overflow-x-auto pb-2">
         {highlights.map((album) => (
           <Link
@@ -40,7 +40,7 @@ const StoryHighlights = ({ userId }) => {
                 className="w-full h-full rounded-full object-cover"
               />
             </div>
-            <span className="text-xs text-gray-600 font-medium text-center w-20 truncate">
+            <span className="text-xs text-jolshaa-on-surface-variant font-medium text-center w-20 truncate">
               {album.title}
             </span>
           </Link>

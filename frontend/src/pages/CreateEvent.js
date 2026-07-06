@@ -91,32 +91,32 @@ const CreateEvent = () => {
   return (
     <Layout>
       <div className="max-w-lg mx-auto mt-8 px-4">
-        <div className="card rounded-lg p-6">
-          <h2 className="text-xl font-semibold mb-6 text-on-surface">Create Event</h2>
+        <div className="bg-jolshaa-surface-container-lowest rounded-2xl shadow-ambient p-6">
+          <h2 className="font-display text-xl font-semibold mb-6 text-jolshaa-on-surface">Create Event</h2>
 
           {error && <div className="bg-red-500/15 text-red-400 border border-red-500/25 px-4 py-2 rounded mb-4 text-sm">{error}</div>}
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-on-surface-variant mb-1">Event Name *</label>
+              <label className="block text-sm font-medium text-jolshaa-on-surface-variant mb-1">Event Name *</label>
               <input
                 type="text"
                 name="title"
                 value={formData.title}
                 onChange={handleChange}
                 placeholder="Event name"
-                className="input"
+                className="w-full rounded-lg px-3 py-2 text-sm bg-jolshaa-surface-container-lowest border border-jolshaa-outline-variant text-jolshaa-on-surface focus:outline-none focus:ring-2 focus:ring-jolshaa-teal"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-on-surface-variant mb-1">Cover Photo</label>
+              <label className="block text-sm font-medium text-jolshaa-on-surface-variant mb-1">Cover Photo</label>
               <div className="relative">
-                <div className="h-40 bg-surface-high rounded-lg overflow-hidden flex items-center justify-center">
+                <div className="h-40 bg-jolshaa-surface-container-high rounded-lg overflow-hidden flex items-center justify-center">
                   {preview ? (
                     <img src={preview} alt="" className="w-full h-full object-cover" />
                   ) : (
-                    <svg className="w-12 h-12 text-on-surface-variant/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-12 h-12 text-jolshaa-on-surface-variant/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                     </svg>
                   )}
@@ -125,7 +125,7 @@ const CreateEvent = () => {
                 <button
                   type="button"
                   onClick={() => fileInputRef.current.click()}
-                  className="absolute bottom-2 right-2 bg-surface-high text-sm px-3 py-1 rounded shadow hover:bg-surface-high"
+                  className="absolute bottom-2 right-2 bg-jolshaa-surface-container-high text-sm px-3 py-1 rounded shadow hover:bg-jolshaa-surface-container-high"
                 >
                   {preview ? 'Change' : 'Add Photo'}
                 </button>
@@ -133,82 +133,82 @@ const CreateEvent = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-on-surface-variant mb-1">Description</label>
+              <label className="block text-sm font-medium text-jolshaa-on-surface-variant mb-1">Description</label>
               <textarea
                 name="description"
                 value={formData.description}
                 onChange={handleChange}
                 rows={3}
                 placeholder="Tell people about your event"
-                className="input"
+                className="w-full rounded-lg px-3 py-2 text-sm bg-jolshaa-surface-container-lowest border border-jolshaa-outline-variant text-jolshaa-on-surface focus:outline-none focus:ring-2 focus:ring-jolshaa-teal"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-on-surface-variant mb-1">Location</label>
+              <label className="block text-sm font-medium text-jolshaa-on-surface-variant mb-1">Location</label>
               <input
                 type="text"
                 name="location"
                 value={formData.location}
                 onChange={handleChange}
                 placeholder="Event location"
-                className="input"
+                className="w-full rounded-lg px-3 py-2 text-sm bg-jolshaa-surface-container-lowest border border-jolshaa-outline-variant text-jolshaa-on-surface focus:outline-none focus:ring-2 focus:ring-jolshaa-teal"
               />
             </div>
 
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-sm font-medium text-on-surface-variant mb-1">Start Date *</label>
+                <label className="block text-sm font-medium text-jolshaa-on-surface-variant mb-1">Start Date *</label>
                 <input
                   type="date"
                   name="startDate"
                   value={formData.startDate}
                   onChange={handleChange}
-                  className="input"
+                  className="w-full rounded-lg px-3 py-2 text-sm bg-jolshaa-surface-container-lowest border border-jolshaa-outline-variant text-jolshaa-on-surface focus:outline-none focus:ring-2 focus:ring-jolshaa-teal"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-on-surface-variant mb-1">Start Time</label>
+                <label className="block text-sm font-medium text-jolshaa-on-surface-variant mb-1">Start Time</label>
                 <input
                   type="time"
                   name="startTime"
                   value={formData.startTime}
                   onChange={handleChange}
-                  className="input"
+                  className="w-full rounded-lg px-3 py-2 text-sm bg-jolshaa-surface-container-lowest border border-jolshaa-outline-variant text-jolshaa-on-surface focus:outline-none focus:ring-2 focus:ring-jolshaa-teal"
                 />
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-sm font-medium text-on-surface-variant mb-1">End Date</label>
+                <label className="block text-sm font-medium text-jolshaa-on-surface-variant mb-1">End Date</label>
                 <input
                   type="date"
                   name="endDate"
                   value={formData.endDate}
                   onChange={handleChange}
-                  className="input"
+                  className="w-full rounded-lg px-3 py-2 text-sm bg-jolshaa-surface-container-lowest border border-jolshaa-outline-variant text-jolshaa-on-surface focus:outline-none focus:ring-2 focus:ring-jolshaa-teal"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-on-surface-variant mb-1">End Time</label>
+                <label className="block text-sm font-medium text-jolshaa-on-surface-variant mb-1">End Time</label>
                 <input
                   type="time"
                   name="endTime"
                   value={formData.endTime}
                   onChange={handleChange}
-                  className="input"
+                  className="w-full rounded-lg px-3 py-2 text-sm bg-jolshaa-surface-container-lowest border border-jolshaa-outline-variant text-jolshaa-on-surface focus:outline-none focus:ring-2 focus:ring-jolshaa-teal"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-on-surface-variant mb-1">Visibility</label>
+              <label className="block text-sm font-medium text-jolshaa-on-surface-variant mb-1">Visibility</label>
               <select
                 name="visibility"
                 value={formData.visibility}
                 onChange={handleChange}
-                className="input"
+                className="w-full rounded-lg px-3 py-2 text-sm bg-jolshaa-surface-container-lowest border border-jolshaa-outline-variant text-jolshaa-on-surface focus:outline-none focus:ring-2 focus:ring-jolshaa-teal"
               >
                 <option value="public">Public</option>
                 <option value="friends">Friends</option>
@@ -219,7 +219,7 @@ const CreateEvent = () => {
             <button
               type="submit"
               disabled={loading}
-              className="w-full btn-primary py-2 rounded-lg disabled:opacity-50 transition"
+              className="w-full bg-jolshaa-teal text-jolshaa-on-teal hover:bg-jolshaa-teal-container py-2 rounded-lg text-sm font-medium disabled:opacity-50 transition-colors"
             >
               {loading ? 'Creating...' : 'Create Event'}
             </button>

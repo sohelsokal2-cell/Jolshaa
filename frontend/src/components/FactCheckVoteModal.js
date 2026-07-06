@@ -65,8 +65,8 @@ const FactCheckVoteModal = ({ postId, factCheck: initialFc, onClose, onUpdate })
   if (loading) {
     return (
       <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={onClose}>
-        <div className="bg-white dark:bg-neutral-800 rounded-2xl w-full max-w-md p-6" onClick={e => e.stopPropagation()}>
-          <div className="text-center text-neutral-500">Loading...</div>
+        <div className="bg-jolshaa-surface-container-lowest rounded-2xl w-full max-w-md p-6" onClick={e => e.stopPropagation()}>
+          <div className="text-center text-jolshaa-on-surface-variant">Loading...</div>
         </div>
       </div>
     );
@@ -77,14 +77,14 @@ const FactCheckVoteModal = ({ postId, factCheck: initialFc, onClose, onUpdate })
 
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={onClose}>
-      <div className="bg-white dark:bg-neutral-800 rounded-2xl w-full max-w-md overflow-hidden" onClick={e => e.stopPropagation()}>
+      <div className="bg-jolshaa-surface-container-lowest rounded-2xl w-full max-w-md overflow-hidden" onClick={e => e.stopPropagation()}>
         {/* Header */}
-        <div className="px-5 py-4 border-b border-neutral-100 dark:border-neutral-700">
+        <div className="px-5 py-4 border-b border-jolshaa-outline-variant/50">
           <div className="flex items-center justify-between">
-            <h3 className="text-lg font-bold text-neutral-900 dark:text-neutral-100">
+            <h3 className="font-display text-lg font-bold text-jolshaa-on-surface">
               Fact Check?
             </h3>
-            <button onClick={onClose} className="text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200">
+            <button onClick={onClose} className="text-jolshaa-on-surface-variant hover:text-jolshaa-on-surface">
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
@@ -94,17 +94,17 @@ const FactCheckVoteModal = ({ postId, factCheck: initialFc, onClose, onUpdate })
 
         {/* Admin verdict banner */}
         {stats?.adminVerdict && (
-          <div className="px-5 py-3 bg-blue-50 dark:bg-blue-900/20 border-b border-blue-200 dark:border-blue-800">
+          <div className="px-5 py-3 bg-blue-50 border-b border-blue-200">
             <div className="flex items-center gap-2">
-              <svg className="w-4 h-4 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
               </svg>
               <div>
-                <p className="text-sm font-medium text-blue-700 dark:text-blue-300">
+                <p className="text-sm font-medium text-blue-700">
                   Verified: {stats.adminVerdict === 'true' ? 'True' : stats.adminVerdict === 'false' ? 'Fake' : 'Misleading'}
                 </p>
                 {stats.adminNote && (
-                  <p className="text-xs text-blue-600/70 dark:text-blue-400/70">{stats.adminNote}</p>
+                  <p className="text-xs text-blue-600/70">{stats.adminNote}</p>
                 )}
               </div>
             </div>
@@ -113,7 +113,7 @@ const FactCheckVoteModal = ({ postId, factCheck: initialFc, onClose, onUpdate })
 
         {/* Vote buttons */}
         <div className="p-5">
-          <p className="text-sm text-neutral-600 dark:text-neutral-400 mb-4">
+          <p className="text-sm text-jolshaa-on-surface-variant mb-4">
             Share your opinion on this post:
           </p>
 
@@ -123,8 +123,8 @@ const FactCheckVoteModal = ({ postId, factCheck: initialFc, onClose, onUpdate })
               disabled={voting}
               className={`flex flex-col items-center gap-1 sm:gap-1.5 p-2 sm:p-3 rounded-xl border-2 transition-all ${
                 userVote === 'true'
-                  ? 'border-green-500 bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300'
-                  : 'border-neutral-200 dark:border-neutral-700 hover:border-green-300 dark:hover:border-green-700 text-neutral-600 dark:text-neutral-400'
+                  ? 'border-green-500 bg-green-50 text-green-700'
+                  : 'border-jolshaa-outline-variant hover:border-green-300 text-jolshaa-on-surface-variant'
               } ${voting ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
             >
               <span className="text-xl sm:text-2xl">✓</span>
@@ -136,8 +136,8 @@ const FactCheckVoteModal = ({ postId, factCheck: initialFc, onClose, onUpdate })
               disabled={voting}
               className={`flex flex-col items-center gap-1 sm:gap-1.5 p-2 sm:p-3 rounded-xl border-2 transition-all ${
                 userVote === 'false'
-                  ? 'border-red-500 bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-300'
-                  : 'border-neutral-200 dark:border-neutral-700 hover:border-red-300 dark:hover:border-red-700 text-neutral-600 dark:text-neutral-400'
+                  ? 'border-red-500 bg-red-50 text-red-700'
+                  : 'border-jolshaa-outline-variant hover:border-red-300 text-jolshaa-on-surface-variant'
               } ${voting ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
             >
               <span className="text-xl sm:text-2xl">✗</span>
@@ -149,8 +149,8 @@ const FactCheckVoteModal = ({ postId, factCheck: initialFc, onClose, onUpdate })
               disabled={voting}
               className={`flex flex-col items-center gap-1 sm:gap-1.5 p-2 sm:p-3 rounded-xl border-2 transition-all ${
                 userVote === 'misleading'
-                  ? 'border-orange-500 bg-orange-50 dark:bg-orange-900/20 text-orange-700 dark:text-orange-300'
-                  : 'border-neutral-200 dark:border-neutral-700 hover:border-orange-300 dark:hover:border-orange-700 text-neutral-600 dark:text-neutral-400'
+                  ? 'border-orange-500 bg-orange-50 text-orange-700'
+                  : 'border-jolshaa-outline-variant hover:border-orange-300 text-jolshaa-on-surface-variant'
               } ${voting ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
             >
               <span className="text-xl sm:text-2xl">~</span>
@@ -161,11 +161,11 @@ const FactCheckVoteModal = ({ postId, factCheck: initialFc, onClose, onUpdate })
           {/* Vote distribution bar */}
           {stats?.totalVotes > 0 && (
             <div className="mb-5">
-              <div className="flex justify-between text-xs text-neutral-500 dark:text-neutral-400 mb-1.5">
+              <div className="flex justify-between text-xs text-jolshaa-on-surface-variant mb-1.5">
                 <span>Vote Distribution</span>
                 <span>{stats.totalVotes} people voted</span>
               </div>
-              <div className="h-3 bg-neutral-100 dark:bg-neutral-700 rounded-full overflow-hidden flex">
+              <div className="h-3 bg-jolshaa-outline-variant/30 rounded-full overflow-hidden flex">
                 {dist.true > 0 && (
                   <div
                     className="bg-green-500 transition-all duration-500"
@@ -189,26 +189,26 @@ const FactCheckVoteModal = ({ postId, factCheck: initialFc, onClose, onUpdate })
                 )}
               </div>
               <div className="flex justify-between mt-1.5 text-xs">
-                <span className="text-green-600 dark:text-green-400">✓ {dist.true}%</span>
-                <span className="text-red-600 dark:text-red-400">✗ {dist.false}%</span>
-                <span className="text-orange-600 dark:text-orange-400">~ {dist.misleading}%</span>
+                <span className="text-green-600">✓ {dist.true}%</span>
+                <span className="text-red-600">✗ {dist.false}%</span>
+                <span className="text-orange-600">~ {dist.misleading}%</span>
               </div>
             </div>
           )}
 
           {/* Report section */}
-          <div className="border-t border-neutral-100 dark:border-neutral-700 pt-4">
+          <div className="border-t border-jolshaa-outline-variant/50 pt-4">
             {!showReportForm ? (
               <button
                 onClick={() => setShowReportForm(true)}
-                className="text-sm text-primary-600 dark:text-primary-400 hover:underline"
+                className="text-sm text-jolshaa-teal hover:underline"
               >
                 Want to report?
               </button>
             ) : (
               <div className="space-y-3">
                 {reportSubmitted ? (
-                  <p className="text-sm text-green-600 dark:text-green-400">
+                  <p className="text-sm text-green-600">
                     Your report has been submitted. Thank you!
                   </p>
                 ) : (
@@ -217,20 +217,20 @@ const FactCheckVoteModal = ({ postId, factCheck: initialFc, onClose, onUpdate })
                       value={reportReason}
                       onChange={(e) => setReportReason(e.target.value)}
                       placeholder="Why do you think this is false information..."
-                      className="w-full border border-neutral-300 dark:border-neutral-600 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/30 focus:border-primary-500 bg-white dark:bg-neutral-700 resize-none"
+                      className="w-full border border-jolshaa-outline-variant rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-jolshaa-teal/30 focus:border-jolshaa-teal bg-jolshaa-surface-container-lowest resize-none"
                       rows={3}
                     />
                     <div className="flex gap-2">
                       <button
                         onClick={handleReport}
                         disabled={!reportReason.trim()}
-                        className="px-4 py-1.5 bg-primary-600 text-white rounded-lg text-sm font-medium hover:bg-primary-700 transition-colors disabled:opacity-50"
+                        className="px-4 py-1.5 bg-jolshaa-teal text-white rounded-lg text-sm font-medium hover:bg-jolshaa-teal-dark transition-colors disabled:opacity-50"
                       >
                         Submit
                       </button>
                       <button
                         onClick={() => { setShowReportForm(false); setReportReason(''); }}
-                        className="px-4 py-1.5 bg-neutral-200 dark:bg-neutral-700 text-neutral-700 dark:text-neutral-200 rounded-lg text-sm font-medium hover:bg-neutral-300 dark:hover:bg-neutral-600 transition-colors"
+                        className="px-4 py-1.5 bg-jolshaa-surface-container-low text-jolshaa-on-surface rounded-lg text-sm font-medium hover:bg-jolshaa-surface-container transition-colors"
                       >
                         Cancel
                       </button>

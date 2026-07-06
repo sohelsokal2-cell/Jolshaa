@@ -57,20 +57,20 @@ const StarGiftModal = ({ isOpen, onClose, toUserId, postId = null, creatorName =
           {sent ? (
             <div className="text-center py-8">
               <div className="text-5xl mb-3">⭐</div>
-              <p className="font-semibold text-lg text-neutral-900 dark:text-neutral-100">Gift Sent!</p>
-              <p className="text-sm text-neutral-500 mt-1">
+              <p className="font-semibold text-lg text-jolshaa-on-surface">Gift Sent!</p>
+              <p className="text-sm text-jolshaa-on-surface-variant mt-1">
                 {amount} stars sent to {creatorName || 'creator'}
               </p>
             </div>
           ) : (
             <>
-              <div className="flex items-center justify-between mb-4 p-3 bg-neutral-50 dark:bg-neutral-800 rounded-lg">
-                <span className="text-sm text-neutral-500">Your Balance</span>
+              <div className="flex items-center justify-between mb-4 p-3 bg-jolshaa-surface-container rounded-lg">
+                <span className="text-sm text-jolshaa-on-surface-variant">Your Balance</span>
                 <span className="font-bold text-amber-600">⭐ {balance.toLocaleString()}</span>
               </div>
 
               <div className="mb-4">
-                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
+                <label className="block text-sm font-medium text-jolshaa-on-surface mb-2">
                   Select Amount
                 </label>
                 <div className="grid grid-cols-4 gap-2 mb-2">
@@ -81,7 +81,7 @@ const StarGiftModal = ({ isOpen, onClose, toUserId, postId = null, creatorName =
                       className={`py-2 rounded-lg text-sm font-medium transition-colors ${
                         amount === a
                           ? 'bg-amber-500 text-white'
-                          : 'bg-neutral-100 dark:bg-neutral-700 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-600'
+                          : 'bg-jolshaa-surface-container text-jolshaa-on-surface hover:bg-jolshaa-surface-container-high'
                       }`}
                     >
                       {a}
@@ -93,7 +93,7 @@ const StarGiftModal = ({ isOpen, onClose, toUserId, postId = null, creatorName =
                   min="1"
                   value={amount}
                   onChange={(e) => setAmount(parseInt(e.target.value) || 0)}
-                  className="w-full px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 text-sm focus:ring-2 focus:ring-amber-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-jolshaa-outline-variant rounded-lg bg-jolshaa-surface-container-lowest text-jolshaa-on-surface text-sm focus:ring-2 focus:ring-amber-500 focus:border-transparent"
                   placeholder="Custom amount"
                 />
               </div>
@@ -105,18 +105,18 @@ const StarGiftModal = ({ isOpen, onClose, toUserId, postId = null, creatorName =
                   onChange={(e) => setMessage(e.target.value)}
                   placeholder="Add a message (optional)"
                   maxLength={200}
-                  className="w-full px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 text-sm focus:ring-2 focus:ring-amber-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-jolshaa-outline-variant rounded-lg bg-jolshaa-surface-container-lowest text-jolshaa-on-surface text-sm focus:ring-2 focus:ring-amber-500 focus:border-transparent"
                 />
               </div>
 
               {insufficientBalance && (
-                <div className="mb-4 p-3 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg">
-                  <p className="text-sm text-amber-700 dark:text-amber-300">
+                <div className="mb-4 p-3 bg-amber-50 border border-amber-200 rounded-lg">
+                  <p className="text-sm text-amber-700">
                     Insufficient balance. You need {amount - balance} more stars.
                   </p>
                   <button
                     onClick={() => setShowBuyStars(true)}
-                    className="text-sm font-medium text-amber-800 dark:text-amber-200 underline mt-1"
+                    className="text-sm font-medium text-amber-800 underline mt-1"
                   >
                     Buy More Stars
                   </button>
@@ -126,7 +126,7 @@ const StarGiftModal = ({ isOpen, onClose, toUserId, postId = null, creatorName =
               <div className="flex gap-3">
                 <button
                   onClick={onClose}
-                  className="flex-1 py-2.5 border border-neutral-200 dark:border-neutral-700 rounded-lg text-sm font-medium hover:bg-neutral-50 dark:hover:bg-neutral-800 text-neutral-700 dark:text-neutral-300 transition-colors"
+                  className="flex-1 py-2.5 border border-jolshaa-outline-variant rounded-lg text-sm font-medium hover:bg-jolshaa-surface-container text-jolshaa-on-surface transition-colors"
                 >
                   Cancel
                 </button>

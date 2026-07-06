@@ -10,14 +10,14 @@ const Skeleton = ({ className = '', variant = 'rect', ...props }) => {
 
   return (
     <div
-      className={`animate-pulse bg-neutral-200 dark:bg-neutral-700 ${variants[variant]} ${className}`}
+      className={`animate-pulse bg-jolshaa-surface-container-high ${variants[variant]} ${className}`}
       {...props}
     />
   );
 };
 
 export const PostSkeleton = () => (
-  <div className="bg-white rounded-xl shadow-card dark:bg-neutral-800 p-4 space-y-4">
+  <div className="bg-jolshaa-surface-container-lowest rounded-xl shadow-ambient p-4 space-y-4">
     <div className="flex items-center gap-3">
       <Skeleton variant="avatar" className="w-10 h-10" />
       <div className="space-y-2 flex-1">

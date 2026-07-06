@@ -530,7 +530,7 @@ const Profile = () => {
                   {/* Given help */}
                   {helpHistory.given?.length > 0 && (
                     <div className="bg-jolshaa-surface-container-lowest rounded-xl shadow-ambient p-4">
-                      <h3 className="text-sm font-bold text-jolshaa-on-surface mb-3">🤝 Helped Others</h3>
+                      <h3 className="font-display text-sm font-bold text-jolshaa-on-surface mb-3">🤝 Helped Others</h3>
                       <div className="space-y-2">
                         {helpHistory.given.map(req => (
                           <Link
@@ -553,7 +553,7 @@ const Profile = () => {
                   {/* Received help */}
                   {helpHistory.received?.length > 0 && (
                     <div className="bg-jolshaa-surface-container-lowest rounded-xl shadow-ambient p-4">
-                      <h3 className="text-sm font-bold text-jolshaa-on-surface mb-3">💙 Received Help</h3>
+                      <h3 className="font-display text-sm font-bold text-jolshaa-on-surface mb-3">💙 Received Help</h3>
                       <div className="space-y-2">
                         {helpHistory.received.map(req => (
                           <Link

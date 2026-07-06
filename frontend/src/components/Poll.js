@@ -59,8 +59,8 @@ const Poll = ({ postId, isOwner }) => {
 
   if (poll) {
     return (
-      <div className="bg-gray-50 rounded-lg p-4 mt-2">
-        <h4 className="font-semibold text-gray-800 mb-3">{poll.question}</h4>
+      <div className="bg-jolshaa-surface-container-low rounded-lg p-4 mt-2">
+        <h4 className="font-display font-semibold text-jolshaa-on-surface mb-3">{poll.question}</h4>
         <div className="space-y-2">
           {poll.options.map((opt, i) => (
             <button
@@ -70,7 +70,7 @@ const Poll = ({ postId, isOwner }) => {
               className={`w-full relative rounded-lg p-3 text-left text-sm transition ${
                 opt.hasVoted
                   ? 'border-2 border-blue-500 bg-blue-50'
-                  : 'border border-gray-300 hover:border-blue-400'
+                  : 'border-jolshaa-outline-variant hover:border-blue-400'
               }`}
             >
               <div
@@ -84,7 +84,7 @@ const Poll = ({ postId, isOwner }) => {
             </button>
           ))}
         </div>
-        <p className="text-xs text-gray-500 mt-2">{poll.totalVotes} votes</p>
+        <p className="text-xs text-jolshaa-on-surface-variant mt-2">{poll.totalVotes} votes</p>
       </div>
     );
   }
@@ -101,7 +101,7 @@ const Poll = ({ postId, isOwner }) => {
           + Add Poll
         </button>
       ) : (
-        <div className="bg-gray-50 rounded-lg p-4 space-y-3">
+        <div className="bg-jolshaa-surface-container-low rounded-lg p-4 space-y-3">
           <input
             type="text"
             value={question}
@@ -152,7 +152,7 @@ const Poll = ({ postId, isOwner }) => {
             </button>
             <button
               onClick={() => setShowCreate(false)}
-              className="px-4 bg-gray-200 text-gray-700 py-2 rounded-lg text-sm"
+              className="px-4 bg-jolshaa-surface-container text-jolshaa-on-surface py-2 rounded-lg text-sm"
             >
               Cancel
             </button>

@@ -19,10 +19,10 @@ const SearchBar = () => {
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         placeholder="Search Jolshaa"
-        className="w-full bg-neutral-100 dark:bg-neutral-700 rounded-full px-4 py-2 pl-10 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/30 focus:bg-white dark:focus:bg-neutral-600 transition-all text-neutral-900 dark:text-neutral-100 placeholder-neutral-400"
+        className="w-full bg-jolshaa-surface-container-high rounded-full px-4 py-2 pl-10 text-sm focus:outline-none focus:ring-2 focus:ring-jolshaa-teal/30 focus:bg-jolshaa-surface-container-lowest transition-all text-jolshaa-on-surface placeholder-jolshaa-on-surface-variant"
       />
       <svg
-        className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400"
+        className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-jolshaa-on-surface-variant"
         fill="none"
         stroke="currentColor"
         viewBox="0 0 24 24"

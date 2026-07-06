@@ -43,16 +43,16 @@ const CreateReel = () => {
 
   return (
     <div className="max-w-lg mx-auto p-4">
-      <h2 className="text-xl font-semibold mb-4">Create Reel</h2>
+      <h2 className="font-display text-xl font-semibold mb-4">Create Reel</h2>
 
       <div className="bg-white rounded-lg shadow-sm p-4">
         {!videoPreview ? (
           <div
             onClick={() => fileInputRef.current.click()}
-            className="border-2 border-dashed border-gray-300 rounded-lg p-12 text-center cursor-pointer hover:border-blue-500"
+            className="border-2 border-dashed border-jolshaa-outline-variant rounded-lg p-12 text-center cursor-pointer hover:border-blue-500"
           >
-            <p className="text-gray-500">Click to select a video</p>
-            <p className="text-xs text-gray-400 mt-1">MP4, MOV up to 60s</p>
+            <p className="text-jolshaa-on-surface-variant">Click to select a video</p>
+            <p className="text-xs text-jolshaa-on-surface-variant/60 mt-1">MP4, MOV up to 60s</p>
           </div>
         ) : (
           <div className="relative mb-4">

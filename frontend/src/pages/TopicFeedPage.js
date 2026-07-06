@@ -44,7 +44,7 @@ const TopicFeedPage = () => {
   return (
     <Layout>
       <div className="max-w-4xl mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4 text-on-surface">Topic Feeds</h1>
+      <h1 className="font-display text-2xl font-bold mb-4 text-jolshaa-on-surface">Topic Feeds</h1>
 
       <div className="flex gap-2 overflow-x-auto pb-4 mb-4">
         {topics.map(topic => (
@@ -53,8 +53,8 @@ const TopicFeedPage = () => {
             onClick={() => setSelectedTopic(topic.id)}
             className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition ${
               selectedTopic === topic.id
-                ? 'bg-primary-600 text-white'
-                : 'bg-surface text-on-surface-variant hover:bg-white/5'
+                ? 'bg-jolshaa-teal text-jolshaa-on-teal'
+                : 'bg-jolshaa-surface-container-lowest text-jolshaa-on-surface-variant hover:bg-jolshaa-surface-container-low'
             }`}
           >
             {topic.name}
@@ -65,14 +65,14 @@ const TopicFeedPage = () => {
       {loading ? (
         <div className="space-y-4">
           {[1, 2, 3].map(i => (
-            <div key={i} className="card rounded-lg shadow-sm p-4 animate-pulse">
-              <div className="h-4 bg-surface rounded w-1/3 mb-3" />
-              <div className="h-20 bg-surface rounded" />
+            <div key={i} className="bg-jolshaa-surface-container-lowest rounded-2xl shadow-ambient p-4 animate-pulse">
+              <div className="h-4 bg-jolshaa-surface-container rounded w-1/3 mb-3" />
+              <div className="h-20 bg-jolshaa-surface-container rounded" />
             </div>
           ))}
         </div>
       ) : posts.length === 0 ? (
-        <div className="text-center py-12 text-on-surface-variant">
+        <div className="text-center py-12 text-jolshaa-on-surface-variant">
           <p className="text-4xl mb-4">📰</p>
           <p>No posts in this topic yet</p>
         </div>

@@ -73,8 +73,8 @@ const QAPost = ({ postId, isOwner }) => {
 
   if (qa) {
     return (
-      <div className="bg-gray-50 rounded-lg p-4 mt-2">
-        <h4 className="font-semibold text-gray-800 mb-2">❓ {qa.question}</h4>
+      <div className="bg-jolshaa-surface-container-low rounded-lg p-4 mt-2">
+        <h4 className="font-display font-semibold text-jolshaa-on-surface mb-2">❓ {qa.question}</h4>
         <div className="space-y-3">
           {qa.answers.map((ans) => (
             <div key={ans._id} className="bg-white rounded-lg p-3">
@@ -85,12 +85,12 @@ const QAPost = ({ postId, isOwner }) => {
                     <button
                       onClick={() => handleUpvote(ans._id)}
                       className={`text-xs flex items-center gap-1 ${
-                        ans.hasUpvoted ? 'text-blue-600' : 'text-gray-500'
+                        ans.hasUpvoted ? 'text-blue-600' : 'text-jolshaa-on-surface-variant'
                       }`}
                     >
                       👍 {ans.upvoteCount}
                     </button>
-                    <span className="text-xs text-gray-400">
+                    <span className="text-xs text-jolshaa-on-surface-variant/60">
                       {ans.user?.name || 'Anonymous'} · {new Date(ans.createdAt).toLocaleDateString()}
                     </span>
                   </div>
@@ -131,7 +131,7 @@ const QAPost = ({ postId, isOwner }) => {
           + Add Q&A
         </button>
       ) : (
-        <div className="bg-gray-50 rounded-lg p-4 space-y-3">
+        <div className="bg-jolshaa-surface-container-low rounded-lg p-4 space-y-3">
           <input
             type="text"
             value={question}
@@ -158,7 +158,7 @@ const QAPost = ({ postId, isOwner }) => {
             </button>
             <button
               onClick={() => setShowCreate(false)}
-              className="px-4 bg-gray-200 text-gray-700 py-2 rounded-lg text-sm"
+              className="px-4 bg-jolshaa-surface-container text-jolshaa-on-surface py-2 rounded-lg text-sm"
             >
               Cancel
             </button>

@@ -78,8 +78,8 @@ const HelpRequestDetail = () => {
     }
   };
 
-  if (loading) return <Layout><div className="text-center py-12 text-neutral-500">Loading...</div></Layout>;
-  if (!request) return <Layout><div className="text-center py-12 text-neutral-500">Not found</div></Layout>;
+  if (loading) return <Layout><div className="text-center py-12 text-jolshaa-on-surface-variant">Loading...</div></Layout>;
+  if (!request) return <Layout><div className="text-center py-12 text-jolshaa-on-surface-variant">Not found</div></Layout>;
 
   const isOwner = user?.id === request.requester?._id;
   const myOffer = request.helpers?.find(h => h.user?._id === user?.id || h.user === user?.id);
@@ -94,22 +94,22 @@ const HelpRequestDetail = () => {
   return (
     <Layout>
       <div className="max-w-2xl mx-auto px-4 py-4">
-        <Link to="/help" className="text-sm text-primary-600 hover:underline mb-4 inline-flex items-center gap-1">
+        <Link to="/help" className="text-sm text-jolshaa-teal hover:underline mb-4 inline-flex items-center gap-1">
           ← Help Feed
         </Link>
 
         {/* Status banner */}
         {request.status === 'resolved' && (
-          <div className="mt-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-xl p-4 mb-4">
-            <p className="text-sm font-bold text-green-700 dark:text-green-300">✅ Resolved</p>
+          <div className="mt-3 bg-green-50 border border-green-200 rounded-xl p-4 mb-4">
+            <p className="text-sm font-bold text-green-700">✅ Resolved</p>
             {request.resolvedNote && (
-              <p className="text-xs text-green-600/70 dark:text-green-400/70 mt-1">{request.resolvedNote}</p>
+              <p className="text-xs text-green-600/70 mt-1">{request.resolvedNote}</p>
             )}
           </div>
         )}
 
         {/* Main card */}
-        <div className="bg-white dark:bg-neutral-800 rounded-xl shadow-card overflow-hidden">
+        <div className="bg-jolshaa-surface-container-lowest rounded-xl shadow-ambient overflow-hidden">
           {/* Urgency bar */}
           <div className={`px-4 py-2 ${
             request.urgency === 'immediate' ? 'bg-red-500' :
@@ -122,14 +122,14 @@ const HelpRequestDetail = () => {
           </div>
 
           <div className="p-5">
-            <h1 className="text-xl font-bold text-neutral-900 dark:text-neutral-100 mb-3">{request.title}</h1>
+            <h1 className="font-display text-xl font-bold text-jolshaa-on-surface mb-3">{request.title}</h1>
 
             <div className="flex items-center gap-3 mb-4">
               <Link to={`/profile/${request.requester?._id}`} className="flex items-center gap-2 hover:underline">
                 <Avatar src={request.requester?.profilePhoto} alt={request.requester?.name} size="md" />
                 <div>
-                  <p className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">{request.requester?.name}</p>
-                  <p className="text-xs text-neutral-500">
+                  <p className="text-sm font-semibold text-jolshaa-on-surface">{request.requester?.name}</p>
+                  <p className="text-xs text-jolshaa-on-surface-variant">
                     {request.location?.upazila && `${request.location.upazila}, `}
                     {request.location?.district}, {request.location?.division}
                   </p>
@@ -137,25 +137,25 @@ const HelpRequestDetail = () => {
               </Link>
             </div>
 
-            <div className="prose prose-sm dark:prose-invert max-w-none mb-4">
-              <p className="text-neutral-700 dark:text-neutral-300 whitespace-pre-wrap">{request.description}</p>
+            <div className="prose prose-sm max-w-none mb-4">
+              <p className="text-jolshaa-on-surface whitespace-pre-wrap">{request.description}</p>
             </div>
 
-            <div className="flex items-center gap-4 text-xs text-neutral-500 mb-4">
+            <div className="flex items-center gap-4 text-xs text-jolshaa-on-surface-variant mb-4">
               <span>👁 {request.viewCount || 0} views</span>
               <span>🤝 {request.helpers?.length || 0} people want to help</span>
             </div>
 
             {/* Resolve button for owner */}
             {isOwner && request.status === 'active' && (
-              <div className="border-t border-neutral-100 dark:border-neutral-700 pt-4 mt-4">
+              <div className="border-t border-jolshaa-outline-variant/50 pt-4 mt-4">
                 {showResolve ? (
                   <div className="space-y-3">
                     <textarea
                       value={resolveNote}
                       onChange={(e) => setResolveNote(e.target.value)}
                       placeholder="Describe how it was resolved (optional)..."
-                      className="w-full border border-neutral-300 dark:border-neutral-600 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-green-500/30 bg-white dark:bg-neutral-700 resize-none"
+                      className="w-full border border-jolshaa-outline rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-green-500/30 bg-jolshaa-surface-container-highest resize-none"
                       rows={3}
                     />
                     <div className="flex gap-2">
@@ -177,28 +177,28 @@ const HelpRequestDetail = () => {
 
         {/* Helpers list */}
         {request.helpers?.length > 0 && (
-          <div className="mt-4 bg-white dark:bg-neutral-800 rounded-xl shadow-card p-4">
-            <h3 className="text-sm font-bold text-neutral-900 dark:text-neutral-100 mb-3">
+          <div className="mt-4 bg-jolshaa-surface-container-lowest rounded-xl shadow-ambient p-4">
+            <h3 className="font-display text-sm font-bold text-jolshaa-on-surface mb-3">
               🤝 People wanting to help ({request.helpers.length})
             </h3>
             <div className="space-y-3">
               {request.helpers.map((h) => (
-                <div key={h._id} className="flex items-start gap-3 p-3 bg-neutral-50 dark:bg-neutral-900 rounded-xl">
+                <div key={h._id} className="flex items-start gap-3 p-3 bg-jolshaa-surface-container-high rounded-xl">
                   <Avatar src={h.user?.profilePhoto} alt={h.user?.name} size="sm" />
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
-                      <Link to={`/profile/${h.user?._id}`} className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 hover:underline">
+                      <Link to={`/profile/${h.user?._id}`} className="text-sm font-semibold text-jolshaa-on-surface hover:underline">
                         {h.user?.name}
                       </Link>
                       <span className={`text-xs px-2 py-0.5 rounded-full ${
-                        h.status === 'accepted' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300' :
-                        'bg-neutral-100 text-neutral-500 dark:bg-neutral-700 dark:text-neutral-400'
+                        h.status === 'accepted' ? 'bg-green-100 text-green-700' :
+                        'bg-jolshaa-surface-container-high text-jolshaa-on-surface-variant'
                       }`}>
                         {h.status === 'accepted' ? 'Accepted' : 'Offered'}
                       </span>
                     </div>
                     {h.message && (
-                      <p className="text-xs text-neutral-600 dark:text-neutral-400 mt-1">{h.message}</p>
+                      <p className="text-xs text-jolshaa-on-surface-variant mt-1">{h.message}</p>
                     )}
                     {isOwner && h.status === 'offered' && request.status === 'active' && (
                       <Button
@@ -219,15 +219,15 @@ const HelpRequestDetail = () => {
 
         {/* Offer form (for non-owners) */}
         {!isOwner && request.status === 'active' && !myOffer && (
-          <div className="mt-4 bg-white dark:bg-neutral-800 rounded-xl shadow-card p-4">
-            <h3 className="text-sm font-bold text-neutral-900 dark:text-neutral-100 mb-3">
+          <div className="mt-4 bg-jolshaa-surface-container-lowest rounded-xl shadow-ambient p-4">
+            <h3 className="font-display text-sm font-bold text-jolshaa-on-surface mb-3">
               Want to help?
             </h3>
             <textarea
               value={offerMessage}
               onChange={(e) => setOfferMessage(e.target.value)}
               placeholder="Describe how you can help..."
-              className="w-full border border-neutral-300 dark:border-neutral-600 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-green-500/30 bg-white dark:bg-neutral-700 resize-none mb-3"
+              className="w-full border border-jolshaa-outline rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-green-500/30 bg-jolshaa-surface-container-highest resize-none mb-3"
               rows={3}
             />
             <Button
@@ -242,8 +242,8 @@ const HelpRequestDetail = () => {
         )}
 
         {myOffer && (
-          <div className="mt-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-xl p-4 text-center">
-            <p className="text-sm font-medium text-green-700 dark:text-green-300">
+          <div className="mt-4 bg-green-50 border border-green-200 rounded-xl p-4 text-center">
+            <p className="text-sm font-medium text-green-700">
               ✅ You have sent a help offer
             </p>
           </div>

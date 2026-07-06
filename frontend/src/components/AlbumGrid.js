@@ -73,9 +73,9 @@ const AlbumGrid = ({ userId }) => {
       <div className="grid grid-cols-2 gap-4">
         {[1, 2, 3, 4].map((i) => (
           <div key={i} className="bg-white rounded-lg shadow-sm overflow-hidden animate-pulse">
-            <div className="aspect-square bg-gray-200" />
+            <div className="aspect-square bg-jolshaa-surface-container" />
             <div className="p-3">
-              <div className="h-4 bg-gray-200 rounded w-2/3" />
+              <div className="h-4 bg-jolshaa-surface-container rounded w-2/3" />
             </div>
           </div>
         ))}
@@ -86,7 +86,7 @@ const AlbumGrid = ({ userId }) => {
   return (
     <>
       <div className="mb-4 flex items-center justify-between">
-        <h3 className="font-semibold text-gray-800">Albums ({albums.length})</h3>
+        <h3 className="font-display font-semibold text-jolshaa-on-surface">Albums ({albums.length})</h3>
         {isOwnProfile && (
           <button
             onClick={() => setShowCreate(!showCreate)}
@@ -105,25 +105,25 @@ const AlbumGrid = ({ userId }) => {
             value={newAlbumTitle}
             onChange={(e) => setNewAlbumTitle(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleCreateAlbum()}
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full border border-jolshaa-outline-variant rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           <textarea
             placeholder="Description (optional)"
             value={newAlbumDescription}
             onChange={(e) => setNewAlbumDescription(e.target.value)}
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+            className="w-full border border-jolshaa-outline-variant rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
             rows={2}
           />
           <select
             value={newAlbumVisibility}
             onChange={(e) => setNewAlbumVisibility(e.target.value)}
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full border border-jolshaa-outline-variant rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             <option value="public">Public</option>
             <option value="friends">Friends</option>
             <option value="onlyme">Only Me</option>
           </select>
-          <label className="flex items-center gap-2 text-sm text-gray-700">
+          <label className="flex items-center gap-2 text-sm text-jolshaa-on-surface">
             <input
               type="checkbox"
               checked={newAlbumHighlight}
@@ -142,7 +142,7 @@ const AlbumGrid = ({ userId }) => {
             </button>
             <button
               onClick={() => setShowCreate(false)}
-              className="px-4 bg-gray-200 text-gray-700 py-2 rounded-lg text-sm font-medium hover:bg-gray-300"
+              className="px-4 bg-jolshaa-surface-container text-jolshaa-on-surface py-2 rounded-lg text-sm font-medium hover:bg-jolshaa-surface-container-high"
             >
               Cancel
             </button>
@@ -151,7 +151,7 @@ const AlbumGrid = ({ userId }) => {
       )}
 
       {albums.length === 0 ? (
-        <div className="text-center py-8 text-gray-500">
+        <div className="text-center py-8 text-jolshaa-on-surface-variant">
           <p>No albums yet</p>
           {isOwnProfile && (
             <p className="text-sm mt-1">Create your first album to organize photos</p>
@@ -165,7 +165,7 @@ const AlbumGrid = ({ userId }) => {
               className="bg-white rounded-lg shadow-sm overflow-hidden cursor-pointer hover:shadow-md transition-shadow group"
               onClick={() => setSelectedAlbum(album)}
             >
-              <div className="aspect-square bg-gray-100 relative">
+              <div className="aspect-square bg-jolshaa-surface-container-low relative">
                 {album.photos.length > 0 ? (
                   <>
                     <img
@@ -182,7 +182,7 @@ const AlbumGrid = ({ userId }) => {
                 ) : (
                   <div className="w-full h-full flex items-center justify-center">
                     <svg
-                      className="w-12 h-12 text-gray-300"
+                      className="w-12 h-12 text-jolshaa-outline-variant"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -210,7 +210,7 @@ const AlbumGrid = ({ userId }) => {
               </div>
               <div className="p-3">
                 <div className="flex items-center gap-2">
-                  <h4 className="font-medium text-gray-800 text-sm truncate">
+                  <h4 className="font-display font-medium text-jolshaa-on-surface text-sm truncate">
                     {album.title}
                   </h4>
                   {album.isHighlight && (
@@ -218,10 +218,10 @@ const AlbumGrid = ({ userId }) => {
                   )}
                 </div>
                 <div className="flex items-center gap-2 mt-1">
-                  <p className="text-gray-500 text-xs">
+                  <p className="text-jolshaa-on-surface-variant text-xs">
                     {album.photos.length} photo{album.photos.length !== 1 ? 's' : ''}
                   </p>
-                  <span className="text-[10px] text-gray-400 capitalize">{album.visibility}</span>
+                  <span className="text-[10px] text-jolshaa-on-surface-variant/60 capitalize">{album.visibility}</span>
                 </div>
               </div>
             </div>

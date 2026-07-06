@@ -66,24 +66,24 @@ const PayoutRequestModal = ({ isOpen, onClose }) => {
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Request Payout" size="md">
       <div className="p-5">
-        <div className="flex items-center justify-between mb-4 p-3 bg-neutral-50 dark:bg-neutral-800 rounded-lg">
-          <span className="text-sm text-neutral-500">Available Balance</span>
+        <div className="flex items-center justify-between mb-4 p-3 bg-jolshaa-surface-container-high rounded-lg">
+          <span className="text-sm text-jolshaa-on-surface-variant">Available Balance</span>
           <span className="font-bold text-green-600 text-lg">৳{balance.toLocaleString()}</span>
         </div>
 
         {balance < 1000 ? (
           <div className="text-center py-6">
-            <p className="text-neutral-500 text-sm">
+            <p className="text-jolshaa-on-surface-variant text-sm">
               You need at least ৳1,000 to request a payout.
             </p>
-            <p className="text-neutral-400 text-xs mt-1">
+            <p className="text-jolshaa-on-surface-variant text-xs mt-1">
               Current balance: ৳{balance.toLocaleString()}
             </p>
           </div>
         ) : (
           <>
             <div className="mb-4">
-              <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Amount (BDT)</label>
+              <label className="block text-sm font-medium text-jolshaa-on-surface mb-1">Amount (BDT)</label>
               <input
                 type="number"
                 min="1000"
@@ -91,12 +91,12 @@ const PayoutRequestModal = ({ isOpen, onClose }) => {
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
                 placeholder="Minimum 1,000 BDT"
-                className="w-full px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 text-sm focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                className="w-full px-3 py-2 border border-jolshaa-outline rounded-lg bg-jolshaa-surface-container-highest text-jolshaa-on-surface text-sm focus:ring-2 focus:ring-jolshaa-teal focus:border-transparent"
               />
             </div>
 
             <div className="mb-4">
-              <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">Payment Method</label>
+              <label className="block text-sm font-medium text-jolshaa-on-surface mb-2">Payment Method</label>
               <div className="grid grid-cols-2 gap-2">
                 {methods.map(m => (
                   <button
@@ -104,8 +104,8 @@ const PayoutRequestModal = ({ isOpen, onClose }) => {
                     onClick={() => setMethod(m.id)}
                     className={`flex items-center gap-2 p-3 rounded-lg border text-sm font-medium transition-colors ${
                       method === m.id
-                        ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/20 text-primary-700 dark:text-primary-300'
-                        : 'border-neutral-200 dark:border-neutral-700 text-neutral-600 dark:text-neutral-400 hover:border-neutral-300'
+                        ? 'border-jolshaa-teal bg-jolshaa-teal/10 text-jolshaa-teal'
+                        : 'border-jolshaa-outline-variant text-jolshaa-on-surface-variant hover:border-jolshaa-outline'
                     }`}
                   >
                     <span>{m.icon}</span>
@@ -118,55 +118,55 @@ const PayoutRequestModal = ({ isOpen, onClose }) => {
             {/* Account Details */}
             <div className="space-y-3 mb-4">
               <div>
-                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Account Number</label>
+                <label className="block text-sm font-medium text-jolshaa-on-surface mb-1">Account Number</label>
                 <input
                   type="text"
                   value={accountDetails.accountNumber}
                   onChange={(e) => setAccountDetails({ ...accountDetails, accountNumber: e.target.value })}
                   placeholder={method === 'bank' ? 'Account number' : 'Mobile number'}
-                  className="w-full px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 text-sm focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-jolshaa-outline rounded-lg bg-jolshaa-surface-container-highest text-jolshaa-on-surface text-sm focus:ring-2 focus:ring-jolshaa-teal focus:border-transparent"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Account Holder Name</label>
+                <label className="block text-sm font-medium text-jolshaa-on-surface mb-1">Account Holder Name</label>
                 <input
                   type="text"
                   value={accountDetails.accountName}
                   onChange={(e) => setAccountDetails({ ...accountDetails, accountName: e.target.value })}
                   placeholder="Name on account"
-                  className="w-full px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 text-sm focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-jolshaa-outline rounded-lg bg-jolshaa-surface-container-highest text-jolshaa-on-surface text-sm focus:ring-2 focus:ring-jolshaa-teal focus:border-transparent"
                 />
               </div>
               {method === 'bank' && (
                 <>
                   <div>
-                    <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Bank Name</label>
+                    <label className="block text-sm font-medium text-jolshaa-on-surface mb-1">Bank Name</label>
                     <input
                       type="text"
                       value={accountDetails.bankName}
                       onChange={(e) => setAccountDetails({ ...accountDetails, bankName: e.target.value })}
                       placeholder="e.g. Dutch-Bangla Bank"
-                      className="w-full px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 text-sm focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                      className="w-full px-3 py-2 border border-jolshaa-outline rounded-lg bg-jolshaa-surface-container-highest text-jolshaa-on-surface text-sm focus:ring-2 focus:ring-jolshaa-teal focus:border-transparent"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Branch</label>
+                    <label className="block text-sm font-medium text-jolshaa-on-surface mb-1">Branch</label>
                     <input
                       type="text"
                       value={accountDetails.branchName}
                       onChange={(e) => setAccountDetails({ ...accountDetails, branchName: e.target.value })}
                       placeholder="Branch name"
-                      className="w-full px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 text-sm focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                      className="w-full px-3 py-2 border border-jolshaa-outline rounded-lg bg-jolshaa-surface-container-highest text-jolshaa-on-surface text-sm focus:ring-2 focus:ring-jolshaa-teal focus:border-transparent"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Routing Number</label>
+                    <label className="block text-sm font-medium text-jolshaa-on-surface mb-1">Routing Number</label>
                     <input
                       type="text"
                       value={accountDetails.routingNumber}
                       onChange={(e) => setAccountDetails({ ...accountDetails, routingNumber: e.target.value })}
                       placeholder="9-digit routing number"
-                      className="w-full px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 text-sm focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                      className="w-full px-3 py-2 border border-jolshaa-outline rounded-lg bg-jolshaa-surface-container-highest text-jolshaa-on-surface text-sm focus:ring-2 focus:ring-jolshaa-teal focus:border-transparent"
                     />
                   </div>
                 </>
@@ -182,14 +182,14 @@ const PayoutRequestModal = ({ isOpen, onClose }) => {
             <div className="flex gap-3">
               <button
                 onClick={onClose}
-                className="flex-1 py-2.5 border border-neutral-200 dark:border-neutral-700 rounded-lg text-sm font-medium hover:bg-neutral-50 dark:hover:bg-neutral-800 text-neutral-700 dark:text-neutral-300"
+                className="flex-1 py-2.5 border border-jolshaa-outline-variant rounded-lg text-sm font-medium hover:bg-jolshaa-surface-container-high text-jolshaa-on-surface"
               >
                 Cancel
               </button>
               <button
                 onClick={handleSubmit}
                 disabled={submitting || !amount || parseFloat(amount) < 1000}
-                className="flex-1 py-2.5 bg-primary-600 text-white rounded-lg text-sm font-medium hover:bg-primary-700 disabled:opacity-50 transition-colors"
+                className="flex-1 py-2.5 bg-jolshaa-teal text-white rounded-lg text-sm font-medium hover:bg-jolshaa-teal-container disabled:opacity-50 transition-colors"
               >
                 {submitting ? 'Submitting...' : 'Submit Request'}
               </button>

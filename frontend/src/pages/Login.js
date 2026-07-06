@@ -42,19 +42,19 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-neutral-100 dark:bg-neutral-900 flex items-center justify-center px-4">
+    <div className="min-h-screen bg-jolshaa-surface flex items-center justify-center px-4">
       <div className="w-full max-w-md space-y-8">
         <div className="text-center">
-          <div className="w-16 h-16 bg-primary-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+          <div className="w-16 h-16 bg-jolshaa-teal rounded-2xl flex items-center justify-center mx-auto mb-4">
             <span className="text-white font-bold text-3xl">J</span>
           </div>
-          <h1 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">Welcome back</h1>
-          <p className="text-sm text-neutral-500 mt-1">Log in to Jolshaa</p>
+          <h1 className="font-display text-2xl font-bold text-jolshaa-on-surface">Welcome back</h1>
+          <p className="text-sm text-jolshaa-on-surface-variant mt-1">Log in to Jolshaa</p>
         </div>
 
-        <div className="bg-white dark:bg-neutral-800 rounded-2xl shadow-card p-6 space-y-5">
+        <div className="bg-jolshaa-surface-container-lowest rounded-2xl shadow-ambient p-6 space-y-5">
           {error && (
-            <div className="bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 px-4 py-3 rounded-xl text-sm flex items-center gap-2">
+            <div className="bg-red-50 text-red-600 px-4 py-3 rounded-xl text-sm flex items-center gap-2">
               <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
               {error}
             </div>
@@ -93,9 +93,9 @@ const Login = () => {
           </form>
         </div>
 
-        <p className="text-center text-sm text-neutral-500">
+        <p className="text-center text-sm text-jolshaa-on-surface-variant">
           Don't have an account?{' '}
-          <Link to="/signup" className="text-primary-600 hover:text-primary-700 font-medium">Sign up</Link>
+          <Link to="/signup" className="text-jolshaa-teal hover:text-jolshaa-teal-container font-medium">Sign up</Link>
         </p>
       </div>
     </div>

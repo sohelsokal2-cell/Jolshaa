@@ -94,14 +94,14 @@ const StoryViewer = ({ stories, initialIndex, onClose, onStoryViewed }) => {
     <div className="fixed inset-0 bg-black z-[70] flex items-center justify-center">
       <button onClick={onClose} className="absolute top-4 right-4 text-white text-3xl z-50">&times;</button>
 
-      <button onClick={goPrev} className="absolute left-4 text-white text-4xl z-50 hover:text-gray-300">&#8249;</button>
-      <button onClick={goNext} className="absolute right-12 text-white text-4xl z-50 hover:text-gray-300">&#8250;</button>
+      <button onClick={goPrev} className="absolute left-4 text-white text-4xl z-50 hover:text-jolshaa-outline-variant">&#8249;</button>
+      <button onClick={goNext} className="absolute right-12 text-white text-4xl z-50 hover:text-jolshaa-outline-variant">&#8250;</button>
 
       <div className="relative w-full max-w-md h-[90vh] bg-black rounded-lg overflow-hidden">
         {/* Progress bars */}
         <div className="absolute top-0 left-0 right-0 flex gap-1 p-2 z-50">
           {authorStories.stories.map((_, i) => (
-            <div key={i} className="flex-1 h-0.5 bg-gray-600 rounded">
+            <div key={i} className="flex-1 h-0.5 bg-jolshaa-surface-container-high rounded">
               <div
                 className="h-full bg-white rounded transition-all"
                 style={{
@@ -116,7 +116,7 @@ const StoryViewer = ({ stories, initialIndex, onClose, onStoryViewed }) => {
         <div className="absolute top-4 left-0 right-0 flex items-center gap-2 px-4 z-50">
           <img src={authorStories.author.profilePhoto} alt="" className="w-8 h-8 rounded-full object-cover" />
           <span className="text-white text-sm font-medium">{authorStories.author.name}</span>
-          <span className="text-gray-400 text-xs">{new Date(story.createdAt).toLocaleTimeString()}</span>
+          <span className="text-jolshaa-on-surface-variant/60 text-xs">{new Date(story.createdAt).toLocaleTimeString()}</span>
         </div>
 
         {/* Story content */}
@@ -136,7 +136,7 @@ const StoryViewer = ({ stories, initialIndex, onClose, onStoryViewed }) => {
               😊
             </button>
             {showReactions && (
-              <div className="absolute bottom-10 left-1/2 -translate-x-1/2 bg-gray-900 rounded-full px-3 py-2 flex gap-3">
+              <div className="absolute bottom-10 left-1/2 -translate-x-1/2 bg-jolshaa-surface-container-high rounded-full px-3 py-2 flex gap-3">
                 {['❤️', '😂', '😮', '😢', '😡', '👍'].map((emoji) => (
                   <button key={emoji} onClick={() => handleReact(emoji)} className="text-xl hover:scale-125 transition-transform">
                     {emoji}
@@ -164,7 +164,7 @@ const StoryViewer = ({ stories, initialIndex, onClose, onStoryViewed }) => {
                 onChange={(e) => setReplyText(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleReply()}
                 placeholder="Reply to story..."
-                className="flex-1 bg-transparent border border-gray-500 rounded-full px-4 py-2 text-white text-sm focus:outline-none"
+                className="flex-1 bg-transparent border border-jolshaa-outline-variant rounded-full px-4 py-2 text-white text-sm focus:outline-none"
               />
               <button onClick={handleReply} className="text-blue-400 font-medium text-sm">Send</button>
             </div>
@@ -173,9 +173,9 @@ const StoryViewer = ({ stories, initialIndex, onClose, onStoryViewed }) => {
 
         {/* Viewers list */}
         {showViewers && (
-          <div className="absolute bottom-0 left-0 right-0 bg-gray-900 rounded-t-xl p-4 z-50 max-h-[40vh] overflow-y-auto">
-            <h3 className="text-white font-semibold mb-3">Viewed by {story.viewCount || 0}</h3>
-            <p className="text-gray-400 text-sm">Viewer list will appear here</p>
+          <div className="absolute bottom-0 left-0 right-0 bg-jolshaa-surface-container-high rounded-t-xl p-4 z-50 max-h-[40vh] overflow-y-auto">
+            <h3 className="font-display text-white font-semibold mb-3">Viewed by {story.viewCount || 0}</h3>
+            <p className="text-jolshaa-on-surface-variant/60 text-sm">Viewer list will appear here</p>
           </div>
         )}
       </div>

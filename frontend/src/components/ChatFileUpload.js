@@ -41,7 +41,7 @@ const ChatFileUpload = ({ conversationId, onSend }) => {
       />
       <button
         onClick={() => fileInputRef.current.click()}
-        className="p-2 text-gray-500 hover:text-blue-600"
+        className="p-2 text-jolshaa-on-surface-variant hover:text-blue-600"
         title="Attach file"
       >
         📎

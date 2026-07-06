@@ -62,7 +62,7 @@ const CallEndedScreen = ({ callDuration, callStatus, callType, remoteUserInfo, o
         />
 
         {/* Name */}
-        <h2 className="text-xl font-bold text-white mb-2">{remoteName}</h2>
+        <h2 className="font-display text-xl font-bold text-white mb-2">{remoteName}</h2>
 
         {/* Status */}
         <p className="text-white/70 text-base mb-1">{statusText}</p>

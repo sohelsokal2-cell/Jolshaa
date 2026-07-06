@@ -32,8 +32,8 @@ const SuggestedPeople = () => {
   if (suggested.length === 0) return null;
 
   return (
-    <div className="bg-surface rounded-lg shadow-sm p-4 mb-4">
-      <h3 className="font-semibold text-on-surface mb-3 text-sm">People You May Know</h3>
+    <div className="bg-jolshaa-surface-container-lowest rounded-lg shadow-sm p-4 mb-4">
+      <h3 className="font-display font-semibold text-jolshaa-on-surface mb-3 text-sm">People You May Know</h3>
       <div className="space-y-3">
         {suggested.slice(0, 8).map((person) => (
           <div key={person._id} className="flex items-center gap-3">
@@ -45,11 +45,11 @@ const SuggestedPeople = () => {
               />
             </Link>
             <div className="flex-1 min-w-0">
-              <Link to={`/profile/${person._id}`} className="font-medium text-sm text-on-surface hover:underline block truncate">
+              <Link to={`/profile/${person._id}`} className="font-medium text-sm text-jolshaa-on-surface hover:underline block truncate">
                 {person.name}
               </Link>
               {person.mutualCount > 0 && (
-                <p className="text-xs text-on-surface-variant">{person.mutualCount} mutual friend{person.mutualCount !== 1 ? 's' : ''}</p>
+                <p className="text-xs text-jolshaa-on-surface-variant">{person.mutualCount} mutual friend{person.mutualCount !== 1 ? 's' : ''}</p>
               )}
             </div>
             <FriendButton
@@ -61,7 +61,7 @@ const SuggestedPeople = () => {
         ))}
       </div>
       {suggested.length > 8 && (
-        <Link to="/friends" className="block text-center text-primary-400 text-sm hover:underline mt-3">
+        <Link to="/friends" className="block text-center text-jolshaa-teal text-sm hover:underline mt-3">
           See More
         </Link>
       )}

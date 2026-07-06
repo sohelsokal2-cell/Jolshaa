@@ -174,7 +174,7 @@ export const InterstitialAd = ({ onClose }) => {
       <div ref={containerRef} className="relative max-w-lg w-full mx-4" />
       <button
         onClick={onClose}
-        className="absolute top-4 right-4 text-white text-3xl font-bold hover:text-gray-300 z-50"
+        className="absolute top-4 right-4 text-white text-3xl font-bold hover:text-jolshaa-outline-variant z-50"
       >
         ×
       </button>
@@ -287,8 +287,8 @@ export const FeedAd = ({ position = 0, frequency = 3 }) => {
   if (!hasAd) return null;
 
   return (
-    <div className="my-4 p-3 bg-white dark:bg-gray-800 rounded-lg border dark:border-gray-700">
-      <div className="text-xs text-gray-400 mb-1 flex items-center gap-1">
+    <div className="my-4 p-3 bg-jolshaa-surface-container-lowest rounded-lg border border-jolshaa-outline-variant">
+      <div className="text-xs text-jolshaa-on-surface-variant/60 mb-1 flex items-center gap-1">
         <span className="inline-block w-2 h-2 rounded-full bg-green-500"></span>
         Sponsored
       </div>

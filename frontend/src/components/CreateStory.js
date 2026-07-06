@@ -61,10 +61,10 @@ const CreateStory = ({ onClose, onStoryCreated }) => {
       <div className="bg-white rounded-xl max-w-md w-full overflow-hidden">
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b">
-          <h3 className="font-semibold text-gray-800">Create Story</h3>
+          <h3 className="font-display font-semibold text-jolshaa-on-surface">Create Story</h3>
           <button
             onClick={onClose}
-            className="text-gray-500 hover:text-gray-700 text-xl"
+            className="text-jolshaa-on-surface-variant hover:text-jolshaa-on-surface text-xl"
           >
             &times;
           </button>
@@ -75,10 +75,10 @@ const CreateStory = ({ onClose, onStoryCreated }) => {
           {!preview ? (
             <div
               onClick={() => fileInputRef.current.click()}
-              className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center cursor-pointer hover:border-blue-500 transition-colors"
+              className="border-2 border-dashed border-jolshaa-outline-variant rounded-lg p-8 text-center cursor-pointer hover:border-blue-500 transition-colors"
             >
               <svg
-                className="w-12 h-12 mx-auto text-gray-400 mb-3"
+                className="w-12 h-12 mx-auto text-jolshaa-on-surface-variant/60 mb-3"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -90,10 +90,10 @@ const CreateStory = ({ onClose, onStoryCreated }) => {
                   d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
                 />
               </svg>
-              <p className="text-gray-600 font-medium">
+              <p className="text-jolshaa-on-surface-variant font-medium">
                 Click to upload photo or video
               </p>
-              <p className="text-gray-400 text-sm mt-1">Max 10MB</p>
+              <p className="text-jolshaa-on-surface-variant/60 text-sm mt-1">Max 10MB</p>
             </div>
           ) : (
             <div className="relative">
@@ -130,11 +130,11 @@ const CreateStory = ({ onClose, onStoryCreated }) => {
 
           {preview && (
             <div className="mt-3">
-              <label className="block text-sm font-medium text-gray-700 mb-1">Who can see this story</label>
+              <label className="block text-sm font-medium text-jolshaa-on-surface mb-1">Who can see this story</label>
               <select
                 value={visibility}
                 onChange={(e) => setVisibility(e.target.value)}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full border border-jolshaa-outline-variant rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="public">Public</option>
                 <option value="friends">Friends Only</option>
@@ -148,7 +148,7 @@ const CreateStory = ({ onClose, onStoryCreated }) => {
         <div className="p-4 border-t flex justify-end gap-3">
           <button
             onClick={onClose}
-            className="px-4 py-2 text-gray-600 hover:text-gray-800 font-medium"
+            className="px-4 py-2 text-jolshaa-on-surface-variant hover:text-jolshaa-on-surface font-medium"
           >
             Cancel
           </button>

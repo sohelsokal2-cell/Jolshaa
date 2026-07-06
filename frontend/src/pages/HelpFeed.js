@@ -101,13 +101,13 @@ const HelpFeed = () => {
       <Layout>
         <div className="max-w-2xl mx-auto px-4 py-12 text-center">
           <div className="text-6xl mb-4">🆘</div>
-          <h2 className="text-xl font-bold text-neutral-900 dark:text-neutral-100 mb-2">
+          <h2 className="font-display text-xl font-bold text-jolshaa-on-surface mb-2">
             Request Help
           </h2>
-          <p className="text-sm text-neutral-500 mb-4">
+          <p className="text-sm text-jolshaa-on-surface-variant mb-4">
             Set your location to see help requests in your area.
           </p>
-          <a href="/profile/edit" className="text-sm text-primary-600 hover:underline">
+          <a href="/profile/edit" className="text-sm text-jolshaa-teal hover:underline">
             Edit profile →
           </a>
         </div>
@@ -121,10 +121,10 @@ const HelpFeed = () => {
         {/* Header */}
         <div className="flex items-start justify-between gap-3 mb-4">
           <div className="min-w-0">
-            <h1 className="text-lg sm:text-xl font-bold text-neutral-900 dark:text-neutral-100">
+            <h1 className="font-display text-lg sm:text-xl font-bold text-jolshaa-on-surface">
               🆘               Request Help
             </h1>
-            <p className="text-xs text-neutral-500 mt-0.5 truncate">{district} — Active help requests</p>
+            <p className="text-xs text-jolshaa-on-surface-variant mt-0.5 truncate">{district} — Active help requests</p>
           </div>
           <button
             onClick={() => setShowCreate(true)}
@@ -136,8 +136,8 @@ const HelpFeed = () => {
 
         {/* New request alert */}
         {newRequestAlert && (
-          <div className="mb-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-3 animate-slide-down">
-            <p className="text-sm font-medium text-red-700 dark:text-red-300">{newRequestAlert}</p>
+          <div className="mb-4 bg-red-50 border border-red-200 rounded-xl p-3 animate-slide-down">
+            <p className="text-sm font-medium text-red-700">{newRequestAlert}</p>
           </div>
         )}
 
@@ -150,7 +150,7 @@ const HelpFeed = () => {
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors ${
                 filter === opt.value
                   ? 'bg-red-500 text-white'
-                  : 'bg-neutral-100 dark:bg-neutral-700 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-200 dark:hover:bg-neutral-600'
+                  : 'bg-jolshaa-surface-container-high text-jolshaa-on-surface-variant hover:bg-jolshaa-surface-container-highest'
               }`}
             >
               <span>{opt.icon}</span>
@@ -167,8 +167,8 @@ const HelpFeed = () => {
               onClick={() => setSort(opt.value)}
               className={`px-3 py-1 rounded-lg text-xs font-medium transition-colors ${
                 sort === opt.value
-                  ? 'bg-neutral-900 dark:bg-neutral-100 text-white dark:text-neutral-900'
-                  : 'text-neutral-500 hover:bg-neutral-100 dark:hover:bg-neutral-700'
+                  ? 'bg-jolshaa-on-surface text-jolshaa-surface'
+                  : 'text-jolshaa-on-surface-variant hover:bg-jolshaa-surface-container-high'
               }`}
             >
               {opt.label}
@@ -184,7 +184,7 @@ const HelpFeed = () => {
         ) : requests.length === 0 ? (
           <div className="text-center py-12">
             <div className="text-5xl mb-3">✨</div>
-            <p className="text-neutral-500 text-sm">
+            <p className="text-jolshaa-on-surface-variant text-sm">
               {filter === 'all'
                 ? 'No help requests in this area yet'
                 : 'No help requests of this type'}
@@ -203,7 +203,7 @@ const HelpFeed = () => {
           <button
             onClick={loadMore}
             disabled={loading}
-            className="w-full mt-4 py-2.5 text-sm text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300 transition-colors"
+            className="w-full mt-4 py-2.5 text-sm text-jolshaa-on-surface-variant hover:text-jolshaa-on-surface transition-colors"
           >
             {loading ? 'Loading...' : 'Load more'}
           </button>

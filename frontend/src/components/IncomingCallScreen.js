@@ -67,7 +67,7 @@ const IncomingCallScreen = ({ callerInfo, callType, onAccept, onReject }) => {
         </div>
 
         {/* Caller name */}
-        <h2 className="text-2xl font-bold text-white mb-2">{callerName}</h2>
+        <h2 className="font-display text-2xl font-bold text-white mb-2">{callerName}</h2>
 
         {/* Call type label */}
         <p className="text-lg text-white/70 mb-2">

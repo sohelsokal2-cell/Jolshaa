@@ -50,8 +50,8 @@ const ReactionPicker = ({ currentReaction, onReact }) => {
         onClick={() => handleReaction(currentReaction || 'like')}
         className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium transition-colors ${
           currentReaction
-            ? 'text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-900/20'
-            : 'text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700'
+            ? 'text-jolshaa-teal bg-jolshaa-teal/10'
+            : 'text-jolshaa-on-surface-variant hover:bg-jolshaa-surface-container-high'
         }`}
       >
         {currentEmoji ? (
@@ -65,13 +65,13 @@ const ReactionPicker = ({ currentReaction, onReact }) => {
       </button>
 
       {showPicker && (
-        <div className="absolute bottom-full left-0 mb-2 bg-white dark:bg-neutral-800 rounded-full shadow-dropdown border border-neutral-100 dark:border-neutral-700 px-2 py-1.5 flex gap-0.5 z-50 animate-scale-in">
+        <div className="absolute bottom-full left-0 mb-2 bg-jolshaa-surface-container-lowest rounded-full shadow-ambient-hover border border-jolshaa-outline-variant px-2 py-1.5 flex gap-0.5 z-50 animate-scale-in">
           {REACTIONS.map(reaction => (
             <button
               key={reaction.type}
               onClick={() => handleReaction(reaction.type)}
               className={`text-xl hover:scale-125 active:scale-95 transition-all p-1.5 rounded-full ${
-                currentReaction === reaction.type ? 'bg-primary-50 dark:bg-primary-900/20' : 'hover:bg-neutral-100 dark:hover:bg-neutral-700'
+                currentReaction === reaction.type ? 'bg-jolshaa-teal/10' : 'hover:bg-jolshaa-surface-container-high'
               }`}
               title={reaction.label}
             >

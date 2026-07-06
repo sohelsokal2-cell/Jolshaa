@@ -61,43 +61,43 @@ const CreateGroup = () => {
   return (
     <Layout>
       <div className="max-w-2xl mx-auto mt-8 px-4">
-        <div className="card p-6">
-          <h2 className="text-xl font-semibold mb-6 text-on-surface">Create Group</h2>
+        <div className="bg-jolshaa-surface-container-lowest rounded-2xl shadow-ambient p-6">
+          <h2 className="font-display text-xl font-semibold mb-6 text-jolshaa-on-surface">Create Group</h2>
 
           {error && <div className="bg-red-500/15 text-red-400 px-4 py-2 rounded-lg mb-4 text-sm border border-red-500/25">{error}</div>}
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-on-surface-variant mb-1">Group Name *</label>
+              <label className="block text-sm font-medium text-jolshaa-on-surface-variant mb-1">Group Name *</label>
               <input
                 type="text"
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
-                className="input"
+                className="w-full rounded-lg px-3 py-2 text-sm bg-jolshaa-surface-container-lowest border border-jolshaa-outline-variant text-jolshaa-on-surface focus:outline-none focus:ring-2 focus:ring-jolshaa-teal"
                 placeholder="My Awesome Group"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-on-surface-variant mb-1">Description</label>
+              <label className="block text-sm font-medium text-jolshaa-on-surface-variant mb-1">Description</label>
               <textarea
                 name="description"
                 value={formData.description}
                 onChange={handleChange}
                 rows={3}
-                className="input"
+                className="w-full rounded-lg px-3 py-2 text-sm bg-jolshaa-surface-container-lowest border border-jolshaa-outline-variant text-jolshaa-on-surface focus:outline-none focus:ring-2 focus:ring-jolshaa-teal"
                 placeholder="What's this group about?"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-on-surface-variant mb-1">Privacy</label>
+              <label className="block text-sm font-medium text-jolshaa-on-surface-variant mb-1">Privacy</label>
               <select
                 name="privacy"
                 value={formData.privacy}
                 onChange={handleChange}
-                className="input"
+                className="w-full rounded-lg px-3 py-2 text-sm bg-jolshaa-surface-container-lowest border border-jolshaa-outline-variant text-jolshaa-on-surface focus:outline-none focus:ring-2 focus:ring-jolshaa-teal"
               >
                 <option value="public">Public - Anyone can join</option>
                 <option value="private">Private - Requires approval</option>
@@ -105,12 +105,12 @@ const CreateGroup = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-on-surface-variant mb-1">Cover Photo</label>
+              <label className="block text-sm font-medium text-jolshaa-on-surface-variant mb-1">Cover Photo</label>
               <input
                 type="file"
                 accept="image/*"
                 onChange={handleFileChange}
-                className="w-full text-on-surface-variant"
+                className="w-full text-jolshaa-on-surface-variant"
               />
               {preview && (
                 <img src={preview} alt="Cover preview" className="mt-2 h-32 w-full object-cover rounded-lg" />
@@ -120,7 +120,7 @@ const CreateGroup = () => {
             <button
               type="submit"
               disabled={loading}
-              className="w-full btn-primary"
+              className="w-full bg-jolshaa-teal text-jolshaa-on-teal hover:bg-jolshaa-teal-container py-2 rounded-lg text-sm font-medium disabled:opacity-50 transition-colors"
             >
               {loading ? 'Creating...' : 'Create Group'}
             </button>

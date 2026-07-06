@@ -53,8 +53,8 @@ const ReportModal = ({ targetType, targetId, userId, onClose }) => {
     <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
       <div className="bg-white rounded-xl max-w-md w-full overflow-hidden">
         <div className="flex items-center justify-between p-4 border-b">
-          <h3 className="font-semibold text-gray-800">Report</h3>
-          <button onClick={onClose} className="text-gray-500 hover:text-gray-700 text-xl">&times;</button>
+          <h3 className="font-display font-semibold text-jolshaa-on-surface">Report</h3>
+          <button onClick={onClose} className="text-jolshaa-on-surface-variant hover:text-jolshaa-on-surface text-xl">&times;</button>
         </div>
 
         <div className="p-4">
@@ -65,9 +65,9 @@ const ReportModal = ({ targetType, targetId, userId, onClose }) => {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
               </div>
-              <p className="text-gray-800 font-medium">Report Submitted</p>
-              <p className="text-gray-500 text-sm mt-1">Thank you for helping keep our community safe.</p>
-              {blockUser && <p className="text-gray-500 text-sm mt-1">User has been blocked.</p>}
+              <p className="text-jolshaa-on-surface font-medium">Report Submitted</p>
+              <p className="text-jolshaa-on-surface-variant text-sm mt-1">Thank you for helping keep our community safe.</p>
+              {blockUser && <p className="text-jolshaa-on-surface-variant text-sm mt-1">User has been blocked.</p>}
               <button
                 onClick={onClose}
                 className="mt-4 px-6 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700"
@@ -77,7 +77,7 @@ const ReportModal = ({ targetType, targetId, userId, onClose }) => {
             </div>
           ) : (
             <>
-              <p className="text-gray-600 text-sm mb-4">Why are you reporting this {targetType}?</p>
+              <p className="text-jolshaa-on-surface-variant text-sm mb-4">Why are you reporting this {targetType}?</p>
 
               <div className="space-y-2 mb-4">
                 {reasons.map((r) => (
@@ -86,7 +86,7 @@ const ReportModal = ({ targetType, targetId, userId, onClose }) => {
                     className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-colors ${
                       reason === r.value
                         ? 'bg-blue-50 border border-blue-300'
-                        : 'bg-gray-50 hover:bg-gray-100 border border-transparent'
+                        : 'bg-jolshaa-surface-container-low hover:bg-jolshaa-surface-container border border-transparent'
                     }`}
                   >
                     <input
@@ -97,7 +97,7 @@ const ReportModal = ({ targetType, targetId, userId, onClose }) => {
                       onChange={(e) => setReason(e.target.value)}
                       className="text-blue-600 focus:ring-blue-500"
                     />
-                    <span className="text-sm text-gray-700">{r.label}</span>
+                    <span className="text-sm text-jolshaa-on-surface">{r.label}</span>
                   </label>
                 ))}
               </div>
@@ -106,20 +106,20 @@ const ReportModal = ({ targetType, targetId, userId, onClose }) => {
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="Additional details (optional)"
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                className="w-full border border-jolshaa-outline-variant rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
                 rows={3}
                 maxLength={500}
               />
 
               {userId && (
-                <label className="flex items-center gap-2 mt-3 p-3 bg-gray-50 rounded-lg cursor-pointer">
+                <label className="flex items-center gap-2 mt-3 p-3 bg-jolshaa-surface-container-low rounded-lg cursor-pointer">
                   <input
                     type="checkbox"
                     checked={blockUser}
                     onChange={(e) => setBlockUser(e.target.checked)}
                     className="text-blue-600 focus:ring-blue-500 rounded"
                   />
-                  <span className="text-sm text-gray-700">Also block this user</span>
+                  <span className="text-sm text-jolshaa-on-surface">Also block this user</span>
                 </label>
               )}
 
@@ -128,7 +128,7 @@ const ReportModal = ({ targetType, targetId, userId, onClose }) => {
               <div className="flex gap-3 mt-4">
                 <button
                   onClick={onClose}
-                  className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50"
+                  className="flex-1 px-4 py-2 border border-jolshaa-outline-variant text-jolshaa-on-surface rounded-lg font-medium hover:bg-jolshaa-surface-container-low"
                 >
                   Cancel
                 </button>

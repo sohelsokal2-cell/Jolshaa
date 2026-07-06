@@ -108,10 +108,10 @@ const NotesPage = () => {
     <Layout>
       <div className="max-w-2xl mx-auto p-4">
         <div className="flex items-center justify-between mb-6">
-          <h1 className="text-2xl font-bold text-neutral-900 dark:text-white">Notes</h1>
+          <h1 className="font-display text-2xl font-bold text-jolshaa-on-surface">Notes</h1>
           <button
             onClick={() => openEditor()}
-            className="px-4 py-2 bg-primary-600 text-white rounded-lg text-sm font-medium hover:bg-primary-700 flex items-center gap-2"
+            className="px-4 py-2 bg-jolshaa-teal text-jolshaa-on-teal hover:bg-jolshaa-teal-container rounded-lg text-sm font-medium flex items-center gap-2 transition-colors"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -121,20 +121,20 @@ const NotesPage = () => {
         </div>
 
         {showEditor && (
-          <div className="bg-white dark:bg-neutral-800 rounded-xl shadow-card p-4 mb-6">
+          <div className="bg-jolshaa-surface-container-lowest rounded-2xl shadow-ambient p-4 mb-6">
             <input
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="Note title..."
-              className="w-full text-xl font-bold bg-transparent border-none focus:outline-none mb-3 text-neutral-900 dark:text-white placeholder-neutral-400"
+              className="w-full text-xl font-bold bg-transparent border-none focus:outline-none mb-3 text-jolshaa-on-surface placeholder-jolshaa-on-surface-variant"
               autoFocus
             />
             <textarea
               value={content}
               onChange={(e) => setContent(e.target.value)}
               placeholder="Write your note... (Supports Markdown: # Heading, **bold**, *italic*, `code`)"
-              className="w-full bg-transparent border-none focus:outline-none resize-none min-h-[200px] text-neutral-700 dark:text-neutral-200 placeholder-neutral-400 leading-relaxed"
+              className="w-full bg-transparent border-none focus:outline-none resize-none min-h-[200px] text-jolshaa-on-surface placeholder-jolshaa-on-surface-variant leading-relaxed"
             />
             <div className="flex items-center gap-2 mt-3 flex-wrap">
               <input
@@ -142,18 +142,18 @@ const NotesPage = () => {
                 value={tags}
                 onChange={(e) => setTags(e.target.value)}
                 placeholder="Tags (comma separated)"
-                className="px-3 py-1.5 rounded-lg text-xs bg-neutral-100 dark:bg-neutral-700 focus:outline-none text-neutral-700 dark:text-neutral-200 w-40"
+                className="px-3 py-1.5 rounded-lg text-xs bg-jolshaa-surface-container-low focus:outline-none text-jolshaa-on-surface w-40"
               />
               <select
                 value={visibility}
                 onChange={(e) => setVisibility(e.target.value)}
-                className="px-3 py-1.5 rounded-lg text-xs bg-neutral-100 dark:bg-neutral-700 text-neutral-700 dark:text-neutral-200"
+                className="px-3 py-1.5 rounded-lg text-xs bg-jolshaa-surface-container-low text-jolshaa-on-surface"
               >
                 <option value="public">🌍 Public</option>
                 <option value="friends">👥 Friends</option>
                 <option value="onlyme">🔒 Only Me</option>
               </select>
-              <label className="px-3 py-1.5 rounded-lg text-xs bg-neutral-100 dark:bg-neutral-700 text-neutral-600 dark:text-neutral-300 cursor-pointer hover:bg-neutral-200 dark:hover:bg-neutral-600">
+              <label className="px-3 py-1.5 rounded-lg text-xs bg-jolshaa-surface-container-low text-jolshaa-on-surface-variant cursor-pointer hover:bg-jolshaa-surface-container transition-colors">
                 📷 Cover
                 <input
                   type="file"
@@ -178,13 +178,13 @@ const NotesPage = () => {
               </div>
             )}
             <div className="flex gap-2 mt-4">
-              <button onClick={resetEditor} className="flex-1 py-2 text-sm text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded-lg">
+              <button onClick={resetEditor} className="flex-1 py-2 text-sm text-jolshaa-on-surface-variant hover:bg-jolshaa-surface-container-low rounded-lg transition-colors">
                 Cancel
               </button>
               <button
                 onClick={handleSave}
                 disabled={!title.trim() || !content.trim() || saving}
-                className="flex-1 py-2 text-sm bg-primary-600 text-white rounded-lg hover:bg-primary-700 disabled:opacity-50"
+                className="flex-1 py-2 text-sm bg-jolshaa-teal text-jolshaa-on-teal rounded-lg hover:bg-jolshaa-teal-container disabled:opacity-50 transition-colors"
               >
                 {saving ? 'Saving...' : editingNote ? 'Update' : 'Publish'}
               </button>
@@ -195,31 +195,31 @@ const NotesPage = () => {
         {loading ? (
           <div className="space-y-4">
             {[1, 2, 3].map(i => (
-              <div key={i} className="bg-white dark:bg-neutral-800 rounded-xl p-4 animate-pulse">
-                <div className="h-5 bg-neutral-200 dark:bg-neutral-700 rounded w-1/3 mb-3" />
-                <div className="h-3 bg-neutral-200 dark:bg-neutral-700 rounded w-full mb-2" />
-                <div className="h-3 bg-neutral-200 dark:bg-neutral-700 rounded w-2/3" />
+              <div key={i} className="bg-jolshaa-surface-container-lowest rounded-2xl p-4 animate-pulse">
+                <div className="h-5 bg-jolshaa-surface-container rounded w-1/3 mb-3" />
+                <div className="h-3 bg-jolshaa-surface-container rounded w-full mb-2" />
+                <div className="h-3 bg-jolshaa-surface-container rounded w-2/3" />
               </div>
             ))}
           </div>
         ) : notes.length === 0 ? (
           <div className="text-center py-12">
             <p className="text-4xl mb-4">📝</p>
-            <p className="text-neutral-500 dark:text-neutral-400">No notes yet</p>
-            <p className="text-sm text-neutral-400 mt-1">Write your first long-form note</p>
+            <p className="text-jolshaa-on-surface-variant">No notes yet</p>
+            <p className="text-sm text-jolshaa-on-surface-variant mt-1">Write your first long-form note</p>
           </div>
         ) : (
           <div className="space-y-4">
             {notes.map((note) => (
-              <article key={note._id} className="bg-white dark:bg-neutral-800 rounded-xl shadow-card overflow-hidden">
+              <article key={note._id} className="bg-jolshaa-surface-container-lowest rounded-2xl shadow-ambient overflow-hidden">
                 {note.coverImage && (
                   <img src={note.coverImage} alt="" className="w-full h-48 object-cover" />
                 )}
                 <div className="p-4">
                   <div className="flex items-start justify-between mb-2">
                     <div>
-                      <h2 className="text-lg font-bold text-neutral-900 dark:text-white">{note.title}</h2>
-                      <div className="flex items-center gap-2 text-xs text-neutral-500 mt-1">
+                      <h2 className="font-display text-lg font-bold text-jolshaa-on-surface">{note.title}</h2>
+                      <div className="flex items-center gap-2 text-xs text-jolshaa-on-surface-variant mt-1">
                         <span>{note.readTime} min read</span>
                         <span>·</span>
                         <span>{new Date(note.createdAt).toLocaleDateString()}</span>
@@ -227,12 +227,12 @@ const NotesPage = () => {
                     </div>
                     {note.author?._id === user?.id && (
                       <div className="flex gap-1">
-                        <button onClick={() => openEditor(note)} className="p-1.5 text-neutral-400 hover:text-neutral-600 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-700">
+                        <button onClick={() => openEditor(note)} className="p-1.5 text-jolshaa-on-surface-variant hover:text-jolshaa-on-surface rounded-lg hover:bg-jolshaa-surface-container-low transition-colors">
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                           </svg>
                         </button>
-                        <button onClick={() => handleDelete(note._id)} className="p-1.5 text-neutral-400 hover:text-red-500 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-700">
+                        <button onClick={() => handleDelete(note._id)} className="p-1.5 text-jolshaa-on-surface-variant hover:text-red-500 rounded-lg hover:bg-jolshaa-surface-container-low transition-colors">
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                           </svg>
@@ -240,29 +240,29 @@ const NotesPage = () => {
                       </div>
                     )}
                   </div>
-                  <div className="text-sm text-neutral-700 dark:text-neutral-300 leading-relaxed line-clamp-4">
+                  <div className="text-sm text-jolshaa-on-surface leading-relaxed line-clamp-4">
                     <ReactMarkdown>{note.content.substring(0, 300) + (note.content.length > 300 ? '...' : '')}</ReactMarkdown>
                   </div>
                   {note.tags?.length > 0 && (
                     <div className="flex gap-1.5 mt-3 flex-wrap">
                       {note.tags.map((tag, i) => (
-                        <span key={i} className="text-xs bg-neutral-100 dark:bg-neutral-700 text-neutral-600 dark:text-neutral-300 px-2 py-0.5 rounded-full">
+                        <span key={i} className="text-xs bg-jolshaa-surface-container-low text-jolshaa-on-surface-variant px-2 py-0.5 rounded-full">
                           #{tag}
                         </span>
                       ))}
                     </div>
                   )}
-                  <div className="flex items-center gap-4 mt-3 pt-3 border-t border-neutral-100 dark:border-neutral-700">
+                  <div className="flex items-center gap-4 mt-3 pt-3 border-t border-jolshaa-outline-variant/50">
                     <button
                       onClick={() => handleLike(note._id)}
-                      className={`flex items-center gap-1 text-sm ${note.isLiked ? 'text-red-500' : 'text-neutral-500 hover:text-red-500'}`}
+                      className={`flex items-center gap-1 text-sm ${note.isLiked ? 'text-red-500' : 'text-jolshaa-on-surface-variant hover:text-red-500'}`}
                     >
                       <svg className="w-4 h-4" fill={note.isLiked ? 'currentColor' : 'none'} stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                       </svg>
                       {note.likeCount || 0}
                     </button>
-                    <Link to={`/notes/${note._id}`} className="text-sm text-primary-600 hover:text-primary-700">
+                    <Link to={`/notes/${note._id}`} className="text-sm text-jolshaa-teal hover:text-jolshaa-teal-container">
                       Read more →
                     </Link>
                   </div>

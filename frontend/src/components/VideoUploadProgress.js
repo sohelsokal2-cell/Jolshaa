@@ -16,7 +16,7 @@ const VideoUploadProgress = ({
   };
 
   return (
-    <div className="rounded-lg border border-neutral-200 dark:border-neutral-600 p-3 mt-2">
+    <div className="rounded-lg border border-jolshaa-outline-variant p-3 mt-2">
       {/* Status text */}
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-2">
@@ -37,14 +37,14 @@ const VideoUploadProgress = ({
             </svg>
           )}
           <span className={`text-xs font-medium ${
-            uploadStatus === 'ready' ? 'text-green-600 dark:text-green-400' :
-            uploadStatus === 'error' ? 'text-red-600 dark:text-red-400' :
-            'text-neutral-600 dark:text-neutral-300'
+            uploadStatus === 'ready' ? 'text-green-600' :
+            uploadStatus === 'error' ? 'text-red-600' :
+            'text-jolshaa-on-surface-variant'
           }`}>
             {statusMessages[uploadStatus]}
           </span>
           {isShortForm && (
-            <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 font-medium">
+            <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-purple-100 text-purple-600 font-medium">
               Short
             </span>
           )}
@@ -54,7 +54,7 @@ const VideoUploadProgress = ({
           {uploadStatus === 'uploading' && (
             <button
               onClick={onCancel}
-              className="text-xs text-neutral-400 hover:text-red-500 transition-colors"
+              className="text-xs text-jolshaa-on-surface-variant/60 hover:text-red-500 transition-colors"
             >
               Cancel
             </button>
@@ -72,7 +72,7 @@ const VideoUploadProgress = ({
 
       {/* Progress bar */}
       {(uploadStatus === 'uploading' || uploadStatus === 'processing') && (
-        <div className="w-full h-1.5 bg-neutral-100 dark:bg-neutral-700 rounded-full overflow-hidden">
+        <div className="w-full h-1.5 bg-jolshaa-surface-container rounded-full overflow-hidden">
           <div
             className={`h-full rounded-full transition-all duration-300 ${
               uploadStatus === 'processing'
@@ -86,7 +86,7 @@ const VideoUploadProgress = ({
 
       {/* Error message */}
       {uploadStatus === 'error' && uploadError && (
-        <p className="text-xs text-red-500 dark:text-red-400 mt-1">{uploadError}</p>
+        <p className="text-xs text-red-500 mt-1">{uploadError}</p>
       )}
     </div>
   );

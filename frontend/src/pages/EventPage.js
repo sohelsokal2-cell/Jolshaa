@@ -207,7 +207,7 @@ const EventPage = () => {
             {activeTab === 'attendees' && (
               <div className="space-y-4">
                 <div>
-                  <h4 className="font-medium text-jolshaa-on-surface mb-2">Going ({event.attendeeCount || 0})</h4>
+                  <h4 className="font-display font-medium text-jolshaa-on-surface mb-2">Going ({event.attendeeCount || 0})</h4>
                   <div className="flex flex-wrap gap-2">
                     {event.attendees?.filter(a => a.status === 'going').map(a => (
                       <Link key={a.user._id} to={`/profile/${a.user._id}`} className="flex items-center gap-2 p-2 rounded-lg hover:bg-jolshaa-surface-container-low transition-colors">
@@ -219,7 +219,7 @@ const EventPage = () => {
                 </div>
                 {event.maybeCount > 0 && (
                   <div>
-                    <h4 className="font-medium text-jolshaa-on-surface mb-2">Maybe ({event.maybeCount})</h4>
+                    <h4 className="font-display font-medium text-jolshaa-on-surface mb-2">Maybe ({event.maybeCount})</h4>
                     <div className="flex flex-wrap gap-2">
                       {event.attendees?.filter(a => a.status === 'maybe').map(a => (
                         <Link key={a.user._id} to={`/profile/${a.user._id}`} className="flex items-center gap-2 p-2 rounded-lg hover:bg-jolshaa-surface-container-low transition-colors">

@@ -102,8 +102,8 @@ const AlbumViewer = ({ album, onClose, isOwner, onPhotosUpdated }) => {
           {/* Header */}
           <div className="flex items-center justify-between p-4 border-b flex-shrink-0">
             <div>
-              <h3 className="font-semibold text-gray-800">{album.title}</h3>
-              <p className="text-gray-500 text-sm">
+              <h3 className="font-display font-semibold text-jolshaa-on-surface">{album.title}</h3>
+              <p className="text-jolshaa-on-surface-variant text-sm">
                 {album.photos.length} photo{album.photos.length !== 1 ? 's' : ''}
               </p>
             </div>
@@ -111,7 +111,7 @@ const AlbumViewer = ({ album, onClose, isOwner, onPhotosUpdated }) => {
               {isOwner && (
                 <button
                   onClick={() => setShowSettings(!showSettings)}
-                  className="text-sm text-gray-600 hover:text-gray-700 font-medium"
+                  className="text-sm text-jolshaa-on-surface-variant hover:text-jolshaa-on-surface font-medium"
                 >
                   Settings
                 </button>
@@ -132,7 +132,7 @@ const AlbumViewer = ({ album, onClose, isOwner, onPhotosUpdated }) => {
               </button>
               <button
                 onClick={onClose}
-                className="text-gray-500 hover:text-gray-700 text-xl ml-2"
+                className="text-jolshaa-on-surface-variant hover:text-jolshaa-on-surface text-xl ml-2"
               >
                 &times;
               </button>
@@ -141,12 +141,12 @@ const AlbumViewer = ({ album, onClose, isOwner, onPhotosUpdated }) => {
 
           {/* Upload area */}
           {showUpload && (
-            <div className="p-4 border-b bg-gray-50">
+            <div className="p-4 border-b bg-jolshaa-surface-container-low">
               <div
                 onClick={() => fileInputRef.current.click()}
-                className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center cursor-pointer hover:border-blue-500 transition-colors"
+                className="border-2 border-dashed border-jolshaa-outline-variant rounded-lg p-4 text-center cursor-pointer hover:border-blue-500 transition-colors"
               >
-                <p className="text-gray-600 text-sm">
+                <p className="text-jolshaa-on-surface-variant text-sm">
                   {uploading ? 'Uploading...' : 'Click to select photos (max 20)'}
                 </p>
               </div>
@@ -162,25 +162,25 @@ const AlbumViewer = ({ album, onClose, isOwner, onPhotosUpdated }) => {
           )}
 
           {showSettings && isOwner && (
-            <div className="p-4 border-b bg-gray-50 space-y-3">
+            <div className="p-4 border-b bg-jolshaa-surface-container-low space-y-3">
               <input
                 type="text"
                 value={settingsTitle}
                 onChange={(e) => setSettingsTitle(e.target.value)}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full border border-jolshaa-outline-variant rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Album title"
               />
               <textarea
                 value={settingsDescription}
                 onChange={(e) => setSettingsDescription(e.target.value)}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full border border-jolshaa-outline-variant rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Description (optional)"
                 rows={2}
               />
               <select
                 value={settingsVisibility}
                 onChange={(e) => setSettingsVisibility(e.target.value)}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full border border-jolshaa-outline-variant rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="public">Public</option>
                 <option value="friends">Friends</option>
@@ -205,7 +205,7 @@ const AlbumViewer = ({ album, onClose, isOwner, onPhotosUpdated }) => {
                 </button>
                 <button
                   onClick={() => setShowSettings(false)}
-                  className="px-4 bg-gray-200 text-gray-700 py-2 rounded-lg text-sm font-medium hover:bg-gray-300"
+                  className="px-4 bg-jolshaa-surface-container text-jolshaa-on-surface py-2 rounded-lg text-sm font-medium hover:bg-jolshaa-surface-container-high"
                 >
                   Cancel
                 </button>
@@ -216,7 +216,7 @@ const AlbumViewer = ({ album, onClose, isOwner, onPhotosUpdated }) => {
           {/* Photos grid */}
           <div className="flex-1 overflow-y-auto p-4">
             {album.photos.length === 0 ? (
-              <div className="text-center py-12 text-gray-500">
+              <div className="text-center py-12 text-jolshaa-on-surface-variant">
                 <p>No photos in this album yet</p>
                 {isOwner && (
                   <p className="text-sm mt-1">Click "Add Photos" to get started</p>
@@ -259,14 +259,14 @@ const AlbumViewer = ({ album, onClose, isOwner, onPhotosUpdated }) => {
         <div className="fixed inset-0 bg-black bg-opacity-95 z-[60] flex items-center justify-center">
           <button
             onClick={closeLightbox}
-            className="absolute top-4 right-4 text-white text-3xl z-50 hover:text-gray-300"
+            className="absolute top-4 right-4 text-white text-3xl z-50 hover:text-jolshaa-outline-variant"
           >
             &times;
           </button>
 
           <button
             onClick={goToPrev}
-            className="absolute left-4 text-white text-4xl z-50 hover:text-gray-300"
+            className="absolute left-4 text-white text-4xl z-50 hover:text-jolshaa-outline-variant"
           >
             &#8249;
           </button>
@@ -279,7 +279,7 @@ const AlbumViewer = ({ album, onClose, isOwner, onPhotosUpdated }) => {
 
           <button
             onClick={goToNext}
-            className="absolute right-4 text-white text-4xl z-50 hover:text-gray-300"
+            className="absolute right-4 text-white text-4xl z-50 hover:text-jolshaa-outline-variant"
           >
             &#8250;
           </button>

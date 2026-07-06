@@ -107,7 +107,7 @@ const FriendButton = ({ userId, initialStatus, initialRequestId, onStatusChange 
             <div className="absolute right-0 top-full mt-1 bg-white shadow-lg rounded-lg border py-1 z-10 w-40">
               <button
                 onClick={handleUnfriend}
-                className="w-full text-left px-3 py-2 text-sm text-red-600 hover:bg-gray-100"
+                className="w-full text-left px-3 py-2 text-sm text-red-600 hover:bg-jolshaa-surface-container"
               >
                 Unfriend
               </button>
@@ -122,7 +122,7 @@ const FriendButton = ({ userId, initialStatus, initialRequestId, onStatusChange 
         <button
           onClick={handleCancelRequest}
           disabled={loading}
-          className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-300 disabled:opacity-50"
+          className="px-4 py-2 bg-jolshaa-surface-container text-jolshaa-on-surface rounded-lg text-sm font-medium hover:bg-jolshaa-surface-container-high disabled:opacity-50"
         >
           {loading ? 'Canceling...' : 'Cancel Request'}
         </button>
@@ -142,7 +142,7 @@ const FriendButton = ({ userId, initialStatus, initialRequestId, onStatusChange 
           <button
             onClick={handleReject}
             disabled={loading}
-            className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-300 disabled:opacity-50"
+            className="px-4 py-2 bg-jolshaa-surface-container text-jolshaa-on-surface rounded-lg text-sm font-medium hover:bg-jolshaa-surface-container-high disabled:opacity-50"
           >
             Reject
           </button>

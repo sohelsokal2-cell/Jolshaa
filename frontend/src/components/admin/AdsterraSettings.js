@@ -51,7 +51,7 @@ const AdsterraSettings = () => {
   };
 
   if (loading) {
-    return <div className="text-center py-8 text-neutral-500">Loading...</div>;
+    return <div className="text-center py-8 text-jolshaa-on-surface-variant">Loading...</div>;
   }
 
   const tabs = [
@@ -65,7 +65,7 @@ const AdsterraSettings = () => {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-neutral-900 dark:text-neutral-100">Adsterra Ad Network</h2>
+        <h2 className="font-display text-lg font-semibold text-jolshaa-on-surface">Adsterra Ad Network</h2>
         <div className="flex items-center gap-3">
           {message && (
             <span className={`text-sm ${message.includes('success') ? 'text-green-600' : 'text-red-600'}`}>
@@ -79,15 +79,15 @@ const AdsterraSettings = () => {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-2 border-b border-neutral-200 dark:border-neutral-700">
+      <div className="flex gap-2 border-b border-jolshaa-outline-variant">
         {tabs.map(tab => (
           <button
             key={tab.key}
             onClick={() => setActiveTab(tab.key)}
             className={`pb-2 px-3 text-sm font-medium border-b-2 transition-colors ${
               activeTab === tab.key
-                ? 'border-primary-500 text-primary-600'
-                : 'border-transparent text-neutral-500 hover:text-neutral-700'
+                ? 'border-jolshaa-teal text-jolshaa-teal'
+                : 'border-transparent text-jolshaa-on-surface-variant hover:text-jolshaa-on-surface'
             }`}
           >
             {tab.label}
@@ -100,12 +100,12 @@ const AdsterraSettings = () => {
         <Card className="p-6 space-y-4">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="font-medium text-neutral-900 dark:text-neutral-100">Enable Adsterra Ads</h3>
-              <p className="text-sm text-neutral-500">Turn on/off all Adsterra ads</p>
+              <h3 className="font-display font-medium text-jolshaa-on-surface">Enable Adsterra Ads</h3>
+              <p className="text-sm text-jolshaa-on-surface-variant">Turn on/off all Adsterra ads</p>
             </div>
             <button
               onClick={() => setSettings(prev => ({ ...prev, enabled: !prev.enabled }))}
-              className={`w-12 h-6 rounded-full transition-colors ${settings.enabled ? 'bg-green-500' : 'bg-neutral-300'}`}
+              className={`w-12 h-6 rounded-full transition-colors ${settings.enabled ? 'bg-green-500' : 'bg-jolshaa-surface-container-high'}`}
             >
               <div className={`w-5 h-5 bg-white rounded-full shadow transition-transform ${settings.enabled ? 'translate-x-6' : 'translate-x-0.5'}`} />
             </button>
@@ -146,19 +146,19 @@ const AdsterraSettings = () => {
         <Card className="p-6 space-y-4">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="font-medium text-neutral-900 dark:text-neutral-100">Popunder Ads</h3>
-              <p className="text-sm text-neutral-500">Full page ads that open in a new tab on first click</p>
+              <h3 className="font-display font-medium text-jolshaa-on-surface">Popunder Ads</h3>
+              <p className="text-sm text-jolshaa-on-surface-variant">Full page ads that open in a new tab on first click</p>
             </div>
             <button
               onClick={() => updateFormat('popunder', 'enabled', !settings.popunder?.enabled)}
-              className={`w-12 h-6 rounded-full transition-colors ${settings.popunder?.enabled ? 'bg-green-500' : 'bg-neutral-300'}`}
+              className={`w-12 h-6 rounded-full transition-colors ${settings.popunder?.enabled ? 'bg-green-500' : 'bg-jolshaa-surface-container-high'}`}
             >
               <div className={`w-5 h-5 bg-white rounded-full shadow transition-transform ${settings.popunder?.enabled ? 'translate-x-6' : 'translate-x-0.5'}`} />
             </button>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
+            <label className="block text-sm font-medium text-jolshaa-on-surface-variant mb-1">
               Script Tag (from Adsterra)
             </label>
             <textarea
@@ -166,9 +166,9 @@ const AdsterraSettings = () => {
               onChange={e => updateFormat('popunder', 'script', e.target.value)}
               placeholder='<script src="https://..." data-cfasync="false" type="text/javascript"></script>'
               rows={4}
-              className="w-full px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-800 text-sm font-mono"
+              className="w-full px-3 py-2 border border-jolshaa-outline-variant rounded-lg bg-jolshaa-surface-container-lowest text-sm font-mono"
             />
-            <p className="text-xs text-neutral-400 mt-1">
+            <p className="text-xs text-jolshaa-on-surface-variant/60 mt-1">
               Get this from Adsterra Dashboard → Websites → Get Code → Popunder
             </p>
           </div>
@@ -180,19 +180,19 @@ const AdsterraSettings = () => {
         <Card className="p-6 space-y-4">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="font-medium text-neutral-900 dark:text-neutral-100">Social Bar Ads</h3>
-              <p className="text-sm text-neutral-500">Push notification style floating ads</p>
+              <h3 className="font-display font-medium text-jolshaa-on-surface">Social Bar Ads</h3>
+              <p className="text-sm text-jolshaa-on-surface-variant">Push notification style floating ads</p>
             </div>
             <button
               onClick={() => updateFormat('socialBar', 'enabled', !settings.socialBar?.enabled)}
-              className={`w-12 h-6 rounded-full transition-colors ${settings.socialBar?.enabled ? 'bg-green-500' : 'bg-neutral-300'}`}
+              className={`w-12 h-6 rounded-full transition-colors ${settings.socialBar?.enabled ? 'bg-green-500' : 'bg-jolshaa-surface-container-high'}`}
             >
               <div className={`w-5 h-5 bg-white rounded-full shadow transition-transform ${settings.socialBar?.enabled ? 'translate-x-6' : 'translate-x-0.5'}`} />
             </button>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
+            <label className="block text-sm font-medium text-jolshaa-on-surface-variant mb-1">
               Script Tag (from Adsterra)
             </label>
             <textarea
@@ -200,9 +200,9 @@ const AdsterraSettings = () => {
               onChange={e => updateFormat('socialBar', 'script', e.target.value)}
               placeholder='<script src="https://..." data-cfasync="false" type="text/javascript"></script>'
               rows={4}
-              className="w-full px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-800 text-sm font-mono"
+              className="w-full px-3 py-2 border border-jolshaa-outline-variant rounded-lg bg-jolshaa-surface-container-lowest text-sm font-mono"
             />
-            <p className="text-xs text-neutral-400 mt-1">
+            <p className="text-xs text-jolshaa-on-surface-variant/60 mt-1">
               Get this from Adsterra Dashboard → Websites → Get Code → Social Bar
             </p>
           </div>
@@ -214,19 +214,19 @@ const AdsterraSettings = () => {
         <Card className="p-6 space-y-4">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="font-medium text-neutral-900 dark:text-neutral-100">Native Banner Ads</h3>
-              <p className="text-sm text-neutral-500">Content-style ads that blend with feed</p>
+              <h3 className="font-display font-medium text-jolshaa-on-surface">Native Banner Ads</h3>
+              <p className="text-sm text-jolshaa-on-surface-variant">Content-style ads that blend with feed</p>
             </div>
             <button
               onClick={() => updateFormat('nativeBanner', 'enabled', !settings.nativeBanner?.enabled)}
-              className={`w-12 h-6 rounded-full transition-colors ${settings.nativeBanner?.enabled ? 'bg-green-500' : 'bg-neutral-300'}`}
+              className={`w-12 h-6 rounded-full transition-colors ${settings.nativeBanner?.enabled ? 'bg-green-500' : 'bg-jolshaa-surface-container-high'}`}
             >
               <div className={`w-5 h-5 bg-white rounded-full shadow transition-transform ${settings.nativeBanner?.enabled ? 'translate-x-6' : 'translate-x-0.5'}`} />
             </button>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
+            <label className="block text-sm font-medium text-jolshaa-on-surface-variant mb-1">
               Script Tag (from Adsterra)
             </label>
             <textarea
@@ -234,9 +234,9 @@ const AdsterraSettings = () => {
               onChange={e => updateFormat('nativeBanner', 'script', e.target.value)}
               placeholder='<script src="https://..." data-cfasync="false" type="text/javascript"></script>'
               rows={4}
-              className="w-full px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-800 text-sm font-mono"
+              className="w-full px-3 py-2 border border-jolshaa-outline-variant rounded-lg bg-jolshaa-surface-container-lowest text-sm font-mono"
             />
-            <p className="text-xs text-neutral-400 mt-1">
+            <p className="text-xs text-jolshaa-on-surface-variant/60 mt-1">
               Get this from Adsterra Dashboard → Websites → Get Code → Native Banner
             </p>
           </div>
@@ -248,19 +248,19 @@ const AdsterraSettings = () => {
         <Card className="p-6 space-y-4">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="font-medium text-neutral-900 dark:text-neutral-100">Video Ads</h3>
-              <p className="text-sm text-neutral-500">Pre-roll or mid-roll video advertisements</p>
+              <h3 className="font-display font-medium text-jolshaa-on-surface">Video Ads</h3>
+              <p className="text-sm text-jolshaa-on-surface-variant">Pre-roll or mid-roll video advertisements</p>
             </div>
             <button
               onClick={() => updateFormat('video', 'enabled', !settings.video?.enabled)}
-              className={`w-12 h-6 rounded-full transition-colors ${settings.video?.enabled ? 'bg-green-500' : 'bg-neutral-300'}`}
+              className={`w-12 h-6 rounded-full transition-colors ${settings.video?.enabled ? 'bg-green-500' : 'bg-jolshaa-surface-container-high'}`}
             >
               <div className={`w-5 h-5 bg-white rounded-full shadow transition-transform ${settings.video?.enabled ? 'translate-x-6' : 'translate-x-0.5'}`} />
             </button>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
+            <label className="block text-sm font-medium text-jolshaa-on-surface-variant mb-1">
               Script Tag (from Adsterra)
             </label>
             <textarea
@@ -268,9 +268,9 @@ const AdsterraSettings = () => {
               onChange={e => updateFormat('video', 'script', e.target.value)}
               placeholder='<script src="https://..." data-cfasync="false" type="text/javascript"></script>'
               rows={4}
-              className="w-full px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-800 text-sm font-mono"
+              className="w-full px-3 py-2 border border-jolshaa-outline-variant rounded-lg bg-jolshaa-surface-container-lowest text-sm font-mono"
             />
-            <p className="text-xs text-neutral-400 mt-1">
+            <p className="text-xs text-jolshaa-on-surface-variant/60 mt-1">
               Get this from Adsterra Dashboard → Websites → Get Code → Video
             </p>
           </div>

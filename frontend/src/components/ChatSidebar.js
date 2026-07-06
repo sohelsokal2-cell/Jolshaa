@@ -223,7 +223,7 @@ const ChatSidebar = ({ activeConversation, onSelectConversation, className = '' 
             <button onClick={() => setShowNewChat(false)} className="text-jolshaa-on-surface-variant hover:text-jolshaa-on-surface">
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
             </button>
-            <h3 className="font-semibold text-sm">New Message</h3>
+            <h3 className="font-display font-semibold text-sm">New Message</h3>
             <button
               onClick={() => { setShowGroupModal(true); setShowNewChat(false); }}
               className="ml-auto text-xs text-jolshaa-teal hover:underline"
@@ -290,7 +290,7 @@ const ChatSidebar = ({ activeConversation, onSelectConversation, className = '' 
             <button onClick={() => { setShowGroupModal(false); setShowNewChat(true); }} className="text-jolshaa-on-surface-variant hover:text-jolshaa-on-surface">
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
             </button>
-            <h3 className="font-semibold text-sm">New Group</h3>
+            <h3 className="font-display font-semibold text-sm">New Group</h3>
           </div>
           <div className="p-3 border-b border-jolshaa-outline-variant">
             <input
@@ -354,7 +354,7 @@ const ChatSidebar = ({ activeConversation, onSelectConversation, className = '' 
       {/* Header */}
       <div className="p-3 md:p-4 border-b border-jolshaa-outline-variant">
         <div className="flex items-center justify-between mb-3">
-          <h2 className="text-lg md:text-xl font-bold">Chats</h2>
+          <h2 className="font-display text-lg md:text-xl font-bold">Chats</h2>
           <button
             onClick={openNewChat}
             className="w-8 h-8 flex items-center justify-center bg-jolshaa-teal text-jolshaa-on-teal rounded-full hover:bg-jolshaa-teal-container transition"

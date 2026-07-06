@@ -6,7 +6,7 @@ const CallButtons = ({ onStartCall, disabled, isGroup }) => {
       <button
         onClick={() => onStartCall('audio')}
         disabled={disabled}
-        className="p-2 text-gray-500 hover:text-green-600 rounded-full hover:bg-gray-100 transition disabled:opacity-40 disabled:cursor-not-allowed"
+        className="p-2 text-jolshaa-on-surface-variant hover:text-green-600 rounded-full hover:bg-jolshaa-surface-container transition disabled:opacity-40 disabled:cursor-not-allowed"
         title="Audio call"
       >
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -16,7 +16,7 @@ const CallButtons = ({ onStartCall, disabled, isGroup }) => {
       <button
         onClick={() => onStartCall('video')}
         disabled={disabled}
-        className="p-2 text-gray-500 hover:text-blue-600 rounded-full hover:bg-gray-100 transition disabled:opacity-40 disabled:cursor-not-allowed"
+        className="p-2 text-jolshaa-on-surface-variant hover:text-blue-600 rounded-full hover:bg-jolshaa-surface-container transition disabled:opacity-40 disabled:cursor-not-allowed"
         title="Video call"
       >
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

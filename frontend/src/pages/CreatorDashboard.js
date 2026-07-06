@@ -106,17 +106,17 @@ const CreatorDashboard = () => {
           <div className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="bg-jolshaa-surface-container-lowest border border-jolshaa-outline-variant rounded-xl p-4 shadow-ambient">
-                <h3 className="text-sm font-medium text-jolshaa-on-surface-variant mb-1">Ad Revenue</h3>
+                <h3 className="font-display text-sm font-medium text-jolshaa-on-surface-variant mb-1">Ad Revenue</h3>
                 <p className="text-2xl font-bold text-blue-600">৳{(earnings.breakdown?.adRevenue || 0).toLocaleString()}</p>
                 <p className="text-xs text-jolshaa-on-surface-variant">From in-stream video ads</p>
               </div>
               <div className="bg-jolshaa-surface-container-lowest border border-jolshaa-outline-variant rounded-xl p-4 shadow-ambient">
-                <h3 className="text-sm font-medium text-jolshaa-on-surface-variant mb-1">Subscription Revenue</h3>
+                <h3 className="font-display text-sm font-medium text-jolshaa-on-surface-variant mb-1">Subscription Revenue</h3>
                 <p className="text-2xl font-bold text-jolshaa-indigo">৳{(earnings.breakdown?.subscriptionRevenue || 0).toLocaleString()}</p>
                 <p className="text-xs text-jolshaa-on-surface-variant">From fan subscriptions</p>
               </div>
               <div className="bg-jolshaa-surface-container-lowest border border-jolshaa-outline-variant rounded-xl p-4 shadow-ambient">
-                <h3 className="text-sm font-medium text-jolshaa-on-surface-variant mb-1">Star Gifts</h3>
+                <h3 className="font-display text-sm font-medium text-jolshaa-on-surface-variant mb-1">Star Gifts</h3>
                 <p className="text-2xl font-bold text-amber-600">৳{(earnings.breakdown?.starRevenue || 0).toLocaleString()}</p>
                 <p className="text-xs text-jolshaa-on-surface-variant">From star gifts</p>
               </div>

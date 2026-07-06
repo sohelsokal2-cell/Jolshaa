@@ -434,21 +434,21 @@ const VideoPlayer = ({
       {/* Mid-roll ad overlay */}
       {showMidRollAd && (
         <div className="absolute inset-0 z-30 flex flex-col items-center justify-center bg-black/90">
-          <div className="bg-neutral-800 rounded-xl p-6 max-w-sm mx-4 text-center shadow-2xl border border-neutral-600">
+          <div className="bg-jolshaa-surface-container-high rounded-xl p-6 max-w-sm mx-4 text-center shadow-2xl border border-jolshaa-outline-variant">
             <div className="flex items-center justify-center gap-2 mb-3">
               <span className="text-xs font-medium text-amber-400 bg-amber-400/10 px-2 py-0.5 rounded">Sponsored</span>
             </div>
-            <div className="w-full h-32 bg-gradient-to-br from-primary-500 to-primary-700 rounded-lg mb-4 flex items-center justify-center">
+            <div className="w-full h-32 bg-gradient-to-br from-jolshaa-teal to-jolshaa-teal-dark rounded-lg mb-4 flex items-center justify-center">
               <span className="text-white text-lg font-bold">Advertisement</span>
             </div>
-            <p className="text-sm text-neutral-400 mb-4">Support this creator by watching the ad</p>
+            <p className="text-sm text-jolshaa-on-surface-variant mb-4">Support this creator by watching the ad</p>
             <button
               onClick={handleSkipAd}
               disabled={!adSkippable}
               className={`w-full py-2.5 rounded-lg text-sm font-medium transition-colors ${
                 adSkippable
-                  ? 'bg-primary-600 text-white hover:bg-primary-700'
-                  : 'bg-neutral-700 text-neutral-400 cursor-not-allowed'
+                  ? 'bg-jolshaa-teal text-white hover:bg-jolshaa-teal-dark'
+                  : 'bg-jolshaa-surface-container text-jolshaa-on-surface-variant cursor-not-allowed'
               }`}
             >
               {adSkippable ? 'Skip Ad' : 'Ad playing...'}
@@ -541,10 +541,10 @@ const VideoPlayer = ({
                 {showQualityMenu && (
                   <>
                     <div className="fixed inset-0 z-10" onClick={() => setShowQualityMenu(false)} />
-                    <div className="absolute bottom-full right-0 mb-2 bg-neutral-800 rounded-lg shadow-xl border border-neutral-600 py-1 z-20 min-w-[100px]">
+                    <div className="absolute bottom-full right-0 mb-2 bg-jolshaa-surface-container-high rounded-lg shadow-xl border border-jolshaa-outline-variant py-1 z-20 min-w-[100px]">
                       <button
                         onClick={() => { setSelectedQuality('auto'); setShowQualityMenu(false); }}
-                        className={`w-full text-left px-3 py-1.5 text-xs hover:bg-neutral-700 ${selectedQuality === 'auto' ? 'text-blue-400' : 'text-white'}`}
+                        className={`w-full text-left px-3 py-1.5 text-xs hover:bg-jolshaa-surface-container-highest ${selectedQuality === 'auto' ? 'text-blue-400' : 'text-white'}`}
                       >
                         Auto
                       </button>
@@ -552,7 +552,7 @@ const VideoPlayer = ({
                         <button
                           key={q.resolution}
                           onClick={() => { setSelectedQuality(q.resolution); setShowQualityMenu(false); }}
-                          className={`w-full text-left px-3 py-1.5 text-xs hover:bg-neutral-700 ${selectedQuality === q.resolution ? 'text-blue-400' : 'text-white'}`}
+                          className={`w-full text-left px-3 py-1.5 text-xs hover:bg-jolshaa-surface-container-highest ${selectedQuality === q.resolution ? 'text-blue-400' : 'text-white'}`}
                         >
                           {q.resolution}
                         </button>

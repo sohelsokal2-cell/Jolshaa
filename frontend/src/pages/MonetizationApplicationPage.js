@@ -37,8 +37,8 @@ const MonetizationApplicationPage = () => {
       <Layout>
         <div className="max-w-2xl mx-auto p-4">
           <div className="animate-pulse space-y-4">
-            <div className="h-8 bg-neutral-200 dark:bg-neutral-700 rounded w-1/3" />
-            <div className="h-40 bg-neutral-200 dark:bg-neutral-700 rounded" />
+            <div className="h-8 bg-jolshaa-surface-container-high rounded w-1/3" />
+            <div className="h-40 bg-jolshaa-surface-container-high rounded" />
           </div>
         </div>
       </Layout>
@@ -46,10 +46,10 @@ const MonetizationApplicationPage = () => {
   }
 
   const statusConfig = {
-    not_applied: { color: 'text-neutral-600', bg: 'bg-neutral-100 dark:bg-neutral-800', label: 'Not Applied' },
-    pending: { color: 'text-amber-600', bg: 'bg-amber-50 dark:bg-amber-900/20', label: 'Under Review' },
-    approved: { color: 'text-green-600', bg: 'bg-green-50 dark:bg-green-900/20', label: 'Approved' },
-    rejected: { color: 'text-red-600', bg: 'bg-red-50 dark:bg-red-900/20', label: 'Not Approved' },
+    not_applied: { color: 'text-jolshaa-on-surface-variant', bg: 'bg-jolshaa-surface-container-high', label: 'Not Applied' },
+    pending: { color: 'text-amber-600', bg: 'bg-amber-50', label: 'Under Review' },
+    approved: { color: 'text-green-600', bg: 'bg-green-50', label: 'Approved' },
+    rejected: { color: 'text-red-600', bg: 'bg-red-50', label: 'Not Approved' },
   };
 
   const status = statusConfig[eligibility?.verificationStatus] || statusConfig.not_applied;
@@ -57,21 +57,21 @@ const MonetizationApplicationPage = () => {
   return (
     <Layout>
       <div className="max-w-2xl mx-auto p-4">
-        <h1 className="text-2xl font-bold mb-6 text-neutral-900 dark:text-neutral-100">
+        <h1 className="font-display text-2xl font-bold mb-6 text-jolshaa-on-surface">
           Creator Monetization
         </h1>
 
         {eligibility?.isCreator ? (
-          <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-xl p-6 mb-6">
+          <div className="bg-green-50 border border-green-200 rounded-xl p-6 mb-6">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-green-100 dark:bg-green-900/40 rounded-full flex items-center justify-center">
+              <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
                 <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
               </div>
               <div>
-                <h2 className="font-semibold text-green-800 dark:text-green-200">You are an approved creator!</h2>
-                <p className="text-sm text-green-600 dark:text-green-400">
+                <h2 className="font-display font-semibold text-green-800">You are an approved creator!</h2>
+                <p className="text-sm text-green-600">
                   Access your <Link to="/creator" className="underline">Creator Dashboard</Link> to manage monetization.
                 </p>
               </div>
@@ -80,8 +80,8 @@ const MonetizationApplicationPage = () => {
         ) : (
           <>
             {/* Eligibility Requirements */}
-            <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-xl p-6 mb-6">
-              <h2 className="font-semibold text-lg mb-4 text-neutral-900 dark:text-neutral-100">
+            <div className="bg-jolshaa-surface-container-lowest border border-jolshaa-outline-variant rounded-xl p-6 mb-6">
+              <h2 className="font-display font-semibold text-lg mb-4 text-jolshaa-on-surface">
                 Eligibility Requirements
               </h2>
 
@@ -89,16 +89,16 @@ const MonetizationApplicationPage = () => {
                 {eligibility?.requirements && Object.entries(eligibility.requirements).map(([key, req]) => (
                   <div key={key}>
                     <div className="flex items-center justify-between mb-1">
-                      <span className="text-sm text-neutral-700 dark:text-neutral-300 capitalize">
+                      <span className="text-sm text-jolshaa-on-surface capitalize">
                         {key === 'accountAge' ? 'Account Age' : key}
                       </span>
-                      <span className={`text-sm font-medium ${req.met ? 'text-green-600' : 'text-neutral-500'}`}>
+                      <span className={`text-sm font-medium ${req.met ? 'text-green-600' : 'text-jolshaa-on-surface-variant'}`}>
                         {req.met ? '✓ Met' : `${req.current}/${req.required}`}
                       </span>
                     </div>
-                    <div className="w-full bg-neutral-200 dark:bg-neutral-700 rounded-full h-2">
+                    <div className="w-full bg-jolshaa-surface-container-high rounded-full h-2">
                       <div
-                        className={`h-2 rounded-full transition-all ${req.met ? 'bg-green-500' : 'bg-primary-500'}`}
+                        className={`h-2 rounded-full transition-all ${req.met ? 'bg-green-500' : 'bg-jolshaa-teal'}`}
                         style={{ width: `${Math.min(100, (req.current / req.required) * 100)}%` }}
                       />
                     </div>
@@ -109,12 +109,12 @@ const MonetizationApplicationPage = () => {
 
             {/* Application Status */}
             {eligibility?.verificationStatus !== 'not_applied' && (
-              <div className={`${status.bg} border border-neutral-200 dark:border-neutral-700 rounded-xl p-6 mb-6`}>
+              <div className={`${status.bg} border border-jolshaa-outline-variant rounded-xl p-6 mb-6`}>
                 <div className="flex items-center gap-3">
                   <span className={`text-lg font-semibold ${status.color}`}>{status.label}</span>
                 </div>
                 {eligibility?.verificationStatus === 'rejected' && eligibility?.rejectionReason && (
-                  <p className="text-sm text-red-600 dark:text-red-400 mt-2">
+                  <p className="text-sm text-red-600 mt-2">
                     Reason: {eligibility.rejectionReason}
                   </p>
                 )}
@@ -123,14 +123,14 @@ const MonetizationApplicationPage = () => {
 
             {/* Application Form */}
             {eligibility?.verificationStatus === 'not_applied' && eligibility?.meetsRequirements && (
-              <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-xl p-6 mb-6">
-                <h2 className="font-semibold text-lg mb-4 text-neutral-900 dark:text-neutral-100">
+              <div className="bg-jolshaa-surface-container-lowest border border-jolshaa-outline-variant rounded-xl p-6 mb-6">
+                <h2 className="font-display font-semibold text-lg mb-4 text-jolshaa-on-surface">
                   Apply for Monetization
                 </h2>
 
                 <div className="space-y-4 mb-4">
                   <div>
-                    <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
+                    <label className="block text-sm font-medium text-jolshaa-on-surface mb-1">
                       NID Number (Optional)
                     </label>
                     <input
@@ -138,11 +138,11 @@ const MonetizationApplicationPage = () => {
                       value={nidNumber}
                       onChange={(e) => setNidNumber(e.target.value)}
                       placeholder="National ID number"
-                      className="w-full px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 text-sm focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                      className="w-full px-3 py-2 border border-jolshaa-outline rounded-lg bg-jolshaa-surface-container-highest text-jolshaa-on-surface text-sm focus:ring-2 focus:ring-jolshaa-teal focus:border-transparent"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
+                    <label className="block text-sm font-medium text-jolshaa-on-surface mb-1">
                       TIN Number (Optional)
                     </label>
                     <input
@@ -150,12 +150,12 @@ const MonetizationApplicationPage = () => {
                       value={tinNumber}
                       onChange={(e) => setTinNumber(e.target.value)}
                       placeholder="Tax Identification Number"
-                      className="w-full px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 text-sm focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                      className="w-full px-3 py-2 border border-jolshaa-outline rounded-lg bg-jolshaa-surface-container-highest text-jolshaa-on-surface text-sm focus:ring-2 focus:ring-jolshaa-teal focus:border-transparent"
                     />
                   </div>
                 </div>
 
-                <p className="text-xs text-neutral-500 mb-4">
+                <p className="text-xs text-jolshaa-on-surface-variant mb-4">
                   By applying, you agree to our Creator Monetization Terms. Tax information helps with
                   compliance with Bangladesh National Board of Revenue (NBR) requirements.
                 </p>
@@ -169,7 +169,7 @@ const MonetizationApplicationPage = () => {
                 <button
                   onClick={handleApply}
                   disabled={applying}
-                  className="w-full py-2.5 bg-primary-600 text-white rounded-lg font-medium hover:bg-primary-700 disabled:opacity-50 transition-colors"
+                  className="w-full py-2.5 bg-jolshaa-teal text-white rounded-lg font-medium hover:bg-jolshaa-teal-container disabled:opacity-50 transition-colors"
                 >
                   {applying ? 'Submitting...' : 'Apply Now'}
                 </button>
@@ -177,8 +177,8 @@ const MonetizationApplicationPage = () => {
             )}
 
             {!eligibility?.meetsRequirements && eligibility?.verificationStatus === 'not_applied' && (
-              <div className="bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl p-6 text-center">
-                <p className="text-neutral-600 dark:text-neutral-400">
+              <div className="bg-jolshaa-surface-container-high border border-jolshaa-outline-variant rounded-xl p-6 text-center">
+                <p className="text-jolshaa-on-surface-variant">
                   Meet all requirements above to apply for creator monetization.
                 </p>
               </div>
@@ -186,8 +186,8 @@ const MonetizationApplicationPage = () => {
           </>
         )}
 
-        <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl p-4 mt-6">
-          <p className="text-xs text-blue-700 dark:text-blue-300">
+        <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 mt-6">
+          <p className="text-xs text-blue-700">
             <strong>Tax Disclaimer:</strong> Creators are responsible for their own tax reporting to the
             Bangladesh National Board of Revenue (NBR). Jolshaa does not withhold taxes automatically.
             Consult a tax professional for guidance on reporting your earnings.

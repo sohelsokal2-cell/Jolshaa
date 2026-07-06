@@ -46,7 +46,7 @@ const AudioCallScreen = ({
         </div>
 
         {/* User name */}
-        <h2 className="text-xl font-bold text-white mb-1">{remoteName}</h2>
+        <h2 className="font-display text-xl font-bold text-white mb-1">{remoteName}</h2>
 
         {/* Call duration */}
         <p className="text-lg text-green-400 font-mono mt-1">

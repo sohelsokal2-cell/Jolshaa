@@ -113,7 +113,7 @@ const PostCard = ({ post, onDelete }) => {
   };
 
   return (
-    <article className="bg-white dark:bg-neutral-800 rounded-xl shadow-card overflow-hidden">
+    <article className="bg-jolshaa-surface-container-lowest rounded-xl shadow-ambient overflow-hidden">
       {/* Header */}
       <div className="px-4 pt-4 pb-2">
         <div className="flex items-start justify-between">
@@ -122,15 +122,15 @@ const PostCard = ({ post, onDelete }) => {
               <Avatar src={post.author?.profilePhoto} alt={post.author?.name} size="md" />
             </Link>
             <div>
-              <Link to={`/profile/${post.author?._id}`} className="font-semibold text-sm text-neutral-900 dark:text-neutral-100 hover:underline">
+              <Link to={`/profile/${post.author?._id}`} className="font-semibold text-sm text-jolshaa-on-surface hover:underline">
                 {post.author?.name}
               </Link>
               {post.collaborators?.length > 0 && (
-                <span className="text-xs text-neutral-500">
+                <span className="text-xs text-jolshaa-on-surface-variant">
                   with {post.collaborators.map(c => c.user?.name).filter(Boolean).join(', ')}
                 </span>
               )}
-              <div className="flex items-center gap-1.5 text-xs text-neutral-500">
+              <div className="flex items-center gap-1.5 text-xs text-jolshaa-on-surface-variant">
                 <span>{timeAgo(post.createdAt)}</span>
                 {isEdited && <span>· edited</span>}
                 {sharedPost && <span>· shared</span>}
@@ -147,7 +147,7 @@ const PostCard = ({ post, onDelete }) => {
           <div className="relative" ref={menuRef}>
             <button
               onClick={() => setShowMenu(!showMenu)}
-              className="p-1.5 rounded-full hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors text-neutral-400"
+              className="p-1.5 rounded-full hover:bg-jolshaa-surface-container-high transition-colors text-jolshaa-on-surface-variant"
             >
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                 <circle cx="12" cy="5" r="2" />
@@ -156,25 +156,25 @@ const PostCard = ({ post, onDelete }) => {
               </svg>
             </button>
             {showMenu && (
-              <div className="absolute right-0 top-full mt-1 w-48 bg-white dark:bg-neutral-800 rounded-xl shadow-dropdown border border-neutral-100 dark:border-neutral-700 z-20 py-1 animate-scale-in">
+              <div className="absolute right-0 top-full mt-1 w-48 bg-jolshaa-surface-container-lowest rounded-xl shadow-ambient-hover border border-jolshaa-outline-variant z-20 py-1 animate-scale-in">
                 {isOwner ? (
                   <>
-                    <button onClick={() => { setIsEditing(true); setShowMenu(false); }} className="w-full text-left px-4 py-2.5 text-sm text-neutral-700 dark:text-neutral-200 hover:bg-neutral-50 dark:hover:bg-neutral-700 flex items-center gap-3">
-                      <svg className="w-4 h-4 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
+                    <button onClick={() => { setIsEditing(true); setShowMenu(false); }} className="w-full text-left px-4 py-2.5 text-sm text-jolshaa-on-surface hover:bg-jolshaa-surface-container-high flex items-center gap-3">
+                      <svg className="w-4 h-4 text-jolshaa-on-surface-variant" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
                       Edit post
                     </button>
-                    <button onClick={() => { setShowBoost(true); setShowMenu(false); }} className="w-full text-left px-4 py-2.5 text-sm text-neutral-700 dark:text-neutral-200 hover:bg-neutral-50 dark:hover:bg-neutral-700 flex items-center gap-3">
-                      <svg className="w-4 h-4 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                    <button onClick={() => { setShowBoost(true); setShowMenu(false); }} className="w-full text-left px-4 py-2.5 text-sm text-jolshaa-on-surface hover:bg-jolshaa-surface-container-high flex items-center gap-3">
+                      <svg className="w-4 h-4 text-jolshaa-on-surface-variant" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
                       Boost post
                     </button>
-                    <div className="h-px bg-neutral-100 dark:bg-neutral-700 my-1" />
-                    <button onClick={() => { handleDelete(); setShowMenu(false); }} className="w-full text-left px-4 py-2.5 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/10 flex items-center gap-3">
+                    <div className="h-px bg-jolshaa-outline-variant/50 my-1" />
+                    <button onClick={() => { handleDelete(); setShowMenu(false); }} className="w-full text-left px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 flex items-center gap-3">
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
                       Delete
                     </button>
                   </>
                 ) : (
-                  <button onClick={() => { setShowReport(true); setShowMenu(false); }} className="w-full text-left px-4 py-2.5 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/10 flex items-center gap-3">
+                  <button onClick={() => { setShowReport(true); setShowMenu(false); }} className="w-full text-left px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 flex items-center gap-3">
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4.5c-.77-.833-2.694-.833-3.464 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z" /></svg>
                     Report post
                   </button>
@@ -186,21 +186,21 @@ const PostCard = ({ post, onDelete }) => {
 
         {post.communityLabel && (
           <div className="ml-[52px] mt-1">
-            <span className="text-xs bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 px-2 py-0.5 rounded-full font-medium">
+            <span className="text-xs bg-jolshaa-teal/15 text-jolshaa-teal px-2 py-0.5 rounded-full font-medium">
               🏷️ {post.communityLabel}
             </span>
           </div>
         )}
         {post.contentWarning && post.contentWarning !== 'none' && (
           <div className="ml-[52px] mt-1">
-            <span className="text-xs bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 px-2 py-0.5 rounded-full font-medium">
+            <span className="text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full font-medium">
               ⚠️ {post.contentWarning.charAt(0).toUpperCase() + post.contentWarning.slice(1)} content
             </span>
           </div>
         )}
         {post.feeling && (
-          <p className="text-sm text-neutral-500 mt-1 ml-[52px]">
-            is feeling <span className="font-medium text-neutral-700 dark:text-neutral-300">{post.feeling}</span>
+          <p className="text-sm text-jolshaa-on-surface-variant mt-1 ml-[52px]">
+            is feeling <span className="font-medium text-jolshaa-on-surface">{post.feeling}</span>
           </p>
         )}
 
@@ -211,7 +211,7 @@ const PostCard = ({ post, onDelete }) => {
         )}
         {post.isBoosted && (
           <div className="ml-[52px] mt-1">
-            <span className="text-xs text-amber-600 bg-amber-50 dark:bg-amber-900/20 px-2 py-0.5 rounded flex items-center gap-1 w-fit">
+            <span className="text-xs text-amber-600 bg-amber-50 px-2 py-0.5 rounded flex items-center gap-1 w-fit">
               <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24"><path d="M7 2v11h3v9l7-12h-4l4-8z" /></svg>
               Boosted
             </span>
@@ -229,34 +229,34 @@ const PostCard = ({ post, onDelete }) => {
             <textarea
               value={editText}
               onChange={(e) => setEditText(e.target.value)}
-              className="w-full border border-neutral-300 dark:border-neutral-600 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/30 focus:border-primary-500 bg-white dark:bg-neutral-700 resize-none"
+              className="w-full border border-jolshaa-outline rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-jolshaa-teal/30 focus:border-jolshaa-teal bg-jolshaa-surface-container-highest resize-none"
               rows={4}
               autoFocus
             />
             <div className="flex gap-2">
-              <button onClick={handleEdit} className="px-4 py-1.5 bg-primary-600 text-white rounded-lg text-sm font-medium hover:bg-primary-700 transition-colors">Save</button>
-              <button onClick={() => { setIsEditing(false); setEditText(displayText); }} className="px-4 py-1.5 bg-neutral-200 dark:bg-neutral-700 text-neutral-700 dark:text-neutral-200 rounded-lg text-sm font-medium hover:bg-neutral-300 dark:hover:bg-neutral-600 transition-colors">Cancel</button>
+              <button onClick={handleEdit} className="px-4 py-1.5 bg-jolshaa-teal text-white rounded-lg text-sm font-medium hover:bg-jolshaa-teal-container transition-colors">Save</button>
+              <button onClick={() => { setIsEditing(false); setEditText(displayText); }} className="px-4 py-1.5 bg-jolshaa-surface-container-high text-jolshaa-on-surface rounded-lg text-sm font-medium hover:bg-jolshaa-surface-container-highest transition-colors">Cancel</button>
             </div>
           </div>
         ) : (
           <>
             {displayText && (
-              <p className="text-sm text-neutral-900 dark:text-neutral-100 whitespace-pre-wrap leading-relaxed line-clamp-4">{displayText}</p>
+              <p className="text-sm text-jolshaa-on-surface whitespace-pre-wrap leading-relaxed line-clamp-4">{displayText}</p>
             )}
 
             {sharedPost && (
-              <div className="mt-2 border border-neutral-200 dark:border-neutral-700 rounded-xl overflow-hidden bg-neutral-50 dark:bg-neutral-900">
+              <div className="mt-2 border border-jolshaa-outline-variant rounded-xl overflow-hidden bg-jolshaa-surface-container-high">
                 <div className="p-3">
                   <div className="flex items-center gap-2 mb-2">
                     <Avatar src={sharedPost.author?.profilePhoto} alt={sharedPost.author?.name} size="sm" />
                     <div>
-                      <Link to={`/profile/${sharedPost.author?._id}`} className="font-semibold text-xs text-neutral-900 dark:text-neutral-100 hover:underline">
+                      <Link to={`/profile/${sharedPost.author?._id}`} className="font-semibold text-xs text-jolshaa-on-surface hover:underline">
                         {sharedPost.author?.name}
                       </Link>
-                      <p className="text-2xs text-neutral-500">{timeAgo(sharedPost.createdAt)}</p>
+                      <p className="text-2xs text-jolshaa-on-surface-variant">{timeAgo(sharedPost.createdAt)}</p>
                     </div>
                   </div>
-                  {sharedPost.text && <p className="text-sm text-neutral-700 dark:text-neutral-300">{sharedPost.text}</p>}
+                  {sharedPost.text && <p className="text-sm text-jolshaa-on-surface">{sharedPost.text}</p>}
                 </div>
                 {sharedPost.media?.length > 0 && (
                   <MediaCarousel media={sharedPost.media} />
@@ -329,8 +329,8 @@ const PostCard = ({ post, onDelete }) => {
 
       {/* Footnotes */}
       {post.footnotes && (
-        <div className="px-4 py-2 border-t border-neutral-100 dark:border-neutral-700">
-          <p className="text-xs text-neutral-500 dark:text-neutral-400 italic">
+        <div className="px-4 py-2 border-t border-jolshaa-outline-variant/50">
+          <p className="text-xs text-jolshaa-on-surface-variant italic">
             📝 {post.footnotes}
           </p>
         </div>
@@ -338,11 +338,11 @@ const PostCard = ({ post, onDelete }) => {
 
       {/* Reaction & Comment counts */}
       {(reactions.count > 0 || commentCount > 0) && (
-        <div className="px-4 py-2 flex items-center justify-between text-xs text-neutral-500">
+        <div className="px-4 py-2 flex items-center justify-between text-xs text-jolshaa-on-surface-variant">
           <div className="flex items-center gap-1.5">
             {reactions.count > 0 && (
               <>
-                <span className="flex items-center justify-center w-5 h-5 bg-primary-100 dark:bg-primary-900/30 rounded-full text-[10px]">
+                <span className="flex items-center justify-center w-5 h-5 bg-jolshaa-teal/15 rounded-full text-[10px]">
                   {reactions.myReaction === 'love' ? '❤️' : reactions.myReaction === 'haha' ? '😂' : reactions.myReaction === 'wow' ? '😮' : reactions.myReaction === 'sad' ? '😢' : reactions.myReaction === 'angry' ? '😡' : reactions.myReaction === 'fire' ? '🔥' : reactions.myReaction === 'clap' ? '👏' : reactions.myReaction === 'think' ? '🤔' : reactions.myReaction === 'care' ? '🤗' : '👍'}
                 </span>
                 <span>{reactions.count}</span>
@@ -360,11 +360,11 @@ const PostCard = ({ post, onDelete }) => {
       )}
 
       {/* Action buttons */}
-      <div className="px-4 py-1 border-t border-neutral-100 dark:border-neutral-700">
+      <div className="px-4 py-1 border-t border-jolshaa-outline-variant/50">
         <div className="flex items-center justify-between">
           <ReactionPicker currentReaction={reactions.myReaction} onReact={handleReact} />
           {post.commentPrivacy === 'none' && !isOwner ? (
-            <span className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs text-neutral-400 cursor-not-allowed">
+            <span className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs text-jolshaa-on-surface-variant cursor-not-allowed">
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
               </svg>
@@ -373,7 +373,7 @@ const PostCard = ({ post, onDelete }) => {
           ) : (
             <button
               onClick={() => setShowComments(!showComments)}
-              className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-2 rounded-lg text-xs font-medium text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors"
+              className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-2 rounded-lg text-xs font-medium text-jolshaa-on-surface-variant hover:bg-jolshaa-surface-container-high transition-colors"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
@@ -383,7 +383,7 @@ const PostCard = ({ post, onDelete }) => {
           )}
             <button
             onClick={() => setShowShare(true)}
-            className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-2 rounded-lg text-xs font-medium text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors"
+            className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-2 rounded-lg text-xs font-medium text-jolshaa-on-surface-variant hover:bg-jolshaa-surface-container-high transition-colors"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
@@ -403,7 +403,7 @@ const PostCard = ({ post, onDelete }) => {
 
       {/* Comments section */}
       {showComments && (
-        <div className="px-4 pb-4 border-t border-neutral-100 dark:border-neutral-700 pt-3">
+        <div className="px-4 pb-4 border-t border-jolshaa-outline-variant/50 pt-3">
           <CommentSection postId={post._id} commentCount={commentCount} />
         </div>
       )}

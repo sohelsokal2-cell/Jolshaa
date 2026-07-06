@@ -91,10 +91,10 @@ const SavedPostsPage = () => {
     <Layout>
       <div className="max-w-2xl mx-auto p-4">
         <div className="flex items-center justify-between mb-4">
-          <h1 className="text-2xl font-bold text-on-surface">Saved Posts</h1>
+          <h1 className="font-display text-2xl font-bold text-jolshaa-on-surface">Saved Posts</h1>
           <button
             onClick={() => setShowCreateFolder(true)}
-            className="px-3 py-1.5 bg-primary-600 text-white rounded-lg text-sm font-medium hover:bg-primary-700 flex items-center gap-1"
+            className="px-3 py-1.5 bg-jolshaa-teal text-white rounded-lg text-sm font-medium hover:bg-jolshaa-teal-container flex items-center gap-1"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -104,15 +104,15 @@ const SavedPostsPage = () => {
         </div>
 
         {showCreateFolder && (
-          <div className="bg-white dark:bg-neutral-800 rounded-xl shadow-card p-4 mb-4">
-            <h3 className="font-semibold text-sm mb-3 text-neutral-900 dark:text-white">Create Folder</h3>
+          <div className="bg-jolshaa-surface-container-lowest rounded-xl shadow-ambient p-4 mb-4">
+            <h3 className="font-display font-semibold text-sm mb-3 text-jolshaa-on-surface">Create Folder</h3>
             <div className="flex gap-2 mb-3 flex-wrap">
               {icons.map(icon => (
                 <button
                   key={icon}
                   onClick={() => setFolderIcon(icon)}
                   className={`w-9 h-9 rounded-lg flex items-center justify-center text-lg ${
-                    folderIcon === icon ? 'bg-primary-100 dark:bg-primary-900/30 ring-2 ring-primary-500' : 'bg-neutral-100 dark:bg-neutral-700'
+                    folderIcon === icon ? 'bg-jolshaa-teal/15 ring-2 ring-jolshaa-teal' : 'bg-jolshaa-surface-container-high'
                   }`}
                 >
                   {icon}
@@ -124,20 +124,20 @@ const SavedPostsPage = () => {
               value={folderName}
               onChange={(e) => setFolderName(e.target.value)}
               placeholder="Folder name..."
-              className="w-full border border-neutral-300 dark:border-neutral-600 rounded-lg px-3 py-2 text-sm mb-3 bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white"
+              className="w-full border border-jolshaa-outline rounded-lg px-3 py-2 text-sm mb-3 bg-jolshaa-surface-container-highest text-jolshaa-on-surface"
               autoFocus
             />
             <div className="flex gap-2">
               <button
                 onClick={() => { setShowCreateFolder(false); setFolderName(''); setFolderIcon('📁'); }}
-                className="flex-1 py-2 text-sm text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded-lg"
+                className="flex-1 py-2 text-sm text-jolshaa-on-surface-variant hover:bg-jolshaa-surface-container-high rounded-lg"
               >
                 Cancel
               </button>
               <button
                 onClick={handleCreateFolder}
                 disabled={!folderName.trim()}
-                className="flex-1 py-2 text-sm bg-primary-600 text-white rounded-lg hover:bg-primary-700 disabled:opacity-50"
+                className="flex-1 py-2 text-sm bg-jolshaa-teal text-white rounded-lg hover:bg-jolshaa-teal-container disabled:opacity-50"
               >
                 Create
               </button>
@@ -150,7 +150,7 @@ const SavedPostsPage = () => {
             <button
               onClick={() => setActiveFolder(null)}
               className={`flex-shrink-0 px-3 py-2 rounded-lg text-sm font-medium ${
-                !activeFolder ? 'bg-primary-600 text-white' : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-300'
+                !activeFolder ? 'bg-jolshaa-teal text-white' : 'bg-jolshaa-surface-container-high text-jolshaa-on-surface-variant'
               }`}
             >
               All ({posts.length})
@@ -160,7 +160,7 @@ const SavedPostsPage = () => {
                 <button
                   onClick={() => setActiveFolder(folder._id)}
                   className={`px-3 py-2 rounded-lg text-sm font-medium flex items-center gap-1.5 ${
-                    activeFolder === folder._id ? 'bg-primary-600 text-white' : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-300'
+                    activeFolder === folder._id ? 'bg-jolshaa-teal text-white' : 'bg-jolshaa-surface-container-high text-jolshaa-on-surface-variant'
                   }`}
                 >
                   <span>{folder.icon}</span>
@@ -181,7 +181,7 @@ const SavedPostsPage = () => {
         {loading ? (
           <div className="space-y-4">
             {[1, 2, 3].map(i => (
-              <div key={i} className="card rounded-lg shadow-sm p-4 animate-pulse">
+              <div key={i} className="bg-jolshaa-surface-container-lowest rounded-lg shadow-sm p-4 animate-pulse">
                 <div className="h-4 bg-on-surface-variant/20 rounded w-1/3 mb-3" />
                 <div className="h-20 bg-on-surface-variant/20 rounded" />
               </div>
@@ -190,10 +190,10 @@ const SavedPostsPage = () => {
         ) : filteredPosts.length === 0 ? (
           <div className="text-center py-12">
             <p className="text-4xl mb-4">💾</p>
-            <p className="text-on-surface-variant">
+            <p className="text-jolshaa-on-surface-variant">
               {activeFolder ? 'No posts in this folder' : 'No saved posts yet'}
             </p>
-            <p className="text-sm text-on-surface-variant/60 mt-1">
+            <p className="text-sm text-jolshaa-on-surface-variant/60 mt-1">
               {activeFolder ? 'Save posts and add them to this folder' : 'Save posts to read them later'}
             </p>
           </div>
@@ -210,7 +210,7 @@ const SavedPostsPage = () => {
                         e.target.value = '';
                       }}
                       defaultValue=""
-                      className="text-xs bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg px-2 py-1 text-neutral-600 dark:text-neutral-300 shadow-sm"
+                      className="text-xs bg-jolshaa-surface-container-lowest border border-jolshaa-outline-variant rounded-lg px-2 py-1 text-jolshaa-on-surface-variant shadow-sm"
                     >
                       <option value="" disabled>Add to...</option>
                       {folders.map(f => (

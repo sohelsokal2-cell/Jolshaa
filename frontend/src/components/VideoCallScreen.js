@@ -62,7 +62,7 @@ const VideoCallScreen = ({
       {/* Local video (PIP) */}
       <div
         ref={localPipRef}
-        className={`absolute z-10 bg-gray-900 rounded-xl overflow-hidden shadow-2xl border border-white/20 transition-all duration-300 ${
+        className={`absolute z-10 bg-jolshaa-surface-container-high rounded-xl overflow-hidden shadow-2xl border border-white/20 transition-all duration-300 ${
           isPipExpanded ? 'w-48 h-36' : 'w-28 h-20'
         } bottom-24 right-4`}
         onClick={() => setIsPipExpanded(!isPipExpanded)}
@@ -77,7 +77,7 @@ const VideoCallScreen = ({
           style={{ transform: isFrontCamera ? 'scaleX(-1)' : 'none' }}
         />
         {isCameraOff && (
-          <div className="absolute inset-0 flex items-center justify-center bg-gray-800">
+          <div className="absolute inset-0 flex items-center justify-center bg-jolshaa-surface-container-high">
             <svg className="w-8 h-8 text-white/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
             </svg>

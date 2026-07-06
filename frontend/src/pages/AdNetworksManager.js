@@ -139,7 +139,7 @@ const AdNetworksManager = () => {
       green: 'bg-green-500',
       red: 'bg-red-500',
     };
-    return colors[color] || 'bg-gray-500';
+    return colors[color] || 'bg-jolshaa-on-surface-variant';
   };
 
   const totalRevenue = stats.reduce((sum, s) => sum + (s.totalRevenue || 0), 0);
@@ -155,57 +155,57 @@ const AdNetworksManager = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-6">
+    <div className="min-h-screen bg-jolshaa-surface p-6">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+          <h1 className="font-display text-3xl font-bold text-jolshaa-on-surface">
             Ad Networks Manager
           </h1>
-          <p className="text-gray-600 dark:text-gray-400 mt-2">
+          <p className="text-jolshaa-on-surface-variant mt-2">
             Manage multiple ad networks from one place
           </p>
         </div>
 
         {/* Stats Overview */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow">
-            <p className="text-sm text-gray-500 dark:text-gray-400">Total Networks</p>
-            <p className="text-2xl font-bold text-gray-900 dark:text-white">
+          <div className="bg-jolshaa-surface-container-lowest rounded-lg p-6 shadow">
+            <p className="text-sm text-jolshaa-on-surface-variant">Total Networks</p>
+            <p className="text-2xl font-bold text-jolshaa-on-surface">
               {networks.length}
             </p>
             <p className="text-sm text-green-500">
               {networks.filter(n => n.enabled).length} active
             </p>
           </div>
-          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow">
-            <p className="text-sm text-gray-500 dark:text-gray-400">Total Impressions</p>
-            <p className="text-2xl font-bold text-gray-900 dark:text-white">
+          <div className="bg-jolshaa-surface-container-lowest rounded-lg p-6 shadow">
+            <p className="text-sm text-jolshaa-on-surface-variant">Total Impressions</p>
+            <p className="text-2xl font-bold text-jolshaa-on-surface">
               {totalImpressions.toLocaleString()}
             </p>
           </div>
-          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow">
-            <p className="text-sm text-gray-500 dark:text-gray-400">Total Clicks</p>
-            <p className="text-2xl font-bold text-gray-900 dark:text-white">
+          <div className="bg-jolshaa-surface-container-lowest rounded-lg p-6 shadow">
+            <p className="text-sm text-jolshaa-on-surface-variant">Total Clicks</p>
+            <p className="text-2xl font-bold text-jolshaa-on-surface">
               {totalClicks.toLocaleString()}
             </p>
           </div>
-          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow">
-            <p className="text-sm text-gray-500 dark:text-gray-400">Total Revenue</p>
-            <p className="text-2xl font-bold text-gray-900 dark:text-white">
+          <div className="bg-jolshaa-surface-container-lowest rounded-lg p-6 shadow">
+            <p className="text-sm text-jolshaa-on-surface-variant">Total Revenue</p>
+            <p className="text-2xl font-bold text-jolshaa-on-surface">
               ${totalRevenue.toFixed(2)}
             </p>
           </div>
         </div>
 
         {/* Tabs */}
-        <div className="flex gap-4 mb-6 border-b dark:border-gray-700 pb-2">
+        <div className="flex gap-4 mb-6 border-b border-jolshaa-outline-variant pb-2">
           <button
             onClick={() => setActiveTab('networks')}
             className={`px-4 py-2 font-medium ${
               activeTab === 'networks'
                 ? 'text-blue-500 border-b-2 border-blue-500'
-                : 'text-gray-500 hover:text-gray-700'
+                : 'text-jolshaa-on-surface-variant hover:text-jolshaa-on-surface'
             }`}
           >
             Networks
@@ -215,7 +215,7 @@ const AdNetworksManager = () => {
             className={`px-4 py-2 font-medium ${
               activeTab === 'stats'
                 ? 'text-blue-500 border-b-2 border-blue-500'
-                : 'text-gray-500 hover:text-gray-700'
+                : 'text-jolshaa-on-surface-variant hover:text-jolshaa-on-surface'
             }`}
           >
             Statistics
@@ -230,12 +230,12 @@ const AdNetworksManager = () => {
               return (
                 <div
                   key={network.name}
-                  className="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden"
+                  className="bg-jolshaa-surface-container-lowest rounded-lg shadow-lg overflow-hidden"
                 >
                   {/* Header */}
                   <div className={`${getColorClass(info.color)} p-4`}>
                     <div className="flex items-center justify-between">
-                      <h3 className="text-white font-bold text-lg">{info.name}</h3>
+                      <h3 className="font-display text-white font-bold text-lg">{info.name}</h3>
                       <label className="relative inline-flex items-center cursor-pointer">
                         <input
                           type="checkbox"
@@ -243,7 +243,7 @@ const AdNetworksManager = () => {
                           onChange={(e) => toggleNetwork(network.name, e.target.checked)}
                           className="sr-only peer"
                         />
-                        <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-white"></div>
+                        <div className="w-11 h-6 bg-jolshaa-outline-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-jolshaa-outline after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-white"></div>
                       </label>
                     </div>
                     <p className="text-white/80 text-sm mt-1">{info.site}</p>
@@ -252,16 +252,16 @@ const AdNetworksManager = () => {
                   {/* Content */}
                   <div className="p-4">
                     <div className="mb-4">
-                      <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">
+                      <p className="text-sm text-jolshaa-on-surface-variant mb-2">
                         Publisher ID
                       </p>
-                      <p className="text-gray-900 dark:text-white font-mono text-sm truncate">
+                      <p className="text-jolshaa-on-surface font-mono text-sm truncate">
                         {network.publisherId || 'Not set'}
                       </p>
                     </div>
 
                     <div className="mb-4">
-                      <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">
+                      <p className="text-sm text-jolshaa-on-surface-variant mb-2">
                         Ad Formats
                       </p>
                       <div className="flex flex-wrap gap-2">
@@ -273,8 +273,8 @@ const AdNetworksManager = () => {
                               onClick={() => toggleFormat(network.name, feature.key, !isEnabled)}
                               className={`px-2 py-1 text-xs rounded-full ${
                                 isEnabled
-                                  ? 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300'
-                                  : 'bg-gray-100 text-gray-500 dark:bg-gray-700 dark:text-gray-400'
+                                  ? 'bg-green-100 text-green-700'
+                                  : 'bg-jolshaa-surface-container-high text-jolshaa-on-surface-variant'
                               }`}
                             >
                               {feature.label}
@@ -285,10 +285,10 @@ const AdNetworksManager = () => {
                     </div>
 
                     <div className="mb-4">
-                      <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">
+                      <p className="text-sm text-jolshaa-on-surface-variant mb-2">
                         Priority
                       </p>
-                      <p className="text-gray-900 dark:text-white">{network.priority}</p>
+                      <p className="text-jolshaa-on-surface">{network.priority}</p>
                     </div>
 
                     <div className="flex gap-2">
@@ -299,7 +299,7 @@ const AdNetworksManager = () => {
                         Configure
                       </button>
                       <div className="flex items-center gap-1">
-                        <span className="text-xs text-gray-500">
+                        <span className="text-xs text-jolshaa-on-surface-variant">
                           {network.totalImpressions || 0} imp
                         </span>
                       </div>
@@ -313,31 +313,31 @@ const AdNetworksManager = () => {
 
         {/* Stats Tab */}
         {activeTab === 'stats' && (
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
+          <div className="bg-jolshaa-surface-container-lowest rounded-lg shadow overflow-hidden">
             <table className="w-full">
-              <thead className="bg-gray-50 dark:bg-gray-700">
+              <thead className="bg-jolshaa-surface-container-high">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-jolshaa-on-surface-variant uppercase">
                     Network
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-jolshaa-on-surface-variant uppercase">
                     Status
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-jolshaa-on-surface-variant uppercase">
                     Impressions
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-jolshaa-on-surface-variant uppercase">
                     Clicks
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-jolshaa-on-surface-variant uppercase">
                     Revenue
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-jolshaa-on-surface-variant uppercase">
                     CTR
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+              <tbody className="divide-y divide-jolshaa-outline-variant/50">
                 {stats.map((stat) => {
                   const info = NETWORK_INFO[stat._id] || {};
                   const ctr = stat.totalImpressions > 0
@@ -348,7 +348,7 @@ const AdNetworksManager = () => {
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center">
                           <div className={`w-3 h-3 rounded-full ${getColorClass(info.color)} mr-3`}></div>
-                          <span className="text-gray-900 dark:text-white font-medium">
+                          <span className="text-jolshaa-on-surface font-medium">
                             {info.name || stat._id}
                           </span>
                         </div>
@@ -356,22 +356,22 @@ const AdNetworksManager = () => {
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
                           stat.enabled
-                            ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
-                            : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200'
+                            ? 'bg-green-100 text-green-800'
+                            : 'bg-jolshaa-surface-container-high text-jolshaa-on-surface-variant'
                         }`}>
                           {stat.enabled ? 'Active' : 'Inactive'}
                         </span>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-gray-900 dark:text-white">
+                      <td className="px-6 py-4 whitespace-nowrap text-jolshaa-on-surface">
                         {(stat.totalImpressions || 0).toLocaleString()}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-gray-900 dark:text-white">
+                      <td className="px-6 py-4 whitespace-nowrap text-jolshaa-on-surface">
                         {(stat.totalClicks || 0).toLocaleString()}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-gray-900 dark:text-white">
+                      <td className="px-6 py-4 whitespace-nowrap text-jolshaa-on-surface">
                         ${(stat.totalRevenue || 0).toFixed(2)}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-gray-900 dark:text-white">
+                      <td className="px-6 py-4 whitespace-nowrap text-jolshaa-on-surface">
                         {ctr}%
                       </td>
                     </tr>
@@ -385,15 +385,15 @@ const AdNetworksManager = () => {
         {/* Edit Modal */}
         {editMode && selectedNetwork && (
           <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white dark:bg-gray-800 rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="bg-jolshaa-surface-container-lowest rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
               <div className="p-6">
                 <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-xl font-bold text-gray-900 dark:text-white">
+                  <h2 className="font-display text-xl font-bold text-jolshaa-on-surface">
                     Configure {NETWORK_INFO[editForm.name]?.name}
                   </h2>
                   <button
                     onClick={() => setEditMode(false)}
-                    className="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
+                    className="text-jolshaa-on-surface-variant hover:text-jolshaa-on-surface"
                   >
                     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -403,64 +403,64 @@ const AdNetworksManager = () => {
 
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    <label className="block text-sm font-medium text-jolshaa-on-surface mb-1">
                       Publisher ID
                     </label>
                     <input
                       type="text"
                       value={editForm.publisherId || ''}
                       onChange={(e) => setEditForm({ ...editForm, publisherId: e.target.value })}
-                      className="w-full px-4 py-2 border dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                      className="w-full px-4 py-2 border border-jolshaa-outline rounded-lg focus:ring-2 focus:ring-blue-500 bg-jolshaa-surface-container-highest text-jolshaa-on-surface"
                       placeholder="Enter Publisher ID"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    <label className="block text-sm font-medium text-jolshaa-on-surface mb-1">
                       API Key (optional)
                     </label>
                     <input
                       type="password"
                       value={editForm.apiKey || ''}
                       onChange={(e) => setEditForm({ ...editForm, apiKey: e.target.value })}
-                      className="w-full px-4 py-2 border dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                      className="w-full px-4 py-2 border border-jolshaa-outline rounded-lg focus:ring-2 focus:ring-blue-500 bg-jolshaa-surface-container-highest text-jolshaa-on-surface"
                       placeholder="Enter API Key"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    <label className="block text-sm font-medium text-jolshaa-on-surface mb-1">
                       Priority (higher = shown first)
                     </label>
                     <input
                       type="number"
                       value={editForm.priority || 0}
                       onChange={(e) => setEditForm({ ...editForm, priority: parseInt(e.target.value) })}
-                      className="w-full px-4 py-2 border dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                      className="w-full px-4 py-2 border border-jolshaa-outline rounded-lg focus:ring-2 focus:ring-blue-500 bg-jolshaa-surface-container-highest text-jolshaa-on-surface"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    <label className="block text-sm font-medium text-jolshaa-on-surface mb-1">
                       Ad Frequency (show ad every N posts)
                     </label>
                     <input
                       type="number"
                       value={editForm.adFrequency || 3}
                       onChange={(e) => setEditForm({ ...editForm, adFrequency: parseInt(e.target.value) })}
-                      className="w-full px-4 py-2 border dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                      className="w-full px-4 py-2 border border-jolshaa-outline rounded-lg focus:ring-2 focus:ring-blue-500 bg-jolshaa-surface-container-highest text-jolshaa-on-surface"
                     />
                   </div>
 
                   {/* Ad Formats */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    <label className="block text-sm font-medium text-jolshaa-on-surface mb-2">
                       Ad Format Scripts
                     </label>
                     {Object.entries(editForm.adFormats || {}).map(([format, data]) => (
-                      <div key={format} className="mb-3 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                      <div key={format} className="mb-3 p-3 bg-jolshaa-surface-container-high rounded-lg">
                         <div className="flex items-center justify-between mb-2">
-                          <span className="text-sm font-medium text-gray-700 dark:text-gray-300 capitalize">
+                          <span className="text-sm font-medium text-jolshaa-on-surface capitalize">
                             {format}
                           </span>
                           <label className="relative inline-flex items-center cursor-pointer">
@@ -474,7 +474,7 @@ const AdNetworksManager = () => {
                               }}
                               className="sr-only peer"
                             />
-                            <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600"></div>
+                            <div className="w-9 h-5 bg-jolshaa-outline-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-jolshaa-outline after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600"></div>
                           </label>
                         </div>
                         <textarea
@@ -484,7 +484,7 @@ const AdNetworksManager = () => {
                             newFormats[format] = { ...data, script: e.target.value };
                             setEditForm({ ...editForm, adFormats: newFormats });
                           }}
-                          className="w-full px-3 py-2 text-sm border dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-white font-mono"
+                          className="w-full px-3 py-2 text-sm border border-jolshaa-outline rounded-lg focus:ring-2 focus:ring-blue-500 bg-jolshaa-surface-container-highest text-jolshaa-on-surface font-mono"
                           placeholder={`Paste ${format} ad script here...`}
                           rows={3}
                         />
@@ -493,7 +493,7 @@ const AdNetworksManager = () => {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    <label className="block text-sm font-medium text-jolshaa-on-surface mb-1">
                       Blocked Pages (comma separated)
                     </label>
                     <input
@@ -503,7 +503,7 @@ const AdNetworksManager = () => {
                         ...editForm,
                         blockedPages: e.target.value.split(',').map(p => p.trim()).filter(Boolean)
                       })}
-                      className="w-full px-4 py-2 border dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                      className="w-full px-4 py-2 border border-jolshaa-outline rounded-lg focus:ring-2 focus:ring-blue-500 bg-jolshaa-surface-container-highest text-jolshaa-on-surface"
                       placeholder="/admin, /messages"
                     />
                   </div>
@@ -518,7 +518,7 @@ const AdNetworksManager = () => {
                   </button>
                   <button
                     onClick={() => setEditMode(false)}
-                    className="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600"
+                    className="px-4 py-2 bg-jolshaa-surface-container-high text-jolshaa-on-surface rounded-lg hover:bg-jolshaa-surface-container-highest"
                   >
                     Cancel
                   </button>

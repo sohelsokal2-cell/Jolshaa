@@ -49,10 +49,10 @@ const BoostPostModal = ({ postId, onClose }) => {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onClick={onClose}>
-      <div className="bg-white dark:bg-neutral-900 rounded-xl w-full max-w-md mx-4" onClick={(e) => e.stopPropagation()}>
-        <div className="p-4 border-b border-neutral-200 dark:border-neutral-700">
-          <h3 className="font-semibold text-neutral-900 dark:text-neutral-100">Boost Post</h3>
-          <p className="text-sm text-neutral-500">Increase your post's reach</p>
+      <div className="bg-jolshaa-surface-container-lowest rounded-xl w-full max-w-md mx-4" onClick={(e) => e.stopPropagation()}>
+        <div className="p-4 border-b border-jolshaa-outline-variant">
+          <h3 className="font-display font-semibold text-jolshaa-on-surface">Boost Post</h3>
+          <p className="text-sm text-jolshaa-on-surface-variant">Increase your post's reach</p>
         </div>
 
         <div className="p-4 space-y-3">
@@ -62,25 +62,25 @@ const BoostPostModal = ({ postId, onClose }) => {
               onClick={() => setDuration(d.hours)}
               className={`w-full flex justify-between items-center p-3 rounded-lg border transition-colors ${
                 duration === d.hours
-                  ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/20'
-                  : 'border-neutral-200 dark:border-neutral-700 hover:border-neutral-300'
+                  ? 'border-jolshaa-teal bg-jolshaa-teal/10'
+                  : 'border-jolshaa-outline-variant hover:border-jolshaa-outline'
               }`}
             >
-              <span className="text-sm font-medium text-neutral-900 dark:text-neutral-100">{d.label}</span>
-              <span className="text-sm font-bold text-primary-600 dark:text-primary-400">${d.price}.00</span>
+              <span className="text-sm font-medium text-jolshaa-on-surface">{d.label}</span>
+              <span className="text-sm font-bold text-jolshaa-teal">${d.price}.00</span>
             </button>
           ))}
         </div>
 
         <div className="px-4 pb-3">
-          <label className="block text-xs font-medium text-neutral-500 mb-1.5">Payment Method</label>
+          <label className="block text-xs font-medium text-jolshaa-on-surface-variant mb-1.5">Payment Method</label>
           <div className="flex gap-2">
             <button
               onClick={() => setGateway('stripe')}
               className={`flex-1 py-2 text-sm font-medium rounded-lg border transition-colors ${
                 gateway === 'stripe'
-                  ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/20 text-primary-700 dark:text-primary-300'
-                  : 'border-neutral-200 dark:border-neutral-700 text-neutral-600 dark:text-neutral-400'
+                  ? 'border-jolshaa-teal bg-jolshaa-teal/10 text-jolshaa-teal'
+                  : 'border-jolshaa-outline-variant text-jolshaa-on-surface-variant'
               }`}
             >
               💳 Card (Stripe)
@@ -89,8 +89,8 @@ const BoostPostModal = ({ postId, onClose }) => {
               onClick={() => setGateway('sslcommerz')}
               className={`flex-1 py-2 text-sm font-medium rounded-lg border transition-colors ${
                 gateway === 'sslcommerz'
-                  ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/20 text-primary-700 dark:text-primary-300'
-                  : 'border-neutral-200 dark:border-neutral-700 text-neutral-600 dark:text-neutral-400'
+                  ? 'border-jolshaa-teal bg-jolshaa-teal/10 text-jolshaa-teal'
+                  : 'border-jolshaa-outline-variant text-jolshaa-on-surface-variant'
               }`}
             >
               📱 bKash/SSLCommerz
@@ -98,17 +98,17 @@ const BoostPostModal = ({ postId, onClose }) => {
           </div>
         </div>
 
-        <div className="p-4 border-t border-neutral-200 dark:border-neutral-700 flex gap-3">
+        <div className="p-4 border-t border-jolshaa-outline-variant flex gap-3">
           <button
             onClick={onClose}
-            className="flex-1 py-2 border border-neutral-200 dark:border-neutral-700 rounded-lg text-sm font-medium hover:bg-neutral-50 dark:hover:bg-neutral-800 text-neutral-700 dark:text-neutral-300"
+            className="flex-1 py-2 border border-jolshaa-outline-variant rounded-lg text-sm font-medium hover:bg-jolshaa-surface-container-high text-jolshaa-on-surface"
           >
             Cancel
           </button>
           <button
             onClick={handleBoost}
             disabled={loading}
-            className="flex-1 py-2 bg-primary-600 text-white rounded-lg text-sm font-medium hover:bg-primary-700 disabled:opacity-50 transition-colors"
+            className="flex-1 py-2 bg-jolshaa-teal text-white rounded-lg text-sm font-medium hover:bg-jolshaa-teal-container disabled:opacity-50 transition-colors"
           >
             {loading ? 'Processing...' : `Pay $${selectedDuration.price}.00 & Boost`}
           </button>

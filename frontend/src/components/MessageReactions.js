@@ -22,7 +22,7 @@ const MessageReactions = ({ messageId, reactions, currentUserId }) => {
       {reactions && reactions.length > 0 && (
         <div className="flex gap-1 mt-1">
           {[...new Set(reactions.map(r => r.emoji))].map(emoji => (
-            <span key={emoji} className="text-sm bg-gray-100 rounded-full px-1.5 py-0.5">
+            <span key={emoji} className="text-sm bg-jolshaa-surface-container-low rounded-full px-1.5 py-0.5">
               {emoji} {reactions.filter(r => r.emoji === emoji).length}
             </span>
           ))}
@@ -31,7 +31,7 @@ const MessageReactions = ({ messageId, reactions, currentUserId }) => {
 
       <button
         onClick={() => setShowPicker(!showPicker)}
-        className="text-xs text-gray-400 hover:text-gray-600 ml-1"
+        className="text-xs text-jolshaa-on-surface-variant/60 hover:text-jolshaa-on-surface-variant ml-1"
       >
         😊
       </button>

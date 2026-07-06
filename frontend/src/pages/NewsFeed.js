@@ -54,7 +54,7 @@ const AdCard = ({ ad, onImpression }) => {
         />
       )}
       <div className="p-4">
-        <h4 className="font-semibold text-sm text-jolshaa-on-surface mb-1 cursor-pointer hover:underline" onClick={handleClick}>
+        <h4 className="font-display font-semibold text-sm text-jolshaa-on-surface mb-1 cursor-pointer hover:underline" onClick={handleClick}>
           {ad.title}
         </h4>
         {ad.description && (

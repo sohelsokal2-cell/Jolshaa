@@ -90,7 +90,7 @@ const ReelsFeed = () => {
       <div className="flex flex-col items-center justify-center h-screen text-white gap-4">
         <span className="text-5xl">🎬</span>
         <p className="text-xl font-semibold">No Reels Yet</p>
-        <p className="text-gray-400">Be the first to create a reel!</p>
+        <p className="text-jolshaa-on-surface-variant/60">Be the first to create a reel!</p>
         <Link
           to="/reels/create"
           className="px-4 py-2 bg-blue-600 rounded-lg hover:bg-blue-700"
@@ -140,7 +140,7 @@ const ReelsFeed = () => {
               </div>
               <p className="text-sm mb-2">{reel.caption}</p>
               {reel.music && (
-                <p className="text-xs text-gray-300">🎵 {reel.music}</p>
+                <p className="text-xs text-jolshaa-outline-variant">🎵 {reel.music}</p>
               )}
             </div>
 

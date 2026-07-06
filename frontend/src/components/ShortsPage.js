@@ -142,7 +142,7 @@ const ShortsPage = () => {
       {/* Header */}
       <div className="absolute top-0 left-0 right-0 z-30 bg-gradient-to-b from-black/60 to-transparent pointer-events-none">
         <div className="flex items-center justify-between px-4 py-3">
-          <h1 className="text-white font-bold text-lg pointer-events-auto">Shorts</h1>
+          <h1 className="font-display text-white font-bold text-lg pointer-events-auto">Shorts</h1>
           <div className="flex items-center gap-3">
             {/* Navigation dots */}
             <div className="flex gap-1 pointer-events-auto">

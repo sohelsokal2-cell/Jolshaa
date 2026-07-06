@@ -42,9 +42,9 @@ const ListingDetail = () => {
     return (
       <Layout>
         <div className="max-w-2xl mx-auto p-4 animate-pulse">
-          <div className="h-80 bg-surface-high rounded-lg mb-4" />
-          <div className="h-6 bg-surface-high rounded w-1/2 mb-2" />
-          <div className="h-4 bg-surface-high rounded w-1/3" />
+          <div className="h-80 bg-jolshaa-surface-container-high rounded-lg mb-4" />
+          <div className="h-6 bg-jolshaa-surface-container-high rounded w-1/2 mb-2" />
+          <div className="h-4 bg-jolshaa-surface-container-high rounded w-1/3" />
         </div>
       </Layout>
     );
@@ -53,7 +53,7 @@ const ListingDetail = () => {
   if (!listing) {
     return (
       <Layout>
-        <div className="max-w-2xl mx-auto p-4 text-center py-12 text-on-surface-variant">
+        <div className="max-w-2xl mx-auto p-4 text-center py-12 text-jolshaa-on-surface-variant">
           Listing not found
         </div>
       </Layout>
@@ -66,7 +66,7 @@ const ListingDetail = () => {
   return (
     <Layout>
       <div className="max-w-2xl mx-auto p-4">
-        <button onClick={() => navigate(-1)} className="text-primary-400 text-sm mb-4">&larr; Back</button>
+        <button onClick={() => navigate(-1)} className="text-jolshaa-teal text-sm mb-4">&larr; Back</button>
 
         {listing.images?.length > 0 && (
           <div className="grid grid-cols-2 gap-2 mb-4 rounded-lg overflow-hidden">
@@ -76,11 +76,11 @@ const ListingDetail = () => {
           </div>
         )}
 
-        <div className="card rounded-lg p-4">
-          <h1 className="text-xl font-bold mb-2">{listing.title}</h1>
-          <p className="text-2xl font-bold text-primary-400 mb-3">${listing.price}</p>
+        <div className="bg-jolshaa-surface-container-lowest rounded-2xl shadow-ambient p-4">
+          <h1 className="font-display text-xl font-bold mb-2">{listing.title}</h1>
+          <p className="text-2xl font-bold text-jolshaa-teal mb-3">${listing.price}</p>
 
-          <div className="flex gap-3 text-sm text-on-surface-variant mb-4">
+          <div className="flex gap-3 text-sm text-jolshaa-on-surface-variant mb-4">
             <span className="capitalize">{listing.category}</span>
             <span>•</span>
             <span className="capitalize">{listing.condition?.replace('_', ' ')}</span>
@@ -89,10 +89,10 @@ const ListingDetail = () => {
           </div>
 
           {listing.description && (
-            <p className="text-on-surface mb-4 whitespace-pre-wrap">{listing.description}</p>
+            <p className="text-jolshaa-on-surface mb-4 whitespace-pre-wrap">{listing.description}</p>
           )}
 
-          <div className="border-t border-white/10 pt-4 mt-4">
+          <div className="border-t border-jolshaa-outline-variant/50 pt-4 mt-4">
             <div className="flex items-center gap-3 mb-4">
               <img
                 src={listing.seller?.profilePhoto}
@@ -101,7 +101,7 @@ const ListingDetail = () => {
               />
               <div>
                 <p className="font-medium text-sm">{listing.seller?.name}</p>
-                <p className="text-xs text-on-surface-variant">{listing.location || 'Location not set'}</p>
+                <p className="text-xs text-jolshaa-on-surface-variant">{listing.location || 'Location not set'}</p>
               </div>
             </div>
 
@@ -111,8 +111,8 @@ const ListingDetail = () => {
                   onClick={handleInterested}
                   className={`flex-1 py-2 rounded-lg text-sm font-medium ${
                     isInterested
-                      ? 'bg-accent-500/15 text-accent-400 border border-accent-500/30'
-                      : 'btn-primary text-white hover:bg-primary-700'
+                      ? 'bg-jolshaa-teal/15 text-jolshaa-teal border border-jolshaa-teal/30'
+                      : 'bg-jolshaa-teal text-white hover:bg-jolshaa-teal-container'
                   }`}
                 >
                   {isInterested ? '✓ Interested' : 'I\'m Interested'}
@@ -125,7 +125,7 @@ const ListingDetail = () => {
 
             {isOwner && (
               <div className="flex gap-3">
-                <button className="flex-1 py-2 bg-white/5 text-on-surface-variant rounded-lg text-sm font-medium hover:bg-white/5">
+                <button className="flex-1 py-2 bg-jolshaa-surface-container-high text-jolshaa-on-surface-variant rounded-lg text-sm font-medium hover:bg-jolshaa-surface-container-highest">
                   Edit Listing
                 </button>
                 <button className="px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-medium hover:bg-green-700">

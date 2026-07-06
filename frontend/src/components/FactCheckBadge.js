@@ -19,7 +19,7 @@ const FactCheckBadge = ({ post, onUpdate }) => {
         <div className="ml-[52px] mt-1">
           <button
             onClick={() => setShowModal(true)}
-            className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs text-neutral-500 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors"
+            className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs text-jolshaa-on-surface-variant hover:bg-jolshaa-surface-container transition-colors"
           >
             <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9" />
@@ -48,13 +48,13 @@ const FactCheckBadge = ({ post, onUpdate }) => {
     return (
       <>
         <div className="ml-[52px] mt-1">
-          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
+          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-blue-50 text-blue-700 border border-blue-200">
             <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
             </svg>
             Verified
             {adminNote && (
-              <span className="text-blue-600 dark:text-blue-400 font-normal">— {adminNote}</span>
+              <span className="text-blue-600 font-normal">— {adminNote}</span>
             )}
           </div>
         </div>
@@ -73,9 +73,9 @@ const FactCheckBadge = ({ post, onUpdate }) => {
   const badgeConfig = {
     unverified: null,
     true: {
-      bg: 'bg-green-50 dark:bg-green-900/20',
-      text: 'text-green-700 dark:text-green-300',
-      border: 'border-green-200 dark:border-green-800',
+      bg: 'bg-green-50',
+      text: 'text-green-700',
+      border: 'border-green-200',
       icon: (
         <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
@@ -84,9 +84,9 @@ const FactCheckBadge = ({ post, onUpdate }) => {
       label: 'Seems true',
     },
     false: {
-      bg: 'bg-red-50 dark:bg-red-900/20',
-      text: 'text-red-700 dark:text-red-300',
-      border: 'border-red-200 dark:border-red-800',
+      bg: 'bg-red-50',
+      text: 'text-red-700',
+      border: 'border-red-200',
       icon: (
         <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-2.694-.833-3.464 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z" />
@@ -95,9 +95,9 @@ const FactCheckBadge = ({ post, onUpdate }) => {
       label: 'This post may be fake — stay alert',
     },
     misleading: {
-      bg: 'bg-orange-50 dark:bg-orange-900/20',
-      text: 'text-orange-700 dark:text-orange-300',
-      border: 'border-orange-200 dark:border-orange-800',
+      bg: 'bg-orange-50',
+      text: 'text-orange-700',
+      border: 'border-orange-200',
       icon: (
         <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -112,22 +112,22 @@ const FactCheckBadge = ({ post, onUpdate }) => {
   if (effectiveStatus === 'false') {
     return (
       <>
-        <div className="px-4 py-3 bg-red-50 dark:bg-red-900/20 border-y border-red-200 dark:border-red-800">
+        <div className="px-4 py-3 bg-red-50 border-y border-red-200">
           <div className="flex items-center gap-2">
             <span className="text-red-500 text-lg">⚠</span>
             <div className="flex-1">
-              <p className="text-sm font-medium text-red-700 dark:text-red-300">
+              <p className="text-sm font-medium text-red-700">
                 This post may be fake — stay alert
               </p>
               {totalVotes > 0 && (
-                <p className="text-xs text-red-600/70 dark:text-red-400/70 mt-0.5">
+                <p className="text-xs text-red-600/70 mt-0.5">
                   {totalVotes} people voted
                 </p>
               )}
             </div>
             <button
               onClick={() => setShowModal(true)}
-              className="text-xs text-red-600 dark:text-red-400 underline hover:no-underline whitespace-nowrap"
+              className="text-xs text-red-600 underline hover:no-underline whitespace-nowrap"
             >
               Details
             </button>
@@ -157,13 +157,13 @@ const FactCheckBadge = ({ post, onUpdate }) => {
         <div className="ml-[52px] mt-1">
           <button
             onClick={() => setShowModal(true)}
-            className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs text-neutral-500 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors"
+            className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs text-jolshaa-on-surface-variant hover:bg-jolshaa-surface-container transition-colors"
           >
             <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9" />
             </svg>
             Vote
-            {totalVotes > 0 && <span className="text-neutral-400">({totalVotes})</span>}
+            {totalVotes > 0 && <span className="text-jolshaa-on-surface-variant/60">({totalVotes})</span>}
           </button>
         </div>
         {showModal && (

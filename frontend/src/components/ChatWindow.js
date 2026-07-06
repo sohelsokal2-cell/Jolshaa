@@ -418,7 +418,7 @@ const ChatWindow = ({ conversation, onBack, showInfoPanel, onToggleInfo, onStart
           )}
         </div>
         <div className="flex-1 min-w-0">
-          <h3 className="font-semibold text-sm truncate">{getHeaderName()}</h3>
+          <h3 className="font-display font-semibold text-sm truncate">{getHeaderName()}</h3>
           {typingUsers.length > 0 ? (
             <p className="text-xs text-green-500 truncate">
               {typingUsers.map(u => u.userName).join(', ')} {typingUsers.length === 1 ? 'is' : 'are'} typing...
@@ -797,7 +797,7 @@ const ChatWindow = ({ conversation, onBack, showInfoPanel, onToggleInfo, onStart
         <>
           <div className="fixed inset-0 bg-black/50 z-30" onClick={() => setShowDeleteModal(null)} />
           <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-40 bg-jolshaa-surface-container-lowest rounded-2xl shadow-2xl p-6 w-80">
-            <h3 className="font-bold text-lg mb-4">Delete Message</h3>
+            <h3 className="font-display font-bold text-lg mb-4">Delete Message</h3>
             {showDeleteModal.sender?._id === user.id && isWithinDeleteWindow(showDeleteModal.createdAt) ? (
               <div className="space-y-3">
                 <button onClick={() => handleDeleteMessage(showDeleteModal._id, false)}
@@ -829,7 +829,7 @@ const ChatWindow = ({ conversation, onBack, showInfoPanel, onToggleInfo, onStart
           <div className="fixed inset-0 bg-black/50 z-30" onClick={() => setShowForwardModal(false)} />
           <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-40 bg-jolshaa-surface-container-lowest rounded-2xl shadow-2xl w-96 max-h-[70vh] flex flex-col">
             <div className="p-4 border-b border-jolshaa-outline-variant flex items-center justify-between">
-              <h3 className="font-bold">Forward to</h3>
+              <h3 className="font-display font-bold">Forward to</h3>
               <button onClick={() => setShowForwardModal(false)} className="text-jolshaa-on-surface-variant hover:text-jolshaa-on-surface-variant">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
               </button>

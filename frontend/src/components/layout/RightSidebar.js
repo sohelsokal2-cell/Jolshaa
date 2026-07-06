@@ -40,7 +40,7 @@ const RightSidebar = () => {
 
   const sectionTitle = (text, linkTo, linkLabel) => (
     <div className="flex items-center justify-between mb-3">
-      <h3 className="text-[0.7rem] font-semibold tracking-[0.08em] uppercase text-jolshaa-on-surface-variant">
+      <h3 className="font-display text-[0.7rem] font-semibold tracking-[0.08em] uppercase text-jolshaa-on-surface-variant">
         {text}
       </h3>
       {linkTo && (

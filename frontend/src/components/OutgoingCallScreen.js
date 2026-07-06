@@ -25,7 +25,7 @@ const OutgoingCallScreen = ({ recipientInfo, callType, onEndCall }) => {
         </div>
 
         {/* Recipient name */}
-        <h2 className="text-2xl font-bold text-white mb-2">{recipientName}</h2>
+        <h2 className="font-display text-2xl font-bold text-white mb-2">{recipientName}</h2>
 
         {/* Call type label + elapsed */}
         <p className="text-lg text-white/70 mb-2">

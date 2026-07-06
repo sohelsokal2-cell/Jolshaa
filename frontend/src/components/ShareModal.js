@@ -75,20 +75,20 @@ const ShareModal = ({ post, onClose, shareType, shareId }) => {
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onClick={onClose}>
       <div className="bg-white rounded-lg shadow-xl w-full max-w-md mx-4" onClick={e => e.stopPropagation()}>
         <div className="flex items-center justify-between px-4 py-3 border-b">
-          <h3 className="font-semibold text-gray-800">{shareType === 'album' ? 'Share Album' : 'Share Post'}</h3>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 text-xl">&times;</button>
+          <h3 className="font-display font-semibold text-jolshaa-on-surface">{shareType === 'album' ? 'Share Album' : 'Share Post'}</h3>
+          <button onClick={onClose} className="text-jolshaa-on-surface-variant/60 hover:text-jolshaa-on-surface-variant text-xl">&times;</button>
         </div>
 
         <div className="flex border-b">
           <button
             onClick={() => setActiveTab('share')}
-            className={`flex-1 py-2.5 text-sm font-medium ${activeTab === 'share' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500'}`}
+            className={`flex-1 py-2.5 text-sm font-medium ${activeTab === 'share' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-jolshaa-on-surface-variant'}`}
           >
             Share to Feed
           </button>
           <button
             onClick={() => setActiveTab('message')}
-            className={`flex-1 py-2.5 text-sm font-medium ${activeTab === 'message' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500'}`}
+            className={`flex-1 py-2.5 text-sm font-medium ${activeTab === 'message' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-jolshaa-on-surface-variant'}`}
           >
             Send via Message
           </button>
@@ -98,7 +98,7 @@ const ShareModal = ({ post, onClose, shareType, shareId }) => {
           {activeTab === 'share' ? (
             <>
               {post && (
-                <div className="bg-gray-50 rounded-lg p-3 mb-4">
+                <div className="bg-jolshaa-surface-container-low rounded-lg p-3 mb-4">
                   <div className="flex items-center gap-2 mb-2">
                     <img
                       src={post.author?.profilePhoto || 'https://ui-avatars.com/api/?name=U&background=494454&color=dae2fd&size=128'}
@@ -106,11 +106,11 @@ const ShareModal = ({ post, onClose, shareType, shareId }) => {
                       className="w-8 h-8 rounded-full object-cover"
                     />
                     <div>
-                      <p className="text-sm font-medium text-gray-800">{post.author?.name}</p>
-                      <p className="text-xs text-gray-400">{new Date(post.createdAt).toLocaleDateString()}</p>
+                      <p className="text-sm font-medium text-jolshaa-on-surface">{post.author?.name}</p>
+                      <p className="text-xs text-jolshaa-on-surface-variant/60">{new Date(post.createdAt).toLocaleDateString()}</p>
                     </div>
                   </div>
-                  <p className="text-sm text-gray-700 line-clamp-3">{post.text}</p>
+                  <p className="text-sm text-jolshaa-on-surface line-clamp-3">{post.text}</p>
                 </div>
               )}
 
@@ -125,7 +125,7 @@ const ShareModal = ({ post, onClose, shareType, shareId }) => {
               <div className="flex gap-2 mt-4">
                 <button
                   onClick={handleCopyLink}
-                  className="flex-1 bg-gray-100 text-gray-700 py-2 rounded-lg text-sm font-medium hover:bg-gray-200 transition"
+                  className="flex-1 bg-jolshaa-surface-container-low text-jolshaa-on-surface py-2 rounded-lg text-sm font-medium hover:bg-jolshaa-surface-container transition"
                 >
                   {copied ? 'Copied!' : 'Copy Link'}
                 </button>
@@ -147,14 +147,14 @@ const ShareModal = ({ post, onClose, shareType, shareId }) => {
               />
               <div className="max-h-60 overflow-y-auto space-y-1">
                 {conversations.length === 0 ? (
-                  <p className="text-center text-gray-400 text-sm py-4">No conversations found</p>
+                  <p className="text-center text-jolshaa-on-surface-variant/60 text-sm py-4">No conversations found</p>
                 ) : (
                   conversations.map((conv) => (
                     <button
                       key={conv._id}
                       onClick={() => setSelectedConv(conv)}
                       className={`w-full flex items-center gap-3 p-2 rounded-lg text-left transition ${
-                        selectedConv?._id === conv._id ? 'bg-blue-50 ring-1 ring-blue-200' : 'hover:bg-gray-50'
+                        selectedConv?._id === conv._id ? 'bg-blue-50 ring-1 ring-blue-200' : 'hover:bg-jolshaa-surface-container-low'
                       }`}
                     >
                       <img
@@ -163,10 +163,10 @@ const ShareModal = ({ post, onClose, shareType, shareId }) => {
                         className="w-10 h-10 rounded-full object-cover"
                       />
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-gray-800 truncate">
+                        <p className="text-sm font-medium text-jolshaa-on-surface truncate">
                           {conv.otherUser?.name || conv.participants?.find(p => p._id !== user?.id)?.name || 'Chat'}
                         </p>
-                        <p className="text-xs text-gray-400 truncate">{conv.lastMessage || ''}</p>
+                        <p className="text-xs text-jolshaa-on-surface-variant/60 truncate">{conv.lastMessage || ''}</p>
                       </div>
                     </button>
                   ))

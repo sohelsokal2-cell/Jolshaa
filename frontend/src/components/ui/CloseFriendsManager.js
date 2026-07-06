@@ -56,7 +56,7 @@ export default function CloseFriendsManager({ dark, onClose }) {
         
         <div className={`flex items-center justify-between p-4 border-b
           ${dark ? 'border-white/10' : 'border-black/10'}`}>
-          <h2 className={`text-lg font-bold ${dark ? 'text-[#dae2fd]' : 'text-[#202020]'}`}>
+          <h2 className={`font-display text-lg font-bold ${dark ? 'text-[#dae2fd]' : 'text-[#202020]'}`}>
             Close Friends
           </h2>
           <button onClick={onClose} className={`p-1 rounded-lg ${dark ? 'hover:bg-white/10 text-white/50' : 'hover:bg-black/5 text-black/50'}`}>

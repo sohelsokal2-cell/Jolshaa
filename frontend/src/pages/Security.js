@@ -141,7 +141,7 @@ const Security = () => {
   return (
     <Layout>
       <div className="max-w-xl mx-auto mt-8 px-4 pb-8">
-        <h1 className="text-xl font-bold text-on-surface mb-4">Security & Account</h1>
+        <h1 className="font-display text-xl font-bold text-jolshaa-on-surface mb-4">Security & Account</h1>
 
         <div className="flex gap-2 mb-4">
           {tabs.map((tab) => (
@@ -150,8 +150,8 @@ const Security = () => {
               onClick={() => setActiveTab(tab.key)}
               className={`px-4 py-2 rounded-lg text-sm font-medium ${
                 activeTab === tab.key
-                  ? 'bg-primary-600 text-white'
-                  : 'card text-on-surface-variant hover:bg-surface-high'
+                  ? 'bg-jolshaa-teal text-jolshaa-on-teal'
+                  : 'bg-jolshaa-surface-container-lowest text-jolshaa-on-surface-variant hover:bg-jolshaa-surface-container-high'
               }`}
             >
               {tab.label}
@@ -161,29 +161,29 @@ const Security = () => {
 
         {/* Password Change */}
         {activeTab === 'password' && (
-          <div className="card rounded-lg shadow-sm p-6">
-            <h2 className="font-semibold text-on-surface mb-4">Change Password</h2>
+          <div className="bg-jolshaa-surface-container-lowest rounded-2xl shadow-ambient p-6">
+            <h2 className="font-display font-semibold text-jolshaa-on-surface mb-4">Change Password</h2>
             <div className="space-y-3">
               <input
                 type="password"
                 placeholder="Current password"
                 value={passwords.current}
                 onChange={(e) => setPasswords({ ...passwords, current: e.target.value })}
-                className="input w-full rounded-lg px-3 py-2 text-sm"
+                className="w-full rounded-lg px-3 py-2 text-sm bg-jolshaa-surface-container-lowest border border-jolshaa-outline-variant text-jolshaa-on-surface focus:outline-none focus:ring-2 focus:ring-jolshaa-teal"
               />
               <input
                 type="password"
                 placeholder="New password"
                 value={passwords.newPass}
                 onChange={(e) => setPasswords({ ...passwords, newPass: e.target.value })}
-                className="input w-full rounded-lg px-3 py-2 text-sm"
+                className="w-full rounded-lg px-3 py-2 text-sm bg-jolshaa-surface-container-lowest border border-jolshaa-outline-variant text-jolshaa-on-surface focus:outline-none focus:ring-2 focus:ring-jolshaa-teal"
               />
               <input
                 type="password"
                 placeholder="Confirm new password"
                 value={passwords.confirm}
                 onChange={(e) => setPasswords({ ...passwords, confirm: e.target.value })}
-                className="input w-full rounded-lg px-3 py-2 text-sm"
+                className="w-full rounded-lg px-3 py-2 text-sm bg-jolshaa-surface-container-lowest border border-jolshaa-outline-variant text-jolshaa-on-surface focus:outline-none focus:ring-2 focus:ring-jolshaa-teal"
               />
               {passwordMsg && (
                 <p className={`text-sm ${passwordMsg.includes('success') ? 'text-green-600' : 'text-red-500'}`}>
@@ -193,7 +193,7 @@ const Security = () => {
               <button
                 onClick={handleChangePassword}
                 disabled={passwordLoading}
-                className="px-4 py-2 bg-primary-600 text-white rounded-lg text-sm font-medium hover:bg-primary-700 disabled:opacity-50"
+                className="px-4 py-2 bg-jolshaa-teal text-jolshaa-on-teal rounded-lg text-sm font-medium hover:bg-jolshaa-teal-container disabled:opacity-50 transition-colors"
               >
                 {passwordLoading ? 'Changing...' : 'Change Password'}
               </button>
@@ -203,9 +203,9 @@ const Security = () => {
 
         {/* Sessions */}
         {activeTab === 'sessions' && (
-          <div className="card rounded-lg shadow-sm p-6">
+          <div className="bg-jolshaa-surface-container-lowest rounded-2xl shadow-ambient p-6">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="font-semibold text-on-surface">Active Sessions</h2>
+              <h2 className="font-display font-semibold text-jolshaa-on-surface">Active Sessions</h2>
               {sessions.length > 1 && (
                 <button onClick={handleRevokeAll} className="text-xs text-red-600 hover:underline">
                   Revoke all other sessions
@@ -213,16 +213,16 @@ const Security = () => {
               )}
             </div>
             {sessionsLoading ? (
-              <p className="text-on-surface-variant text-sm">Loading...</p>
+              <p className="text-jolshaa-on-surface-variant text-sm">Loading...</p>
             ) : sessions.length === 0 ? (
-              <p className="text-on-surface-variant text-sm">No active sessions</p>
+              <p className="text-jolshaa-on-surface-variant text-sm">No active sessions</p>
             ) : (
               <div className="space-y-3">
                 {sessions.map((session) => (
-                  <div key={session._id} className="flex items-center justify-between p-3 bg-surface-high/50 rounded-lg">
+                  <div key={session._id} className="flex items-center justify-between p-3 bg-jolshaa-surface-container-high/50 rounded-lg">
                     <div>
-                      <p className="text-sm font-medium text-on-surface-variant">{session.userAgent || 'Unknown device'}</p>
-                      <p className="text-xs text-on-surface-variant">
+                      <p className="text-sm font-medium text-jolshaa-on-surface-variant">{session.userAgent || 'Unknown device'}</p>
+                      <p className="text-xs text-jolshaa-on-surface-variant">
                         {session.ip || 'Unknown IP'} &middot; Last active: {new Date(session.lastActive).toLocaleString()}
                       </p>
                     </div>
@@ -246,21 +246,21 @@ const Security = () => {
 
         {/* Login History */}
         {activeTab === 'login-history' && (
-          <div className="card rounded-lg shadow-sm p-6">
-            <h2 className="font-semibold text-on-surface mb-4">Login History</h2>
+          <div className="bg-jolshaa-surface-container-lowest rounded-2xl shadow-ambient p-6">
+            <h2 className="font-display font-semibold text-jolshaa-on-surface mb-4">Login History</h2>
             {historyLoading ? (
-              <p className="text-on-surface-variant text-sm">Loading...</p>
+              <p className="text-jolshaa-on-surface-variant text-sm">Loading...</p>
             ) : loginHistory.length === 0 ? (
-              <p className="text-on-surface-variant text-sm">No login history</p>
+              <p className="text-jolshaa-on-surface-variant text-sm">No login history</p>
             ) : (
               <div className="space-y-2">
                 {loginHistory.map((entry, i) => (
-                  <div key={i} className="flex items-center justify-between p-3 bg-surface-high/50 rounded-lg text-sm">
+                  <div key={i} className="flex items-center justify-between p-3 bg-jolshaa-surface-container-high/50 rounded-lg text-sm">
                     <div>
-                      <p className="font-medium text-on-surface-variant">{entry.ip || 'Unknown IP'}</p>
-                      <p className="text-xs text-on-surface-variant">{entry.userAgent || 'Unknown device'}</p>
+                      <p className="font-medium text-jolshaa-on-surface-variant">{entry.ip || 'Unknown IP'}</p>
+                      <p className="text-xs text-jolshaa-on-surface-variant">{entry.userAgent || 'Unknown device'}</p>
                     </div>
-                    <span className="text-xs text-on-surface-variant">{new Date(entry.timestamp).toLocaleString()}</span>
+                    <span className="text-xs text-jolshaa-on-surface-variant">{new Date(entry.timestamp).toLocaleString()}</span>
                   </div>
                 ))}
               </div>
@@ -270,8 +270,8 @@ const Security = () => {
 
         {/* Safety Settings */}
         {activeTab === 'safety' && (
-          <div className="card rounded-lg shadow-sm p-6">
-            <h2 className="font-semibold text-on-surface mb-4">Safety & Privacy</h2>
+          <div className="bg-jolshaa-surface-container-lowest rounded-2xl shadow-ambient p-6">
+            <h2 className="font-display font-semibold text-jolshaa-on-surface mb-4">Safety & Privacy</h2>
             {safetyMsg && (
               <p className={`text-sm mb-3 ${safetyMsg.includes('saved') ? 'text-green-600' : 'text-red-500'}`}>
                 {safetyMsg}
@@ -280,37 +280,37 @@ const Security = () => {
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-on-surface-variant">Login Alerts</p>
-                  <p className="text-xs text-on-surface-variant">Get notified of new logins from unknown devices</p>
+                  <p className="text-sm font-medium text-jolshaa-on-surface-variant">Login Alerts</p>
+                  <p className="text-xs text-jolshaa-on-surface-variant">Get notified of new logins from unknown devices</p>
                 </div>
                 <button
                   onClick={() => handleSafetyUpdate('loginAlerts', !safety.loginAlerts)}
-                  className={`w-10 h-6 rounded-full transition-colors relative ${safety.loginAlerts ? 'bg-primary-600' : 'bg-neutral-300'}`}
+                  className={`w-10 h-6 rounded-full transition-colors relative ${safety.loginAlerts ? 'bg-jolshaa-teal' : 'bg-jolshaa-outline-variant'}`}
                 >
                   <span className={`absolute top-0.5 w-5 h-5 bg-white rounded-full transition-transform shadow ${safety.loginAlerts ? 'left-4.5' : 'left-0.5'}`} />
                 </button>
               </div>
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-on-surface-variant">Two-Factor Authentication</p>
-                  <p className="text-xs text-on-surface-variant">Add an extra layer of security to your account</p>
+                  <p className="text-sm font-medium text-jolshaa-on-surface-variant">Two-Factor Authentication</p>
+                  <p className="text-xs text-jolshaa-on-surface-variant">Add an extra layer of security to your account</p>
                 </div>
                 <button
                   onClick={() => handleSafetyUpdate('twoFactorEnabled', !safety.twoFactorEnabled)}
-                  className={`w-10 h-6 rounded-full transition-colors relative ${safety.twoFactorEnabled ? 'bg-primary-600' : 'bg-neutral-300'}`}
+                  className={`w-10 h-6 rounded-full transition-colors relative ${safety.twoFactorEnabled ? 'bg-jolshaa-teal' : 'bg-jolshaa-outline-variant'}`}
                 >
                   <span className={`absolute top-0.5 w-5 h-5 bg-white rounded-full transition-transform shadow ${safety.twoFactorEnabled ? 'left-4.5' : 'left-0.5'}`} />
                 </button>
               </div>
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-on-surface-variant">Content Filter</p>
-                  <p className="text-xs text-on-surface-variant">Filter potentially sensitive content</p>
+                  <p className="text-sm font-medium text-jolshaa-on-surface-variant">Content Filter</p>
+                  <p className="text-xs text-jolshaa-on-surface-variant">Filter potentially sensitive content</p>
                 </div>
                 <select
                   value={safety.contentFilterLevel}
                   onChange={(e) => handleSafetyUpdate('contentFilterLevel', e.target.value)}
-                  className="input px-3 py-1.5 rounded-lg text-sm"
+                  className="w-full rounded-lg px-3 py-1.5 text-sm bg-jolshaa-surface-container-lowest border border-jolshaa-outline-variant text-jolshaa-on-surface focus:outline-none focus:ring-2 focus:ring-jolshaa-teal"
                 >
                   <option value="off">Off</option>
                   <option value="moderate">Moderate</option>
@@ -319,12 +319,12 @@ const Security = () => {
               </div>
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-on-surface-variant">Restrict DMs</p>
-                  <p className="text-xs text-on-surface-variant">Only allow friends to send you messages</p>
+                  <p className="text-sm font-medium text-jolshaa-on-surface-variant">Restrict DMs</p>
+                  <p className="text-xs text-jolshaa-on-surface-variant">Only allow friends to send you messages</p>
                 </div>
                 <button
                   onClick={() => handleSafetyUpdate('restrictedDMs', !safety.restrictedDMs)}
-                  className={`w-10 h-6 rounded-full transition-colors relative ${safety.restrictedDMs ? 'bg-primary-600' : 'bg-neutral-300'}`}
+                  className={`w-10 h-6 rounded-full transition-colors relative ${safety.restrictedDMs ? 'bg-jolshaa-teal' : 'bg-jolshaa-outline-variant'}`}
                 >
                   <span className={`absolute top-0.5 w-5 h-5 bg-white rounded-full transition-transform shadow ${safety.restrictedDMs ? 'left-4.5' : 'left-0.5'}`} />
                 </button>

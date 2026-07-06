@@ -194,7 +194,7 @@ const GroupPage = () => {
           {group.rules && group.rules.length > 0 && !editingRules && (
             <div className="mt-4 p-3 bg-jolshaa-surface-container-low rounded-lg">
               <div className="flex items-center justify-between mb-2">
-                <h4 className="font-medium text-sm text-jolshaa-on-surface">Group Rules</h4>
+                <h4 className="font-display font-medium text-sm text-jolshaa-on-surface">Group Rules</h4>
                 {group.isAdmin && (
                   <button onClick={() => setEditingRules(true)} className="text-xs text-jolshaa-teal hover:underline">Edit</button>
                 )}
@@ -209,7 +209,7 @@ const GroupPage = () => {
 
           {group.isAdmin && editingRules && (
             <div className="mt-4 p-3 bg-jolshaa-surface-container-low rounded-lg">
-              <h4 className="font-medium text-sm text-jolshaa-on-surface mb-2">Edit Rules (one per line)</h4>
+              <h4 className="font-display font-medium text-sm text-jolshaa-on-surface mb-2">Edit Rules (one per line)</h4>
               <textarea
                 value={rulesText}
                 onChange={(e) => setRulesText(e.target.value)}
@@ -298,7 +298,7 @@ const GroupPage = () => {
               {/* Moderators */}
               {group.moderators && group.moderators.length > 0 && (
                 <div className="mb-4">
-                  <h3 className="font-semibold mb-2 text-sm text-jolshaa-on-surface">Moderators</h3>
+                  <h3 className="font-display font-semibold mb-2 text-sm text-jolshaa-on-surface">Moderators</h3>
                   <div className="grid grid-cols-2 gap-2">
                     {group.moderators.map(mod => (
                       <Link key={mod._id} to={`/profile/${mod._id}`} className="flex items-center gap-2 p-2 rounded-lg hover:bg-jolshaa-surface-container-low transition-colors">
@@ -310,7 +310,7 @@ const GroupPage = () => {
                 </div>
               )}
 
-              <h3 className="font-semibold mb-3 text-jolshaa-on-surface">All Members ({group.memberCount})</h3>
+              <h3 className="font-display font-semibold mb-3 text-jolshaa-on-surface">All Members ({group.memberCount})</h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {group.members?.map(member => (
                   <div key={member._id} className="flex items-center gap-3 p-2 rounded-lg hover:bg-jolshaa-surface-container-low transition-colors">
@@ -341,7 +341,7 @@ const GroupPage = () => {
               {/* Pending Requests (admin only) */}
               {group.isAdmin && (
                 <div className="bg-jolshaa-surface-container-lowest rounded-xl shadow-ambient p-4">
-                  <h3 className="font-semibold mb-3 text-jolshaa-on-surface">Pending Requests ({pendingUsers.length})</h3>
+                  <h3 className="font-display font-semibold mb-3 text-jolshaa-on-surface">Pending Requests ({pendingUsers.length})</h3>
                   {pendingUsers.length === 0 ? (
                     <p className="text-jolshaa-on-surface-variant text-sm">No pending requests</p>
                   ) : (
@@ -366,7 +366,7 @@ const GroupPage = () => {
               {/* Manage Moderators (admin only) */}
               {group.isAdmin && (
                 <div className="bg-jolshaa-surface-container-lowest rounded-xl shadow-ambient p-4">
-                  <h3 className="font-semibold mb-3 text-jolshaa-on-surface">Manage Moderators</h3>
+                  <h3 className="font-display font-semibold mb-3 text-jolshaa-on-surface">Manage Moderators</h3>
                   <p className="text-sm text-jolshaa-on-surface-variant mb-3">Moderators can approve requests, pin posts, and create announcements.</p>
                   <div className="space-y-2">
                     {group.members?.filter(m => !group.admins?.some(a => a._id === m._id)).map(member => {
@@ -393,7 +393,7 @@ const GroupPage = () => {
               {/* Pin Post */}
               {group.pinnedPost && (
                 <div className="bg-jolshaa-surface-container-lowest rounded-xl shadow-ambient p-4">
-                  <h3 className="font-semibold mb-2 text-jolshaa-on-surface">Pinned Post</h3>
+                  <h3 className="font-display font-semibold mb-2 text-jolshaa-on-surface">Pinned Post</h3>
                   <button onClick={() => handlePinPost(group.pinnedPost._id)} className="text-sm text-red-500 hover:underline">
                     Unpin Post
                   </button>

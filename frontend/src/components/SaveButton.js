@@ -16,7 +16,7 @@ const SaveButton = ({ postId, initialSaved }) => {
   return (
     <button
       onClick={handleToggle}
-      className="flex items-center gap-1 p-2 -m-2 text-sm text-gray-500 hover:text-blue-600 rounded-lg"
+      className="flex items-center gap-1 p-2 -m-2 text-sm text-jolshaa-on-surface-variant hover:text-blue-600 rounded-lg"
     >
       {isSaved ? (
         <svg className="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 24 24">

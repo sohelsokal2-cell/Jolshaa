@@ -44,7 +44,7 @@ const TipButton = ({ userId, tipsEnabled }) => {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onClick={() => setShowModal(false)}>
           <div className="bg-white rounded-xl w-full max-w-sm mx-4" onClick={(e) => e.stopPropagation()}>
             <div className="p-4 border-b">
-              <h3 className="font-semibold">Send a Tip</h3>
+              <h3 className="font-display font-semibold">Send a Tip</h3>
             </div>
 
             {sent ? (
@@ -62,7 +62,7 @@ const TipButton = ({ userId, tipsEnabled }) => {
                       className={`py-2 rounded-lg text-sm font-medium ${
                         amount === a.toString()
                           ? 'bg-green-600 text-white'
-                          : 'bg-gray-100 hover:bg-gray-200'
+                          : 'bg-jolshaa-surface-container-low hover:bg-jolshaa-surface-container'
                       }`}
                     >
                       ${a}

@@ -36,7 +36,7 @@ const CheckinModal = ({ onClose, onCheckin }) => {
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onClick={onClose}>
       <div className="bg-white rounded-xl w-full max-w-md mx-4" onClick={e => e.stopPropagation()}>
         <div className="p-4 border-b">
-          <h3 className="font-semibold">Check In</h3>
+          <h3 className="font-display font-semibold">Check In</h3>
         </div>
 
         <div className="p-4 space-y-3">
@@ -53,7 +53,7 @@ const CheckinModal = ({ onClose, onCheckin }) => {
               <button
                 key={loc}
                 onClick={() => setLocationName(loc)}
-                className="text-xs bg-gray-100 hover:bg-gray-200 px-2 py-1 rounded-full"
+                className="text-xs bg-jolshaa-surface-container-low hover:bg-jolshaa-surface-container px-2 py-1 rounded-full"
               >
                 {loc}
               </button>

@@ -71,7 +71,7 @@ const MediaCarousel = ({ media, postVideo, postId }) => {
           />
         )}
         {getCaption(item) && (
-          <p className="px-4 py-2 text-sm text-neutral-600 dark:text-neutral-300">{getCaption(item)}</p>
+          <p className="px-4 py-2 text-sm text-jolshaa-on-surface-variant">{getCaption(item)}</p>
         )}
       </div>
     );

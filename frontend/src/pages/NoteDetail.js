@@ -53,9 +53,9 @@ const NoteDetail = () => {
       <Layout showSidebar={false}>
         <div className="max-w-2xl mx-auto p-4">
           <div className="animate-pulse space-y-4">
-            <div className="h-8 bg-neutral-200 dark:bg-neutral-700 rounded w-2/3" />
-            <div className="h-4 bg-neutral-200 dark:bg-neutral-700 rounded w-1/3" />
-            <div className="h-64 bg-neutral-200 dark:bg-neutral-700 rounded-xl" />
+            <div className="h-8 bg-jolshaa-surface-container-high rounded w-2/3" />
+            <div className="h-4 bg-jolshaa-surface-container-high rounded w-1/3" />
+            <div className="h-64 bg-jolshaa-surface-container-high rounded-xl" />
           </div>
         </div>
       </Layout>
@@ -67,8 +67,8 @@ const NoteDetail = () => {
       <Layout showSidebar={false}>
         <div className="max-w-2xl mx-auto p-4 text-center py-12">
           <p className="text-4xl mb-4">📝</p>
-          <p className="text-neutral-500">Note not found</p>
-          <Link to="/notes" className="text-primary-600 hover:underline mt-2 inline-block">Back to Notes</Link>
+          <p className="text-jolshaa-on-surface-variant">Note not found</p>
+          <Link to="/notes" className="text-jolshaa-teal hover:underline mt-2 inline-block">Back to Notes</Link>
         </div>
       </Layout>
     );
@@ -77,7 +77,7 @@ const NoteDetail = () => {
   return (
     <Layout showSidebar={false}>
       <div className="max-w-2xl mx-auto p-4">
-        <Link to="/notes" className="inline-flex items-center gap-1 text-sm text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300 mb-6">
+        <Link to="/notes" className="inline-flex items-center gap-1 text-sm text-jolshaa-on-surface-variant hover:text-jolshaa-on-surface mb-6">
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
           </svg>
@@ -89,14 +89,14 @@ const NoteDetail = () => {
             <img src={note.coverImage} alt="" className="w-full h-64 object-cover rounded-xl mb-6" />
           )}
 
-          <h1 className="text-3xl font-bold text-neutral-900 dark:text-white mb-3">{note.title}</h1>
+          <h1 className="font-display text-3xl font-bold text-jolshaa-on-surface mb-3">{note.title}</h1>
 
           <div className="flex items-center gap-4 mb-6">
             <Link to={`/profile/${note.author?._id}`} className="flex items-center gap-2">
               <img src={note.author?.profilePhoto} alt="" className="w-10 h-10 rounded-full object-cover" />
               <div>
-                <p className="font-medium text-sm text-neutral-900 dark:text-white">{note.author?.name}</p>
-                <p className="text-xs text-neutral-500">{note.readTime} min read · {new Date(note.createdAt).toLocaleDateString()}</p>
+                <p className="font-medium text-sm text-jolshaa-on-surface">{note.author?.name}</p>
+                <p className="text-xs text-jolshaa-on-surface-variant">{note.readTime} min read · {new Date(note.createdAt).toLocaleDateString()}</p>
               </div>
             </Link>
           </div>
@@ -104,24 +104,24 @@ const NoteDetail = () => {
           {note.tags?.length > 0 && (
             <div className="flex gap-2 mb-6 flex-wrap">
               {note.tags.map((tag, i) => (
-                <span key={i} className="text-sm bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-300 px-3 py-1 rounded-full">
+                <span key={i} className="text-sm bg-jolshaa-surface-container-low text-jolshaa-on-surface-variant px-3 py-1 rounded-full">
                   #{tag}
                 </span>
               ))}
             </div>
           )}
 
-          <div className="prose prose-lg max-w-none text-neutral-700 dark:text-neutral-200 leading-relaxed">
+          <div className="prose prose-lg max-w-none text-jolshaa-on-surface leading-relaxed">
             <ReactMarkdown>{note.content}</ReactMarkdown>
           </div>
 
-          <div className="flex items-center gap-4 mt-8 pt-6 border-t border-neutral-200 dark:border-neutral-700">
+          <div className="flex items-center gap-4 mt-8 pt-6 border-t border-jolshaa-outline-variant">
             <button
               onClick={handleLike}
               className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                 note.isLiked
-                  ? 'bg-red-50 dark:bg-red-900/20 text-red-600'
-                  : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-300 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600'
+                  ? 'bg-red-50 text-red-600'
+                  : 'bg-jolshaa-surface-container-low text-jolshaa-on-surface-variant hover:bg-red-50 hover:text-red-600'
               }`}
             >
               <svg className="w-5 h-5" fill={note.isLiked ? 'currentColor' : 'none'} stroke="currentColor" viewBox="0 0 24 24">
@@ -133,8 +133,8 @@ const NoteDetail = () => {
               onClick={handleBookmark}
               className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                 note.isBookmarked
-                  ? 'bg-primary-50 dark:bg-primary-900/20 text-primary-600'
-                  : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-300 hover:bg-primary-50 dark:hover:bg-primary-900/20 hover:text-primary-600'
+                  ? 'bg-jolshaa-surface-container-low text-jolshaa-teal'
+                  : 'bg-jolshaa-surface-container-low text-jolshaa-on-surface-variant hover:bg-jolshaa-surface-container-low hover:text-jolshaa-teal'
               }`}
             >
               <svg className="w-5 h-5" fill={note.isBookmarked ? 'currentColor' : 'none'} stroke="currentColor" viewBox="0 0 24 24">

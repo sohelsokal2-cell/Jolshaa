@@ -21,7 +21,7 @@ const SubscribeButton = ({ userId, onSubscribeChange }) => {
 
   if (checking) {
     return (
-      <button disabled className="px-4 py-2 text-sm font-medium rounded-lg bg-neutral-200 dark:bg-neutral-700 text-neutral-400 cursor-wait">
+      <button disabled className="px-4 py-2 text-sm font-medium rounded-lg bg-jolshaa-surface-container text-jolshaa-on-surface-variant/60 cursor-wait">
         ...
       </button>
     );
@@ -31,7 +31,7 @@ const SubscribeButton = ({ userId, onSubscribeChange }) => {
     return (
       <Link
         to={`/creator/subscriptions/${userId}`}
-        className="px-4 py-2 text-sm font-medium rounded-lg bg-primary-600 text-white hover:bg-primary-700 transition-colors inline-block"
+        className="px-4 py-2 text-sm font-medium rounded-lg bg-jolshaa-teal text-white hover:bg-jolshaa-teal-dark transition-colors inline-block"
       >
         {isSubscribed ? 'Subscribed ✓' : 'Subscribe'}
       </Link>
@@ -41,7 +41,7 @@ const SubscribeButton = ({ userId, onSubscribeChange }) => {
   return (
     <Link
       to={`/creator/subscriptions/${userId}`}
-      className="px-4 py-2 text-sm font-medium rounded-lg bg-primary-600 text-white hover:bg-primary-700 transition-colors inline-block"
+      className="px-4 py-2 text-sm font-medium rounded-lg bg-jolshaa-teal text-white hover:bg-jolshaa-teal-dark transition-colors inline-block"
     >
       View Tiers
     </Link>

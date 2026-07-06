@@ -21,13 +21,13 @@ const FollowButton = ({ userId, initialFollowing, initialFollowerCount }) => {
         onClick={handleToggle}
         className={`px-4 py-1.5 rounded-full text-sm font-medium transition ${
           isFollowing
-            ? 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+            ? 'bg-jolshaa-surface-container text-jolshaa-on-surface hover:bg-jolshaa-surface-container-high'
             : 'bg-blue-600 text-white hover:bg-blue-700'
         }`}
       >
         {isFollowing ? 'Following' : 'Follow'}
       </button>
-      <span className="text-sm text-gray-500">{followerCount} followers</span>
+      <span className="text-sm text-jolshaa-on-surface-variant">{followerCount} followers</span>
     </div>
   );
 };

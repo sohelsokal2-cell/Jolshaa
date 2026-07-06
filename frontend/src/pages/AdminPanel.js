@@ -637,7 +637,7 @@ const ReportsTab = () => {
 
   const statusColors = { pending: 'warning', reviewed: 'primary', resolved: 'success', dismissed: 'neutral', escalated: 'danger' };
   const priorityColors = { low: 'neutral', medium: 'warning', high: 'danger', critical: 'danger' };
-  const priorityBg = { low: 'bg-neutral-50 dark:bg-neutral-800', medium: 'bg-amber-50 dark:bg-amber-900/10', high: 'bg-red-50 dark:bg-red-900/10', critical: 'bg-red-100 dark:bg-red-900/20' };
+  const priorityBg = { low: 'bg-jolshaa-surface-container-low', medium: 'bg-amber-50', high: 'bg-red-50', critical: 'bg-red-100' };
   const resolutionLabels = { none: '-', content_removed: 'Content Removed', warning_issued: 'Warning Issued', account_suspended: 'Account Suspended', account_banned: 'Account Banned', no_action: 'No Action', other: 'Other' };
 
   const pendingCount = reports.filter(r => r.status === 'pending').length;
@@ -647,23 +647,23 @@ const ReportsTab = () => {
     <div className="space-y-4">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">Reports & Safety</h1>
-        <p className="text-sm text-neutral-500 mt-1">Review reports, assign, escalate, and resolve incidents</p>
+        <h1 className="text-2xl font-bold font-display text-jolshaa-on-surface">Reports & Safety</h1>
+        <p className="text-sm text-jolshaa-on-surface-variant mt-1">Review reports, assign, escalate, and resolve incidents</p>
       </div>
 
       {/* Quick stats */}
       <div className="grid grid-cols-3 gap-3">
-        <Card className="bg-amber-50 dark:bg-amber-900/20 border-l-4 border-l-amber-500">
-          <p className="text-xs text-neutral-500">Pending</p>
+        <Card className="bg-amber-50 border-l-4 border-l-amber-500">
+          <p className="text-xs text-jolshaa-on-surface-variant">Pending</p>
           <p className="text-2xl font-bold text-amber-600">{pendingCount}</p>
         </Card>
-        <Card className="bg-red-50 dark:bg-red-900/20 border-l-4 border-l-red-500">
-          <p className="text-xs text-neutral-500">Escalated</p>
+        <Card className="bg-red-50 border-l-4 border-l-red-500">
+          <p className="text-xs text-jolshaa-on-surface-variant">Escalated</p>
           <p className="text-2xl font-bold text-red-600">{escalatedCount}</p>
         </Card>
-        <Card className="bg-neutral-50 dark:bg-neutral-700 border-l-4 border-l-neutral-400">
-          <p className="text-xs text-neutral-500">Total Loaded</p>
-          <p className="text-2xl font-bold text-neutral-600 dark:text-neutral-300">{reports.length}</p>
+        <Card className="bg-jolshaa-surface-container-low border-l-4 border-l-jolshaa-outline">
+          <p className="text-xs text-jolshaa-on-surface-variant">Total Loaded</p>
+          <p className="text-2xl font-bold text-jolshaa-on-surface">{reports.length}</p>
         </Card>
       </div>
 
@@ -678,8 +678,8 @@ const ReportsTab = () => {
                 onClick={() => setFilter(s)}
                 className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-colors ${
                   filter === s
-                    ? 'bg-primary-600 text-white'
-                    : 'bg-neutral-100 dark:bg-neutral-700 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-200 dark:hover:bg-neutral-600'
+                    ? 'bg-jolshaa-teal text-jolshaa-on-teal'
+                    : 'bg-jolshaa-surface-container-low text-jolshaa-on-surface-variant hover:bg-jolshaa-surface-container'
                 }`}
               >
                 {s.charAt(0).toUpperCase() + s.slice(1)}
@@ -687,10 +687,10 @@ const ReportsTab = () => {
             ))}
           </div>
 
-          <div className="h-4 w-px bg-neutral-300 dark:bg-neutral-600" />
+          <div className="h-4 w-px bg-jolshaa-outline-variant" />
 
           {/* Priority filter */}
-          <select value={priorityFilter} onChange={e => setPriorityFilter(e.target.value)} className="text-xs border border-neutral-300 dark:border-neutral-600 rounded-lg px-2 py-1.5 bg-white dark:bg-neutral-800">
+          <select value={priorityFilter} onChange={e => setPriorityFilter(e.target.value)} className="text-xs border border-jolshaa-outline-variant rounded-lg px-2 py-1.5 bg-jolshaa-surface-container-lowest text-jolshaa-on-surface">
             <option value="">All Priority</option>
             <option value="low">Low</option>
             <option value="medium">Medium</option>
@@ -699,7 +699,7 @@ const ReportsTab = () => {
           </select>
 
           {/* Reason filter */}
-          <select value={reasonFilter} onChange={e => setReasonFilter(e.target.value)} className="text-xs border border-neutral-300 dark:border-neutral-600 rounded-lg px-2 py-1.5 bg-white dark:bg-neutral-800">
+          <select value={reasonFilter} onChange={e => setReasonFilter(e.target.value)} className="text-xs border border-jolshaa-outline-variant rounded-lg px-2 py-1.5 bg-jolshaa-surface-container-lowest text-jolshaa-on-surface">
             <option value="">All Reasons</option>
             <option value="spam">Spam</option>
             <option value="harassment">Harassment</option>
@@ -716,19 +716,19 @@ const ReportsTab = () => {
 
       {/* Reports list - incident console style */}
       {loading ? (
-        <div className="text-center py-8 text-neutral-500">Loading...</div>
+        <div className="text-center py-8 text-jolshaa-on-surface-variant">Loading...</div>
       ) : reports.length === 0 ? (
-        <div className="text-center py-12 text-neutral-500">No reports found</div>
+        <div className="text-center py-12 text-jolshaa-on-surface-variant">No reports found</div>
       ) : (
         <div className="space-y-2">
           {reports.map(report => (
-            <Card key={report._id} className={`${priorityBg[report.priority] || 'bg-white dark:bg-neutral-800'} transition-all hover:shadow-md`}>
+            <Card key={report._id} className={`${priorityBg[report.priority] || 'bg-jolshaa-surface-container-lowest'} transition-all hover:shadow-ambient-hover`}>
               <div className="flex items-start gap-3">
                 {/* Priority indicator */}
                 <div className={`w-1 self-stretch rounded-full flex-shrink-0 ${
                   report.priority === 'critical' ? 'bg-red-500' :
                   report.priority === 'high' ? 'bg-orange-500' :
-                  report.priority === 'medium' ? 'bg-amber-400' : 'bg-neutral-300'
+                  report.priority === 'medium' ? 'bg-amber-400' : 'bg-jolshaa-outline-variant'
                 }`} />
 
                 {/* Content */}
@@ -740,24 +740,24 @@ const ReportsTab = () => {
                     {report.escalationLevel > 0 && (
                       <Badge variant="danger" size="xs">L{report.escalationLevel}</Badge>
                     )}
-                    <span className="text-xs font-medium text-neutral-500 capitalize">{report.targetType}</span>
-                    <span className="text-xs text-neutral-400">·</span>
-                    <span className="text-xs text-neutral-400">{report.reason?.replace(/_/g, ' ')}</span>
+                    <span className="text-xs font-medium text-jolshaa-on-surface-variant capitalize">{report.targetType}</span>
+                    <span className="text-xs text-jolshaa-on-surface-variant">·</span>
+                    <span className="text-xs text-jolshaa-on-surface-variant">{report.reason?.replace(/_/g, ' ')}</span>
                     {report.isAutoFlagged && <Badge variant="warning" size="xs">Auto</Badge>}
                   </div>
 
                   {/* Reporter info */}
-                  <p className="text-sm text-neutral-700 dark:text-neutral-300">
+                  <p className="text-sm text-jolshaa-on-surface">
                     <span className="font-medium">{report.reporter?.name}</span> reported this {report.targetType}
                   </p>
 
                   {/* Description */}
                   {report.description && (
-                    <p className="text-xs text-neutral-500 mt-1 italic">"{report.description}"</p>
+                    <p className="text-xs text-jolshaa-on-surface-variant mt-1 italic">"{report.description}"</p>
                   )}
 
                   {/* Meta info */}
-                  <div className="flex items-center gap-3 mt-2 text-2xs text-neutral-400">
+                  <div className="flex items-center gap-3 mt-2 text-2xs text-jolshaa-on-surface-variant">
                     <span className="flex items-center gap-1">
                       <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                       {new Date(report.createdAt).toLocaleString()}
@@ -769,7 +769,7 @@ const ReportsTab = () => {
                       </span>
                     )}
                     {report.resolution && report.resolution !== 'none' && (
-                      <span className="text-green-600 dark:text-green-400">✓ {resolutionLabels[report.resolution]}</span>
+                      <span className="text-green-600">✓ {resolutionLabels[report.resolution]}</span>
                     )}
                   </div>
 
@@ -777,7 +777,7 @@ const ReportsTab = () => {
                   {report.evidenceUrls?.length > 0 && (
                     <div className="flex gap-1 mt-1">
                       {report.evidenceUrls.map((url, i) => (
-                        <a key={i} href={url} target="_blank" rel="noopener noreferrer" className="text-2xs text-primary-600 hover:underline">Evidence {i + 1}</a>
+                        <a key={i} href={url} target="_blank" rel="noopener noreferrer" className="text-2xs text-jolshaa-teal hover:underline">Evidence {i + 1}</a>
                       ))}
                     </div>
                   )}
@@ -808,7 +808,7 @@ const ReportsTab = () => {
       {assignModal && (
         <Modal isOpen={!!assignModal} onClose={() => setAssignModal(null)} title="Assign Report">
           <div className="p-5 space-y-3">
-            <p className="text-sm text-neutral-600">Assign this report to yourself?</p>
+            <p className="text-sm text-jolshaa-on-surface-variant">Assign this report to yourself?</p>
             <div className="flex gap-2 justify-end">
               <Button size="sm" variant="secondary" onClick={() => setAssignModal(null)}>Cancel</Button>
               <Button size="sm" onClick={() => handleAssign(assignModal)}>Assign to Me</Button>
@@ -821,12 +821,12 @@ const ReportsTab = () => {
       {escalateModal && (
         <Modal isOpen={!!escalateModal} onClose={() => { setEscalateModal(null); setEscalateReason(''); }} title="Escalate Report">
           <div className="p-5 space-y-3">
-            <label className="text-xs font-medium text-neutral-700 dark:text-neutral-300">Reason for escalation</label>
+            <label className="text-xs font-medium text-jolshaa-on-surface-variant">Reason for escalation</label>
             <textarea
               value={escalateReason}
               onChange={e => setEscalateReason(e.target.value)}
               placeholder="Why is this being escalated?"
-              className="w-full border border-neutral-300 dark:border-neutral-600 rounded-lg px-3 py-2 text-sm bg-white dark:bg-neutral-800 resize-none"
+              className="w-full border border-jolshaa-outline-variant rounded-lg px-3 py-2 text-sm bg-jolshaa-surface-container-lowest text-jolshaa-on-surface resize-none"
               rows={3}
             />
             <div className="flex gap-2 justify-end">
@@ -841,11 +841,11 @@ const ReportsTab = () => {
       {resolveModal && (
         <Modal isOpen={!!resolveModal} onClose={() => { setResolveModal(null); setResolution('no_action'); }} title="Resolve Report">
           <div className="p-5 space-y-3">
-            <label className="text-xs font-medium text-neutral-700 dark:text-neutral-300">Resolution</label>
+            <label className="text-xs font-medium text-jolshaa-on-surface-variant">Resolution</label>
             <select
               value={resolution}
               onChange={e => setResolution(e.target.value)}
-              className="w-full border border-neutral-300 dark:border-neutral-600 rounded-lg px-3 py-2 text-sm bg-white dark:bg-neutral-800"
+              className="w-full border border-jolshaa-outline-variant rounded-lg px-3 py-2 text-sm bg-jolshaa-surface-container-lowest text-jolshaa-on-surface"
             >
               <option value="no_action">No Action</option>
               <option value="content_removed">Content Removed</option>
@@ -867,35 +867,35 @@ const ReportsTab = () => {
         <Modal isOpen={!!selectedReport} onClose={() => setSelectedReport(null)} title="Report Details">
           <div className="p-5 space-y-3 text-sm max-h-[60vh] overflow-y-auto">
             <div className="grid grid-cols-2 gap-2">
-              <div><span className="text-neutral-500">Status:</span> <Badge variant={statusColors[selectedReport.status]} size="xs">{selectedReport.status}</Badge></div>
-              <div><span className="text-neutral-500">Priority:</span> <Badge variant={priorityColors[selectedReport.priority]} size="xs">{selectedReport.priority}</Badge></div>
-              <div><span className="text-neutral-500">Type:</span> {selectedReport.targetType}</div>
-              <div><span className="text-neutral-500">Reason:</span> {selectedReport.reason?.replace(/_/g, ' ')}</div>
-              <div><span className="text-neutral-500">Escalation:</span> Level {selectedReport.escalationLevel}</div>
-              <div><span className="text-neutral-500">Auto-flagged:</span> {selectedReport.isAutoFlagged ? 'Yes' : 'No'}</div>
-              {selectedReport.assignedTo && <div><span className="text-neutral-500">Assigned:</span> {selectedReport.assignedTo.name}</div>}
-              {selectedReport.reviewedBy && <div><span className="text-neutral-500">Reviewed by:</span> {selectedReport.reviewedBy.name}</div>}
-              {selectedReport.resolvedBy && <div><span className="text-neutral-500">Resolved by:</span> {selectedReport.resolvedBy.name}</div>}
-              {selectedReport.resolution && selectedReport.resolution !== 'none' && <div><span className="text-neutral-500">Resolution:</span> {resolutionLabels[selectedReport.resolution]}</div>}
+              <div><span className="text-jolshaa-on-surface-variant">Status:</span> <Badge variant={statusColors[selectedReport.status]} size="xs">{selectedReport.status}</Badge></div>
+              <div><span className="text-jolshaa-on-surface-variant">Priority:</span> <Badge variant={priorityColors[selectedReport.priority]} size="xs">{selectedReport.priority}</Badge></div>
+              <div><span className="text-jolshaa-on-surface-variant">Type:</span> {selectedReport.targetType}</div>
+              <div><span className="text-jolshaa-on-surface-variant">Reason:</span> {selectedReport.reason?.replace(/_/g, ' ')}</div>
+              <div><span className="text-jolshaa-on-surface-variant">Escalation:</span> Level {selectedReport.escalationLevel}</div>
+              <div><span className="text-jolshaa-on-surface-variant">Auto-flagged:</span> {selectedReport.isAutoFlagged ? 'Yes' : 'No'}</div>
+              {selectedReport.assignedTo && <div><span className="text-jolshaa-on-surface-variant">Assigned:</span> {selectedReport.assignedTo.name}</div>}
+              {selectedReport.reviewedBy && <div><span className="text-jolshaa-on-surface-variant">Reviewed by:</span> {selectedReport.reviewedBy.name}</div>}
+              {selectedReport.resolvedBy && <div><span className="text-jolshaa-on-surface-variant">Resolved by:</span> {selectedReport.resolvedBy.name}</div>}
+              {selectedReport.resolution && selectedReport.resolution !== 'none' && <div><span className="text-jolshaa-on-surface-variant">Resolution:</span> {resolutionLabels[selectedReport.resolution]}</div>}
             </div>
-            <div><span className="text-neutral-500">Reported by:</span> {selectedReport.reporter?.name}</div>
-            {selectedReport.description && <div><span className="text-neutral-500">Description:</span> "{selectedReport.description}"</div>}
+            <div><span className="text-jolshaa-on-surface-variant">Reported by:</span> {selectedReport.reporter?.name}</div>
+            {selectedReport.description && <div><span className="text-jolshaa-on-surface-variant">Description:</span> "{selectedReport.description}"</div>}
             {selectedReport.evidenceUrls?.length > 0 && (
               <div>
-                <span className="text-neutral-500">Evidence:</span>
+                <span className="text-jolshaa-on-surface-variant">Evidence:</span>
                 <div className="flex flex-wrap gap-1 mt-1">
                   {selectedReport.evidenceUrls.map((url, i) => (
-                    <a key={i} href={url} target="_blank" rel="noopener noreferrer" className="text-xs text-primary-600 hover:underline block">{url}</a>
+                    <a key={i} href={url} target="_blank" rel="noopener noreferrer" className="text-xs text-jolshaa-teal hover:underline block">{url}</a>
                   ))}
                 </div>
               </div>
             )}
             {selectedReport.escalationHistory?.length > 0 && (
               <div>
-                <span className="text-neutral-500">Escalation History:</span>
+                <span className="text-jolshaa-on-surface-variant">Escalation History:</span>
                 <div className="space-y-1 mt-1">
                   {selectedReport.escalationHistory.map((e, i) => (
-                    <div key={i} className="text-xs text-neutral-600 dark:text-neutral-400">
+                    <div key={i} className="text-xs text-jolshaa-on-surface-variant">
                       Level {e.fromLevel} → {e.toLevel} at {new Date(e.escalatedAt).toLocaleString()}
                       {e.reason && <span className="italic"> — {e.reason}</span>}
                     </div>
@@ -903,7 +903,7 @@ const ReportsTab = () => {
                 </div>
               </div>
             )}
-            <div className="text-2xs text-neutral-400">Created: {new Date(selectedReport.createdAt).toLocaleString()}</div>
+            <div className="text-2xs text-jolshaa-on-surface-variant">Created: {new Date(selectedReport.createdAt).toLocaleString()}</div>
           </div>
         </Modal>
       )}
@@ -957,9 +957,9 @@ const AppealsTab = () => {
       </div>
 
       {loading ? (
-        <div className="text-center py-8 text-neutral-500">Loading...</div>
+        <div className="text-center py-8 text-jolshaa-on-surface-variant">Loading...</div>
       ) : appeals.length === 0 ? (
-        <div className="text-center py-12 text-neutral-500">No appeals found</div>
+        <div className="text-center py-12 text-jolshaa-on-surface-variant">No appeals found</div>
       ) : (
         <div className="space-y-3">
           {appeals.map(appeal => (
@@ -968,15 +968,15 @@ const AppealsTab = () => {
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-1">
                     <Badge variant={appeal.status === 'pending' ? 'warning' : appeal.status === 'accepted' ? 'success' : 'neutral'} size="xs">{appeal.status}</Badge>
-                    <span className="text-xs font-medium text-neutral-500">{typeLabels[appeal.type] || appeal.type}</span>
+                    <span className="text-xs font-medium text-jolshaa-on-surface-variant">{typeLabels[appeal.type] || appeal.type}</span>
                   </div>
                   <div className="flex items-center gap-2 mb-1">
                     <Avatar src={appeal.user?.profilePhoto} alt={appeal.user?.name} size="xs" />
-                    <span className="text-sm font-medium text-neutral-900 dark:text-neutral-100">{appeal.user?.name}</span>
+                    <span className="text-sm font-medium text-jolshaa-on-surface">{appeal.user?.name}</span>
                   </div>
-                  <p className="text-sm text-neutral-600 dark:text-neutral-400">{appeal.reason}</p>
-                  {appeal.adminNote && <p className="text-xs text-neutral-500 mt-1 italic">Admin: {appeal.adminNote}</p>}
-                  <p className="text-2xs text-neutral-400 mt-1">{new Date(appeal.createdAt).toLocaleString()}</p>
+                  <p className="text-sm text-jolshaa-on-surface-variant">{appeal.reason}</p>
+                  {appeal.adminNote && <p className="text-xs text-jolshaa-on-surface-variant mt-1 italic">Admin: {appeal.adminNote}</p>}
+                  <p className="text-2xs text-jolshaa-on-surface-variant mt-1">{new Date(appeal.createdAt).toLocaleString()}</p>
                 </div>
                 {appeal.status === 'pending' && (
                   <div className="flex gap-1.5 flex-shrink-0">
@@ -994,16 +994,16 @@ const AppealsTab = () => {
           {selectedAppeal && (
             <>
               <div>
-                <p className="text-sm text-neutral-500">User</p>
-                <p className="font-medium">{selectedAppeal.user?.name}</p>
+                <p className="text-sm text-jolshaa-on-surface-variant">User</p>
+                <p className="font-medium text-jolshaa-on-surface">{selectedAppeal.user?.name}</p>
               </div>
               <div>
-                <p className="text-sm text-neutral-500">Type</p>
-                <p className="font-medium">{typeLabels[selectedAppeal.type]}</p>
+                <p className="text-sm text-jolshaa-on-surface-variant">Type</p>
+                <p className="font-medium text-jolshaa-on-surface">{typeLabels[selectedAppeal.type]}</p>
               </div>
               <div>
-                <p className="text-sm text-neutral-500">Reason</p>
-                <p className="text-sm">{selectedAppeal.reason}</p>
+                <p className="text-sm text-jolshaa-on-surface-variant">Reason</p>
+                <p className="text-sm text-jolshaa-on-surface">{selectedAppeal.reason}</p>
               </div>
               <Input label="Admin note" value={adminNote} onChange={e => setAdminNote(e.target.value)} placeholder="Optional note..." />
               <div className="flex justify-end gap-2">
@@ -1048,9 +1048,9 @@ const VerificationTab = () => {
   return (
     <div className="space-y-4">
       {loading ? (
-        <div className="text-center py-8 text-neutral-500">Loading...</div>
+        <div className="text-center py-8 text-jolshaa-on-surface-variant">Loading...</div>
       ) : requests.length === 0 ? (
-        <div className="text-center py-12 text-neutral-500">No pending verification requests</div>
+        <div className="text-center py-12 text-jolshaa-on-surface-variant">No pending verification requests</div>
       ) : (
         <div className="space-y-3">
           {requests.map(u => (
@@ -1059,9 +1059,9 @@ const VerificationTab = () => {
                 <div className="flex items-center gap-3">
                   <Avatar src={u.profilePhoto} alt={u.name} size="md" />
                   <div>
-                    <p className="font-medium text-neutral-900 dark:text-neutral-100">{u.name}</p>
-                    <p className="text-xs text-neutral-500">{u.email}</p>
-                    {u.verificationReason && <p className="text-xs text-neutral-500 mt-1 italic">"{u.verificationReason}"</p>}
+                    <p className="font-medium text-jolshaa-on-surface">{u.name}</p>
+                    <p className="text-xs text-jolshaa-on-surface-variant">{u.email}</p>
+                    {u.verificationReason && <p className="text-xs text-jolshaa-on-surface-variant mt-1 italic">"{u.verificationReason}"</p>}
                   </div>
                 </div>
                 <div className="flex gap-1.5">
@@ -1091,7 +1091,7 @@ const AdminsTab = () => {
   return (
     <div className="space-y-4">
       {loading ? (
-        <div className="text-center py-8 text-neutral-500">Loading...</div>
+        <div className="text-center py-8 text-jolshaa-on-surface-variant">Loading...</div>
       ) : (
         <div className="grid gap-3 md:grid-cols-2">
           {admins.map(a => (
@@ -1099,8 +1099,8 @@ const AdminsTab = () => {
               <div className="flex items-center gap-3">
                 <Avatar src={a.profilePhoto} alt={a.name} size="lg" />
                 <div className="flex-1">
-                  <p className="font-medium text-neutral-900 dark:text-neutral-100">{a.name}</p>
-                  <p className="text-xs text-neutral-500">{a.email}</p>
+                  <p className="font-medium text-jolshaa-on-surface">{a.name}</p>
+                  <p className="text-xs text-jolshaa-on-surface-variant">{a.email}</p>
                 </div>
                 <Badge variant={roleColors[a.role] || 'neutral'} size="sm">{a.role}</Badge>
               </div>
@@ -1160,48 +1160,48 @@ const AuditTab = () => {
   return (
     <div className="space-y-4">
       {loading ? (
-        <div className="text-center py-8 text-neutral-500">Loading...</div>
+        <div className="text-center py-8 text-jolshaa-on-surface-variant">Loading...</div>
       ) : (
         <Card padding={false}>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-neutral-200 dark:border-neutral-700">
-                  <th className="text-left px-4 py-3 font-medium text-neutral-500">Admin</th>
-                  <th className="text-left px-4 py-3 font-medium text-neutral-500">Action</th>
-                  <th className="text-left px-4 py-3 font-medium text-neutral-500">Target</th>
-                  <th className="text-left px-4 py-3 font-medium text-neutral-500">Details</th>
-                  <th className="text-left px-4 py-3 font-medium text-neutral-500">Time</th>
+                <tr className="border-b border-jolshaa-outline-variant">
+                  <th className="text-left px-4 py-3 font-medium text-jolshaa-on-surface-variant">Admin</th>
+                  <th className="text-left px-4 py-3 font-medium text-jolshaa-on-surface-variant">Action</th>
+                  <th className="text-left px-4 py-3 font-medium text-jolshaa-on-surface-variant">Target</th>
+                  <th className="text-left px-4 py-3 font-medium text-jolshaa-on-surface-variant">Details</th>
+                  <th className="text-left px-4 py-3 font-medium text-jolshaa-on-surface-variant">Time</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-neutral-100 dark:divide-neutral-700">
+              <tbody className="divide-y divide-jolshaa-outline-variant">
                 {logs.map(log => (
-                  <tr key={log._id} className="hover:bg-neutral-50 dark:hover:bg-neutral-700/50">
+                  <tr key={log._id} className="hover:bg-jolshaa-surface-container-low">
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-2">
                         <Avatar src={log.admin?.profilePhoto} alt={log.admin?.name} size="xs" />
-                        <span className="text-xs font-medium">{log.admin?.name}</span>
+                        <span className="text-xs font-medium text-jolshaa-on-surface">{log.admin?.name}</span>
                       </div>
                     </td>
                     <td className="px-4 py-3">
                       <Badge variant="neutral" size="xs">{actionLabels[log.action] || log.action}</Badge>
                     </td>
-                    <td className="px-4 py-3 text-xs text-neutral-600 dark:text-neutral-400">{log.targetName || log.targetType}</td>
-                    <td className="px-4 py-3 text-xs text-neutral-500">{JSON.stringify(log.details)}</td>
-                    <td className="px-4 py-3 text-xs text-neutral-400">{new Date(log.createdAt).toLocaleString()}</td>
+                    <td className="px-4 py-3 text-xs text-jolshaa-on-surface-variant">{log.targetName || log.targetType}</td>
+                    <td className="px-4 py-3 text-xs text-jolshaa-on-surface-variant">{JSON.stringify(log.details)}</td>
+                    <td className="px-4 py-3 text-xs text-jolshaa-on-surface-variant">{new Date(log.createdAt).toLocaleString()}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
-          {logs.length === 0 && <p className="text-center py-6 text-neutral-500 text-sm">No audit logs</p>}
+          {logs.length === 0 && <p className="text-center py-6 text-jolshaa-on-surface-variant text-sm">No audit logs</p>}
         </Card>
       )}
 
       {totalPages > 1 && (
         <div className="flex justify-center gap-2">
           <Button variant="secondary" size="sm" disabled={page <= 1} onClick={() => fetchLogs(page - 1)}>Previous</Button>
-          <span className="text-sm text-neutral-500 py-1">Page {page} of {totalPages}</span>
+          <span className="text-sm text-jolshaa-on-surface-variant py-1">Page {page} of {totalPages}</span>
           <Button variant="secondary" size="sm" disabled={page >= totalPages} onClick={() => fetchLogs(page + 1)}>Next</Button>
         </div>
       )}
@@ -1274,20 +1274,20 @@ const PostsModerationTab = () => {
     <div className="space-y-4">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">Post Moderation</h1>
-        <p className="text-sm text-neutral-500 mt-1">Review, flag, hide, or remove posts</p>
+        <h1 className="text-2xl font-bold font-display text-jolshaa-on-surface">Post Moderation</h1>
+        <p className="text-sm text-jolshaa-on-surface-variant mt-1">Review, flag, hide, or remove posts</p>
       </div>
 
       {/* Filter tabs */}
-      <div className="flex gap-1 border-b border-neutral-200 dark:border-neutral-700">
+      <div className="flex gap-1 border-b border-jolshaa-outline-variant">
         {filterTabs.map(tab => (
           <button
             key={tab.key}
             onClick={() => setFilter(tab.key)}
             className={`px-4 py-2.5 text-sm font-medium border-b-2 transition-colors ${
               filter === tab.key
-                ? 'border-primary-600 text-primary-600 dark:border-primary-400 dark:text-primary-400'
-                : 'border-transparent text-neutral-500 hover:text-neutral-700 dark:text-neutral-400'
+                ? 'border-jolshaa-teal text-jolshaa-teal'
+                : 'border-transparent text-jolshaa-on-surface-variant hover:text-jolshaa-on-surface'
             }`}
           >
             {tab.label}
@@ -1298,8 +1298,8 @@ const PostsModerationTab = () => {
 
       {/* Bulk action bar */}
       {selectedIds.length > 0 && (
-        <div className="bg-primary-50 dark:bg-primary-900/20 border border-primary-200 dark:border-primary-800 rounded-lg px-4 py-3 flex items-center justify-between">
-          <span className="text-sm font-medium text-primary-700 dark:text-primary-300">{selectedIds.length} posts selected</span>
+        <div className="bg-jolshaa-teal/10 border border-jolshaa-teal/30 rounded-lg px-4 py-3 flex items-center justify-between">
+          <span className="text-sm font-medium text-jolshaa-teal">{selectedIds.length} posts selected</span>
           <div className="flex gap-2">
             <Button size="xs" variant="ghost" onClick={() => bulkAction('flag')}>Bulk Flag</Button>
             <Button size="xs" variant="ghost" onClick={() => bulkAction('hide')}>Bulk Hide</Button>
@@ -1311,15 +1311,15 @@ const PostsModerationTab = () => {
 
       {/* Posts list */}
       {loading ? (
-        <div className="text-center py-8 text-neutral-500">Loading...</div>
+        <div className="text-center py-8 text-jolshaa-on-surface-variant">Loading...</div>
       ) : posts.length === 0 ? (
-        <div className="text-center py-12 text-neutral-500">No posts found</div>
+        <div className="text-center py-12 text-jolshaa-on-surface-variant">No posts found</div>
       ) : (
         <div className="space-y-2">
           {/* Select all */}
           <div className="flex items-center gap-2 px-1">
             <input type="checkbox" checked={selectedIds.length === posts.length && posts.length > 0} onChange={selectAll} className="rounded" />
-            <span className="text-xs text-neutral-500">Select all ({posts.length})</span>
+            <span className="text-xs text-jolshaa-on-surface-variant">Select all ({posts.length})</span>
           </div>
 
           {/* Post cards with inline preview */}
@@ -1336,8 +1336,8 @@ const PostsModerationTab = () => {
                   <div className="flex items-start justify-between gap-2">
                     <div className="flex items-center gap-2 mb-2">
                       <Avatar src={post.author?.profilePhoto} alt={post.author?.name} size="xs" />
-                      <span className="text-xs font-medium text-neutral-900 dark:text-neutral-100">{post.author?.name}</span>
-                      <span className="text-2xs text-neutral-400">{new Date(post.createdAt).toLocaleDateString()}</span>
+                      <span className="text-xs font-medium text-jolshaa-on-surface">{post.author?.name}</span>
+                      <span className="text-2xs text-jolshaa-on-surface-variant">{new Date(post.createdAt).toLocaleDateString()}</span>
                       <div className="flex gap-1">
                         {post.isFlagged && <Badge variant="danger" size="xs">Flagged</Badge>}
                         {post.isHidden && <Badge variant="warning" size="xs">Hidden</Badge>}
@@ -1347,17 +1347,17 @@ const PostsModerationTab = () => {
                   </div>
 
                   {/* Inline content preview */}
-                  <p className="text-sm text-neutral-700 dark:text-neutral-300 mb-2">{post.text?.substring(0, 300) || 'Media post'}</p>
+                  <p className="text-sm text-jolshaa-on-surface mb-2">{post.text?.substring(0, 300) || 'Media post'}</p>
 
                   {/* Media preview */}
                   {post.media?.length > 0 && (
                     <div className="flex gap-2 mb-2">
                       {post.media.slice(0, 3).map((m, i) => (
-                        <div key={i} className="w-20 h-20 rounded-lg bg-neutral-100 dark:bg-neutral-700 overflow-hidden">
+                        <div key={i} className="w-20 h-20 rounded-lg bg-jolshaa-surface-container-low overflow-hidden">
                           {m.type === 'image' || m.endsWith?.('.jpg') || m.endsWith?.('.png') ? (
                             <img src={m.url || m} alt="" className="w-full h-full object-cover" />
                           ) : (
-                            <div className="w-full h-full flex items-center justify-center text-neutral-400">
+                            <div className="w-full h-full flex items-center justify-center text-jolshaa-outline">
                               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
                               </svg>
@@ -1366,7 +1366,7 @@ const PostsModerationTab = () => {
                         </div>
                       ))}
                       {post.media.length > 3 && (
-                        <div className="w-20 h-20 rounded-lg bg-neutral-100 dark:bg-neutral-700 flex items-center justify-center text-xs text-neutral-500">
+                        <div className="w-20 h-20 rounded-lg bg-jolshaa-surface-container-low flex items-center justify-center text-xs text-jolshaa-on-surface-variant">
                           +{post.media.length - 3}
                         </div>
                       )}
@@ -1436,8 +1436,8 @@ const CommentsModerationTab = () => {
         ))}
       </div>
 
-      {loading ? <div className="text-center py-8 text-neutral-500">Loading...</div> : comments.length === 0 ? (
-        <div className="text-center py-12 text-neutral-500">No comments found</div>
+      {loading ? <div className="text-center py-8 text-jolshaa-on-surface-variant">Loading...</div> : comments.length === 0 ? (
+        <div className="text-center py-12 text-jolshaa-on-surface-variant">No comments found</div>
       ) : (
         <div className="space-y-2">
           {comments.map(c => (
@@ -1446,12 +1446,12 @@ const CommentsModerationTab = () => {
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-1">
                     <Avatar src={c.author?.profilePhoto} alt={c.author?.name} size="xs" />
-                    <span className="text-xs font-medium">{c.author?.name}</span>
+                    <span className="text-xs font-medium text-jolshaa-on-surface">{c.author?.name}</span>
                     {c.isFlagged && <Badge variant="danger" size="xs">Flagged</Badge>}
                     {c.isHidden && <Badge variant="warning" size="xs">Hidden</Badge>}
                   </div>
-                  <p className="text-sm text-neutral-700 dark:text-neutral-300">{c.text}</p>
-                  {c.post && <p className="text-xs text-neutral-400 mt-1">On post: "{c.post.text?.substring(0, 50)}..."</p>}
+                  <p className="text-sm text-jolshaa-on-surface">{c.text}</p>
+                  {c.post && <p className="text-xs text-jolshaa-on-surface-variant mt-1">On post: "{c.post.text?.substring(0, 50)}..."</p>}
                 </div>
                 <div className="flex gap-1 flex-shrink-0">
                   <Button size="xs" variant="ghost" onClick={() => handleAction(c._id, c.isFlagged ? 'approve' : 'flag')}>{c.isFlagged ? 'Approve' : 'Flag'}</Button>
@@ -1509,13 +1509,13 @@ const StoriesModerationTab = () => {
         ))}
       </div>
 
-      {loading ? <div className="text-center py-8 text-neutral-500">Loading...</div> : stories.length === 0 ? (
-        <div className="text-center py-12 text-neutral-500">No stories found</div>
+      {loading ? <div className="text-center py-8 text-jolshaa-on-surface-variant">Loading...</div> : stories.length === 0 ? (
+        <div className="text-center py-12 text-jolshaa-on-surface-variant">No stories found</div>
       ) : (
         <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
           {stories.map(s => (
             <Card key={s._id}>
-              <div className="aspect-[9/16] bg-neutral-100 dark:bg-neutral-700 rounded-lg mb-2 overflow-hidden">
+              <div className="aspect-[9/16] bg-jolshaa-surface-container-low rounded-lg mb-2 overflow-hidden">
                 {s.mediaType === 'video' ? (
                   <video src={s.media} className="w-full h-full object-cover" />
                 ) : (
@@ -1525,7 +1525,7 @@ const StoriesModerationTab = () => {
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Avatar src={s.author?.profilePhoto} alt={s.author?.name} size="xs" />
-                  <span className="text-xs font-medium">{s.author?.name}</span>
+                  <span className="text-xs font-medium text-jolshaa-on-surface">{s.author?.name}</span>
                 </div>
                 <div className="flex gap-1">
                   {s.isFlagged && <Badge variant="danger" size="xs">Flagged</Badge>}
@@ -1587,26 +1587,26 @@ const ReelsModerationTab = () => {
         ))}
       </div>
 
-      {loading ? <div className="text-center py-8 text-neutral-500">Loading...</div> : reels.length === 0 ? (
-        <div className="text-center py-12 text-neutral-500">No reels found</div>
+      {loading ? <div className="text-center py-8 text-jolshaa-on-surface-variant">Loading...</div> : reels.length === 0 ? (
+        <div className="text-center py-12 text-jolshaa-on-surface-variant">No reels found</div>
       ) : (
         <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
           {reels.map(r => (
             <Card key={r._id}>
-              <div className="aspect-[9/16] bg-neutral-100 dark:bg-neutral-700 rounded-lg mb-2 overflow-hidden">
+              <div className="aspect-[9/16] bg-jolshaa-surface-container-low rounded-lg mb-2 overflow-hidden">
                 <video src={r.video} poster={r.thumbnail} className="w-full h-full object-cover" controls={false} />
               </div>
               <div className="flex items-center justify-between mb-1">
                 <div className="flex items-center gap-2">
                   <Avatar src={r.author?.profilePhoto} alt={r.author?.name} size="xs" />
-                  <span className="text-xs font-medium">{r.author?.name}</span>
+                  <span className="text-xs font-medium text-jolshaa-on-surface">{r.author?.name}</span>
                 </div>
                 <div className="flex gap-1">
                   {r.isFlagged && <Badge variant="danger" size="xs">Flagged</Badge>}
                   {r.isHidden && <Badge variant="warning" size="xs">Hidden</Badge>}
                 </div>
               </div>
-              <p className="text-xs text-neutral-600 dark:text-neutral-400 truncate">{r.caption || 'No caption'}</p>
+              <p className="text-xs text-jolshaa-on-surface-variant truncate">{r.caption || 'No caption'}</p>
               <div className="flex gap-1 mt-2">
                 <Button size="xs" variant="ghost" className="flex-1" onClick={() => handleAction(r._id, r.isFlagged ? 'approve' : 'flag')}>{r.isFlagged ? 'Approve' : 'Flag'}</Button>
                 <Button size="xs" variant="ghost" className="flex-1" onClick={() => handleAction(r._id, 'hide')}>{r.isHidden ? 'Unhide' : 'Hide'}</Button>
@@ -1654,28 +1654,28 @@ const ListingsModerationTab = () => {
         ))}
       </div>
 
-      {loading ? <div className="text-center py-8 text-neutral-500">Loading...</div> : listings.length === 0 ? (
-        <div className="text-center py-12 text-neutral-500">No listings found</div>
+      {loading ? <div className="text-center py-8 text-jolshaa-on-surface-variant">Loading...</div> : listings.length === 0 ? (
+        <div className="text-center py-12 text-jolshaa-on-surface-variant">No listings found</div>
       ) : (
         <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
           {listings.map(l => (
             <Card key={l._id}>
               {l.images?.[0] && (
-                <div className="aspect-video bg-neutral-100 dark:bg-neutral-700 rounded-lg mb-2 overflow-hidden">
+                <div className="aspect-video bg-jolshaa-surface-container-low rounded-lg mb-2 overflow-hidden">
                   <img src={l.images[0]} alt={l.title} className="w-full h-full object-cover" />
                 </div>
               )}
               <div className="flex items-center justify-between mb-1">
-                <span className="text-sm font-medium text-neutral-900 dark:text-neutral-100">{l.title}</span>
+                <span className="text-sm font-medium text-jolshaa-on-surface">{l.title}</span>
                 <div className="flex gap-1">
                   {l.isFlagged && <Badge variant="danger" size="xs">Flagged</Badge>}
                   {l.isHidden && <Badge variant="warning" size="xs">Hidden</Badge>}
                 </div>
               </div>
-              <p className="text-xs text-neutral-500">${l.price} - {l.category}</p>
+              <p className="text-xs text-jolshaa-on-surface-variant">${l.price} - {l.category}</p>
               <div className="flex items-center gap-2 mt-1">
                 <Avatar src={l.seller?.profilePhoto} alt={l.seller?.name} size="xs" />
-                <span className="text-xs text-neutral-500">{l.seller?.name}</span>
+                <span className="text-xs text-jolshaa-on-surface-variant">{l.seller?.name}</span>
               </div>
               <div className="flex gap-1 mt-2">
                 <Button size="xs" variant="ghost" className="flex-1" onClick={() => handleAction(l._id, l.isFlagged ? 'approve' : 'flag')}>{l.isFlagged ? 'Approve' : 'Flag'}</Button>
@@ -1703,17 +1703,17 @@ const SafetyDashboardTab = () => {
     API.get('/admin/safety/dashboard').then(res => setData(res.data)).finally(() => setLoading(false));
   }, []);
 
-  if (loading) return <div className="text-center py-8 text-neutral-500">Loading...</div>;
+  if (loading) return <div className="text-center py-8 text-jolshaa-on-surface-variant">Loading...</div>;
   if (!data) return null;
 
   const statCards = [
-    { label: 'Total Reports', value: data.totalReports, color: 'text-neutral-600', bg: 'bg-neutral-100 dark:bg-neutral-700' },
-    { label: 'Pending', value: data.pendingReports, color: 'text-amber-600', bg: 'bg-amber-50 dark:bg-amber-900/20' },
-    { label: 'Escalated', value: data.escalatedReports, color: 'text-red-600', bg: 'bg-red-50 dark:bg-red-900/20' },
-    { label: 'Resolved Today', value: data.resolvedToday, color: 'text-green-600', bg: 'bg-green-50 dark:bg-green-900/20' },
-    { label: 'Resolved This Week', value: data.resolvedThisWeek, color: 'text-primary-600', bg: 'bg-primary-50 dark:bg-primary-900/20' },
-    { label: 'Resolved This Month', value: data.resolvedThisMonth, color: 'text-blue-600', bg: 'bg-blue-50 dark:bg-blue-900/20' },
-    { label: 'Avg Resolution', value: `${data.averageResolutionHours}h`, color: 'text-neutral-600', bg: 'bg-neutral-100 dark:bg-neutral-700' },
+    { label: 'Total Reports', value: data.totalReports, color: 'text-jolshaa-on-surface', bg: 'bg-jolshaa-surface-container-low' },
+    { label: 'Pending', value: data.pendingReports, color: 'text-amber-600', bg: 'bg-amber-50' },
+    { label: 'Escalated', value: data.escalatedReports, color: 'text-red-600', bg: 'bg-red-50' },
+    { label: 'Resolved Today', value: data.resolvedToday, color: 'text-green-600', bg: 'bg-green-50' },
+    { label: 'Resolved This Week', value: data.resolvedThisWeek, color: 'text-jolshaa-teal', bg: 'bg-jolshaa-teal/10' },
+    { label: 'Resolved This Month', value: data.resolvedThisMonth, color: 'text-blue-600', bg: 'bg-blue-50' },
+    { label: 'Avg Resolution', value: `${data.averageResolutionHours}h`, color: 'text-jolshaa-on-surface', bg: 'bg-jolshaa-surface-container-low' },
   ];
 
   return (
@@ -1721,7 +1721,7 @@ const SafetyDashboardTab = () => {
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
         {statCards.map(card => (
           <Card key={card.label} className={card.bg}>
-            <p className="text-xs font-medium text-neutral-500">{card.label}</p>
+            <p className="text-xs font-medium text-jolshaa-on-surface-variant">{card.label}</p>
             <p className={`text-2xl font-bold ${card.color}`}>{card.value}</p>
           </Card>
         ))}
@@ -1729,11 +1729,11 @@ const SafetyDashboardTab = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Card>
-          <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-3">Reports by Reason</h3>
+          <h3 className="text-sm font-semibold font-display text-jolshaa-on-surface mb-3">Reports by Reason</h3>
           <div className="space-y-2">
             {data.reportsByReason?.map(r => (
               <div key={r._id} className="flex items-center justify-between text-xs">
-                <span className="text-neutral-600 dark:text-neutral-400 capitalize">{r._id?.replace(/_/g, ' ')}</span>
+                <span className="text-jolshaa-on-surface-variant capitalize">{r._id?.replace(/_/g, ' ')}</span>
                 <Badge variant="neutral" size="xs">{r.count}</Badge>
               </div>
             ))}
@@ -1741,13 +1741,13 @@ const SafetyDashboardTab = () => {
         </Card>
 
         <Card>
-          <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-3">Reports by Priority</h3>
+          <h3 className="text-sm font-semibold font-display text-jolshaa-on-surface mb-3">Reports by Priority</h3>
           <div className="space-y-2">
             {data.reportsByPriority?.map(r => {
               const colors = { low: 'success', medium: 'warning', high: 'danger', critical: 'danger' };
               return (
                 <div key={r._id} className="flex items-center justify-between text-xs">
-                  <span className="text-neutral-600 dark:text-neutral-400 capitalize">{r._id}</span>
+                  <span className="text-jolshaa-on-surface-variant capitalize">{r._id}</span>
                   <Badge variant={colors[r._id] || 'neutral'} size="xs">{r.count}</Badge>
                 </div>
               );
@@ -1758,13 +1758,13 @@ const SafetyDashboardTab = () => {
 
       {data.topReportedUsers?.length > 0 && (
         <Card>
-          <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-3">Most Reported Users</h3>
+          <h3 className="text-sm font-semibold font-display text-jolshaa-on-surface mb-3">Most Reported Users</h3>
           <div className="space-y-2">
             {data.topReportedUsers.map(u => (
               <div key={u._id} className="flex items-center gap-3 text-xs">
                 <Avatar src={u.profilePhoto} alt={u.name} size="xs" />
-                <span className="font-medium text-neutral-900 dark:text-neutral-100">{u.name}</span>
-                <span className="text-neutral-500">{u.reportsReceived} reports</span>
+                <span className="font-medium text-jolshaa-on-surface">{u.name}</span>
+                <span className="text-jolshaa-on-surface-variant">{u.reportsReceived} reports</span>
                 <Badge variant={u.isRepeatOffender ? 'danger' : 'neutral'} size="xs">Score: {u.safetyScore}</Badge>
                 {u.isBanned && <Badge variant="danger" size="xs">Banned</Badge>}
                 {u.isSuspended && <Badge variant="warning" size="xs">Suspended</Badge>}
@@ -1776,18 +1776,18 @@ const SafetyDashboardTab = () => {
 
       {data.recentReports?.length > 0 && (
         <Card>
-          <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-3">Recent Reports</h3>
+          <h3 className="text-sm font-semibold font-display text-jolshaa-on-surface mb-3">Recent Reports</h3>
           <div className="space-y-2">
             {data.recentReports.map(r => (
               <div key={r._id} className="flex items-center gap-3 text-xs">
                 <Avatar src={r.reporter?.profilePhoto} alt={r.reporter?.name} size="xs" />
-                <span className="text-neutral-700 dark:text-neutral-300">
-                  <span className="font-medium">{r.reporter?.name}</span> reported{' '}
+                <span className="text-jolshaa-on-surface-variant">
+                  <span className="font-medium text-jolshaa-on-surface">{r.reporter?.name}</span> reported{' '}
                   <Badge variant="neutral" size="xs">{r.targetType}</Badge>
-                  <span className="ml-1 text-neutral-500">{r.reason?.replace(/_/g, ' ')}</span>
+                  <span className="ml-1 text-jolshaa-on-surface-variant">{r.reason?.replace(/_/g, ' ')}</span>
                 </span>
-                {r.assignedTo && <span className="text-neutral-400 ml-auto">Assigned to {r.assignedTo.name}</span>}
-                <span className="text-neutral-400 ml-auto">{new Date(r.createdAt).toLocaleDateString()}</span>
+                {r.assignedTo && <span className="text-jolshaa-on-surface-variant ml-auto">Assigned to {r.assignedTo.name}</span>}
+                <span className="text-jolshaa-on-surface-variant ml-auto">{new Date(r.createdAt).toLocaleDateString()}</span>
               </div>
             ))}
           </div>
@@ -1842,8 +1842,8 @@ const SpamQueueTab = () => {
         </Button>
       </div>
 
-      {loading ? <div className="text-center py-8 text-neutral-500">Loading...</div> : flags.length === 0 ? (
-        <div className="text-center py-12 text-neutral-500">No spam flags found</div>
+      {loading ? <div className="text-center py-8 text-jolshaa-on-surface-variant">Loading...</div> : flags.length === 0 ? (
+        <div className="text-center py-12 text-jolshaa-on-surface-variant">No spam flags found</div>
       ) : (
         <div className="space-y-2">
           {flags.map(f => (
@@ -1852,12 +1852,12 @@ const SpamQueueTab = () => {
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-1">
                     <Avatar src={f.user?.profilePhoto} alt={f.user?.name} size="xs" />
-                    <span className="text-xs font-medium">{f.user?.name}</span>
+                    <span className="text-xs font-medium text-jolshaa-on-surface">{f.user?.name}</span>
                     <Badge variant={f.status === 'confirmed' ? 'danger' : f.status === 'dismissed' ? 'success' : 'warning'} size="xs">{f.status}</Badge>
                     <Badge variant="neutral" size="xs">{f.contentType}</Badge>
-                    <span className="text-xs text-neutral-400">Confidence: {f.confidence}%</span>
+                    <span className="text-xs text-jolshaa-on-surface-variant">Confidence: {f.confidence}%</span>
                   </div>
-                  <p className="text-sm text-neutral-700 dark:text-neutral-300">{f.contentText?.substring(0, 150)}</p>
+                  <p className="text-sm text-jolshaa-on-surface-variant">{f.contentText?.substring(0, 150)}</p>
                   <div className="flex flex-wrap gap-1 mt-1">
                     {f.flags?.map((flag, i) => (
                       <Badge key={i} variant={flag.severity === 'high' ? 'danger' : flag.severity === 'medium' ? 'warning' : 'neutral'} size="xs">{flag.type}</Badge>
@@ -1888,21 +1888,21 @@ const BlockedUsersTab = () => {
     API.get('/admin/safety/blocked-users').then(res => setData(res.data)).finally(() => setLoading(false));
   }, []);
 
-  if (loading) return <div className="text-center py-8 text-neutral-500">Loading...</div>;
+  if (loading) return <div className="text-center py-8 text-jolshaa-on-surface-variant">Loading...</div>;
 
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Card>
-          <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-3">Banned / Suspended Users</h3>
+          <h3 className="text-sm font-semibold font-display text-jolshaa-on-surface mb-3">Banned / Suspended Users</h3>
           <div className="space-y-2">
             {data.users.length === 0 ? (
-              <p className="text-xs text-neutral-500">No banned or suspended users</p>
+              <p className="text-xs text-jolshaa-on-surface-variant">No banned or suspended users</p>
             ) : data.users.map(u => (
               <div key={u._id} className="flex items-center gap-3 text-xs">
                 <Avatar src={u.profilePhoto} alt={u.name} size="xs" />
                 <div className="flex-1">
-                  <span className="font-medium text-neutral-900 dark:text-neutral-100">{u.name}</span>
+                  <span className="font-medium text-jolshaa-on-surface">{u.name}</span>
                   <div className="flex gap-1 mt-0.5">
                     {u.isBanned && <Badge variant="danger" size="xs">Banned</Badge>}
                     {u.isSuspended && <Badge variant="warning" size="xs">Suspended</Badge>}
@@ -1910,8 +1910,8 @@ const BlockedUsersTab = () => {
                   </div>
                 </div>
                 <div className="text-right">
-                  <p className="text-neutral-500">{u.reportsReceived} reports</p>
-                  <p className="text-neutral-400">Score: {u.safetyScore}</p>
+                  <p className="text-jolshaa-on-surface-variant">{u.reportsReceived} reports</p>
+                  <p className="text-jolshaa-on-surface-variant">Score: {u.safetyScore}</p>
                 </div>
               </div>
             ))}
@@ -1919,13 +1919,13 @@ const BlockedUsersTab = () => {
         </Card>
 
         <Card>
-          <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-3">Most Blocked Users (by others)</h3>
+          <h3 className="text-sm font-semibold font-display text-jolshaa-on-surface mb-3">Most Blocked Users (by others)</h3>
           <div className="space-y-2">
             {data.blockedByUser?.length === 0 ? (
-              <p className="text-xs text-neutral-500">No data</p>
+              <p className="text-xs text-jolshaa-on-surface-variant">No data</p>
             ) : data.blockedByUser?.map(u => (
               <div key={u._id} className="flex items-center justify-between text-xs">
-                <span className="text-neutral-700 dark:text-neutral-300">{u.name}</span>
+                <span className="text-jolshaa-on-surface-variant">{u.name}</span>
                 <Badge variant="danger" size="xs">{u.blockedCount} blocks</Badge>
               </div>
             ))}
@@ -1977,41 +1977,41 @@ const RepeatOffendersTab = () => {
 
   return (
     <div className="space-y-4">
-      {loading ? <div className="text-center py-8 text-neutral-500">Loading...</div> : users.length === 0 ? (
-        <div className="text-center py-12 text-neutral-500">No repeat offenders found</div>
+      {loading ? <div className="text-center py-8 text-jolshaa-on-surface-variant">Loading...</div> : users.length === 0 ? (
+        <div className="text-center py-12 text-jolshaa-on-surface-variant">No repeat offenders found</div>
       ) : (
         <Card padding={false}>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-neutral-200 dark:border-neutral-700">
-                  <th className="text-left px-4 py-3 font-medium text-neutral-500">User</th>
-                  <th className="text-left px-4 py-3 font-medium text-neutral-500">Reports</th>
-                  <th className="text-left px-4 py-3 font-medium text-neutral-500">Score</th>
-                  <th className="text-left px-4 py-3 font-medium text-neutral-500">Status</th>
-                  <th className="text-left px-4 py-3 font-medium text-neutral-500">Warnings</th>
-                  <th className="text-right px-4 py-3 font-medium text-neutral-500">Actions</th>
+                <tr className="border-b border-jolshaa-outline-variant">
+                  <th className="text-left px-4 py-3 font-medium text-jolshaa-on-surface-variant">User</th>
+                  <th className="text-left px-4 py-3 font-medium text-jolshaa-on-surface-variant">Reports</th>
+                  <th className="text-left px-4 py-3 font-medium text-jolshaa-on-surface-variant">Score</th>
+                  <th className="text-left px-4 py-3 font-medium text-jolshaa-on-surface-variant">Status</th>
+                  <th className="text-left px-4 py-3 font-medium text-jolshaa-on-surface-variant">Warnings</th>
+                  <th className="text-right px-4 py-3 font-medium text-jolshaa-on-surface-variant">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-neutral-100 dark:divide-neutral-700">
+              <tbody className="divide-y divide-jolshaa-outline-variant">
                 {users.map(u => (
-                  <tr key={u._id} className="hover:bg-neutral-50 dark:hover:bg-neutral-700/50">
+                  <tr key={u._id} className="hover:bg-jolshaa-surface-container-low">
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
                         <Avatar src={u.profilePhoto} alt={u.name} size="sm" />
                         <div>
-                          <p className="font-medium text-neutral-900 dark:text-neutral-100">{u.name}</p>
-                          <p className="text-xs text-neutral-500">{u.email}</p>
+                          <p className="font-medium text-jolshaa-on-surface">{u.name}</p>
+                          <p className="text-xs text-jolshaa-on-surface-variant">{u.email}</p>
                         </div>
                       </div>
                     </td>
-                    <td className="px-4 py-3 text-xs font-medium">{u.reportsReceived}</td>
+                    <td className="px-4 py-3 text-xs font-medium text-jolshaa-on-surface">{u.reportsReceived}</td>
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-2">
-                        <div className="w-16 h-1.5 bg-neutral-200 dark:bg-neutral-700 rounded-full overflow-hidden">
+                        <div className="w-16 h-1.5 bg-jolshaa-surface-container-high rounded-full overflow-hidden">
                           <div className={`h-full rounded-full ${u.safetyScore >= 70 ? 'bg-green-500' : u.safetyScore >= 40 ? 'bg-amber-500' : 'bg-red-500'}`} style={{ width: `${u.safetyScore}%` }} />
                         </div>
-                        <span className="text-xs text-neutral-500">{u.safetyScore}</span>
+                        <span className="text-xs text-jolshaa-on-surface-variant">{u.safetyScore}</span>
                       </div>
                     </td>
                     <td className="px-4 py-3">
@@ -2045,21 +2045,21 @@ const RepeatOffendersTab = () => {
         <Modal isOpen={!!selectedUser} onClose={() => { setSelectedUser(null); setCaseData(null); }} title={`Case History: ${selectedUser.name}`}>
           <div className="p-5 space-y-4 max-h-[60vh] overflow-y-auto">
             <div className="grid grid-cols-2 gap-3 text-xs">
-              <div><span className="text-neutral-500">Safety Score:</span> <span className="font-medium">{selectedUser.safetyScore}</span></div>
-              <div><span className="text-neutral-500">Reports Received:</span> <span className="font-medium">{selectedUser.reportsReceived}</span></div>
-              <div><span className="text-neutral-500">Joined:</span> <span className="font-medium">{new Date(selectedUser.createdAt).toLocaleDateString()}</span></div>
-              <div><span className="text-neutral-500">Warnings:</span> <span className="font-medium">{selectedUser.warnings?.length || 0}</span></div>
+              <div><span className="text-jolshaa-on-surface-variant">Safety Score:</span> <span className="font-medium text-jolshaa-on-surface">{selectedUser.safetyScore}</span></div>
+              <div><span className="text-jolshaa-on-surface-variant">Reports Received:</span> <span className="font-medium text-jolshaa-on-surface">{selectedUser.reportsReceived}</span></div>
+              <div><span className="text-jolshaa-on-surface-variant">Joined:</span> <span className="font-medium text-jolshaa-on-surface">{new Date(selectedUser.createdAt).toLocaleDateString()}</span></div>
+              <div><span className="text-jolshaa-on-surface-variant">Warnings:</span> <span className="font-medium text-jolshaa-on-surface">{selectedUser.warnings?.length || 0}</span></div>
             </div>
 
             {caseData.reportsAgainst?.length > 0 && (
               <div>
-                <h4 className="text-xs font-semibold text-neutral-700 dark:text-neutral-300 mb-2">Reports Against This User</h4>
+                <h4 className="font-display text-xs font-semibold text-jolshaa-on-surface mb-2">Reports Against This User</h4>
                 <div className="space-y-1">
                   {caseData.reportsAgainst.map(r => (
                     <div key={r._id} className="text-xs flex items-center gap-2">
                       <Badge variant={r.status === 'resolved' ? 'success' : r.status === 'escalated' ? 'danger' : 'warning'} size="xs">{r.status}</Badge>
-                      <span className="text-neutral-500">{r.reason?.replace(/_/g, ' ')}</span>
-                      <span className="text-neutral-400 ml-auto">{new Date(r.createdAt).toLocaleDateString()}</span>
+                      <span className="text-jolshaa-on-surface-variant">{r.reason?.replace(/_/g, ' ')}</span>
+                      <span className="text-jolshaa-on-surface-variant ml-auto">{new Date(r.createdAt).toLocaleDateString()}</span>
                     </div>
                   ))}
                 </div>
@@ -2068,12 +2068,12 @@ const RepeatOffendersTab = () => {
 
             {caseData.notes?.length > 0 && (
               <div>
-                <h4 className="text-xs font-semibold text-neutral-700 dark:text-neutral-300 mb-2">Moderator Notes</h4>
+                <h4 className="font-display text-xs font-semibold text-jolshaa-on-surface mb-2">Moderator Notes</h4>
                 <div className="space-y-1">
                   {caseData.notes.map(n => (
-                    <div key={n._id} className="text-xs p-2 bg-neutral-50 dark:bg-neutral-800 rounded">
-                      <p className="text-neutral-700 dark:text-neutral-300">{n.note}</p>
-                      <p className="text-neutral-400 mt-0.5">By {n.author?.name} - {new Date(n.createdAt).toLocaleDateString()}</p>
+                    <div key={n._id} className="text-xs p-2 bg-jolshaa-surface-container-low rounded">
+                      <p className="text-jolshaa-on-surface">{n.note}</p>
+                      <p className="text-jolshaa-on-surface-variant mt-0.5">By {n.author?.name} - {new Date(n.createdAt).toLocaleDateString()}</p>
                     </div>
                   ))}
                 </div>
@@ -2081,7 +2081,7 @@ const RepeatOffendersTab = () => {
             )}
 
             <div>
-              <h4 className="text-xs font-semibold text-neutral-700 dark:text-neutral-300 mb-2">Add Note</h4>
+              <h4 className="font-display text-xs font-semibold text-jolshaa-on-surface mb-2">Add Note</h4>
               <AddNoteForm targetType="user" targetId={selectedUser._id} onAdded={() => loadCaseHistory(selectedUser._id)} />
             </div>
           </div>
@@ -2112,7 +2112,7 @@ const AddNoteForm = ({ targetType, targetId, onAdded }) => {
         value={note}
         onChange={e => setNote(e.target.value)}
         placeholder="Add a note..."
-        className="w-full border border-neutral-300 dark:border-neutral-600 rounded-lg px-3 py-2 text-sm bg-white dark:bg-neutral-800 resize-none"
+        className="w-full border border-jolshaa-outline-variant rounded-lg px-3 py-2 text-sm bg-jolshaa-surface-container-lowest text-jolshaa-on-surface resize-none"
         rows={2}
       />
       <div className="flex gap-1 flex-wrap">
@@ -2132,7 +2132,7 @@ const AddNoteForm = ({ targetType, targetId, onAdded }) => {
 // ============================================================
 
 // Simple bar chart component (no external deps)
-const BarChart = ({ data, maxVal, color = 'bg-primary-500', height = 100, labelFn }) => {
+const BarChart = ({ data, maxVal, color = 'bg-jolshaa-teal', height = 100, labelFn }) => {
   const max = maxVal || Math.max(...data.map(d => d.value), 1);
   return (
     <div className="flex items-end gap-0.5" style={{ height }}>
@@ -2143,9 +2143,9 @@ const BarChart = ({ data, maxVal, color = 'bg-primary-500', height = 100, labelF
             style={{ height: `${(d.value / max) * 100}%`, minHeight: d.value > 0 ? 2 : 0 }}
           />
           {labelFn && (
-            <span className="text-2xs text-neutral-400 truncate w-full text-center" title={d.label}>{d.label}</span>
+            <span className="text-2xs text-jolshaa-on-surface-variant truncate w-full text-center" title={d.label}>{d.label}</span>
           )}
-          <div className="absolute -top-6 left-1/2 -translate-x-1/2 bg-neutral-800 text-white text-2xs px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-10">
+          <div className="absolute -top-6 left-1/2 -translate-x-1/2 bg-jolshaa-on-surface text-white text-2xs px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-10">
             {d.value}
           </div>
         </div>
@@ -2201,7 +2201,7 @@ const AnalyticsTab = () => {
     if (value === undefined || value === null) return null;
     const isPositive = value > 0;
     return (
-      <span className={`inline-flex items-center gap-0.5 text-[10px] font-medium ${isPositive ? 'text-green-600' : value < 0 ? 'text-red-600' : 'text-neutral-400'}`}>
+      <span className={`inline-flex items-center gap-0.5 text-[10px] font-medium ${isPositive ? 'text-green-600' : value < 0 ? 'text-red-600' : 'text-jolshaa-on-surface-variant'}`}>
         {isPositive ? '↑' : value < 0 ? '↓' : '→'} {Math.abs(value)}{suffix}
       </span>
     );
@@ -2217,13 +2217,13 @@ const AnalyticsTab = () => {
   if (loading) return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <div className="h-8 w-48 bg-neutral-100 dark:bg-neutral-800 rounded animate-pulse" />
-        <div className="h-8 w-32 bg-neutral-100 dark:bg-neutral-800 rounded animate-pulse" />
+        <div className="h-8 w-48 bg-jolshaa-surface-container-low rounded animate-pulse" />
+        <div className="h-8 w-32 bg-jolshaa-surface-container-low rounded animate-pulse" />
       </div>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        {[1,2,3,4].map(i => <div key={i} className="h-20 bg-neutral-100 dark:bg-neutral-800 rounded-lg animate-pulse" />)}
+        {[1,2,3,4].map(i => <div key={i} className="h-20 bg-jolshaa-surface-container-low rounded-lg animate-pulse" />)}
       </div>
-      <div className="h-64 bg-neutral-100 dark:bg-neutral-800 rounded-lg animate-pulse" />
+      <div className="h-64 bg-jolshaa-surface-container-low rounded-lg animate-pulse" />
     </div>
   );
 
@@ -2242,12 +2242,12 @@ const AnalyticsTab = () => {
       {/* Header with time range */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-lg font-bold text-neutral-900 dark:text-neutral-100">Analytics</h2>
-          <p className="text-xs text-neutral-500">Platform metrics and trends</p>
+          <h2 className="text-lg font-bold text-jolshaa-on-surface font-display">Analytics</h2>
+          <p className="text-xs text-jolshaa-on-surface-variant">Platform metrics and trends</p>
         </div>
-        <div className="flex items-center gap-1 bg-neutral-100 dark:bg-neutral-800 rounded-lg p-0.5">
+        <div className="flex items-center gap-1 bg-jolshaa-surface-container-low rounded-lg p-0.5">
           {timeRanges.map(r => (
-            <button key={r.key} onClick={() => setTimeRange(r.key)} className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all ${timeRange === r.key ? 'bg-white dark:bg-neutral-700 text-neutral-900 dark:text-neutral-100 shadow-sm' : 'text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300'}`}>{r.label}</button>
+            <button key={r.key} onClick={() => setTimeRange(r.key)} className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all ${timeRange === r.key ? 'bg-jolshaa-surface-container-lowest text-jolshaa-on-surface shadow-sm' : 'text-jolshaa-on-surface-variant hover:text-jolshaa-on-surface'}`}>{r.label}</button>
           ))}
         </div>
       </div>
@@ -2260,13 +2260,13 @@ const AnalyticsTab = () => {
           {/* Primary Metrics */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             {[
-              { label: 'Total Users', value: overview.totalUsers, color: 'text-neutral-600', trend: overview.usersTrend },
+              { label: 'Total Users', value: overview.totalUsers, color: 'text-jolshaa-on-surface', trend: overview.usersTrend },
               { label: 'DAU', value: overview.dau, color: 'text-blue-600', trend: overview.dauTrend },
               { label: 'New Today', value: overview.newUsersToday, color: 'text-green-600', trend: overview.newUsersTrend },
-              { label: 'New This Week', value: overview.newUsersWeek, color: 'text-primary-600' },
+              { label: 'New This Week', value: overview.newUsersWeek, color: 'text-jolshaa-teal' },
             ].map(card => (
               <Card key={card.label}>
-                <p className="text-[10px] font-medium text-neutral-500 uppercase tracking-wider">{card.label}</p>
+                <p className="text-[10px] font-medium text-jolshaa-on-surface-variant uppercase tracking-wider">{card.label}</p>
                 <p className={`text-2xl font-bold ${card.color} mt-1`}>{card.value}</p>
                 {card.trend !== undefined && <TrendBadge value={card.trend} suffix="%" />}
               </Card>
@@ -2281,8 +2281,8 @@ const AnalyticsTab = () => {
               { label: 'Escalated', value: overview.escalatedReports, color: 'text-red-600', urgent: overview.escalatedReports > 0 },
               { label: 'Ad Revenue', value: `$${overview.adRevenue?.toLocaleString()}`, color: 'text-emerald-600' },
             ].map(card => (
-              <Card key={card.label} className={card.urgent ? 'border-amber-200 dark:border-amber-800' : ''}>
-                <p className="text-[10px] font-medium text-neutral-500 uppercase tracking-wider">{card.label}</p>
+              <Card key={card.label} className={card.urgent ? 'border-amber-200' : ''}>
+                <p className="text-[10px] font-medium text-jolshaa-on-surface-variant uppercase tracking-wider">{card.label}</p>
                 <p className={`text-2xl font-bold ${card.color} mt-1`}>{card.value}</p>
               </Card>
             ))}
@@ -2291,7 +2291,7 @@ const AnalyticsTab = () => {
           {/* DAU Trend Chart */}
           {activeUsers?.dauTrend && (
             <Card>
-              <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-3">DAU Trend ({timeRange} days)</h3>
+              <h3 className="text-sm font-semibold font-display text-jolshaa-on-surface mb-3">DAU Trend ({timeRange} days)</h3>
               <BarChart
                 data={activeUsers.dauTrend.map(d => ({ label: d.date.slice(5), value: d.count }))}
                 color="bg-blue-500"
@@ -2304,20 +2304,20 @@ const AnalyticsTab = () => {
           {modPerf?.actionsByAdmin?.length > 0 && (
             <Card>
               <div className="flex items-center justify-between mb-3">
-                <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">Moderator Activity</h3>
-                <button onClick={() => setSubTab('moderators')} className="text-xs text-primary-600 hover:underline">View all</button>
+                <h3 className="text-sm font-semibold font-display text-jolshaa-on-surface">Moderator Activity</h3>
+                <button onClick={() => setSubTab('moderators')} className="text-xs text-jolshaa-teal hover:underline">View all</button>
               </div>
               <div className="space-y-2">
                 {modPerf.actionsByAdmin.slice(0, 3).map(a => (
                   <div key={a._id?._id} className="flex items-center gap-3 text-xs">
                     <Avatar src={a._id?.profilePhoto} alt={a._id?.name} size="xs" />
-                    <span className="flex-1 font-medium text-neutral-900 dark:text-neutral-100">{a._id?.name}</span>
-                    <div className="flex gap-2 text-neutral-500">
+                    <span className="flex-1 font-medium text-jolshaa-on-surface">{a._id?.name}</span>
+                    <div className="flex gap-2 text-jolshaa-on-surface-variant">
                       <span className="text-blue-600">{a.reportActions} reports</span>
                       <span className="text-amber-600">{a.userActions} users</span>
                       <span className="text-purple-600">{a.moderationActions} content</span>
                     </div>
-                    <span className="font-medium text-neutral-700 dark:text-neutral-300">{a.totalActions}</span>
+                    <span className="font-medium text-jolshaa-on-surface-variant">{a.totalActions}</span>
                   </div>
                 ))}
               </div>
@@ -2332,22 +2332,22 @@ const AnalyticsTab = () => {
           {/* Active User Metrics */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             <Card>
-              <p className="text-[10px] font-medium text-neutral-500 uppercase tracking-wider">DAU</p>
+              <p className="text-[10px] font-medium text-jolshaa-on-surface-variant uppercase tracking-wider">DAU</p>
               <p className="text-2xl font-bold text-blue-600 mt-1">{activeUsers.dau}</p>
               <TrendBadge value={activeUsers.dauTrend} suffix="%" />
             </Card>
             <Card>
-              <p className="text-[10px] font-medium text-neutral-500 uppercase tracking-wider">WAU</p>
-              <p className="text-2xl font-bold text-primary-600 mt-1">{activeUsers.wau}</p>
+              <p className="text-[10px] font-medium text-jolshaa-on-surface-variant uppercase tracking-wider">WAU</p>
+              <p className="text-2xl font-bold text-jolshaa-teal mt-1">{activeUsers.wau}</p>
             </Card>
             <Card>
-              <p className="text-[10px] font-medium text-neutral-500 uppercase tracking-wider">MAU</p>
+              <p className="text-[10px] font-medium text-jolshaa-on-surface-variant uppercase tracking-wider">MAU</p>
               <p className="text-2xl font-bold text-emerald-600 mt-1">{activeUsers.mau}</p>
             </Card>
             <Card>
-              <p className="text-[10px] font-medium text-neutral-500 uppercase tracking-wider">Stickiness</p>
+              <p className="text-[10px] font-medium text-jolshaa-on-surface-variant uppercase tracking-wider">Stickiness</p>
               <p className="text-2xl font-bold text-amber-600 mt-1">{activeUsers.stickiness}%</p>
-              <p className="text-[10px] text-neutral-400 mt-0.5">DAU/MAU ratio</p>
+              <p className="text-[10px] text-jolshaa-on-surface-variant mt-0.5">DAU/MAU ratio</p>
             </Card>
           </div>
 
@@ -2355,9 +2355,9 @@ const AnalyticsTab = () => {
           {userGrowth.signups?.length > 0 && (
             <Card>
               <div className="flex items-center justify-between mb-3">
-                <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">New Signups ({timeRange} days)</h3>
+                <h3 className="text-sm font-semibold font-display text-jolshaa-on-surface">New Signups ({timeRange} days)</h3>
                 <div className="flex gap-3 text-[10px]">
-                  <span className="text-neutral-500">Total: <span className="font-medium text-neutral-700 dark:text-neutral-300">{userGrowth.totalUsers}</span></span>
+                  <span className="text-jolshaa-on-surface-variant">Total: <span className="font-medium text-jolshaa-on-surface-variant">{userGrowth.totalUsers}</span></span>
                   <span className="text-blue-500">Male: <span className="font-medium">{userGrowth.maleCount}</span></span>
                   <span className="text-pink-500">Female: <span className="font-medium">{userGrowth.femaleCount}</span></span>
                   <span className="text-green-500">Verified: <span className="font-medium">{userGrowth.verifiedCount}</span></span>
@@ -2374,7 +2374,7 @@ const AnalyticsTab = () => {
           {/* DAU Trend */}
           {activeUsers.dauTrend && (
             <Card>
-              <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-3">DAU Trend ({timeRange} days)</h3>
+              <h3 className="text-sm font-semibold font-display text-jolshaa-on-surface mb-3">DAU Trend ({timeRange} days)</h3>
               <BarChart
                 data={activeUsers.dauTrend.map(d => ({ label: d.date.slice(5), value: d.count }))}
                 color="bg-blue-500"
@@ -2387,18 +2387,18 @@ const AnalyticsTab = () => {
           {retention?.cohorts && (
             <Card>
               <div className="flex items-center justify-between mb-3">
-                <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">Retention Cohorts</h3>
-                <span className="text-xs text-neutral-500">Overall: <span className="font-medium text-neutral-700 dark:text-neutral-300">{retention.overallRetention}%</span></span>
+                <h3 className="text-sm font-semibold font-display text-jolshaa-on-surface">Retention Cohorts</h3>
+                <span className="text-xs text-jolshaa-on-surface-variant">Overall: <span className="font-medium text-jolshaa-on-surface-variant">{retention.overallRetention}%</span></span>
               </div>
               <div className="space-y-2">
                 {retention.cohorts.map(c => (
                   <div key={c.month} className="flex items-center gap-3 text-xs">
-                    <span className="w-20 font-medium text-neutral-700 dark:text-neutral-300">{c.month}</span>
-                    <div className="flex-1 h-5 bg-neutral-100 dark:bg-neutral-700 rounded-full overflow-hidden">
+                    <span className="w-20 font-medium text-jolshaa-on-surface-variant">{c.month}</span>
+                    <div className="flex-1 h-5 bg-jolshaa-surface-container-low rounded-full overflow-hidden">
                       <div className={`h-full rounded-full transition-all ${c.retentionRate > 50 ? 'bg-green-500' : c.retentionRate > 30 ? 'bg-amber-500' : 'bg-red-500'}`} style={{ width: `${c.retentionRate}%` }} />
                     </div>
-                    <span className="w-16 text-right font-medium text-neutral-700 dark:text-neutral-300">{c.retentionRate}%</span>
-                    <span className="w-16 text-right text-neutral-400">{c.retained}/{c.size}</span>
+                    <span className="w-16 text-right font-medium text-jolshaa-on-surface-variant">{c.retentionRate}%</span>
+                    <span className="w-16 text-right text-jolshaa-on-surface-variant">{c.retained}/{c.size}</span>
                   </div>
                 ))}
               </div>
@@ -2419,8 +2419,8 @@ const AnalyticsTab = () => {
               { label: 'Reels', value: engagement.totalReels, sub: engagement.reelsInPeriod, color: 'amber' },
             ].map(card => (
               <Card key={card.label}>
-                <p className="text-[10px] font-medium text-neutral-500 uppercase tracking-wider">{card.label}</p>
-                <p className="text-2xl font-bold text-neutral-900 dark:text-neutral-100 mt-1">{card.value}</p>
+                <p className="text-[10px] font-medium text-jolshaa-on-surface-variant uppercase tracking-wider">{card.label}</p>
+                <p className="text-2xl font-bold text-jolshaa-on-surface mt-1">{card.value}</p>
                 <p className="text-[10px] text-green-600 mt-0.5">+{card.sub} this period</p>
               </Card>
             ))}
@@ -2428,7 +2428,7 @@ const AnalyticsTab = () => {
 
           {engagement.reactionBreakdown?.length > 0 && (
             <Card>
-              <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-3">Reaction Types</h3>
+              <h3 className="text-sm font-semibold font-display text-jolshaa-on-surface mb-3">Reaction Types</h3>
               <div className="space-y-1.5">
                 {engagement.reactionBreakdown.map(r => {
                   const max = engagement.reactionBreakdown[0]?.count || 1;
@@ -2436,10 +2436,10 @@ const AnalyticsTab = () => {
                   return (
                     <div key={r._id} className="flex items-center gap-2 text-xs">
                       <span className="w-12 capitalize">{r._id}</span>
-                      <div className="flex-1 h-4 bg-neutral-100 dark:bg-neutral-700 rounded-full overflow-hidden">
-                        <div className={`h-full rounded-full ${colors[r._id] || 'bg-neutral-500'}`} style={{ width: `${(r.count / max) * 100}%` }} />
+                      <div className="flex-1 h-4 bg-jolshaa-surface-container-low rounded-full overflow-hidden">
+                        <div className={`h-full rounded-full ${colors[r._id] || 'bg-jolshaa-outline'}`} style={{ width: `${(r.count / max) * 100}%` }} />
                       </div>
-                      <span className="w-12 text-right text-neutral-500">{r.count}</span>
+                      <span className="w-12 text-right text-jolshaa-on-surface-variant">{r.count}</span>
                     </div>
                   );
                 })}
@@ -2449,16 +2449,16 @@ const AnalyticsTab = () => {
 
           {engagement.topPosts?.length > 0 && (
             <Card>
-              <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-3">Top Posts by Engagement</h3>
+              <h3 className="text-sm font-semibold font-display text-jolshaa-on-surface mb-3">Top Posts by Engagement</h3>
               <div className="space-y-2">
                 {engagement.topPosts.map((p, i) => (
                   <div key={p._id} className="flex items-center gap-3 text-xs">
-                    <span className="text-neutral-400 w-4">{i + 1}.</span>
+                    <span className="text-jolshaa-on-surface-variant w-4">{i + 1}.</span>
                     <Avatar src={p.author?.profilePhoto} alt={p.author?.name} size="xs" />
                     <div className="flex-1 min-w-0">
-                      <p className="truncate text-neutral-700 dark:text-neutral-300">{p.text?.substring(0, 60) || 'Media post'}</p>
+                      <p className="truncate text-jolshaa-on-surface-variant">{p.text?.substring(0, 60) || 'Media post'}</p>
                     </div>
-                    <div className="flex gap-2 text-neutral-500 flex-shrink-0">
+                    <div className="flex gap-2 text-jolshaa-on-surface-variant flex-shrink-0">
                       <span>R: {p.analytics?.reach || 0}</span>
                       <span>E: {p.analytics?.engagement || 0}</span>
                     </div>
@@ -2469,13 +2469,13 @@ const AnalyticsTab = () => {
           )}
 
           <Card>
-            <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-3">Average Per Post</h3>
+            <h3 className="text-sm font-semibold font-display text-jolshaa-on-surface mb-3">Average Per Post</h3>
             <div className="grid grid-cols-2 md:grid-cols-5 gap-3 text-xs">
-              <div><span className="text-neutral-500">Reach:</span> <span className="font-medium">{engagement.avgEngagement?.avgReach?.toFixed(0) || 0}</span></div>
-              <div><span className="text-neutral-500">Impressions:</span> <span className="font-medium">{engagement.avgEngagement?.avgImpressions?.toFixed(0) || 0}</span></div>
-              <div><span className="text-neutral-500">Engagement:</span> <span className="font-medium">{engagement.avgEngagement?.avgEngagement?.toFixed(0) || 0}</span></div>
-              <div><span className="text-neutral-500">Clicks:</span> <span className="font-medium">{engagement.avgEngagement?.avgClicks?.toFixed(0) || 0}</span></div>
-              <div><span className="text-neutral-500">Shares:</span> <span className="font-medium">{engagement.avgEngagement?.avgShares?.toFixed(0) || 0}</span></div>
+              <div><span className="text-jolshaa-on-surface-variant">Reach:</span> <span className="font-medium">{engagement.avgEngagement?.avgReach?.toFixed(0) || 0}</span></div>
+              <div><span className="text-jolshaa-on-surface-variant">Impressions:</span> <span className="font-medium">{engagement.avgEngagement?.avgImpressions?.toFixed(0) || 0}</span></div>
+              <div><span className="text-jolshaa-on-surface-variant">Engagement:</span> <span className="font-medium">{engagement.avgEngagement?.avgEngagement?.toFixed(0) || 0}</span></div>
+              <div><span className="text-jolshaa-on-surface-variant">Clicks:</span> <span className="font-medium">{engagement.avgEngagement?.avgClicks?.toFixed(0) || 0}</span></div>
+              <div><span className="text-jolshaa-on-surface-variant">Shares:</span> <span className="font-medium">{engagement.avgEngagement?.avgShares?.toFixed(0) || 0}</span></div>
             </div>
           </Card>
         </div>
@@ -2486,7 +2486,7 @@ const AnalyticsTab = () => {
         <div className="space-y-4">
           {contentTrends.postsByType?.length > 0 && (
             <Card>
-              <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-3">Posts by Type</h3>
+              <h3 className="text-sm font-semibold font-display text-jolshaa-on-surface mb-3">Posts by Type</h3>
               <div className="space-y-1.5">
                 {contentTrends.postsByType.map(r => {
                   const max = Math.max(...contentTrends.postsByType.map(x => x.count), 1);
@@ -2494,10 +2494,10 @@ const AnalyticsTab = () => {
                   return (
                     <div key={r._id} className="flex items-center gap-2 text-xs">
                       <span className="w-16 capitalize">{r._id || 'unknown'}</span>
-                      <div className="flex-1 h-4 bg-neutral-100 dark:bg-neutral-700 rounded-full overflow-hidden">
-                        <div className={`h-full rounded-full ${colors[r._id] || 'bg-neutral-500'}`} style={{ width: `${(r.count / max) * 100}%` }} />
+                      <div className="flex-1 h-4 bg-jolshaa-surface-container-low rounded-full overflow-hidden">
+                        <div className={`h-full rounded-full ${colors[r._id] || 'bg-jolshaa-outline'}`} style={{ width: `${(r.count / max) * 100}%` }} />
                       </div>
-                      <span className="w-12 text-right text-neutral-500">{r.count}</span>
+                      <span className="w-12 text-right text-jolshaa-on-surface-variant">{r.count}</span>
                     </div>
                   );
                 })}
@@ -2507,18 +2507,18 @@ const AnalyticsTab = () => {
 
           {contentTrends.postsByVisibility?.length > 0 && (
             <Card>
-              <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-3">Posts by Visibility</h3>
+              <h3 className="text-sm font-semibold font-display text-jolshaa-on-surface mb-3">Posts by Visibility</h3>
               <div className="space-y-1.5">
                 {contentTrends.postsByVisibility.map(r => {
                   const max = Math.max(...contentTrends.postsByVisibility.map(x => x.count), 1);
-                  const colors = { public: 'bg-green-500', friends: 'bg-blue-500', onlyme: 'bg-neutral-400' };
+                  const colors = { public: 'bg-green-500', friends: 'bg-blue-500', onlyme: 'bg-jolshaa-outline' };
                   return (
                     <div key={r._id} className="flex items-center gap-2 text-xs">
                       <span className="w-16 capitalize">{r._id}</span>
-                      <div className="flex-1 h-4 bg-neutral-100 dark:bg-neutral-700 rounded-full overflow-hidden">
-                        <div className={`h-full rounded-full ${colors[r._id] || 'bg-neutral-500'}`} style={{ width: `${(r.count / max) * 100}%` }} />
+                      <div className="flex-1 h-4 bg-jolshaa-surface-container-low rounded-full overflow-hidden">
+                        <div className={`h-full rounded-full ${colors[r._id] || 'bg-jolshaa-outline'}`} style={{ width: `${(r.count / max) * 100}%` }} />
                       </div>
-                      <span className="w-12 text-right text-neutral-500">{r.count}</span>
+                      <span className="w-12 text-right text-jolshaa-on-surface-variant">{r.count}</span>
                     </div>
                   );
                 })}
@@ -2528,7 +2528,7 @@ const AnalyticsTab = () => {
 
           {contentTrends.postsPerDay?.length > 0 && (
             <Card>
-              <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-3">Content Per Day (30 days)</h3>
+              <h3 className="text-sm font-semibold font-display text-jolshaa-on-surface mb-3">Content Per Day (30 days)</h3>
               <BarChart
                 data={contentTrends.postsPerDay.map(d => ({ label: d._id.slice(5), value: d.count }))}
                 color="bg-blue-500"
@@ -2539,18 +2539,18 @@ const AnalyticsTab = () => {
 
           {contentTrends.topHashtags?.length > 0 && (
             <Card>
-              <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-3">Top Hashtags</h3>
+              <h3 className="text-sm font-semibold font-display text-jolshaa-on-surface mb-3">Top Hashtags</h3>
               <div className="space-y-1.5">
                 {contentTrends.topHashtags.slice(0, 15).map((h, i) => {
                   const max = contentTrends.topHashtags[0]?.count || 1;
                   return (
                     <div key={h._id} className="flex items-center gap-2 text-xs">
-                      <span className="text-neutral-400 w-4">{i + 1}.</span>
-                      <span className="font-medium text-primary-600">#{h._id}</span>
-                      <div className="flex-1 h-3 bg-neutral-100 dark:bg-neutral-700 rounded-full overflow-hidden">
-                        <div className="h-full bg-primary-400 rounded-full" style={{ width: `${(h.count / max) * 100}%` }} />
+                      <span className="text-jolshaa-on-surface-variant w-4">{i + 1}.</span>
+                      <span className="font-medium text-jolshaa-teal">#{h._id}</span>
+                      <div className="flex-1 h-3 bg-jolshaa-surface-container-low rounded-full overflow-hidden">
+                        <div className="h-full bg-jolshaa-teal rounded-full" style={{ width: `${(h.count / max) * 100}%` }} />
                       </div>
-                      <span className="w-8 text-right text-neutral-500">{h.count}</span>
+                      <span className="w-8 text-right text-jolshaa-on-surface-variant">{h.count}</span>
                     </div>
                   );
                 })}
@@ -2565,26 +2565,26 @@ const AnalyticsTab = () => {
         <div className="space-y-4">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             <Card>
-              <p className="text-[10px] font-medium text-neutral-500 uppercase tracking-wider">Avg Resolution</p>
-              <p className="text-2xl font-bold text-neutral-900 dark:text-neutral-100 mt-1">{modStats.avgResolutionHours}h</p>
+              <p className="text-[10px] font-medium text-jolshaa-on-surface-variant uppercase tracking-wider">Avg Resolution</p>
+              <p className="text-2xl font-bold text-jolshaa-on-surface mt-1">{modStats.avgResolutionHours}h</p>
             </Card>
-            <Card className={modStats.escalated > 0 ? 'border-red-200 dark:border-red-800' : ''}>
-              <p className="text-[10px] font-medium text-neutral-500 uppercase tracking-wider">Escalated</p>
+            <Card className={modStats.escalated > 0 ? 'border-red-200' : ''}>
+              <p className="text-[10px] font-medium text-jolshaa-on-surface-variant uppercase tracking-wider">Escalated</p>
               <p className={`text-2xl font-bold mt-1 ${modStats.escalated > 0 ? 'text-red-600' : 'text-green-600'}`}>{modStats.escalated}</p>
             </Card>
-            <Card className={modStats.flaggedPosts > 0 ? 'border-amber-200 dark:border-amber-800' : ''}>
-              <p className="text-[10px] font-medium text-neutral-500 uppercase tracking-wider">Flagged Posts</p>
+            <Card className={modStats.flaggedPosts > 0 ? 'border-amber-200' : ''}>
+              <p className="text-[10px] font-medium text-jolshaa-on-surface-variant uppercase tracking-wider">Flagged Posts</p>
               <p className={`text-2xl font-bold mt-1 ${modStats.flaggedPosts > 0 ? 'text-amber-600' : 'text-green-600'}`}>{modStats.flaggedPosts}</p>
             </Card>
             <Card>
-              <p className="text-[10px] font-medium text-neutral-500 uppercase tracking-wider">Flagged Comments</p>
+              <p className="text-[10px] font-medium text-jolshaa-on-surface-variant uppercase tracking-wider">Flagged Comments</p>
               <p className={`text-2xl font-bold mt-1 ${modStats.flaggedComments > 0 ? 'text-amber-600' : 'text-green-600'}`}>{modStats.flaggedComments}</p>
             </Card>
           </div>
 
           {modStats.reportsPerDay?.length > 0 && (
             <Card>
-              <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-3">Report Volume (30 days)</h3>
+              <h3 className="text-sm font-semibold font-display text-jolshaa-on-surface mb-3">Report Volume (30 days)</h3>
               <BarChart
                 data={modStats.reportsPerDay.map(d => ({ label: d._id.slice(5), value: d.count }))}
                 color="bg-red-500"
@@ -2596,17 +2596,17 @@ const AnalyticsTab = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {modStats.reportsByReason?.length > 0 && (
               <Card>
-                <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-3">Reports by Reason</h3>
+                <h3 className="text-sm font-semibold font-display text-jolshaa-on-surface mb-3">Reports by Reason</h3>
                 <div className="space-y-1.5">
                   {modStats.reportsByReason.map(r => {
                     const max = modStats.reportsByReason[0]?.count || 1;
                     return (
                       <div key={r._id} className="flex items-center gap-2 text-xs">
                         <span className="w-24 capitalize truncate">{r._id?.replace(/_/g, ' ')}</span>
-                        <div className="flex-1 h-3 bg-neutral-100 dark:bg-neutral-700 rounded-full overflow-hidden">
+                        <div className="flex-1 h-3 bg-jolshaa-surface-container-low rounded-full overflow-hidden">
                           <div className="h-full bg-red-400 rounded-full" style={{ width: `${(r.count / max) * 100}%` }} />
                         </div>
-                        <span className="w-8 text-right text-neutral-500">{r.count}</span>
+                        <span className="w-8 text-right text-jolshaa-on-surface-variant">{r.count}</span>
                       </div>
                     );
                   })}
@@ -2616,18 +2616,18 @@ const AnalyticsTab = () => {
 
             {modStats.reportsByStatus?.length > 0 && (
               <Card>
-                <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-3">Reports by Status</h3>
+                <h3 className="text-sm font-semibold font-display text-jolshaa-on-surface mb-3">Reports by Status</h3>
                 <div className="space-y-1.5">
                   {modStats.reportsByStatus.map(r => {
-                    const colors = { pending: 'bg-amber-400', reviewed: 'bg-blue-400', resolved: 'bg-green-400', dismissed: 'bg-neutral-400', escalated: 'bg-red-400' };
+                    const colors = { pending: 'bg-amber-400', reviewed: 'bg-blue-400', resolved: 'bg-green-400', dismissed: 'bg-jolshaa-outline', escalated: 'bg-red-400' };
                     const max = Math.max(...modStats.reportsByStatus.map(x => x.count), 1);
                     return (
                       <div key={r._id} className="flex items-center gap-2 text-xs">
                         <span className="w-16 capitalize">{r._id}</span>
-                        <div className="flex-1 h-3 bg-neutral-100 dark:bg-neutral-700 rounded-full overflow-hidden">
-                          <div className={`h-full rounded-full ${colors[r._id] || 'bg-neutral-400'}`} style={{ width: `${(r.count / max) * 100}%` }} />
+                        <div className="flex-1 h-3 bg-jolshaa-surface-container-low rounded-full overflow-hidden">
+                          <div className={`h-full rounded-full ${colors[r._id] || 'bg-jolshaa-outline'}`} style={{ width: `${(r.count / max) * 100}%` }} />
                         </div>
-                        <span className="w-8 text-right text-neutral-500">{r.count}</span>
+                        <span className="w-8 text-right text-jolshaa-on-surface-variant">{r.count}</span>
                       </div>
                     );
                   })}
@@ -2638,17 +2638,17 @@ const AnalyticsTab = () => {
 
           {modStats.resolutionBreakdown?.length > 0 && (
             <Card>
-              <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-3">Resolution Breakdown</h3>
+              <h3 className="text-sm font-semibold font-display text-jolshaa-on-surface mb-3">Resolution Breakdown</h3>
               <div className="space-y-1.5">
                 {modStats.resolutionBreakdown.map(r => {
                   const max = modStats.resolutionBreakdown[0]?.count || 1;
                   return (
                     <div key={r._id} className="flex items-center gap-2 text-xs">
                       <span className="w-32 capitalize">{r._id?.replace(/_/g, ' ')}</span>
-                      <div className="flex-1 h-3 bg-neutral-100 dark:bg-neutral-700 rounded-full overflow-hidden">
+                      <div className="flex-1 h-3 bg-jolshaa-surface-container-low rounded-full overflow-hidden">
                         <div className="h-full bg-green-400 rounded-full" style={{ width: `${(r.count / max) * 100}%` }} />
                       </div>
-                      <span className="w-8 text-right text-neutral-500">{r.count}</span>
+                      <span className="w-8 text-right text-jolshaa-on-surface-variant">{r.count}</span>
                     </div>
                   );
                 })}
@@ -2664,10 +2664,10 @@ const AnalyticsTab = () => {
           {/* Actions Per Day Chart */}
           {modPerf.actionsPerDay?.length > 0 && (
             <Card>
-              <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-3">Admin Actions Per Day ({timeRange} days)</h3>
+              <h3 className="text-sm font-semibold font-display text-jolshaa-on-surface mb-3">Admin Actions Per Day ({timeRange} days)</h3>
               <BarChart
                 data={modPerf.actionsPerDay.map(d => ({ label: d._id.slice(5), value: d.count }))}
-                color="bg-primary-500"
+                color="bg-jolshaa-teal"
                 height={100}
               />
             </Card>
@@ -2676,22 +2676,22 @@ const AnalyticsTab = () => {
           {/* Moderator Leaderboard */}
           {modPerf.actionsByAdmin?.length > 0 && (
             <Card>
-              <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-3">Moderator Leaderboard</h3>
+              <h3 className="text-sm font-semibold font-display text-jolshaa-on-surface mb-3">Moderator Leaderboard</h3>
               <div className="space-y-2">
                 {modPerf.actionsByAdmin.map((a, i) => (
-                  <div key={a._id?._id} className="flex items-center gap-3 py-2 border-b border-neutral-100 dark:border-neutral-700 last:border-0">
-                    <span className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold ${i === 0 ? 'bg-amber-100 text-amber-700' : i === 1 ? 'bg-neutral-200 text-neutral-600' : i === 2 ? 'bg-orange-100 text-orange-700' : 'bg-neutral-100 text-neutral-500'}`}>{i + 1}</span>
+                  <div key={a._id?._id} className="flex items-center gap-3 py-2 border-b border-jolshaa-outline-variant last:border-0">
+                    <span className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold ${i === 0 ? 'bg-amber-100 text-amber-700' : i === 1 ? 'bg-jolshaa-surface-container-high text-jolshaa-on-surface-variant' : i === 2 ? 'bg-orange-100 text-orange-700' : 'bg-jolshaa-surface-container-low text-jolshaa-on-surface-variant'}`}>{i + 1}</span>
                     <Avatar src={a._id?.profilePhoto} alt={a._id?.name} size="xs" />
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100">{a._id?.name}</p>
-                      <p className="text-[10px] text-neutral-400 capitalize">{a._id?.role}</p>
+                      <p className="text-sm font-medium text-jolshaa-on-surface">{a._id?.name}</p>
+                      <p className="text-[10px] text-jolshaa-on-surface-variant capitalize">{a._id?.role}</p>
                     </div>
                     <div className="flex gap-3 text-[10px]">
-                      <div className="text-center"><p className="font-bold text-blue-600">{a.reportActions}</p><p className="text-neutral-400">reports</p></div>
-                      <div className="text-center"><p className="font-bold text-amber-600">{a.userActions}</p><p className="text-neutral-400">users</p></div>
-                      <div className="text-center"><p className="font-bold text-purple-600">{a.moderationActions}</p><p className="text-neutral-400">content</p></div>
+                      <div className="text-center"><p className="font-bold text-blue-600">{a.reportActions}</p><p className="text-jolshaa-on-surface-variant">reports</p></div>
+                      <div className="text-center"><p className="font-bold text-amber-600">{a.userActions}</p><p className="text-jolshaa-on-surface-variant">users</p></div>
+                      <div className="text-center"><p className="font-bold text-purple-600">{a.moderationActions}</p><p className="text-jolshaa-on-surface-variant">content</p></div>
                     </div>
-                    <span className="text-sm font-bold text-neutral-900 dark:text-neutral-100 w-12 text-right">{a.totalActions}</span>
+                    <span className="text-sm font-bold text-jolshaa-on-surface w-12 text-right">{a.totalActions}</span>
                   </div>
                 ))}
               </div>
@@ -2702,12 +2702,12 @@ const AnalyticsTab = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {modPerf.reportsResolved?.length > 0 && (
               <Card>
-                <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-3">Reports Resolved</h3>
+                <h3 className="text-sm font-semibold font-display text-jolshaa-on-surface mb-3">Reports Resolved</h3>
                 <div className="space-y-2">
                   {modPerf.reportsResolved.map(r => (
                     <div key={r._id?._id} className="flex items-center gap-3 text-xs">
                       <Avatar src={r._id?.profilePhoto} alt={r._id?.name} size="xs" />
-                      <span className="flex-1 text-neutral-700 dark:text-neutral-300">{r._id?.name}</span>
+                      <span className="flex-1 text-jolshaa-on-surface-variant">{r._id?.name}</span>
                       <Badge variant="success" size="xs">{r.count} resolved</Badge>
                     </div>
                   ))}
@@ -2717,17 +2717,17 @@ const AnalyticsTab = () => {
 
             {modPerf.actionTypes?.length > 0 && (
               <Card>
-                <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-3">Action Types</h3>
+                <h3 className="text-sm font-semibold font-display text-jolshaa-on-surface mb-3">Action Types</h3>
                 <div className="space-y-1.5">
                   {modPerf.actionTypes.map(a => {
                     const max = modPerf.actionTypes[0]?.count || 1;
                     return (
                       <div key={a._id} className="flex items-center gap-2 text-xs">
-                        <span className="w-32 truncate font-mono text-neutral-600 dark:text-neutral-400">{a._id}</span>
-                        <div className="flex-1 h-3 bg-neutral-100 dark:bg-neutral-700 rounded-full overflow-hidden">
-                          <div className="h-full bg-primary-400 rounded-full" style={{ width: `${(a.count / max) * 100}%` }} />
+                        <span className="w-32 truncate font-mono text-jolshaa-on-surface-variant">{a._id}</span>
+                        <div className="flex-1 h-3 bg-jolshaa-surface-container-low rounded-full overflow-hidden">
+                          <div className="h-full bg-jolshaa-teal rounded-full" style={{ width: `${(a.count / max) * 100}%` }} />
                         </div>
-                        <span className="w-8 text-right font-medium text-neutral-700 dark:text-neutral-300">{a.count}</span>
+                        <span className="w-8 text-right font-medium text-jolshaa-on-surface-variant">{a.count}</span>
                       </div>
                     );
                   })}
@@ -2743,47 +2743,47 @@ const AnalyticsTab = () => {
         <div className="space-y-4">
           {/* Revenue Hero */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            <Card className="bg-emerald-50 dark:bg-emerald-900/20 border-emerald-200 dark:border-emerald-800">
-              <p className="text-[10px] font-medium text-emerald-700 dark:text-emerald-400 uppercase tracking-wider">Total Ad Revenue</p>
-              <p className="text-2xl font-bold text-emerald-700 dark:text-emerald-400 mt-1">${revenue.totalAdSpent?.toLocaleString()}</p>
+            <Card className="bg-emerald-50 border-emerald-200">
+              <p className="text-[10px] font-medium text-emerald-700 uppercase tracking-wider">Total Ad Revenue</p>
+              <p className="text-2xl font-bold text-emerald-700 mt-1">${revenue.totalAdSpent?.toLocaleString()}</p>
             </Card>
             <Card>
-              <p className="text-[10px] font-medium text-neutral-500 uppercase tracking-wider">Active Ads</p>
+              <p className="text-[10px] font-medium text-jolshaa-on-surface-variant uppercase tracking-wider">Active Ads</p>
               <p className="text-2xl font-bold text-blue-600 mt-1">{revenue.activeAds}</p>
             </Card>
             <Card>
-              <p className="text-[10px] font-medium text-neutral-500 uppercase tracking-wider">CTR</p>
+              <p className="text-[10px] font-medium text-jolshaa-on-surface-variant uppercase tracking-wider">CTR</p>
               <p className="text-2xl font-bold text-amber-600 mt-1">{revenue.ctr}%</p>
             </Card>
             <Card>
-              <p className="text-[10px] font-medium text-neutral-500 uppercase tracking-wider">Creators</p>
+              <p className="text-[10px] font-medium text-jolshaa-on-surface-variant uppercase tracking-wider">Creators</p>
               <p className="text-2xl font-bold text-purple-600 mt-1">{revenue.creatorCount}</p>
             </Card>
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             <Card>
-              <p className="text-[10px] font-medium text-neutral-500 uppercase tracking-wider">Ad Budget</p>
-              <p className="text-lg font-bold text-neutral-900 dark:text-neutral-100 mt-1">${revenue.totalAdBudget?.toLocaleString()}</p>
+              <p className="text-[10px] font-medium text-jolshaa-on-surface-variant uppercase tracking-wider">Ad Budget</p>
+              <p className="text-lg font-bold text-jolshaa-on-surface mt-1">${revenue.totalAdBudget?.toLocaleString()}</p>
             </Card>
             <Card>
-              <p className="text-[10px] font-medium text-neutral-500 uppercase tracking-wider">Impressions</p>
-              <p className="text-lg font-bold text-neutral-900 dark:text-neutral-100 mt-1">{revenue.totalImpressions?.toLocaleString()}</p>
+              <p className="text-[10px] font-medium text-jolshaa-on-surface-variant uppercase tracking-wider">Impressions</p>
+              <p className="text-lg font-bold text-jolshaa-on-surface mt-1">{revenue.totalImpressions?.toLocaleString()}</p>
             </Card>
             <Card>
-              <p className="text-[10px] font-medium text-neutral-500 uppercase tracking-wider">Clicks</p>
-              <p className="text-lg font-bold text-neutral-900 dark:text-neutral-100 mt-1">{revenue.totalClicks?.toLocaleString()}</p>
+              <p className="text-[10px] font-medium text-jolshaa-on-surface-variant uppercase tracking-wider">Clicks</p>
+              <p className="text-lg font-bold text-jolshaa-on-surface mt-1">{revenue.totalClicks?.toLocaleString()}</p>
             </Card>
             <Card>
-              <p className="text-[10px] font-medium text-neutral-500 uppercase tracking-wider">Subscribers</p>
-              <p className="text-lg font-bold text-neutral-900 dark:text-neutral-100 mt-1">{revenue.totalSubscribers}</p>
+              <p className="text-[10px] font-medium text-jolshaa-on-surface-variant uppercase tracking-wider">Subscribers</p>
+              <p className="text-lg font-bold text-jolshaa-on-surface mt-1">{revenue.totalSubscribers}</p>
             </Card>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {revenue.adSpendPerDay?.length > 0 && (
               <Card>
-                <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-3">Ad Spend Per Day</h3>
+                <h3 className="text-sm font-semibold font-display text-jolshaa-on-surface mb-3">Ad Spend Per Day</h3>
                 <BarChart
                   data={revenue.adSpendPerDay.map(d => ({ label: d._id.slice(5), value: d.spent }))}
                   color="bg-emerald-500"
@@ -2794,17 +2794,17 @@ const AnalyticsTab = () => {
 
             {revenue.creatorCategories?.length > 0 && (
               <Card>
-                <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-3">Creator Categories</h3>
+                <h3 className="text-sm font-semibold font-display text-jolshaa-on-surface mb-3">Creator Categories</h3>
                 <div className="space-y-1.5">
                   {revenue.creatorCategories.map(c => {
                     const max = revenue.creatorCategories[0]?.count || 1;
                     return (
                       <div key={c._id} className="flex items-center gap-2 text-xs">
                         <span className="w-24 capitalize truncate">{c._id || 'uncategorized'}</span>
-                        <div className="flex-1 h-3 bg-neutral-100 dark:bg-neutral-700 rounded-full overflow-hidden">
+                        <div className="flex-1 h-3 bg-jolshaa-surface-container-low rounded-full overflow-hidden">
                           <div className="h-full bg-purple-400 rounded-full" style={{ width: `${(c.count / max) * 100}%` }} />
                         </div>
-                        <span className="w-8 text-right text-neutral-500">{c.count}</span>
+                        <span className="w-8 text-right text-jolshaa-on-surface-variant">{c.count}</span>
                       </div>
                     );
                   })}
@@ -2815,20 +2815,20 @@ const AnalyticsTab = () => {
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             <Card>
-              <p className="text-[10px] font-medium text-neutral-500 uppercase tracking-wider">Boosted Posts</p>
-              <p className="text-lg font-bold text-neutral-900 dark:text-neutral-100 mt-1">{revenue.boostedPosts}</p>
+              <p className="text-[10px] font-medium text-jolshaa-on-surface-variant uppercase tracking-wider">Boosted Posts</p>
+              <p className="text-lg font-bold text-jolshaa-on-surface mt-1">{revenue.boostedPosts}</p>
             </Card>
             <Card>
-              <p className="text-[10px] font-medium text-neutral-500 uppercase tracking-wider">Sponsored Posts</p>
-              <p className="text-lg font-bold text-neutral-900 dark:text-neutral-100 mt-1">{revenue.sponsoredPosts}</p>
+              <p className="text-[10px] font-medium text-jolshaa-on-surface-variant uppercase tracking-wider">Sponsored Posts</p>
+              <p className="text-lg font-bold text-jolshaa-on-surface mt-1">{revenue.sponsoredPosts}</p>
             </Card>
             <Card>
-              <p className="text-[10px] font-medium text-neutral-500 uppercase tracking-wider">Total Ads</p>
-              <p className="text-lg font-bold text-neutral-900 dark:text-neutral-100 mt-1">{revenue.totalAds}</p>
+              <p className="text-[10px] font-medium text-jolshaa-on-surface-variant uppercase tracking-wider">Total Ads</p>
+              <p className="text-lg font-bold text-jolshaa-on-surface mt-1">{revenue.totalAds}</p>
             </Card>
             <Card>
-              <p className="text-[10px] font-medium text-neutral-500 uppercase tracking-wider">Listings</p>
-              <p className="text-lg font-bold text-neutral-900 dark:text-neutral-100 mt-1">{revenue.totalListings}</p>
+              <p className="text-[10px] font-medium text-jolshaa-on-surface-variant uppercase tracking-wider">Listings</p>
+              <p className="text-lg font-bold text-jolshaa-on-surface mt-1">{revenue.totalListings}</p>
             </Card>
           </div>
         </div>
@@ -2878,16 +2878,16 @@ const SystemControlTab = () => {
     { key: 'database', label: 'Database' },
   ];
 
-  const healthColor = overview?.health?.status === 'healthy' ? 'text-green-600 bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800'
-    : overview?.health?.status === 'degraded' ? 'text-amber-600 bg-amber-50 dark:bg-amber-900/20 border-amber-200 dark:border-amber-800'
-    : 'text-red-600 bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800';
+  const healthColor = overview?.health?.status === 'healthy' ? 'text-green-600 bg-green-50 border-green-200'
+    : overview?.health?.status === 'degraded' ? 'text-amber-600 bg-amber-50 border-amber-200'
+    : 'text-red-600 bg-red-50 border-red-200';
 
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-lg font-bold text-neutral-900 dark:text-neutral-100">System Control</h2>
-          <p className="text-xs text-neutral-500">Platform health, settings, and infrastructure</p>
+          <h2 className="text-lg font-bold font-display text-jolshaa-on-surface">System Control</h2>
+          <p className="text-xs text-jolshaa-on-surface-variant">Platform health, settings, and infrastructure</p>
         </div>
         <Button size="sm" variant="ghost" onClick={fetchOverview}>Refresh All</Button>
       </div>
@@ -2895,19 +2895,19 @@ const SystemControlTab = () => {
       {/* Quick Status Bar */}
       {overview && (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          <button onClick={() => setSubTab('health')} className={`text-left p-3 rounded-lg border transition-all hover:shadow-sm ${healthColor}`}>
+          <button onClick={() => setSubTab('health')} className={`text-left p-3 rounded-lg border transition-all hover:shadow-ambient ${healthColor}`}>
             <p className="text-[10px] font-medium uppercase tracking-wider opacity-70">System Status</p>
             <p className="text-lg font-bold capitalize">{overview.health?.status || 'Unknown'}</p>
           </button>
-          <button onClick={() => setSubTab('errors')} className={`text-left p-3 rounded-lg border transition-all hover:shadow-sm ${overview.errors?.stats?.lastHour > 0 ? 'text-red-600 bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800' : 'text-green-600 bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800'}`}>
+          <button onClick={() => setSubTab('errors')} className={`text-left p-3 rounded-lg border transition-all hover:shadow-ambient ${overview.errors?.stats?.lastHour > 0 ? 'text-red-600 bg-red-50 border-red-200' : 'text-green-600 bg-green-50 border-green-200'}`}>
             <p className="text-[10px] font-medium uppercase tracking-wider opacity-70">Errors (1h)</p>
             <p className="text-lg font-bold">{overview.errors?.stats?.lastHour || 0}</p>
           </button>
-          <button onClick={() => setSubTab('jobs')} className={`text-left p-3 rounded-lg border transition-all hover:shadow-sm ${!overview.jobs?.isRunning ? 'text-red-600 bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800' : 'text-green-600 bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800'}`}>
+          <button onClick={() => setSubTab('jobs')} className={`text-left p-3 rounded-lg border transition-all hover:shadow-ambient ${!overview.jobs?.isRunning ? 'text-red-600 bg-red-50 border-red-200' : 'text-green-600 bg-green-50 border-green-200'}`}>
             <p className="text-[10px] font-medium uppercase tracking-wider opacity-70">Background Jobs</p>
             <p className="text-lg font-bold">{overview.jobs?.isRunning ? 'Running' : 'Paused'}</p>
           </button>
-          <button onClick={() => setSubTab('maintenance')} className={`text-left p-3 rounded-lg border transition-all hover:shadow-sm ${overview.settings?.maintenance_mode?.value ? 'text-red-600 bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800' : 'text-green-600 bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800'}`}>
+          <button onClick={() => setSubTab('maintenance')} className={`text-left p-3 rounded-lg border transition-all hover:shadow-ambient ${overview.settings?.maintenance_mode?.value ? 'text-red-600 bg-red-50 border-red-200' : 'text-green-600 bg-green-50 border-green-200'}`}>
             <p className="text-[10px] font-medium uppercase tracking-wider opacity-70">Maintenance</p>
             <p className="text-lg font-bold">{overview.settings?.maintenance_mode?.value ? 'Active' : 'Off'}</p>
           </button>
@@ -2948,7 +2948,7 @@ const SystemOverviewPanel = () => {
     ]).finally(() => setLoading(false));
   }, []);
 
-  if (loading) return <div className="text-center py-8 text-neutral-500">Loading system overview...</div>;
+  if (loading) return <div className="text-center py-8 text-jolshaa-on-surface-variant">Loading system overview...</div>;
 
   const healthColor = health?.status === 'healthy' ? 'green' : health?.status === 'degraded' ? 'amber' : 'red';
 
@@ -2957,24 +2957,24 @@ const SystemOverviewPanel = () => {
       {/* System Health Summary */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <Card>
-          <p className="text-xs font-medium text-neutral-500">Status</p>
+          <p className="text-xs font-medium text-jolshaa-on-surface-variant">Status</p>
           <p className={`text-2xl font-bold text-${healthColor}-600 capitalize`}>{health?.status || 'Unknown'}</p>
-          {health?.uptime && <p className="text-[10px] text-neutral-400 mt-0.5">Up {Math.floor(health.uptime / 3600)}h {Math.floor((health.uptime % 3600) / 60)}m</p>}
+          {health?.uptime && <p className="text-[10px] text-jolshaa-on-surface-variant mt-0.5">Up {Math.floor(health.uptime / 3600)}h {Math.floor((health.uptime % 3600) / 60)}m</p>}
         </Card>
         <Card>
-          <p className="text-xs font-medium text-neutral-500">Memory</p>
-          <p className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">{health?.memory?.heapUsed}MB</p>
-          <div className="w-full bg-neutral-200 dark:bg-neutral-700 rounded-full h-1.5 mt-1.5">
+          <p className="text-xs font-medium text-jolshaa-on-surface-variant">Memory</p>
+          <p className="text-2xl font-bold text-jolshaa-on-surface">{health?.memory?.heapUsed}MB</p>
+          <div className="w-full bg-jolshaa-surface-container-high rounded-full h-1.5 mt-1.5">
             <div className={`bg-${healthColor}-500 h-1.5 rounded-full`} style={{ width: `${Math.min(100, ((health?.memory?.heapUsed || 0) / (health?.memory?.heapTotal || 1)) * 100)}%` }} />
           </div>
         </Card>
         <Card>
-          <p className="text-xs font-medium text-neutral-500">DB Latency</p>
-          <p className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">{health?.db?.latency || '-'}ms</p>
+          <p className="text-xs font-medium text-jolshaa-on-surface-variant">DB Latency</p>
+          <p className="text-2xl font-bold text-jolshaa-on-surface">{health?.db?.latency || '-'}ms</p>
           <Badge variant={health?.db?.status === 'connected' ? 'success' : 'danger'} size="xs">{health?.db?.status || 'Unknown'}</Badge>
         </Card>
         <Card>
-          <p className="text-xs font-medium text-neutral-500">Errors (24h)</p>
+          <p className="text-xs font-medium text-jolshaa-on-surface-variant">Errors (24h)</p>
           <p className={`text-2xl font-bold ${(errors?.stats?.last24h || 0) > 0 ? 'text-red-600' : 'text-green-600'}`}>{errors?.stats?.last24h || 0}</p>
           {errors?.stats?.lastHour > 0 && <p className="text-[10px] text-red-500 mt-0.5">{errors.stats.lastHour} in last hour</p>}
         </Card>
@@ -2983,26 +2983,26 @@ const SystemOverviewPanel = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Feature Flags Quick View */}
         <Card>
-          <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-3">Feature Flags</h3>
+          <h3 className="text-sm font-semibold font-display text-jolshaa-on-surface mb-3">Feature Flags</h3>
           <div className="space-y-1.5">
             {Object.entries(features).slice(0, 8).map(([key, enabled]) => (
               <div key={key} className="flex items-center justify-between py-1">
-                <span className="text-xs text-neutral-600 dark:text-neutral-400 capitalize">{key.replace(/_/g, ' ')}</span>
-                <div className={`w-2 h-2 rounded-full ${enabled ? 'bg-green-500' : 'bg-neutral-300 dark:bg-neutral-600'}`} />
+                <span className="text-xs text-jolshaa-on-surface-variant capitalize">{key.replace(/_/g, ' ')}</span>
+                <div className={`w-2 h-2 rounded-full ${enabled ? 'bg-green-500' : 'bg-jolshaa-outline-variant'}`} />
               </div>
             ))}
-            {Object.keys(features).length > 8 && <p className="text-[10px] text-neutral-400">+{Object.keys(features).length - 8} more...</p>}
+            {Object.keys(features).length > 8 && <p className="text-[10px] text-jolshaa-on-surface-variant">+{Object.keys(features).length - 8} more...</p>}
           </div>
         </Card>
 
         {/* Background Jobs Quick View */}
         <Card>
-          <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-3">Background Jobs</h3>
+          <h3 className="text-sm font-semibold font-display text-jolshaa-on-surface mb-3">Background Jobs</h3>
           {jobs?.queues ? (
             <div className="space-y-2">
               {Object.entries(jobs.queues).map(([name, stats]) => (
                 <div key={name} className="flex items-center justify-between py-1">
-                  <span className="text-xs text-neutral-600 dark:text-neutral-400 capitalize">{name}</span>
+                  <span className="text-xs text-jolshaa-on-surface-variant capitalize">{name}</span>
                   <div className="flex items-center gap-2 text-[10px]">
                     {stats.waiting > 0 && <span className="text-amber-600">{stats.waiting}w</span>}
                     {stats.processing > 0 && <span className="text-blue-600">{stats.processing}p</span>}
@@ -3011,13 +3011,13 @@ const SystemOverviewPanel = () => {
                   </div>
                 </div>
               ))}
-              <div className="flex items-center justify-between pt-1 border-t border-neutral-100 dark:border-neutral-700">
-                <span className="text-xs font-medium text-neutral-700 dark:text-neutral-300">Queue Status</span>
+              <div className="flex items-center justify-between pt-1 border-t border-jolshaa-outline-variant">
+                <span className="text-xs font-medium text-jolshaa-on-surface-variant">Queue Status</span>
                 <Badge variant={jobs.isRunning ? 'success' : 'danger'} size="xs">{jobs.isRunning ? 'Running' : 'Paused'}</Badge>
               </div>
             </div>
           ) : (
-            <p className="text-xs text-neutral-500">No job data</p>
+            <p className="text-xs text-jolshaa-on-surface-variant">No job data</p>
           )}
         </Card>
       </div>
@@ -3025,13 +3025,13 @@ const SystemOverviewPanel = () => {
       {/* Recent Errors */}
       {errors?.errors?.length > 0 && (
         <Card>
-          <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-3">Recent Errors</h3>
+          <h3 className="text-sm font-semibold font-display text-jolshaa-on-surface mb-3">Recent Errors</h3>
           <div className="space-y-2">
             {errors.errors.slice(0, 5).map(e => (
               <div key={e.id} className="flex items-start gap-2 text-xs">
                 <Badge variant="danger" size="xs">{e.code}</Badge>
-                <span className="text-red-600 dark:text-red-400 flex-1 truncate">{e.message}</span>
-                <span className="text-neutral-400 whitespace-nowrap">{new Date(e.timestamp).toLocaleTimeString()}</span>
+                <span className="text-red-600 flex-1 truncate">{e.message}</span>
+                <span className="text-jolshaa-on-surface-variant whitespace-nowrap">{new Date(e.timestamp).toLocaleTimeString()}</span>
               </div>
             ))}
           </div>
@@ -3053,13 +3053,13 @@ const HealthPanel = () => {
 
   useEffect(() => { fetchHealth(); }, []);
 
-  if (loading) return <div className="text-center py-8 text-neutral-500">Checking health...</div>;
+  if (loading) return <div className="text-center py-8 text-jolshaa-on-surface-variant">Checking health...</div>;
   if (!health) return <div className="text-center py-8 text-red-500">Failed to load health</div>;
 
   const statusConfig = {
-    healthy: { color: 'green', label: 'Healthy', dot: 'bg-green-500', ring: 'ring-green-200 dark:ring-green-800' },
-    degraded: { color: 'amber', label: 'Degraded', dot: 'bg-amber-500', ring: 'ring-amber-200 dark:ring-amber-800' },
-    unhealthy: { color: 'red', label: 'Unhealthy', dot: 'bg-red-500', ring: 'ring-red-200 dark:ring-red-800' },
+    healthy: { color: 'green', label: 'Healthy', dot: 'bg-green-500', ring: 'ring-green-200' },
+    degraded: { color: 'amber', label: 'Degraded', dot: 'bg-amber-500', ring: 'ring-amber-200' },
+    unhealthy: { color: 'red', label: 'Unhealthy', dot: 'bg-red-500', ring: 'ring-red-200' },
   };
   const status = statusConfig[health.status] || statusConfig.unhealthy;
   const memPercent = Math.min(100, ((health.memory?.heapUsed || 0) / (health.memory?.heapTotal || 1)) * 100);
@@ -3068,14 +3068,14 @@ const HealthPanel = () => {
   return (
     <div className="space-y-4">
       {/* Status Hero */}
-      <Card className={`border-${status.color}-200 dark:border-${status.color}-800`}>
+      <Card className={`border-${status.color}-200`}>
         <div className="flex items-center gap-4">
           <div className={`w-14 h-14 rounded-full ${status.dot} ring-4 ${status.ring} flex items-center justify-center flex-shrink-0`}>
             <div className="w-3 h-3 bg-white rounded-full animate-pulse" />
           </div>
           <div className="flex-1">
-            <h3 className="text-lg font-bold text-neutral-900 dark:text-neutral-100">System {status.label}</h3>
-            <p className="text-xs text-neutral-500">
+            <h3 className="text-lg font-bold font-display text-jolshaa-on-surface">System {status.label}</h3>
+            <p className="text-xs text-jolshaa-on-surface-variant">
               Uptime: {Math.floor(health.uptime / 86400)}d {Math.floor((health.uptime % 86400) / 3600)}h {Math.floor((health.uptime % 3600) / 60)}m &middot; Node {health.nodeVersion}
             </p>
           </div>
@@ -3086,27 +3086,27 @@ const HealthPanel = () => {
       {/* Key Metrics */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <Card>
-          <p className="text-[10px] font-medium text-neutral-500 uppercase tracking-wider">Memory Heap</p>
-          <p className="text-xl font-bold text-neutral-900 dark:text-neutral-100 mt-1">{health.memory?.heapUsed}MB</p>
-          <div className="w-full bg-neutral-200 dark:bg-neutral-700 rounded-full h-1.5 mt-2">
+          <p className="text-[10px] font-medium text-jolshaa-on-surface-variant uppercase tracking-wider">Memory Heap</p>
+          <p className="text-xl font-bold text-jolshaa-on-surface mt-1">{health.memory?.heapUsed}MB</p>
+          <div className="w-full bg-jolshaa-surface-container-high rounded-full h-1.5 mt-2">
             <div className={`${memPercent > 80 ? 'bg-red-500' : memPercent > 60 ? 'bg-amber-500' : 'bg-green-500'} h-1.5 rounded-full transition-all`} style={{ width: `${memPercent}%` }} />
           </div>
-          <p className="text-[10px] text-neutral-400 mt-1">{health.memory?.heapTotal}MB total ({Math.round(memPercent)}%)</p>
+          <p className="text-[10px] text-jolshaa-on-surface-variant mt-1">{health.memory?.heapTotal}MB total ({Math.round(memPercent)}%)</p>
         </Card>
         <Card>
-          <p className="text-[10px] font-medium text-neutral-500 uppercase tracking-wider">DB Latency</p>
+          <p className="text-[10px] font-medium text-jolshaa-on-surface-variant uppercase tracking-wider">DB Latency</p>
           <p className={`text-xl font-bold ${(health.db?.latency || 0) > 100 ? 'text-red-600' : (health.db?.latency || 0) > 50 ? 'text-amber-600' : 'text-green-600'} mt-1`}>{health.db?.latency || '-'}ms</p>
           <Badge variant={health.db?.status === 'connected' ? 'success' : 'danger'} size="xs" className="mt-2">{health.db?.status}</Badge>
         </Card>
         <Card>
-          <p className="text-[10px] font-medium text-neutral-500 uppercase tracking-wider">Req/min</p>
-          <p className="text-xl font-bold text-neutral-900 dark:text-neutral-100 mt-1">{health.performance?.requestsPerMinute || 0}</p>
-          <p className="text-[10px] text-neutral-400 mt-1">Avg {health.performance?.avgResponseTime || 0}ms</p>
+          <p className="text-[10px] font-medium text-jolshaa-on-surface-variant uppercase tracking-wider">Req/min</p>
+          <p className="text-xl font-bold text-jolshaa-on-surface mt-1">{health.performance?.requestsPerMinute || 0}</p>
+          <p className="text-[10px] text-jolshaa-on-surface-variant mt-1">Avg {health.performance?.avgResponseTime || 0}ms</p>
         </Card>
         <Card>
-          <p className="text-[10px] font-medium text-neutral-500 uppercase tracking-wider">Error Rate</p>
+          <p className="text-[10px] font-medium text-jolshaa-on-surface-variant uppercase tracking-wider">Error Rate</p>
           <p className={`text-xl font-bold ${errRate > 5 ? 'text-red-600' : errRate > 1 ? 'text-amber-600' : 'text-green-600'} mt-1`}>{health.performance?.errorRate || '0'}%</p>
-          <div className="w-full bg-neutral-200 dark:bg-neutral-700 rounded-full h-1.5 mt-2">
+          <div className="w-full bg-jolshaa-surface-container-high rounded-full h-1.5 mt-2">
             <div className={`${errRate > 5 ? 'bg-red-500' : errRate > 1 ? 'bg-amber-500' : 'bg-green-500'} h-1.5 rounded-full`} style={{ width: `${Math.min(100, errRate * 10)}%` }} />
           </div>
         </Card>
@@ -3115,22 +3115,22 @@ const HealthPanel = () => {
       {/* Services & Host */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Card>
-          <h3 className="text-xs font-semibold text-neutral-700 dark:text-neutral-300 mb-3 uppercase tracking-wider">Services</h3>
+          <h3 className="font-display text-xs font-semibold text-jolshaa-on-surface-variant mb-3 uppercase tracking-wider">Services</h3>
           <div className="space-y-3">
-            <div className="flex items-center justify-between py-2 border-b border-neutral-100 dark:border-neutral-700">
+            <div className="flex items-center justify-between py-2 border-b border-jolshaa-outline-variant">
               <div className="flex items-center gap-2">
                 <div className={`w-2 h-2 rounded-full ${health.db?.status === 'connected' ? 'bg-green-500' : 'bg-red-500 animate-pulse'}`} />
-                <span className="text-sm text-neutral-900 dark:text-neutral-100">MongoDB</span>
+                <span className="text-sm text-jolshaa-on-surface">MongoDB</span>
               </div>
               <div className="text-right">
                 <Badge variant={health.db?.status === 'connected' ? 'success' : 'danger'} size="xs">{health.db?.status}</Badge>
-                <p className="text-[10px] text-neutral-400 mt-0.5">{health.db?.latency}ms &middot; {health.db?.host}</p>
+                <p className="text-[10px] text-jolshaa-on-surface-variant mt-0.5">{health.db?.latency}ms &middot; {health.db?.host}</p>
               </div>
             </div>
             <div className="flex items-center justify-between py-2">
               <div className="flex items-center gap-2">
                 <div className={`w-2 h-2 rounded-full ${health.redis?.status === 'connected' ? 'bg-green-500' : 'bg-amber-500'}`} />
-                <span className="text-sm text-neutral-900 dark:text-neutral-100">Redis</span>
+                <span className="text-sm text-jolshaa-on-surface">Redis</span>
               </div>
               <Badge variant={health.redis?.status === 'connected' ? 'success' : 'warning'} size="xs">{health.redis?.status}</Badge>
             </div>
@@ -3138,15 +3138,15 @@ const HealthPanel = () => {
         </Card>
 
         <Card>
-          <h3 className="text-xs font-semibold text-neutral-700 dark:text-neutral-300 mb-3 uppercase tracking-wider">Performance</h3>
+          <h3 className="font-display text-xs font-semibold text-jolshaa-on-surface-variant mb-3 uppercase tracking-wider">Performance</h3>
           <div className="space-y-3">
             {[
               { label: 'Requests/min', value: health.performance?.requestsPerMinute, color: 'blue' },
               { label: 'Avg Response', value: `${health.performance?.avgResponseTime}ms`, color: parseFloat(health.performance?.avgResponseTime) > 200 ? 'red' : 'green' },
               { label: 'Error Rate', value: `${health.performance?.errorRate}%`, color: errRate > 5 ? 'red' : errRate > 1 ? 'amber' : 'green' },
             ].map(m => (
-              <div key={m.label} className="flex items-center justify-between py-2 border-b border-neutral-100 dark:border-neutral-700 last:border-0">
-                <span className="text-sm text-neutral-600 dark:text-neutral-400">{m.label}</span>
+              <div key={m.label} className="flex items-center justify-between py-2 border-b border-jolshaa-outline-variant last:border-0">
+                <span className="text-sm text-jolshaa-on-surface-variant">{m.label}</span>
                 <span className={`text-sm font-semibold text-${m.color}-600`}>{m.value}</span>
               </div>
             ))}
@@ -3188,13 +3188,13 @@ const SettingsPanel = () => {
     setSaving(false);
   };
 
-  if (loading) return <div className="text-center py-8 text-neutral-500">Loading...</div>;
+  if (loading) return <div className="text-center py-8 text-jolshaa-on-surface-variant">Loading...</div>;
 
   const criticalSettings = Object.entries(settings).filter(([, v]) => v.category === 'security');
   const categories = { site: 'Site Info', upload: 'Uploads' };
 
   const ToggleSwitch = ({ enabled, onChange, danger }) => (
-    <button onClick={onChange} className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${enabled ? (danger ? 'bg-red-500' : 'bg-primary-500') : 'bg-neutral-300 dark:bg-neutral-600'}`}>
+    <button onClick={onChange} className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${enabled ? (danger ? 'bg-red-500' : 'bg-jolshaa-teal') : 'bg-jolshaa-outline-variant'}`}>
       <span className={`inline-block h-4 w-4 rounded-full bg-white transition-transform shadow ${enabled ? 'translate-x-6' : 'translate-x-1'}`} />
     </button>
   );
@@ -3203,17 +3203,17 @@ const SettingsPanel = () => {
     <div className="space-y-4">
       {/* Critical Security Settings */}
       {criticalSettings.length > 0 && (
-        <Card className="border-amber-200 dark:border-amber-800">
+        <Card className="border-amber-200">
           <div className="flex items-center gap-2 mb-4">
             <div className="w-2 h-2 bg-amber-500 rounded-full animate-pulse" />
-            <h3 className="text-sm font-semibold text-amber-700 dark:text-amber-400 uppercase tracking-wider">Security Critical</h3>
+            <h3 className="font-display text-sm font-semibold text-amber-700 uppercase tracking-wider">Security Critical</h3>
           </div>
           <div className="space-y-3">
             {criticalSettings.map(([key, s]) => (
-              <div key={key} className="flex items-center justify-between py-2 border-b border-neutral-100 dark:border-neutral-700 last:border-0">
+              <div key={key} className="flex items-center justify-between py-2 border-b border-jolshaa-outline-variant last:border-0">
                 <div className="flex-1">
-                  <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100">{s.description || key}</p>
-                  <p className="text-[10px] text-neutral-400 mt-0.5">{key}</p>
+                  <p className="text-sm font-medium text-jolshaa-on-surface">{s.description || key}</p>
+                  <p className="text-[10px] text-jolshaa-on-surface-variant mt-0.5">{key}</p>
                 </div>
                 <ToggleSwitch enabled={s.value} onChange={() => handleChange(key, !s.value)} danger={key.includes('maintenance') || key.includes('lock')} />
               </div>
@@ -3228,17 +3228,17 @@ const SettingsPanel = () => {
         if (catSettings.length === 0) return null;
         return (
           <Card key={cat}>
-            <h3 className="text-xs font-semibold text-neutral-700 dark:text-neutral-300 mb-3 uppercase tracking-wider">{label}</h3>
+            <h3 className="font-display text-xs font-semibold text-jolshaa-on-surface-variant mb-3 uppercase tracking-wider">{label}</h3>
             <div className="space-y-2">
               {catSettings.map(([key, s]) => (
-                <div key={key} className="flex items-center gap-3 py-2 border-b border-neutral-100 dark:border-neutral-700 last:border-0">
-                  <label className="text-xs text-neutral-600 dark:text-neutral-400 w-44 flex-shrink-0">{s.description || key}</label>
+                <div key={key} className="flex items-center gap-3 py-2 border-b border-jolshaa-outline-variant last:border-0">
+                  <label className="text-xs text-jolshaa-on-surface-variant w-44 flex-shrink-0">{s.description || key}</label>
                   {typeof s.value === 'boolean' ? (
                     <ToggleSwitch enabled={s.value} onChange={() => handleChange(key, !s.value)} />
                   ) : typeof s.value === 'number' ? (
-                    <input type="number" value={s.value} onChange={e => handleChange(key, parseInt(e.target.value) || 0)} className="w-24 border border-neutral-300 dark:border-neutral-600 rounded px-2 py-1.5 text-sm bg-white dark:bg-neutral-800 focus:ring-2 focus:ring-primary-500 focus:border-primary-500" />
+                    <input type="number" value={s.value} onChange={e => handleChange(key, parseInt(e.target.value) || 0)} className="w-24 border border-jolshaa-outline-variant rounded px-2 py-1.5 text-sm bg-jolshaa-surface-container-lowest focus:ring-2 focus:ring-jolshaa-teal focus:border-jolshaa-teal" />
                   ) : (
-                    <input type="text" value={s.value} onChange={e => handleChange(key, e.target.value)} className="flex-1 border border-neutral-300 dark:border-neutral-600 rounded px-2 py-1.5 text-sm bg-white dark:bg-neutral-800 focus:ring-2 focus:ring-primary-500 focus:border-primary-500" />
+                    <input type="text" value={s.value} onChange={e => handleChange(key, e.target.value)} className="flex-1 border border-jolshaa-outline-variant rounded px-2 py-1.5 text-sm bg-jolshaa-surface-container-lowest focus:ring-2 focus:ring-jolshaa-teal focus:border-jolshaa-teal" />
                   )}
                 </div>
               ))}
@@ -3274,7 +3274,7 @@ const FeaturesPanel = () => {
     } catch { alert('Failed'); }
   };
 
-  if (loading) return <div className="text-center py-8 text-neutral-500">Loading...</div>;
+  if (loading) return <div className="text-center py-8 text-jolshaa-on-surface-variant">Loading...</div>;
 
   const labels = {
     allow_signup: 'User Signups', allow_stories: 'Stories', allow_reels: 'Reels',
@@ -3285,15 +3285,15 @@ const FeaturesPanel = () => {
 
   return (
     <Card>
-      <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4">Feature Flags</h3>
+      <h3 className="text-sm font-semibold font-display text-jolshaa-on-surface mb-4">Feature Flags</h3>
       <div className="space-y-3">
         {Object.entries(features).map(([key, enabled]) => (
-          <div key={key} className="flex items-center justify-between py-2 border-b border-neutral-100 dark:border-neutral-700 last:border-0">
+          <div key={key} className="flex items-center justify-between py-2 border-b border-jolshaa-outline-variant last:border-0">
             <div>
-              <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100">{labels[key] || key}</p>
-              <p className="text-xs text-neutral-400">{key}</p>
+              <p className="text-sm font-medium text-jolshaa-on-surface">{labels[key] || key}</p>
+              <p className="text-xs text-jolshaa-on-surface-variant">{key}</p>
             </div>
-            <button onClick={() => toggle(key)} className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${enabled ? 'bg-green-500' : 'bg-neutral-300 dark:bg-neutral-600'}`}>
+            <button onClick={() => toggle(key)} className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${enabled ? 'bg-green-500' : 'bg-jolshaa-outline-variant'}`}>
               <span className={`inline-block h-4 w-4 rounded-full bg-white transition-transform shadow ${enabled ? 'translate-x-6' : 'translate-x-1'}`} />
             </button>
           </div>
@@ -3322,23 +3322,23 @@ const MaintenancePanel = () => {
     } catch { alert('Failed'); }
   };
 
-  if (loading) return <div className="text-center py-8 text-neutral-500">Loading...</div>;
+  if (loading) return <div className="text-center py-8 text-jolshaa-on-surface-variant">Loading...</div>;
 
   return (
     <Card>
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">Maintenance Mode</h3>
-            <p className="text-xs text-neutral-500 mt-0.5">When enabled, only admins can access the site</p>
+            <h3 className="text-sm font-semibold font-display text-jolshaa-on-surface">Maintenance Mode</h3>
+            <p className="text-xs text-jolshaa-on-surface-variant mt-0.5">When enabled, only admins can access the site</p>
           </div>
-          <button onClick={toggle} className={`relative inline-flex h-7 w-12 items-center rounded-full transition-colors ${data?.enabled ? 'bg-red-500' : 'bg-neutral-300 dark:bg-neutral-600'}`}>
+          <button onClick={toggle} className={`relative inline-flex h-7 w-12 items-center rounded-full transition-colors ${data?.enabled ? 'bg-red-500' : 'bg-jolshaa-outline-variant'}`}>
             <span className={`inline-block h-5 w-5 rounded-full bg-white transition-transform shadow ${data?.enabled ? 'translate-x-6' : 'translate-x-1'}`} />
           </button>
         </div>
         {data?.enabled && (
-          <div className="p-3 bg-red-50 dark:bg-red-900/20 rounded-lg">
-            <p className="text-xs text-red-600 dark:text-red-400 font-medium">MAINTENANCE MODE IS ACTIVE</p>
+          <div className="p-3 bg-red-50 rounded-lg">
+            <p className="text-xs text-red-600 font-medium">MAINTENANCE MODE IS ACTIVE</p>
             <p className="text-xs text-red-500 mt-1">{data.message}</p>
           </div>
         )}
@@ -3366,7 +3366,7 @@ const AnnouncementPanel = () => {
     setSaving(false);
   };
 
-  if (loading) return <div className="text-center py-8 text-neutral-500">Loading...</div>;
+  if (loading) return <div className="text-center py-8 text-jolshaa-on-surface-variant">Loading...</div>;
 
   const typeColors = { info: 'bg-blue-500', warning: 'bg-amber-500', success: 'bg-green-500', error: 'bg-red-500' };
 
@@ -3375,19 +3375,19 @@ const AnnouncementPanel = () => {
       <Card>
         <div className="space-y-3">
           <div className="flex items-center justify-between">
-            <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">Announcement Banner</h3>
-            <button onClick={() => setData(p => ({ ...p, enabled: !p.enabled }))} className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${data.enabled ? 'bg-green-500' : 'bg-neutral-300 dark:bg-neutral-600'}`}>
+            <h3 className="text-sm font-semibold font-display text-jolshaa-on-surface">Announcement Banner</h3>
+            <button onClick={() => setData(p => ({ ...p, enabled: !p.enabled }))} className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${data.enabled ? 'bg-green-500' : 'bg-jolshaa-outline-variant'}`}>
               <span className={`inline-block h-4 w-4 rounded-full bg-white transition-transform shadow ${data.enabled ? 'translate-x-6' : 'translate-x-1'}`} />
             </button>
           </div>
           <div>
-            <label className="text-xs font-medium text-neutral-700 dark:text-neutral-300">Banner Text</label>
-            <input type="text" value={data.text} onChange={e => setData(p => ({ ...p, text: e.target.value }))} placeholder="Enter announcement text..." className="w-full border border-neutral-300 dark:border-neutral-600 rounded-lg px-3 py-2 text-sm bg-white dark:bg-neutral-800 mt-1" />
+            <label className="text-xs font-medium text-jolshaa-on-surface-variant">Banner Text</label>
+            <input type="text" value={data.text} onChange={e => setData(p => ({ ...p, text: e.target.value }))} placeholder="Enter announcement text..." className="w-full border border-jolshaa-outline-variant rounded-lg px-3 py-2 text-sm bg-jolshaa-surface-container-lowest mt-1" />
           </div>
           <div className="flex gap-3">
             <div className="flex-1">
-              <label className="text-xs font-medium text-neutral-700 dark:text-neutral-300">Type</label>
-              <select value={data.type} onChange={e => setData(p => ({ ...p, type: e.target.value }))} className="w-full border border-neutral-300 dark:border-neutral-600 rounded-lg px-3 py-2 text-sm bg-white dark:bg-neutral-800 mt-1">
+              <label className="text-xs font-medium text-jolshaa-on-surface-variant">Type</label>
+              <select value={data.type} onChange={e => setData(p => ({ ...p, type: e.target.value }))} className="w-full border border-jolshaa-outline-variant rounded-lg px-3 py-2 text-sm bg-jolshaa-surface-container-lowest mt-1">
                 <option value="info">Info</option>
                 <option value="warning">Warning</option>
                 <option value="success">Success</option>
@@ -3395,20 +3395,20 @@ const AnnouncementPanel = () => {
               </select>
             </div>
             <div className="flex-1">
-              <label className="text-xs font-medium text-neutral-700 dark:text-neutral-300">Link URL (optional)</label>
-              <input type="text" value={data.link} onChange={e => setData(p => ({ ...p, link: e.target.value }))} placeholder="https://..." className="w-full border border-neutral-300 dark:border-neutral-600 rounded-lg px-3 py-2 text-sm bg-white dark:bg-neutral-800 mt-1" />
+              <label className="text-xs font-medium text-jolshaa-on-surface-variant">Link URL (optional)</label>
+              <input type="text" value={data.link} onChange={e => setData(p => ({ ...p, link: e.target.value }))} placeholder="https://..." className="w-full border border-jolshaa-outline-variant rounded-lg px-3 py-2 text-sm bg-jolshaa-surface-container-lowest mt-1" />
             </div>
           </div>
           <div className="flex items-center gap-2">
             <input type="checkbox" checked={data.dismissable} onChange={e => setData(p => ({ ...p, dismissable: e.target.checked }))} className="rounded" />
-            <label className="text-xs text-neutral-600 dark:text-neutral-400">Users can dismiss this banner</label>
+            <label className="text-xs text-jolshaa-on-surface-variant">Users can dismiss this banner</label>
           </div>
         </div>
       </Card>
 
       {data.enabled && data.text && (
         <Card>
-          <h4 className="text-xs font-medium text-neutral-500 mb-2">Preview</h4>
+          <h4 className="font-display text-xs font-medium text-jolshaa-on-surface-variant mb-2">Preview</h4>
           <div className={`${typeColors[data.type]} text-white px-4 py-3 rounded-lg text-sm flex items-center gap-2`}>
             <span className="flex-1">{data.text}</span>
             {data.dismissable && <span className="text-white/70 cursor-pointer">✕</span>}
@@ -3443,12 +3443,12 @@ const JobsPanel = () => {
     try { const res = await API.put('/admin/system/jobs/toggle'); setData(p => ({ ...p, isRunning: res.data.isRunning })); } catch { alert('Failed'); }
   };
 
-  if (loading) return <div className="text-center py-8 text-neutral-500">Loading...</div>;
+  if (loading) return <div className="text-center py-8 text-jolshaa-on-surface-variant">Loading...</div>;
 
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">Background Jobs</h3>
+        <h3 className="text-sm font-semibold font-display text-jolshaa-on-surface">Background Jobs</h3>
         <div className="flex gap-2">
           <Button size="sm" variant="ghost" onClick={fetchJobs}>Refresh</Button>
           <Button size="sm" variant="ghost" onClick={handleCleanup}>Cleanup</Button>
@@ -3460,12 +3460,12 @@ const JobsPanel = () => {
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <Card>
-          <p className="text-xs font-medium text-neutral-500">Status</p>
+          <p className="text-xs font-medium text-jolshaa-on-surface-variant">Status</p>
           <Badge variant={data?.isRunning ? 'success' : 'danger'} size="sm">{data?.isRunning ? 'Running' : 'Paused'}</Badge>
         </Card>
         {data?.queues && Object.entries(data.queues).map(([name, stats]) => (
           <Card key={name}>
-            <p className="text-xs font-medium text-neutral-500 capitalize">{name}</p>
+            <p className="text-xs font-medium text-jolshaa-on-surface-variant capitalize">{name}</p>
             <div className="flex gap-2 text-xs mt-1">
               <span className="text-amber-600">{stats.waiting} waiting</span>
               <span className="text-blue-600">{stats.processing} active</span>
@@ -3498,12 +3498,12 @@ const ErrorsPanel = () => {
     try { await API.post('/admin/system/errors/clear'); fetchErrors(); } catch { alert('Failed'); }
   };
 
-  if (loading) return <div className="text-center py-8 text-neutral-500">Loading...</div>;
+  if (loading) return <div className="text-center py-8 text-jolshaa-on-surface-variant">Loading...</div>;
 
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">Error Logs</h3>
+        <h3 className="text-sm font-semibold font-display text-jolshaa-on-surface">Error Logs</h3>
         <div className="flex gap-2">
           <Button size="sm" variant="ghost" onClick={fetchErrors}>Refresh</Button>
           <Button size="sm" variant="danger" onClick={handleClear}>Clear Old</Button>
@@ -3514,16 +3514,16 @@ const ErrorsPanel = () => {
       {data?.stats && (
         <div className="grid grid-cols-3 gap-3">
           <Card>
-            <p className="text-[10px] font-medium text-neutral-500 uppercase tracking-wider">Total</p>
-            <p className="text-2xl font-bold text-neutral-900 dark:text-neutral-100 mt-1">{data.stats.total}</p>
+            <p className="text-[10px] font-medium text-jolshaa-on-surface-variant uppercase tracking-wider">Total</p>
+            <p className="text-2xl font-bold text-jolshaa-on-surface mt-1">{data.stats.total}</p>
           </Card>
-          <Card className={data.stats.last24h > 0 ? 'border-amber-200 dark:border-amber-800' : ''}>
-            <p className="text-[10px] font-medium text-neutral-500 uppercase tracking-wider">Last 24h</p>
+          <Card className={data.stats.last24h > 0 ? 'border-amber-200' : ''}>
+            <p className="text-[10px] font-medium text-jolshaa-on-surface-variant uppercase tracking-wider">Last 24h</p>
             <p className={`text-2xl font-bold mt-1 ${data.stats.last24h > 0 ? 'text-amber-600' : 'text-green-600'}`}>{data.stats.last24h}</p>
             {data.stats.last24h > 10 && <p className="text-[10px] text-amber-500 mt-0.5">High error volume</p>}
           </Card>
-          <Card className={data.stats.lastHour > 0 ? 'border-red-200 dark:border-red-800' : ''}>
-            <p className="text-[10px] font-medium text-neutral-500 uppercase tracking-wider">Last Hour</p>
+          <Card className={data.stats.lastHour > 0 ? 'border-red-200' : ''}>
+            <p className="text-[10px] font-medium text-jolshaa-on-surface-variant uppercase tracking-wider">Last Hour</p>
             <p className={`text-2xl font-bold mt-1 ${data.stats.lastHour > 0 ? 'text-red-600' : 'text-green-600'}`}>{data.stats.lastHour}</p>
             {data.stats.lastHour > 0 && <div className="flex items-center gap-1 mt-0.5"><div className="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse" /><p className="text-[10px] text-red-500">Active</p></div>}
           </Card>
@@ -3533,12 +3533,12 @@ const ErrorsPanel = () => {
       {/* Error Codes Breakdown */}
       {data?.stats?.byCode && Object.keys(data.stats.byCode).length > 0 && (
         <Card>
-          <h4 className="text-xs font-semibold text-neutral-700 dark:text-neutral-300 mb-3 uppercase tracking-wider">Error Codes (24h)</h4>
+          <h4 className="font-display text-xs font-semibold text-jolshaa-on-surface-variant mb-3 uppercase tracking-wider">Error Codes (24h)</h4>
           <div className="flex flex-wrap gap-2">
             {Object.entries(data.stats.byCode).map(([code, count]) => (
-              <div key={code} className="flex items-center gap-1.5 bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400 px-2.5 py-1 rounded-full text-xs">
+              <div key={code} className="flex items-center gap-1.5 bg-red-50 text-red-700 px-2.5 py-1 rounded-full text-xs">
                 <span className="font-mono font-medium">{code}</span>
-                <span className="bg-red-200 dark:bg-red-800 text-red-800 dark:text-red-300 px-1.5 rounded-full text-[10px] font-bold">{count}</span>
+                <span className="bg-red-200 text-red-800 px-1.5 rounded-full text-[10px] font-bold">{count}</span>
               </div>
             ))}
           </div>
@@ -3547,29 +3547,29 @@ const ErrorsPanel = () => {
 
       {/* Error List */}
       <Card padding={false}>
-        <div className="divide-y divide-neutral-100 dark:divide-neutral-700 max-h-[50vh] overflow-y-auto">
+        <div className="divide-y divide-jolshaa-outline-variant max-h-[50vh] overflow-y-auto">
           {data?.errors?.length === 0 ? (
-            <div className="text-center py-12 text-neutral-500 text-sm">
-              <div className="w-12 h-12 bg-green-100 dark:bg-green-900/20 rounded-full flex items-center justify-center mx-auto mb-3">
+            <div className="text-center py-12 text-jolshaa-on-surface-variant text-sm">
+              <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
                 <svg className="w-6 h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
               </div>
               No errors logged
             </div>
           ) : data?.errors?.map(e => (
-            <div key={e.id} className={`px-4 py-3 hover:bg-neutral-50 dark:hover:bg-neutral-700/50 transition-colors ${expandedError === e.id ? 'bg-red-50/50 dark:bg-red-900/10' : ''}`}>
+            <div key={e.id} className={`px-4 py-3 hover:bg-jolshaa-surface-container-low transition-colors ${expandedError === e.id ? 'bg-red-50/50' : ''}`}>
               <div className="flex items-center gap-2 mb-1">
                 <Badge variant="danger" size="xs">{e.code}</Badge>
-                <span className="text-xs text-neutral-400">{new Date(e.timestamp).toLocaleString()}</span>
+                <span className="text-xs text-jolshaa-on-surface-variant">{new Date(e.timestamp).toLocaleString()}</span>
                 {e.stack && (
-                  <button onClick={() => setExpandedError(expandedError === e.id ? null : e.id)} className="text-[10px] text-neutral-400 hover:text-neutral-600 ml-auto">
+                  <button onClick={() => setExpandedError(expandedError === e.id ? null : e.id)} className="text-[10px] text-jolshaa-on-surface-variant hover:text-jolshaa-on-surface ml-auto">
                     {expandedError === e.id ? 'Hide' : 'Stack'}
                   </button>
                 )}
               </div>
-              <p className="text-sm text-red-600 dark:text-red-400 font-medium">{e.message}</p>
-              {e.context?.method && <p className="text-xs text-neutral-400 mt-0.5 font-mono">{e.context.method} {e.context.path}</p>}
+              <p className="text-sm text-red-600 font-medium">{e.message}</p>
+              {e.context?.method && <p className="text-xs text-jolshaa-on-surface-variant mt-0.5 font-mono">{e.context.method} {e.context.path}</p>}
               {expandedError === e.id && e.stack && (
-                <pre className="text-[10px] text-neutral-500 mt-2 p-2 bg-neutral-100 dark:bg-neutral-800 rounded max-h-32 overflow-y-auto whitespace-pre-wrap font-mono">{e.stack}</pre>
+                <pre className="text-[10px] text-jolshaa-on-surface-variant mt-2 p-2 bg-jolshaa-surface-container-low rounded max-h-32 overflow-y-auto whitespace-pre-wrap font-mono">{e.stack}</pre>
               )}
             </div>
           ))}
@@ -3590,13 +3590,13 @@ const CachePanel = () => {
     try { await API.post('/admin/system/cache/flush', { pattern }); alert('Cache flushed'); } catch { alert('Failed'); }
   };
 
-  if (loading) return <div className="text-center py-8 text-neutral-500">Loading...</div>;
+  if (loading) return <div className="text-center py-8 text-jolshaa-on-surface-variant">Loading...</div>;
 
   return (
     <div className="space-y-4">
       <Card>
         <div className="flex items-center justify-between mb-3">
-          <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">Cache Management</h3>
+          <h3 className="text-sm font-semibold font-display text-jolshaa-on-surface">Cache Management</h3>
         </div>
         <div className="space-y-3 text-xs">
           <div className="flex items-center justify-between">
@@ -3607,7 +3607,7 @@ const CachePanel = () => {
       </Card>
 
       <Card>
-        <h4 className="text-xs font-semibold text-neutral-700 dark:text-neutral-300 mb-2">Cache Key Patterns</h4>
+        <h4 className="font-display text-xs font-semibold text-jolshaa-on-surface-variant mb-2">Cache Key Patterns</h4>
         <div className="flex flex-wrap gap-1 mb-3">
           {data?.keys?.map(k => (
             <Badge key={k} variant="neutral" size="xs">{k}*</Badge>
@@ -3631,52 +3631,52 @@ const DatabasePanel = () => {
 
   useEffect(() => { API.get('/admin/system/database').then(res => setData(res.data)).finally(() => setLoading(false)); }, []);
 
-  if (loading) return <div className="text-center py-8 text-neutral-500">Loading...</div>;
+  if (loading) return <div className="text-center py-8 text-jolshaa-on-surface-variant">Loading...</div>;
 
   return (
     <div className="space-y-4">
       {data?.connection && (
         <Card>
-          <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-3">Connection</h3>
+          <h3 className="text-sm font-semibold font-display text-jolshaa-on-surface mb-3">Connection</h3>
           <div className="grid grid-cols-3 gap-3 text-xs">
-            <div><span className="text-neutral-500">Status:</span> <Badge variant={data.connection.state === 'connected' ? 'success' : 'danger'} size="xs">{data.connection.state}</Badge></div>
-            <div><span className="text-neutral-500">Host:</span> <span className="font-medium">{data.connection.host}</span></div>
-            <div><span className="text-neutral-500">Database:</span> <span className="font-medium">{data.connection.name}</span></div>
+            <div><span className="text-jolshaa-on-surface-variant">Status:</span> <Badge variant={data.connection.state === 'connected' ? 'success' : 'danger'} size="xs">{data.connection.state}</Badge></div>
+            <div><span className="text-jolshaa-on-surface-variant">Host:</span> <span className="font-medium">{data.connection.host}</span></div>
+            <div><span className="text-jolshaa-on-surface-variant">Database:</span> <span className="font-medium">{data.connection.name}</span></div>
           </div>
         </Card>
       )}
 
       {data?.dbStats && (
         <Card>
-          <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-3">Database Size</h3>
+          <h3 className="text-sm font-semibold font-display text-jolshaa-on-surface mb-3">Database Size</h3>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs">
-            <div><span className="text-neutral-500">Data:</span> <span className="font-medium">{data.dbStats.size} MB</span></div>
-            <div><span className="text-neutral-500">Storage:</span> <span className="font-medium">{data.dbStats.storageSize} MB</span></div>
-            <div><span className="text-neutral-500">Indexes:</span> <span className="font-medium">{data.dbStats.indexes}</span></div>
-            <div><span className="text-neutral-500">Index Size:</span> <span className="font-medium">{data.dbStats.indexSize} MB</span></div>
+            <div><span className="text-jolshaa-on-surface-variant">Data:</span> <span className="font-medium">{data.dbStats.size} MB</span></div>
+            <div><span className="text-jolshaa-on-surface-variant">Storage:</span> <span className="font-medium">{data.dbStats.storageSize} MB</span></div>
+            <div><span className="text-jolshaa-on-surface-variant">Indexes:</span> <span className="font-medium">{data.dbStats.indexes}</span></div>
+            <div><span className="text-jolshaa-on-surface-variant">Index Size:</span> <span className="font-medium">{data.dbStats.indexSize} MB</span></div>
           </div>
         </Card>
       )}
 
       {data?.collections?.length > 0 && (
         <Card>
-          <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-3">Collections</h3>
+          <h3 className="text-sm font-semibold font-display text-jolshaa-on-surface mb-3">Collections</h3>
           <Card padding={false}>
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-neutral-200 dark:border-neutral-700">
-                    <th className="text-left px-4 py-3 font-medium text-neutral-500">Collection</th>
-                    <th className="text-right px-4 py-3 font-medium text-neutral-500">Documents</th>
-                    <th className="text-right px-4 py-3 font-medium text-neutral-500">Last Activity</th>
+                  <tr className="border-b border-jolshaa-outline-variant">
+                    <th className="text-left px-4 py-3 font-medium text-jolshaa-on-surface-variant">Collection</th>
+                    <th className="text-right px-4 py-3 font-medium text-jolshaa-on-surface-variant">Documents</th>
+                    <th className="text-right px-4 py-3 font-medium text-jolshaa-on-surface-variant">Last Activity</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-neutral-100 dark:divide-neutral-700">
+                <tbody className="divide-y divide-jolshaa-outline-variant">
                   {data.collections.map(c => (
-                    <tr key={c.name} className="hover:bg-neutral-50 dark:hover:bg-neutral-700/50">
-                      <td className="px-4 py-3 font-medium text-neutral-900 dark:text-neutral-100 capitalize">{c.name}</td>
+                    <tr key={c.name} className="hover:bg-jolshaa-surface-container-low">
+                      <td className="px-4 py-3 font-medium text-jolshaa-on-surface capitalize">{c.name}</td>
                       <td className="px-4 py-3 text-right text-xs">{c.count.toLocaleString()}</td>
-                      <td className="px-4 py-3 text-right text-xs text-neutral-500">{c.lastActivity ? new Date(c.lastActivity).toLocaleString() : '-'}</td>
+                      <td className="px-4 py-3 text-right text-xs text-jolshaa-on-surface-variant">{c.lastActivity ? new Date(c.lastActivity).toLocaleString() : '-'}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -3756,7 +3756,7 @@ const SchedulerPanel = () => {
     return d.toLocaleDateString();
   };
 
-  if (loading) return <div className="text-center py-8 text-neutral-500">Loading cron jobs...</div>;
+  if (loading) return <div className="text-center py-8 text-jolshaa-on-surface-variant">Loading cron jobs...</div>;
 
   const totalRuns = jobs.reduce((sum, j) => sum + j.runCount, 0);
   const totalFails = jobs.reduce((sum, j) => sum + j.failCount, 0);
@@ -3765,7 +3765,7 @@ const SchedulerPanel = () => {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">Scheduled Jobs (Cron)</h3>
+        <h3 className="text-sm font-semibold font-display text-jolshaa-on-surface">Scheduled Jobs (Cron)</h3>
         <div className="flex gap-2">
           <Button size="sm" variant="ghost" onClick={fetchJobs}>Refresh</Button>
           <Button size="sm" variant="ghost" onClick={handleTriggerAll}>Run All Enabled</Button>
@@ -3774,19 +3774,19 @@ const SchedulerPanel = () => {
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <Card>
-          <p className="text-xs font-medium text-neutral-500">Total Jobs</p>
-          <p className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">{jobs.length}</p>
+          <p className="text-xs font-medium text-jolshaa-on-surface-variant">Total Jobs</p>
+          <p className="text-2xl font-bold text-jolshaa-on-surface">{jobs.length}</p>
         </Card>
         <Card>
-          <p className="text-xs font-medium text-neutral-500">Enabled</p>
+          <p className="text-xs font-medium text-jolshaa-on-surface-variant">Enabled</p>
           <p className="text-2xl font-bold text-green-600">{enabledCount}</p>
         </Card>
         <Card>
-          <p className="text-xs font-medium text-neutral-500">Total Runs</p>
+          <p className="text-xs font-medium text-jolshaa-on-surface-variant">Total Runs</p>
           <p className="text-2xl font-bold text-blue-600">{totalRuns}</p>
         </Card>
         <Card>
-          <p className="text-xs font-medium text-neutral-500">Failed</p>
+          <p className="text-xs font-medium text-jolshaa-on-surface-variant">Failed</p>
           <p className={`text-2xl font-bold ${totalFails > 0 ? 'text-red-600' : 'text-green-600'}`}>{totalFails}</p>
         </Card>
       </div>
@@ -3795,35 +3795,35 @@ const SchedulerPanel = () => {
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-neutral-200 dark:border-neutral-700">
-                <th className="text-left px-4 py-3 font-medium text-neutral-500">Job Name</th>
-                <th className="text-left px-4 py-3 font-medium text-neutral-500">Interval</th>
-                <th className="text-left px-4 py-3 font-medium text-neutral-500">Last Run</th>
-                <th className="text-left px-4 py-3 font-medium text-neutral-500">Duration</th>
-                <th className="text-left px-4 py-3 font-medium text-neutral-500">Runs</th>
-                <th className="text-left px-4 py-3 font-medium text-neutral-500">Status</th>
-                <th className="text-left px-4 py-3 font-medium text-neutral-500">Error</th>
-                <th className="text-right px-4 py-3 font-medium text-neutral-500">Actions</th>
+              <tr className="border-b border-jolshaa-outline-variant">
+                <th className="text-left px-4 py-3 font-medium text-jolshaa-on-surface-variant">Job Name</th>
+                <th className="text-left px-4 py-3 font-medium text-jolshaa-on-surface-variant">Interval</th>
+                <th className="text-left px-4 py-3 font-medium text-jolshaa-on-surface-variant">Last Run</th>
+                <th className="text-left px-4 py-3 font-medium text-jolshaa-on-surface-variant">Duration</th>
+                <th className="text-left px-4 py-3 font-medium text-jolshaa-on-surface-variant">Runs</th>
+                <th className="text-left px-4 py-3 font-medium text-jolshaa-on-surface-variant">Status</th>
+                <th className="text-left px-4 py-3 font-medium text-jolshaa-on-surface-variant">Error</th>
+                <th className="text-right px-4 py-3 font-medium text-jolshaa-on-surface-variant">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-neutral-100 dark:divide-neutral-700">
+            <tbody className="divide-y divide-jolshaa-outline-variant">
               {jobs.map(job => (
-                <tr key={job.name} className="hover:bg-neutral-50 dark:hover:bg-neutral-700/50">
+                <tr key={job.name} className="hover:bg-jolshaa-surface-container-low">
                   <td className="px-4 py-3">
                     <div>
-                      <p className="font-medium text-neutral-900 dark:text-neutral-100 capitalize">
+                      <p className="font-medium text-jolshaa-on-surface capitalize">
                         {job.name.replace(/_/g, ' ')}
                       </p>
-                      <p className="text-2xs text-neutral-400 font-mono">{job.name}</p>
+                      <p className="text-2xs text-jolshaa-on-surface-variant font-mono">{job.name}</p>
                     </div>
                   </td>
                   <td className="px-4 py-3">
                     <Badge variant="neutral" size="xs">{job.intervalLabel}</Badge>
                   </td>
-                  <td className="px-4 py-3 text-xs text-neutral-600 dark:text-neutral-400">
+                  <td className="px-4 py-3 text-xs text-jolshaa-on-surface-variant">
                     {formatTime(job.lastRun)}
                   </td>
-                  <td className="px-4 py-3 text-xs text-neutral-600 dark:text-neutral-400">
+                  <td className="px-4 py-3 text-xs text-jolshaa-on-surface-variant">
                     {formatDuration(job.lastDuration)}
                   </td>
                   <td className="px-4 py-3 text-xs">
@@ -3837,7 +3837,7 @@ const SchedulerPanel = () => {
                       </Badge>
                       <button
                         onClick={() => handleToggle(job.name, !job.enabled)}
-                        className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${job.enabled ? 'bg-green-500' : 'bg-neutral-300 dark:bg-neutral-600'}`}
+                        className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${job.enabled ? 'bg-green-500' : 'bg-jolshaa-outline-variant'}`}
                       >
                         <span className={`inline-block h-3.5 w-3.5 rounded-full bg-white transition-transform ${job.enabled ? 'translate-x-4.5' : 'translate-x-0.5'}`} />
                       </button>
@@ -3863,7 +3863,7 @@ const SchedulerPanel = () => {
             </tbody>
           </table>
         </div>
-        {jobs.length === 0 && <p className="text-center py-6 text-neutral-500 text-sm">No cron jobs found</p>}
+        {jobs.length === 0 && <p className="text-center py-6 text-jolshaa-on-surface-variant text-sm">No cron jobs found</p>}
       </Card>
     </div>
   );
@@ -3893,8 +3893,8 @@ const SecurityTab = () => {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-lg font-bold text-neutral-900 dark:text-neutral-100">Security Center</h2>
-          <p className="text-xs text-neutral-500">Admin login audit, 2FA, sessions, and threat detection</p>
+          <h2 className="text-lg font-bold font-display text-jolshaa-on-surface">Security Center</h2>
+          <p className="text-xs text-jolshaa-on-surface-variant">Admin login audit, 2FA, sessions, and threat detection</p>
         </div>
       </div>
 
@@ -3936,7 +3936,7 @@ const SecurityOverviewPanel = () => {
     }).finally(() => setLoading(false));
   }, []);
 
-  if (loading) return <div className="text-center py-8 text-neutral-500">Loading security overview...</div>;
+  if (loading) return <div className="text-center py-8 text-jolshaa-on-surface-variant">Loading security overview...</div>;
 
   const failedLogins = data?.loginAudit?.entries?.filter(e => !e.success).length || 0;
   const suspiciousCount = data?.suspicious?.suspicious?.length || 0;
@@ -3956,63 +3956,63 @@ const SecurityOverviewPanel = () => {
   return (
     <div className="space-y-4">
       {/* Threat Level Banner */}
-      <Card className={`border-${threat.color}-200 dark:border-${threat.color}-800`}>
+      <Card className={`border-${threat.color}-200`}>
         <div className="flex items-center gap-4">
-          <div className={`w-12 h-12 rounded-full bg-${threat.color}-100 dark:bg-${threat.color}-900/30 flex items-center justify-center flex-shrink-0`}>
+          <div className={`w-12 h-12 rounded-full bg-${threat.color}-100 flex items-center justify-center flex-shrink-0`}>
             <svg className={`w-6 h-6 text-${threat.color}-600`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
             </svg>
           </div>
           <div>
-            <h3 className="text-sm font-bold text-neutral-900 dark:text-neutral-100">Threat Level: <span className={`text-${threat.color}-600`}>{threat.label}</span></h3>
-            <p className="text-xs text-neutral-500">{suspiciousCount} suspicious activity, {rateLimitAbusers} rate-limit abusers, {failedLogins} failed logins</p>
+            <h3 className="text-sm font-bold font-display text-jolshaa-on-surface">Threat Level: <span className={`text-${threat.color}-600`}>{threat.label}</span></h3>
+            <p className="text-xs text-jolshaa-on-surface-variant">{suspiciousCount} suspicious activity, {rateLimitAbusers} rate-limit abusers, {failedLogins} failed logins</p>
           </div>
         </div>
       </Card>
 
       {/* Key Metrics */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <Card className={suspiciousCount > 0 ? 'border-red-200 dark:border-red-800' : ''}>
+        <Card className={suspiciousCount > 0 ? 'border-red-200' : ''}>
           <div className="flex items-center gap-2">
-            <div className={`w-8 h-8 rounded-lg ${suspiciousCount > 0 ? 'bg-red-100 dark:bg-red-900/30' : 'bg-green-100 dark:bg-green-900/30'} flex items-center justify-center`}>
+            <div className={`w-8 h-8 rounded-lg ${suspiciousCount > 0 ? 'bg-red-100' : 'bg-green-100'} flex items-center justify-center`}>
               <svg className={`w-4 h-4 ${suspiciousCount > 0 ? 'text-red-600' : 'text-green-600'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
             </div>
             <div>
-              <p className="text-[10px] font-medium text-neutral-500 uppercase">Suspicious</p>
+              <p className="text-[10px] font-medium text-jolshaa-on-surface-variant uppercase">Suspicious</p>
               <p className={`text-xl font-bold ${suspiciousCount > 0 ? 'text-red-600' : 'text-green-600'}`}>{suspiciousCount}</p>
             </div>
           </div>
         </Card>
         <Card>
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center">
               <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
             </div>
             <div>
-              <p className="text-[10px] font-medium text-neutral-500 uppercase">Sessions</p>
+              <p className="text-[10px] font-medium text-jolshaa-on-surface-variant uppercase">Sessions</p>
               <p className="text-xl font-bold text-blue-600">{activeSessions}</p>
             </div>
           </div>
         </Card>
         <Card>
           <div className="flex items-center gap-2">
-            <div className={`w-8 h-8 rounded-lg ${twoFAEnforced ? 'bg-green-100 dark:bg-green-900/30' : 'bg-amber-100 dark:bg-amber-900/30'} flex items-center justify-center`}>
+            <div className={`w-8 h-8 rounded-lg ${twoFAEnforced ? 'bg-green-100' : 'bg-amber-100'} flex items-center justify-center`}>
               <svg className={`w-4 h-4 ${twoFAEnforced ? 'text-green-600' : 'text-amber-600'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
             </div>
             <div>
-              <p className="text-[10px] font-medium text-neutral-500 uppercase">2FA</p>
-              <p className="text-xl font-bold text-neutral-900 dark:text-neutral-100">{twoFAEnabled}/{totalAdmins}</p>
+              <p className="text-[10px] font-medium text-jolshaa-on-surface-variant uppercase">2FA</p>
+              <p className="text-xl font-bold text-jolshaa-on-surface">{twoFAEnabled}/{totalAdmins}</p>
               <p className={`text-[10px] ${twoFAEnforced ? 'text-green-600' : 'text-amber-600'}`}>{twoFAEnforced ? 'Enforced' : 'Not enforced'}</p>
             </div>
           </div>
         </Card>
-        <Card className={rateLimitAbusers > 0 ? 'border-amber-200 dark:border-amber-800' : ''}>
+        <Card className={rateLimitAbusers > 0 ? 'border-amber-200' : ''}>
           <div className="flex items-center gap-2">
-            <div className={`w-8 h-8 rounded-lg ${rateLimitAbusers > 0 ? 'bg-amber-100 dark:bg-amber-900/30' : 'bg-green-100 dark:bg-green-900/30'} flex items-center justify-center`}>
+            <div className={`w-8 h-8 rounded-lg ${rateLimitAbusers > 0 ? 'bg-amber-100' : 'bg-green-100'} flex items-center justify-center`}>
               <svg className={`w-4 h-4 ${rateLimitAbusers > 0 ? 'text-amber-600' : 'text-green-600'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
             </div>
             <div>
-              <p className="text-[10px] font-medium text-neutral-500 uppercase">Rate Abuse</p>
+              <p className="text-[10px] font-medium text-jolshaa-on-surface-variant uppercase">Rate Abuse</p>
               <p className={`text-xl font-bold ${rateLimitAbusers > 0 ? 'text-amber-600' : 'text-green-600'}`}>{rateLimitAbusers}</p>
             </div>
           </div>
@@ -4021,15 +4021,15 @@ const SecurityOverviewPanel = () => {
 
       {/* Recent Suspicious Logins */}
       {data?.suspicious?.suspicious?.length > 0 && (
-        <Card className="border-red-200 dark:border-red-800">
-          <h3 className="text-xs font-semibold text-red-700 dark:text-red-400 mb-3 uppercase tracking-wider">Suspicious Activity</h3>
+        <Card className="border-red-200">
+          <h3 className="font-display text-xs font-semibold text-red-700 mb-3 uppercase tracking-wider">Suspicious Activity</h3>
           <div className="space-y-2">
             {data.suspicious.suspicious.slice(0, 3).map(s => (
-              <div key={s.adminId} className="flex items-center gap-3 py-2 border-b border-neutral-100 dark:border-neutral-700 last:border-0">
+              <div key={s.adminId} className="flex items-center gap-3 py-2 border-b border-jolshaa-outline-variant last:border-0">
                 <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
                 <div className="flex-1">
-                  <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100">{s.adminName}</p>
-                  <p className="text-[10px] text-neutral-400">{s.reasons.recentFailedAttempts} failed attempts, {s.reasons.uniqueIPs} IPs</p>
+                  <p className="text-sm font-medium text-jolshaa-on-surface">{s.adminName}</p>
+                  <p className="text-[10px] text-jolshaa-on-surface-variant">{s.reasons.recentFailedAttempts} failed attempts, {s.reasons.uniqueIPs} IPs</p>
                 </div>
                 <Badge variant="danger" size="xs">Risk: {s.riskScore}%</Badge>
               </div>
@@ -4041,21 +4041,21 @@ const SecurityOverviewPanel = () => {
       {/* Recent Failed Logins Timeline */}
       {data?.loginAudit?.entries?.filter(e => !e.success).length > 0 && (
         <Card>
-          <h3 className="text-xs font-semibold text-neutral-700 dark:text-neutral-300 mb-3 uppercase tracking-wider">Recent Failed Logins</h3>
+          <h3 className="font-display text-xs font-semibold text-jolshaa-on-surface-variant mb-3 uppercase tracking-wider">Recent Failed Logins</h3>
           <div className="space-y-0">
             {data.loginAudit.entries.filter(e => !e.success).slice(0, 5).map((entry, i) => (
               <div key={i} className="flex items-start gap-3 py-2 relative">
                 {/* Timeline connector */}
                 <div className="flex flex-col items-center">
                   <div className="w-2.5 h-2.5 rounded-full bg-red-500 flex-shrink-0" />
-                  {i < 4 && <div className="w-0.5 h-full bg-neutral-200 dark:bg-neutral-700 absolute left-[5px] top-3" />}
+                  {i < 4 && <div className="w-0.5 h-full bg-jolshaa-surface-container-high absolute left-[5px] top-3" />}
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
-                    <span className="text-sm font-medium text-neutral-900 dark:text-neutral-100">{entry.adminName}</span>
+                    <span className="text-sm font-medium text-jolshaa-on-surface">{entry.adminName}</span>
                     <Badge variant="danger" size="xs">Failed</Badge>
                   </div>
-                  <p className="text-[10px] text-neutral-400 mt-0.5">{entry.ip || 'Unknown IP'} &middot; {new Date(entry.timestamp).toLocaleString()}</p>
+                  <p className="text-[10px] text-jolshaa-on-surface-variant mt-0.5">{entry.ip || 'Unknown IP'} &middot; {new Date(entry.timestamp).toLocaleString()}</p>
                 </div>
               </div>
             ))}
@@ -4089,9 +4089,9 @@ const LoginAuditPanel = () => {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">Admin Login Audit</h3>
+        <h3 className="text-sm font-semibold font-display text-jolshaa-on-surface">Admin Login Audit</h3>
         <div className="flex gap-2">
-          <select value={filter} onChange={e => setFilter(e.target.value)} className="text-xs border border-neutral-300 dark:border-neutral-600 rounded-lg px-2 py-1.5 bg-white dark:bg-neutral-800">
+          <select value={filter} onChange={e => setFilter(e.target.value)} className="text-xs border border-jolshaa-outline-variant rounded-lg px-2 py-1.5 bg-jolshaa-surface-container-lowest">
             <option value="">All admins</option>
           </select>
           <Button size="sm" variant="ghost" onClick={fetchData}>Refresh</Button>
@@ -4101,44 +4101,44 @@ const LoginAuditPanel = () => {
       {/* Stats */}
       <div className="grid grid-cols-3 gap-3">
         <Card>
-          <p className="text-[10px] font-medium text-neutral-500 uppercase tracking-wider">Total</p>
-          <p className="text-2xl font-bold text-neutral-900 dark:text-neutral-100 mt-1">{data.total}</p>
+          <p className="text-[10px] font-medium text-jolshaa-on-surface-variant uppercase tracking-wider">Total</p>
+          <p className="text-2xl font-bold text-jolshaa-on-surface mt-1">{data.total}</p>
         </Card>
         <Card>
-          <p className="text-[10px] font-medium text-neutral-500 uppercase tracking-wider">Successful</p>
+          <p className="text-[10px] font-medium text-jolshaa-on-surface-variant uppercase tracking-wider">Successful</p>
           <p className="text-2xl font-bold text-green-600 mt-1">{successCount}</p>
         </Card>
-        <Card className={failedCount > 0 ? 'border-red-200 dark:border-red-800' : ''}>
-          <p className="text-[10px] font-medium text-neutral-500 uppercase tracking-wider">Failed</p>
+        <Card className={failedCount > 0 ? 'border-red-200' : ''}>
+          <p className="text-[10px] font-medium text-jolshaa-on-surface-variant uppercase tracking-wider">Failed</p>
           <p className={`text-2xl font-bold mt-1 ${failedCount > 0 ? 'text-red-600' : 'text-green-600'}`}>{failedCount}</p>
         </Card>
       </div>
 
-      {loading ? <div className="text-center py-8 text-neutral-500">Loading...</div> : (
+      {loading ? <div className="text-center py-8 text-jolshaa-on-surface-variant">Loading...</div> : (
         <Card padding={false}>
           <div className="max-h-[50vh] overflow-y-auto">
             {data.entries.length === 0 ? (
-              <div className="text-center py-8 text-neutral-500 text-sm">No login history</div>
+              <div className="text-center py-8 text-jolshaa-on-surface-variant text-sm">No login history</div>
             ) : (
-              <div className="divide-y divide-neutral-100 dark:divide-neutral-700">
+              <div className="divide-y divide-jolshaa-outline-variant">
                 {data.entries.map((entry, i) => (
-                  <div key={i} className="flex items-center gap-4 px-4 py-3 hover:bg-neutral-50 dark:hover:bg-neutral-700/50 transition-colors">
+                  <div key={i} className="flex items-center gap-4 px-4 py-3 hover:bg-jolshaa-surface-container-low transition-colors">
                     {/* Status indicator */}
                     <div className={`w-3 h-3 rounded-full flex-shrink-0 ${entry.success ? 'bg-green-500' : 'bg-red-500'}`} />
                     {/* Admin info */}
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
-                        <span className="text-sm font-medium text-neutral-900 dark:text-neutral-100">{entry.adminName}</span>
+                        <span className="text-sm font-medium text-jolshaa-on-surface">{entry.adminName}</span>
                         <Badge variant={entry.adminRole === 'superadmin' ? 'danger' : 'primary'} size="xs">{entry.adminRole}</Badge>
                         <Badge variant={entry.success ? 'success' : 'danger'} size="xs">{entry.success ? 'Success' : 'Failed'}</Badge>
                       </div>
                       <div className="flex items-center gap-3 mt-0.5">
-                        <span className="text-[10px] text-neutral-400 font-mono">{entry.ip || 'Unknown'}</span>
-                        {entry.userAgent && <span className="text-[10px] text-neutral-400 truncate max-w-[200px]">{entry.userAgent}</span>}
+                        <span className="text-[10px] text-jolshaa-on-surface-variant font-mono">{entry.ip || 'Unknown'}</span>
+                        {entry.userAgent && <span className="text-[10px] text-jolshaa-on-surface-variant truncate max-w-[200px]">{entry.userAgent}</span>}
                       </div>
                     </div>
                     {/* Time */}
-                    <span className="text-[10px] text-neutral-400 whitespace-nowrap">{new Date(entry.timestamp).toLocaleString()}</span>
+                    <span className="text-[10px] text-jolshaa-on-surface-variant whitespace-nowrap">{new Date(entry.timestamp).toLocaleString()}</span>
                   </div>
                 ))}
               </div>
@@ -4166,26 +4166,26 @@ const SuspiciousLoginsPanel = () => {
   useEffect(() => { fetchData(); }, []);
 
   const getRiskConfig = (score) => {
-    if (score >= 70) return { color: 'red', bg: 'bg-red-50 dark:bg-red-900/20', border: 'border-red-200 dark:border-red-800', label: 'High Risk', dot: 'bg-red-500 animate-pulse' };
-    if (score >= 40) return { color: 'amber', bg: 'bg-amber-50 dark:bg-amber-900/20', border: 'border-amber-200 dark:border-amber-800', label: 'Medium Risk', dot: 'bg-amber-500' };
-    return { color: 'green', bg: 'bg-green-50 dark:bg-green-900/20', border: 'border-green-200 dark:border-green-800', label: 'Low Risk', dot: 'bg-green-500' };
+    if (score >= 70) return { color: 'red', bg: 'bg-red-50', border: 'border-red-200', label: 'High Risk', dot: 'bg-red-500 animate-pulse' };
+    if (score >= 40) return { color: 'amber', bg: 'bg-amber-50', border: 'border-amber-200', label: 'Medium Risk', dot: 'bg-amber-500' };
+    return { color: 'green', bg: 'bg-green-50', border: 'border-green-200', label: 'Low Risk', dot: 'bg-green-500' };
   };
 
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">Suspicious Login Detection</h3>
+        <h3 className="text-sm font-semibold font-display text-jolshaa-on-surface">Suspicious Login Detection</h3>
         <Button size="sm" variant="ghost" onClick={fetchData}>Refresh</Button>
       </div>
 
-      {loading ? <div className="text-center py-8 text-neutral-500">Loading...</div> : data.suspicious.length === 0 ? (
+      {loading ? <div className="text-center py-8 text-jolshaa-on-surface-variant">Loading...</div> : data.suspicious.length === 0 ? (
         <Card>
           <div className="text-center py-8">
-            <div className="w-12 h-12 bg-green-100 dark:bg-green-900/20 rounded-full flex items-center justify-center mx-auto mb-3">
+            <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
               <svg className="w-6 h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
             </div>
-            <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100">All Clear</p>
-            <p className="text-xs text-neutral-500 mt-0.5">No suspicious logins detected</p>
+            <p className="text-sm font-medium text-jolshaa-on-surface">All Clear</p>
+            <p className="text-xs text-jolshaa-on-surface-variant mt-0.5">No suspicious logins detected</p>
           </div>
         </Card>
       ) : (
@@ -4205,7 +4205,7 @@ const SuspiciousLoginsPanel = () => {
                   {/* Details */}
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-2">
-                      <p className="font-medium text-neutral-900 dark:text-neutral-100">{s.adminName}</p>
+                      <p className="font-medium text-jolshaa-on-surface">{s.adminName}</p>
                       <Badge variant={s.adminRole === 'superadmin' ? 'danger' : 'primary'} size="xs">{s.adminRole}</Badge>
                       <div className="flex items-center gap-1">
                         <div className={`w-1.5 h-1.5 rounded-full ${risk.dot}`} />
@@ -4214,26 +4214,26 @@ const SuspiciousLoginsPanel = () => {
                     </div>
                     {/* Risk Factors Grid */}
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-                      <div className="bg-white dark:bg-neutral-800 rounded p-2">
-                        <p className="text-[10px] text-neutral-500">Failed (24h)</p>
+                      <div className="bg-jolshaa-surface-container-lowest rounded p-2">
+                        <p className="text-[10px] text-jolshaa-on-surface-variant">Failed (24h)</p>
                         <p className="text-sm font-bold text-red-600">{s.reasons.recentFailedAttempts}</p>
                       </div>
-                      <div className="bg-white dark:bg-neutral-800 rounded p-2">
-                        <p className="text-[10px] text-neutral-500">Unique IPs</p>
-                        <p className="text-sm font-bold text-neutral-900 dark:text-neutral-100">{s.reasons.uniqueIPs}</p>
+                      <div className="bg-jolshaa-surface-container-lowest rounded p-2">
+                        <p className="text-[10px] text-jolshaa-on-surface-variant">Unique IPs</p>
+                        <p className="text-sm font-bold text-jolshaa-on-surface">{s.reasons.uniqueIPs}</p>
                       </div>
-                      <div className="bg-white dark:bg-neutral-800 rounded p-2">
-                        <p className="text-[10px] text-neutral-500">Unique UAs</p>
-                        <p className="text-sm font-bold text-neutral-900 dark:text-neutral-100">{s.reasons.uniqueUserAgents}</p>
+                      <div className="bg-jolshaa-surface-container-lowest rounded p-2">
+                        <p className="text-[10px] text-jolshaa-on-surface-variant">Unique UAs</p>
+                        <p className="text-sm font-bold text-jolshaa-on-surface">{s.reasons.uniqueUserAgents}</p>
                       </div>
-                      <div className={`rounded p-2 ${s.reasons.shortTimeBurst ? 'bg-red-100 dark:bg-red-900/30' : 'bg-green-100 dark:bg-green-900/30'}`}>
-                        <p className="text-[10px] text-neutral-500">IP Burst</p>
+                      <div className={`rounded p-2 ${s.reasons.shortTimeBurst ? 'bg-red-100' : 'bg-green-100'}`}>
+                        <p className="text-[10px] text-jolshaa-on-surface-variant">IP Burst</p>
                         <p className={`text-sm font-bold ${s.reasons.shortTimeBurst ? 'text-red-600' : 'text-green-600'}`}>{s.reasons.shortTimeBurst ? 'Yes' : 'No'}</p>
                       </div>
                     </div>
                     {/* Recent Login */}
                     {s.recentLogins.length > 0 && (
-                      <div className="mt-2 flex items-center gap-2 text-[10px] text-neutral-400">
+                      <div className="mt-2 flex items-center gap-2 text-[10px] text-jolshaa-on-surface-variant">
                         <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                         <span>Last: {s.recentLogins[0].ip} &middot; {new Date(s.recentLogins[0].timestamp).toLocaleString()}</span>
                       </div>
@@ -4283,37 +4283,37 @@ const SessionsPanel = () => {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">Admin Sessions ({data.total})</h3>
+        <h3 className="text-sm font-semibold font-display text-jolshaa-on-surface">Admin Sessions ({data.total})</h3>
         <Button size="sm" variant="ghost" onClick={fetchData}>Refresh</Button>
       </div>
 
-      {loading ? <div className="text-center py-8 text-neutral-500">Loading...</div> : (
+      {loading ? <div className="text-center py-8 text-jolshaa-on-surface-variant">Loading...</div> : (
         <Card padding={false}>
           <div className="overflow-x-auto max-h-[50vh] overflow-y-auto">
             <table className="w-full text-sm">
-              <thead className="sticky top-0 bg-white dark:bg-neutral-800">
-                <tr className="border-b border-neutral-200 dark:border-neutral-700">
-                  <th className="text-left px-4 py-3 font-medium text-neutral-500">Admin</th>
-                  <th className="text-left px-4 py-3 font-medium text-neutral-500">IP</th>
-                  <th className="text-left px-4 py-3 font-medium text-neutral-500">User Agent</th>
-                  <th className="text-left px-4 py-3 font-medium text-neutral-500">Created</th>
-                  <th className="text-left px-4 py-3 font-medium text-neutral-500">Last Active</th>
-                  <th className="text-right px-4 py-3 font-medium text-neutral-500">Actions</th>
+              <thead className="sticky top-0 bg-jolshaa-surface-container-lowest">
+                <tr className="border-b border-jolshaa-outline-variant">
+                  <th className="text-left px-4 py-3 font-medium text-jolshaa-on-surface-variant">Admin</th>
+                  <th className="text-left px-4 py-3 font-medium text-jolshaa-on-surface-variant">IP</th>
+                  <th className="text-left px-4 py-3 font-medium text-jolshaa-on-surface-variant">User Agent</th>
+                  <th className="text-left px-4 py-3 font-medium text-jolshaa-on-surface-variant">Created</th>
+                  <th className="text-left px-4 py-3 font-medium text-jolshaa-on-surface-variant">Last Active</th>
+                  <th className="text-right px-4 py-3 font-medium text-jolshaa-on-surface-variant">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-neutral-100 dark:divide-neutral-700">
+              <tbody className="divide-y divide-jolshaa-outline-variant">
                 {data.sessions.map((s, i) => (
-                  <tr key={i} className="hover:bg-neutral-50 dark:hover:bg-neutral-700/50">
+                  <tr key={i} className="hover:bg-jolshaa-surface-container-low">
                     <td className="px-4 py-3">
                       <div>
-                        <p className="font-medium text-neutral-900 dark:text-neutral-100">{s.adminName}</p>
-                        <p className="text-xs text-neutral-400">{s.adminRole}</p>
+                        <p className="font-medium text-jolshaa-on-surface">{s.adminName}</p>
+                        <p className="text-xs text-jolshaa-on-surface-variant">{s.adminRole}</p>
                       </div>
                     </td>
                     <td className="px-4 py-3 text-xs font-mono">{s.ip || '-'}</td>
                     <td className="px-4 py-3 text-xs max-w-[200px] truncate" title={s.userAgent}>{s.userAgent || '-'}</td>
-                    <td className="px-4 py-3 text-xs text-neutral-400">{new Date(s.createdAt).toLocaleString()}</td>
-                    <td className="px-4 py-3 text-xs text-neutral-400">{new Date(s.lastActive).toLocaleString()}</td>
+                    <td className="px-4 py-3 text-xs text-jolshaa-on-surface-variant">{new Date(s.createdAt).toLocaleString()}</td>
+                    <td className="px-4 py-3 text-xs text-jolshaa-on-surface-variant">{new Date(s.lastActive).toLocaleString()}</td>
                     <td className="px-4 py-3">
                       <div className="flex gap-1 justify-end">
                         <Button size="xs" variant="ghost" onClick={() => handleRevoke(s.adminId, s._id)}>Revoke</Button>
@@ -4325,7 +4325,7 @@ const SessionsPanel = () => {
               </tbody>
             </table>
           </div>
-          {data.sessions.length === 0 && <p className="text-center py-6 text-neutral-500 text-sm">No active sessions</p>}
+          {data.sessions.length === 0 && <p className="text-center py-6 text-jolshaa-on-surface-variant text-sm">No active sessions</p>}
         </Card>
       )}
     </div>
@@ -4378,12 +4378,12 @@ const TwoFAPanel = () => {
     } catch (err) { alert('Failed'); }
   };
 
-  if (loading) return <div className="text-center py-8 text-neutral-500">Loading...</div>;
+  if (loading) return <div className="text-center py-8 text-jolshaa-on-surface-variant">Loading...</div>;
 
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">Two-Factor Authentication</h3>
+        <h3 className="text-sm font-semibold font-display text-jolshaa-on-surface">Two-Factor Authentication</h3>
         <div className="flex gap-2">
           <Button size="sm" variant="ghost" onClick={fetchData}>Refresh</Button>
           <Button size="sm" onClick={handleSetup}>Setup 2FA (Self)</Button>
@@ -4392,15 +4392,15 @@ const TwoFAPanel = () => {
 
       <div className="grid grid-cols-3 gap-3">
         <Card>
-          <p className="text-xs text-neutral-500">Total Admins</p>
-          <p className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">{enforcement?.totalAdmins || 0}</p>
+          <p className="text-xs text-jolshaa-on-surface-variant">Total Admins</p>
+          <p className="text-2xl font-bold text-jolshaa-on-surface">{enforcement?.totalAdmins || 0}</p>
         </Card>
         <Card>
-          <p className="text-xs text-neutral-500">2FA Enabled</p>
+          <p className="text-xs text-jolshaa-on-surface-variant">2FA Enabled</p>
           <p className="text-2xl font-bold text-green-600">{enforcement?.enabledCount || 0}</p>
         </Card>
         <Card>
-          <p className="text-xs text-neutral-500">Enforced</p>
+          <p className="text-xs text-jolshaa-on-surface-variant">Enforced</p>
           <p className={`text-2xl font-bold ${enforcement?.enforced ? 'text-green-600' : 'text-red-600'}`}>{enforcement?.enforced ? 'Yes' : 'No'}</p>
         </Card>
       </div>
@@ -4410,18 +4410,18 @@ const TwoFAPanel = () => {
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-neutral-200 dark:border-neutral-700">
-                  <th className="text-left px-4 py-3 font-medium text-neutral-500">Admin</th>
-                  <th className="text-left px-4 py-3 font-medium text-neutral-500">Role</th>
-                  <th className="text-left px-4 py-3 font-medium text-neutral-500">2FA Status</th>
+                <tr className="border-b border-jolshaa-outline-variant">
+                  <th className="text-left px-4 py-3 font-medium text-jolshaa-on-surface-variant">Admin</th>
+                  <th className="text-left px-4 py-3 font-medium text-jolshaa-on-surface-variant">Role</th>
+                  <th className="text-left px-4 py-3 font-medium text-jolshaa-on-surface-variant">2FA Status</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-neutral-100 dark:divide-neutral-700">
+              <tbody className="divide-y divide-jolshaa-outline-variant">
                 {enforcement.admins.map(a => (
-                  <tr key={a.id} className="hover:bg-neutral-50 dark:hover:bg-neutral-700/50">
+                  <tr key={a.id} className="hover:bg-jolshaa-surface-container-low">
                     <td className="px-4 py-3">
-                      <p className="font-medium text-neutral-900 dark:text-neutral-100">{a.name}</p>
-                      <p className="text-xs text-neutral-400">{a.email}</p>
+                      <p className="font-medium text-jolshaa-on-surface">{a.name}</p>
+                      <p className="text-xs text-jolshaa-on-surface-variant">{a.email}</p>
                     </td>
                     <td className="px-4 py-3"><Badge variant={a.role === 'superadmin' ? 'danger' : 'primary'} size="xs">{a.role}</Badge></td>
                     <td className="px-4 py-3">
@@ -4439,17 +4439,17 @@ const TwoFAPanel = () => {
 
       {showSetup && (
         <Card>
-          <h4 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-3">Setup 2FA</h4>
+          <h4 className="text-sm font-semibold font-display text-jolshaa-on-surface mb-3">Setup 2FA</h4>
           <div className="space-y-3 text-xs">
             <div>
-              <p className="text-neutral-500 mb-1">Secret (enter in your authenticator app):</p>
-              <code className="block p-2 bg-neutral-100 dark:bg-neutral-700 rounded font-mono break-all">{secret}</code>
+              <p className="text-jolshaa-on-surface-variant mb-1">Secret (enter in your authenticator app):</p>
+              <code className="block p-2 bg-jolshaa-surface-container-low rounded font-mono break-all">{secret}</code>
             </div>
             <div>
-              <p className="text-neutral-500 mb-1">Backup Codes (save these!):</p>
+              <p className="text-jolshaa-on-surface-variant mb-1">Backup Codes (save these!):</p>
               <div className="flex flex-wrap gap-1">
                 {backupCodes.map((code, i) => (
-                  <code key={i} className="px-2 py-1 bg-neutral-100 dark:bg-neutral-700 rounded">{code}</code>
+                  <code key={i} className="px-2 py-1 bg-jolshaa-surface-container-low rounded">{code}</code>
                 ))}
               </div>
             </div>
@@ -4482,23 +4482,23 @@ const IPDevicePanel = () => {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">IP / Device History</h3>
+        <h3 className="text-sm font-semibold font-display text-jolshaa-on-surface">IP / Device History</h3>
         <Button size="sm" variant="ghost" onClick={fetchData}>Refresh</Button>
       </div>
 
       {data.ipSummary?.length > 0 && (
         <Card>
-          <h4 className="text-xs font-semibold text-neutral-700 dark:text-neutral-300 mb-3">IP Summary (Top {data.ipSummary.length})</h4>
+          <h4 className="font-display text-xs font-semibold text-jolshaa-on-surface-variant mb-3">IP Summary (Top {data.ipSummary.length})</h4>
           <div className="space-y-2">
             {data.ipSummary.slice(0, 20).map(ip => (
               <div key={ip.ip} className="flex items-center justify-between text-xs">
                 <div className="flex items-center gap-2">
-                  <code className="font-mono text-neutral-900 dark:text-neutral-100">{ip.ip}</code>
-                  <span className="text-neutral-400">({ip.users.join(', ')})</span>
+                  <code className="font-mono text-jolshaa-on-surface">{ip.ip}</code>
+                  <span className="text-jolshaa-on-surface-variant">({ip.users.join(', ')})</span>
                 </div>
                 <div className="flex items-center gap-3">
-                  <span className="text-neutral-500">{ip.count} hits</span>
-                  <span className="text-neutral-400">{new Date(ip.lastSeen).toLocaleDateString()}</span>
+                  <span className="text-jolshaa-on-surface-variant">{ip.count} hits</span>
+                  <span className="text-jolshaa-on-surface-variant">{new Date(ip.lastSeen).toLocaleDateString()}</span>
                 </div>
               </div>
             ))}
@@ -4506,26 +4506,26 @@ const IPDevicePanel = () => {
         </Card>
       )}
 
-      {loading ? <div className="text-center py-8 text-neutral-500">Loading...</div> : (
+      {loading ? <div className="text-center py-8 text-jolshaa-on-surface-variant">Loading...</div> : (
         <Card padding={false}>
           <div className="overflow-x-auto max-h-[50vh] overflow-y-auto">
             <table className="w-full text-sm">
-              <thead className="sticky top-0 bg-white dark:bg-neutral-800">
-                <tr className="border-b border-neutral-200 dark:border-neutral-700">
-                  <th className="text-left px-4 py-3 font-medium text-neutral-500">User</th>
-                  <th className="text-left px-4 py-3 font-medium text-neutral-500">Type</th>
-                  <th className="text-left px-4 py-3 font-medium text-neutral-500">IP</th>
-                  <th className="text-left px-4 py-3 font-medium text-neutral-500">User Agent</th>
-                  <th className="text-left px-4 py-3 font-medium text-neutral-500">Status</th>
-                  <th className="text-left px-4 py-3 font-medium text-neutral-500">Time</th>
+              <thead className="sticky top-0 bg-jolshaa-surface-container-lowest">
+                <tr className="border-b border-jolshaa-outline-variant">
+                  <th className="text-left px-4 py-3 font-medium text-jolshaa-on-surface-variant">User</th>
+                  <th className="text-left px-4 py-3 font-medium text-jolshaa-on-surface-variant">Type</th>
+                  <th className="text-left px-4 py-3 font-medium text-jolshaa-on-surface-variant">IP</th>
+                  <th className="text-left px-4 py-3 font-medium text-jolshaa-on-surface-variant">User Agent</th>
+                  <th className="text-left px-4 py-3 font-medium text-jolshaa-on-surface-variant">Status</th>
+                  <th className="text-left px-4 py-3 font-medium text-jolshaa-on-surface-variant">Time</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-neutral-100 dark:divide-neutral-700">
+              <tbody className="divide-y divide-jolshaa-outline-variant">
                 {data.history.slice(0, 100).map((h, i) => (
-                  <tr key={i} className="hover:bg-neutral-50 dark:hover:bg-neutral-700/50">
+                  <tr key={i} className="hover:bg-jolshaa-surface-container-low">
                     <td className="px-4 py-3">
-                      <p className="font-medium text-neutral-900 dark:text-neutral-100">{h.userName}</p>
-                      <p className="text-xs text-neutral-400">{h.userRole}</p>
+                      <p className="font-medium text-jolshaa-on-surface">{h.userName}</p>
+                      <p className="text-xs text-jolshaa-on-surface-variant">{h.userRole}</p>
                     </td>
                     <td className="px-4 py-3"><Badge variant={h.type === 'login' ? 'primary' : 'neutral'} size="xs">{h.type}</Badge></td>
                     <td className="px-4 py-3 text-xs font-mono">{h.ip || '-'}</td>
@@ -4534,7 +4534,7 @@ const IPDevicePanel = () => {
                       {h.type === 'login' && <Badge variant={h.success ? 'success' : 'danger'} size="xs">{h.success ? 'Success' : 'Failed'}</Badge>}
                       {h.type === 'session' && <Badge variant="neutral" size="xs">Active</Badge>}
                     </td>
-                    <td className="px-4 py-3 text-xs text-neutral-400">{new Date(h.timestamp).toLocaleString()}</td>
+                    <td className="px-4 py-3 text-xs text-jolshaa-on-surface-variant">{new Date(h.timestamp).toLocaleString()}</td>
                   </tr>
                 ))}
               </tbody>
@@ -4583,40 +4583,40 @@ const PermissionLogPanel = () => {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">Permission Change Log</h3>
+        <h3 className="text-sm font-semibold font-display text-jolshaa-on-surface">Permission Change Log</h3>
         <Button size="sm" variant="ghost" onClick={fetchData}>Refresh</Button>
       </div>
 
-      {loading ? <div className="text-center py-8 text-neutral-500">Loading...</div> : (
+      {loading ? <div className="text-center py-8 text-jolshaa-on-surface-variant">Loading...</div> : (
         <Card padding={false}>
           <div className="overflow-x-auto max-h-[50vh] overflow-y-auto">
             <table className="w-full text-sm">
-              <thead className="sticky top-0 bg-white dark:bg-neutral-800">
-                <tr className="border-b border-neutral-200 dark:border-neutral-700">
-                  <th className="text-left px-4 py-3 font-medium text-neutral-500">Admin</th>
-                  <th className="text-left px-4 py-3 font-medium text-neutral-500">Action</th>
-                  <th className="text-left px-4 py-3 font-medium text-neutral-500">Details</th>
-                  <th className="text-left px-4 py-3 font-medium text-neutral-500">Time</th>
+              <thead className="sticky top-0 bg-jolshaa-surface-container-lowest">
+                <tr className="border-b border-jolshaa-outline-variant">
+                  <th className="text-left px-4 py-3 font-medium text-jolshaa-on-surface-variant">Admin</th>
+                  <th className="text-left px-4 py-3 font-medium text-jolshaa-on-surface-variant">Action</th>
+                  <th className="text-left px-4 py-3 font-medium text-jolshaa-on-surface-variant">Details</th>
+                  <th className="text-left px-4 py-3 font-medium text-jolshaa-on-surface-variant">Time</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-neutral-100 dark:divide-neutral-700">
+              <tbody className="divide-y divide-jolshaa-outline-variant">
                 {logs.map(log => (
-                  <tr key={log._id} className="hover:bg-neutral-50 dark:hover:bg-neutral-700/50">
+                  <tr key={log._id} className="hover:bg-jolshaa-surface-container-low">
                     <td className="px-4 py-3">
-                      <p className="font-medium text-neutral-900 dark:text-neutral-100">{log.admin?.name}</p>
-                      <p className="text-xs text-neutral-400">{log.admin?.role}</p>
+                      <p className="font-medium text-jolshaa-on-surface">{log.admin?.name}</p>
+                      <p className="text-xs text-jolshaa-on-surface-variant">{log.admin?.role}</p>
                     </td>
                     <td className="px-4 py-3">
                       <Badge variant="neutral" size="xs">{actionLabels[log.action] || log.action}</Badge>
                     </td>
-                    <td className="px-4 py-3 text-xs text-neutral-500 max-w-[250px] truncate">{JSON.stringify(log.details)}</td>
-                    <td className="px-4 py-3 text-xs text-neutral-400">{new Date(log.createdAt).toLocaleString()}</td>
+                    <td className="px-4 py-3 text-xs text-jolshaa-on-surface-variant max-w-[250px] truncate">{JSON.stringify(log.details)}</td>
+                    <td className="px-4 py-3 text-xs text-jolshaa-on-surface-variant">{new Date(log.createdAt).toLocaleString()}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
-          {logs.length === 0 && <p className="text-center py-6 text-neutral-500 text-sm">No permission changes logged</p>}
+          {logs.length === 0 && <p className="text-center py-6 text-jolshaa-on-surface-variant text-sm">No permission changes logged</p>}
         </Card>
       )}
     </div>
@@ -4653,22 +4653,22 @@ const PasswordResetPanel = () => {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">Admin Password Reset</h3>
+        <h3 className="text-sm font-semibold font-display text-jolshaa-on-surface">Admin Password Reset</h3>
         <Button size="sm" variant="ghost" onClick={fetchData}>Refresh</Button>
       </div>
 
       <Card>
-        <p className="text-xs text-neutral-500 mb-4">Reset an admin's password. This will revoke all their active sessions.</p>
+        <p className="text-xs text-jolshaa-on-surface-variant mb-4">Reset an admin's password. This will revoke all their active sessions.</p>
       </Card>
 
-      {loading ? <div className="text-center py-8 text-neutral-500">Loading...</div> : (
+      {loading ? <div className="text-center py-8 text-jolshaa-on-surface-variant">Loading...</div> : (
         <div className="grid gap-3 md:grid-cols-2">
           {admins.map(a => (
             <Card key={a._id}>
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="font-medium text-neutral-900 dark:text-neutral-100">{a.name}</p>
-                  <p className="text-xs text-neutral-400">{a.email}</p>
+                  <p className="font-medium text-jolshaa-on-surface">{a.name}</p>
+                  <p className="text-xs text-jolshaa-on-surface-variant">{a.email}</p>
                 </div>
                 <Button size="xs" variant="danger" onClick={() => { setResetModal(a); setNewPassword(''); }}>
                   Reset Password
@@ -4682,7 +4682,7 @@ const PasswordResetPanel = () => {
       {resetModal && (
         <Modal isOpen={!!resetModal} onClose={() => setResetModal(null)} title={`Reset Password: ${resetModal.name}`}>
           <div className="p-5 space-y-4">
-            <p className="text-sm text-neutral-600">This will set a new password and revoke all active sessions for this admin.</p>
+            <p className="text-sm text-jolshaa-on-surface-variant">This will set a new password and revoke all active sessions for this admin.</p>
             <Input
               label="New Password"
               type="password"
@@ -4717,26 +4717,26 @@ const RateLimitAbusePanel = () => {
   useEffect(() => { fetchData(); }, []);
 
   const getRiskConfig = (level) => {
-    if (level === 'high') return { color: 'red', bg: 'bg-red-50 dark:bg-red-900/20', border: 'border-red-200 dark:border-red-800', dot: 'bg-red-500 animate-pulse' };
-    if (level === 'medium') return { color: 'amber', bg: 'bg-amber-50 dark:bg-amber-900/20', border: 'border-amber-200 dark:border-amber-800', dot: 'bg-amber-500' };
-    return { color: 'green', bg: 'bg-green-50 dark:bg-green-900/20', border: 'border-green-200 dark:border-green-800', dot: 'bg-green-500' };
+    if (level === 'high') return { color: 'red', bg: 'bg-red-50', border: 'border-red-200', dot: 'bg-red-500 animate-pulse' };
+    if (level === 'medium') return { color: 'amber', bg: 'bg-amber-50', border: 'border-amber-200', dot: 'bg-amber-500' };
+    return { color: 'green', bg: 'bg-green-50', border: 'border-green-200', dot: 'bg-green-500' };
   };
 
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">Rate-Limit Abuse Review</h3>
+        <h3 className="text-sm font-semibold font-display text-jolshaa-on-surface">Rate-Limit Abuse Review</h3>
         <Button size="sm" variant="ghost" onClick={fetchData}>Refresh</Button>
       </div>
 
-      {loading ? <div className="text-center py-8 text-neutral-500">Loading...</div> : data.abuseReport.length === 0 ? (
+      {loading ? <div className="text-center py-8 text-jolshaa-on-surface-variant">Loading...</div> : data.abuseReport.length === 0 ? (
         <Card>
           <div className="text-center py-8">
-            <div className="w-12 h-12 bg-green-100 dark:bg-green-900/20 rounded-full flex items-center justify-center mx-auto mb-3">
+            <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
               <svg className="w-6 h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
             </div>
-            <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100">All Clear</p>
-            <p className="text-xs text-neutral-500 mt-0.5">No rate-limit abuse detected</p>
+            <p className="text-sm font-medium text-jolshaa-on-surface">All Clear</p>
+            <p className="text-xs text-jolshaa-on-surface-variant mt-0.5">No rate-limit abuse detected</p>
           </div>
         </Card>
       ) : (
@@ -4753,29 +4753,29 @@ const RateLimitAbusePanel = () => {
                   {/* Details */}
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-2">
-                      <p className="font-medium text-neutral-900 dark:text-neutral-100">{a.adminName}</p>
+                      <p className="font-medium text-jolshaa-on-surface">{a.adminName}</p>
                       <Badge variant={a.riskLevel === 'high' ? 'danger' : a.riskLevel === 'medium' ? 'warning' : 'success'} size="xs">{a.riskLevel}</Badge>
                     </div>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-                      <div className="bg-white dark:bg-neutral-800 rounded p-2">
-                        <p className="text-[10px] text-neutral-500">Total Failed</p>
-                        <p className="text-sm font-bold text-neutral-900 dark:text-neutral-100">{a.totalFailed}</p>
+                      <div className="bg-jolshaa-surface-container-lowest rounded p-2">
+                        <p className="text-[10px] text-jolshaa-on-surface-variant">Total Failed</p>
+                        <p className="text-sm font-bold text-jolshaa-on-surface">{a.totalFailed}</p>
                       </div>
-                      <div className="bg-white dark:bg-neutral-800 rounded p-2">
-                        <p className="text-[10px] text-neutral-500">Last 24h</p>
+                      <div className="bg-jolshaa-surface-container-lowest rounded p-2">
+                        <p className="text-[10px] text-jolshaa-on-surface-variant">Last 24h</p>
                         <p className="text-sm font-bold text-amber-600">{a.failedLast24h}</p>
                       </div>
-                      <div className={`rounded p-2 ${a.failedLastHour > 0 ? 'bg-red-100 dark:bg-red-900/30' : 'bg-white dark:bg-neutral-800'}`}>
-                        <p className="text-[10px] text-neutral-500">Last Hour</p>
-                        <p className={`text-sm font-bold ${a.failedLastHour > 0 ? 'text-red-600' : 'text-neutral-900 dark:text-neutral-100'}`}>{a.failedLastHour}</p>
+                      <div className={`rounded p-2 ${a.failedLastHour > 0 ? 'bg-red-100' : 'bg-jolshaa-surface-container-lowest'}`}>
+                        <p className="text-[10px] text-jolshaa-on-surface-variant">Last Hour</p>
+                        <p className={`text-sm font-bold ${a.failedLastHour > 0 ? 'text-red-600' : 'text-jolshaa-on-surface'}`}>{a.failedLastHour}</p>
                       </div>
-                      <div className="bg-white dark:bg-neutral-800 rounded p-2">
-                        <p className="text-[10px] text-neutral-500">Attacker IPs</p>
-                        <p className="text-sm font-bold text-neutral-900 dark:text-neutral-100">{a.uniqueAttackerIPs}</p>
+                      <div className="bg-jolshaa-surface-container-lowest rounded p-2">
+                        <p className="text-[10px] text-jolshaa-on-surface-variant">Attacker IPs</p>
+                        <p className="text-sm font-bold text-jolshaa-on-surface">{a.uniqueAttackerIPs}</p>
                       </div>
                     </div>
                     {a.lastFailed && (
-                      <p className="text-[10px] text-neutral-400 mt-2">Last failed: {new Date(a.lastFailed).toLocaleString()}</p>
+                      <p className="text-[10px] text-jolshaa-on-surface-variant mt-2">Last failed: {new Date(a.lastFailed).toLocaleString()}</p>
                     )}
                   </div>
                 </div>
@@ -4819,35 +4819,35 @@ const DataExportPanel = () => {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">Data Export</h3>
+        <h3 className="text-sm font-semibold font-display text-jolshaa-on-surface">Data Export</h3>
         <Button size="sm" variant="ghost" onClick={fetchData}>Refresh</Button>
       </div>
 
       <Card>
-        <p className="text-xs text-neutral-500">Export user data for compliance (GDPR/CCPA). Only superadmin can export admin data.</p>
+        <p className="text-xs text-jolshaa-on-surface-variant">Export user data for compliance (GDPR/CCPA). Only superadmin can export admin data.</p>
       </Card>
 
-      {loading ? <div className="text-center py-8 text-neutral-500">Loading...</div> : (
+      {loading ? <div className="text-center py-8 text-jolshaa-on-surface-variant">Loading...</div> : (
         <Card padding={false}>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-neutral-200 dark:border-neutral-700">
-                  <th className="text-left px-4 py-3 font-medium text-neutral-500">User</th>
-                  <th className="text-left px-4 py-3 font-medium text-neutral-500">Role</th>
-                  <th className="text-right px-4 py-3 font-medium text-neutral-500">Posts</th>
-                  <th className="text-right px-4 py-3 font-medium text-neutral-500">Messages</th>
-                  <th className="text-right px-4 py-3 font-medium text-neutral-500">Comments</th>
-                  <th className="text-right px-4 py-3 font-medium text-neutral-500">Est. Size</th>
-                  <th className="text-right px-4 py-3 font-medium text-neutral-500">Actions</th>
+                <tr className="border-b border-jolshaa-outline-variant">
+                  <th className="text-left px-4 py-3 font-medium text-jolshaa-on-surface-variant">User</th>
+                  <th className="text-left px-4 py-3 font-medium text-jolshaa-on-surface-variant">Role</th>
+                  <th className="text-right px-4 py-3 font-medium text-jolshaa-on-surface-variant">Posts</th>
+                  <th className="text-right px-4 py-3 font-medium text-jolshaa-on-surface-variant">Messages</th>
+                  <th className="text-right px-4 py-3 font-medium text-jolshaa-on-surface-variant">Comments</th>
+                  <th className="text-right px-4 py-3 font-medium text-jolshaa-on-surface-variant">Est. Size</th>
+                  <th className="text-right px-4 py-3 font-medium text-jolshaa-on-surface-variant">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-neutral-100 dark:divide-neutral-700">
+              <tbody className="divide-y divide-jolshaa-outline-variant">
                 {data.restrictions.map(u => (
-                  <tr key={u.userId} className="hover:bg-neutral-50 dark:hover:bg-neutral-700/50">
+                  <tr key={u.userId} className="hover:bg-jolshaa-surface-container-low">
                     <td className="px-4 py-3">
-                      <p className="font-medium text-neutral-900 dark:text-neutral-100">{u.name}</p>
-                      <p className="text-xs text-neutral-400">{u.email}</p>
+                      <p className="font-medium text-jolshaa-on-surface">{u.name}</p>
+                      <p className="text-xs text-jolshaa-on-surface-variant">{u.email}</p>
                     </td>
                     <td className="px-4 py-3"><Badge variant={u.role === 'superadmin' ? 'danger' : u.role === 'admin' ? 'primary' : 'neutral'} size="xs">{u.role}</Badge></td>
                     <td className="px-4 py-3 text-right text-xs">{u.postCount}</td>
@@ -4912,16 +4912,16 @@ const SupportOverviewPanel = () => {
     API.get('/admin/support/dashboard').then(res => setData(res.data)).finally(() => setLoading(false));
   }, []);
 
-  if (loading) return <div className="text-center py-8 text-neutral-500">Loading...</div>;
+  if (loading) return <div className="text-center py-8 text-jolshaa-on-surface-variant">Loading...</div>;
   if (!data) return null;
 
   const cards = [
-    { label: 'Open Tickets', value: data.openTickets, color: 'text-blue-600', bg: 'bg-blue-50 dark:bg-blue-900/20' },
-    { label: 'Pending Recovery', value: data.pendingRecovery, color: 'text-amber-600', bg: 'bg-amber-50 dark:bg-amber-900/20' },
-    { label: 'Unread Contact', value: data.unreadContact, color: 'text-purple-600', bg: 'bg-purple-50 dark:bg-purple-900/20' },
-    { label: 'New Feedback', value: data.newFeedback, color: 'text-green-600', bg: 'bg-green-50 dark:bg-green-900/20' },
-    { label: 'Failed Emails (24h)', value: data.failedEmails, color: 'text-red-600', bg: 'bg-red-50 dark:bg-red-900/20' },
-    { label: 'Resolved Today', value: data.resolvedToday, color: 'text-green-600', bg: 'bg-green-50 dark:bg-green-900/20' },
+    { label: 'Open Tickets', value: data.openTickets, color: 'text-blue-600', bg: 'bg-blue-50' },
+    { label: 'Pending Recovery', value: data.pendingRecovery, color: 'text-amber-600', bg: 'bg-amber-50' },
+    { label: 'Unread Contact', value: data.unreadContact, color: 'text-purple-600', bg: 'bg-purple-50' },
+    { label: 'New Feedback', value: data.newFeedback, color: 'text-green-600', bg: 'bg-green-50' },
+    { label: 'Failed Emails (24h)', value: data.failedEmails, color: 'text-red-600', bg: 'bg-red-50' },
+    { label: 'Resolved Today', value: data.resolvedToday, color: 'text-green-600', bg: 'bg-green-50' },
   ];
 
   return (
@@ -4929,7 +4929,7 @@ const SupportOverviewPanel = () => {
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
         {cards.map(c => (
           <Card key={c.label} className={c.bg}>
-            <p className="text-xs font-medium text-neutral-500">{c.label}</p>
+            <p className="text-xs font-medium text-jolshaa-on-surface-variant">{c.label}</p>
             <p className={`text-2xl font-bold ${c.color}`}>{c.value}</p>
           </Card>
         ))}
@@ -4937,14 +4937,14 @@ const SupportOverviewPanel = () => {
 
       {data.recentTickets?.length > 0 && (
         <Card>
-          <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-3">Recent Tickets</h3>
+          <h3 className="text-sm font-semibold font-display text-jolshaa-on-surface mb-3">Recent Tickets</h3>
           <div className="space-y-2">
             {data.recentTickets.map(t => (
               <div key={t._id} className="flex items-center gap-3 text-xs">
                 <Badge variant={t.status === 'open' ? 'warning' : t.status === 'in_progress' ? 'primary' : 'success'} size="xs">{t.status}</Badge>
-                <span className="font-medium text-neutral-900 dark:text-neutral-100 flex-1">{t.subject}</span>
-                <span className="text-neutral-400">{t.user?.name}</span>
-                <span className="text-neutral-400">{new Date(t.createdAt).toLocaleDateString()}</span>
+                <span className="font-medium text-jolshaa-on-surface flex-1">{t.subject}</span>
+                <span className="text-jolshaa-on-surface-variant">{t.user?.name}</span>
+                <span className="text-jolshaa-on-surface-variant">{new Date(t.createdAt).toLocaleDateString()}</span>
               </div>
             ))}
           </div>
@@ -5004,12 +5004,12 @@ const TicketsPanel = () => {
         <Button size="sm" variant="ghost" onClick={fetchTickets} className="ml-auto">Refresh</Button>
       </div>
 
-      {loading ? <div className="text-center py-8 text-neutral-500">Loading...</div> : tickets.length === 0 ? (
-        <div className="text-center py-12 text-neutral-500">No tickets</div>
+      {loading ? <div className="text-center py-8 text-jolshaa-on-surface-variant">Loading...</div> : tickets.length === 0 ? (
+        <div className="text-center py-12 text-jolshaa-on-surface-variant">No tickets</div>
       ) : (
         <div className="space-y-2">
           {tickets.map(t => (
-            <Card key={t._id} className={selected?._id === t._id ? 'ring-2 ring-primary-500' : ''} onClick={() => setSelected(t)}>
+            <Card key={t._id} className={selected?._id === t._id ? 'ring-2 ring-jolshaa-teal' : ''} onClick={() => setSelected(t)}>
               <div className="flex items-start justify-between gap-3">
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-1">
@@ -5017,15 +5017,15 @@ const TicketsPanel = () => {
                     <Badge variant={priorityColors[t.priority]} size="xs">{t.priority}</Badge>
                     <Badge variant="neutral" size="xs">{t.category}</Badge>
                   </div>
-                  <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100">{t.subject}</p>
-                  <p className="text-xs text-neutral-500 mt-1">{t.user?.name} - {new Date(t.createdAt).toLocaleString()}</p>
-                  {t.assignedTo && <p className="text-xs text-neutral-400">Assigned: {t.assignedTo.name}</p>}
+                  <p className="text-sm font-medium text-jolshaa-on-surface">{t.subject}</p>
+                  <p className="text-xs text-jolshaa-on-surface-variant mt-1">{t.user?.name} - {new Date(t.createdAt).toLocaleString()}</p>
+                  {t.assignedTo && <p className="text-xs text-jolshaa-on-surface-variant">Assigned: {t.assignedTo.name}</p>}
                 </div>
                 <div className="flex gap-1">
                   <select
                     value={t.status}
                     onChange={e => { e.stopPropagation(); handleUpdate(t._id, { status: e.target.value }); }}
-                    className="text-xs border border-neutral-300 dark:border-neutral-600 rounded px-2 py-1 bg-white dark:bg-neutral-800"
+                    className="text-xs border border-jolshaa-outline-variant rounded px-2 py-1 bg-jolshaa-surface-container-lowest"
                     onClick={e => e.stopPropagation()}
                   >
                     <option value="open">Open</option>
@@ -5045,19 +5045,19 @@ const TicketsPanel = () => {
         <Card>
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <h4 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">{selected.subject}</h4>
+              <h4 className="text-sm font-semibold font-display text-jolshaa-on-surface">{selected.subject}</h4>
               <Button size="xs" variant="ghost" onClick={() => setSelected(null)}>Close</Button>
             </div>
-            <p className="text-xs text-neutral-500">From: {selected.user?.name} ({selected.user?.email})</p>
-            <p className="text-sm text-neutral-700 dark:text-neutral-300">{selected.description}</p>
+            <p className="text-xs text-jolshaa-on-surface-variant">From: {selected.user?.name} ({selected.user?.email})</p>
+            <p className="text-sm text-jolshaa-on-surface-variant">{selected.description}</p>
 
             {selected.messages?.length > 0 && (
-              <div className="space-y-2 mt-4 border-t border-neutral-200 dark:border-neutral-700 pt-3">
+              <div className="space-y-2 mt-4 border-t border-jolshaa-outline-variant pt-3">
                 {selected.messages.map((m, i) => (
-                  <div key={i} className={`p-2 rounded text-xs ${m.senderType === 'admin' ? 'bg-primary-50 dark:bg-primary-900/20 ml-8' : 'bg-neutral-100 dark:bg-neutral-700 mr-8'}`}>
+                  <div key={i} className={`p-2 rounded text-xs ${m.senderType === 'admin' ? 'bg-jolshaa-teal-container ml-8' : 'bg-jolshaa-surface-container-low mr-8'}`}>
                     <p className="font-medium">{m.senderType === 'admin' ? 'Admin' : 'User'}</p>
-                    <p className="text-neutral-700 dark:text-neutral-300 mt-1">{m.message}</p>
-                    <p className="text-neutral-400 mt-1">{new Date(m.createdAt).toLocaleString()}</p>
+                    <p className="text-jolshaa-on-surface-variant mt-1">{m.message}</p>
+                    <p className="text-jolshaa-on-surface-variant mt-1">{new Date(m.createdAt).toLocaleString()}</p>
                   </div>
                 ))}
               </div>
@@ -5120,22 +5120,22 @@ const ContactInboxPanel = () => {
         ))}
       </div>
 
-      {loading ? <div className="text-center py-8 text-neutral-500">Loading...</div> : messages.length === 0 ? (
-        <div className="text-center py-12 text-neutral-500">No messages</div>
+      {loading ? <div className="text-center py-8 text-jolshaa-on-surface-variant">Loading...</div> : messages.length === 0 ? (
+        <div className="text-center py-12 text-jolshaa-on-surface-variant">No messages</div>
       ) : (
         <div className="space-y-2">
           {messages.map(m => (
-            <Card key={m._id} className={m.status === 'unread' ? 'border-l-4 border-l-primary-500' : ''}>
+            <Card key={m._id} className={m.status === 'unread' ? 'border-l-4 border-l-jolshaa-teal' : ''}>
               <div className="flex items-start justify-between gap-3">
                 <div className="flex-1" onClick={() => { setSelected(m); handleStatus(m._id, m.status === 'unread' ? 'read' : m.status); }}>
                   <div className="flex items-center gap-2 mb-1">
                     <Badge variant={m.status === 'unread' ? 'primary' : m.status === 'replied' ? 'success' : 'neutral'} size="xs">{m.status}</Badge>
                     <Badge variant="neutral" size="xs">{m.category}</Badge>
-                    <span className="text-xs text-neutral-400">{m.email}</span>
+                    <span className="text-xs text-jolshaa-on-surface-variant">{m.email}</span>
                   </div>
-                  <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100">{m.subject}</p>
-                  <p className="text-xs text-neutral-500 mt-1">{m.name} - {new Date(m.createdAt).toLocaleString()}</p>
-                  <p className="text-xs text-neutral-400 mt-1 line-clamp-2">{m.message}</p>
+                  <p className="text-sm font-medium text-jolshaa-on-surface">{m.subject}</p>
+                  <p className="text-xs text-jolshaa-on-surface-variant mt-1">{m.name} - {new Date(m.createdAt).toLocaleString()}</p>
+                  <p className="text-xs text-jolshaa-on-surface-variant mt-1 line-clamp-2">{m.message}</p>
                 </div>
                 <div className="flex gap-1">
                   <Button size="xs" variant="ghost" onClick={() => setSelected(m)}>View</Button>
@@ -5150,16 +5150,16 @@ const ContactInboxPanel = () => {
         <Modal isOpen={!!selected} onClose={() => setSelected(null)} title={selected.subject}>
           <div className="p-5 space-y-3">
             <div className="text-xs space-y-1">
-              <p><span className="text-neutral-500">From:</span> {selected.name} ({selected.email})</p>
-              <p><span className="text-neutral-500">Category:</span> {selected.category}</p>
-              <p><span className="text-neutral-500">Date:</span> {new Date(selected.createdAt).toLocaleString()}</p>
+              <p><span className="text-jolshaa-on-surface-variant">From:</span> {selected.name} ({selected.email})</p>
+              <p><span className="text-jolshaa-on-surface-variant">Category:</span> {selected.category}</p>
+              <p><span className="text-jolshaa-on-surface-variant">Date:</span> {new Date(selected.createdAt).toLocaleString()}</p>
             </div>
-            <div className="p-3 bg-neutral-50 dark:bg-neutral-700 rounded text-sm text-neutral-700 dark:text-neutral-300">{selected.message}</div>
+            <div className="p-3 bg-jolshaa-surface-container-low rounded text-sm text-jolshaa-on-surface-variant">{selected.message}</div>
             <textarea
               value={replyText}
               onChange={e => setReplyText(e.target.value)}
               placeholder="Type a reply..."
-              className="w-full border border-neutral-300 dark:border-neutral-600 rounded-lg px-3 py-2 text-sm bg-white dark:bg-neutral-800 resize-none"
+              className="w-full border border-jolshaa-outline-variant rounded-lg px-3 py-2 text-sm bg-jolshaa-surface-container-lowest resize-none"
               rows={3}
             />
             <div className="flex gap-2 justify-end">
@@ -5211,7 +5211,7 @@ const FeedbackPanel = () => {
             {s || 'All'}
           </Button>
         ))}
-        <select value={typeFilter} onChange={e => setTypeFilter(e.target.value)} className="text-xs border border-neutral-300 dark:border-neutral-600 rounded px-2 py-1 bg-white dark:bg-neutral-800">
+        <select value={typeFilter} onChange={e => setTypeFilter(e.target.value)} className="text-xs border border-jolshaa-outline-variant rounded px-2 py-1 bg-jolshaa-surface-container-lowest">
           <option value="">All Types</option>
           <option value="bug">Bug</option>
           <option value="feature_request">Feature Request</option>
@@ -5221,8 +5221,8 @@ const FeedbackPanel = () => {
         </select>
       </div>
 
-      {loading ? <div className="text-center py-8 text-neutral-500">Loading...</div> : feedback.length === 0 ? (
-        <div className="text-center py-12 text-neutral-500">No feedback</div>
+      {loading ? <div className="text-center py-8 text-jolshaa-on-surface-variant">Loading...</div> : feedback.length === 0 ? (
+        <div className="text-center py-12 text-jolshaa-on-surface-variant">No feedback</div>
       ) : (
         <div className="space-y-2">
           {feedback.map(f => (
@@ -5234,14 +5234,14 @@ const FeedbackPanel = () => {
                     <Badge variant={statusColors[f.status]} size="xs">{f.status}</Badge>
                     {f.rating && <span className="text-xs text-amber-500">{'★'.repeat(f.rating)}</span>}
                   </div>
-                  <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100">{f.title}</p>
-                  <p className="text-xs text-neutral-500 mt-1">{f.user?.name || 'Anonymous'} - {new Date(f.createdAt).toLocaleString()}</p>
-                  <p className="text-xs text-neutral-400 mt-1 line-clamp-2">{f.description}</p>
+                  <p className="text-sm font-medium text-jolshaa-on-surface">{f.title}</p>
+                  <p className="text-xs text-jolshaa-on-surface-variant mt-1">{f.user?.name || 'Anonymous'} - {new Date(f.createdAt).toLocaleString()}</p>
+                  <p className="text-xs text-jolshaa-on-surface-variant mt-1 line-clamp-2">{f.description}</p>
                 </div>
                 <select
                   value={f.status}
                   onChange={e => handleUpdate(f._id, { status: e.target.value })}
-                  className="text-xs border border-neutral-300 dark:border-neutral-600 rounded px-2 py-1 bg-white dark:bg-neutral-800"
+                  className="text-xs border border-jolshaa-outline-variant rounded px-2 py-1 bg-jolshaa-surface-container-lowest"
                 >
                   <option value="new">New</option>
                   <option value="reviewing">Reviewing</option>
@@ -5301,8 +5301,8 @@ const RecoveryPanel = () => {
         ))}
       </div>
 
-      {loading ? <div className="text-center py-8 text-neutral-500">Loading...</div> : requests.length === 0 ? (
-        <div className="text-center py-12 text-neutral-500">No requests</div>
+      {loading ? <div className="text-center py-8 text-jolshaa-on-surface-variant">Loading...</div> : requests.length === 0 ? (
+        <div className="text-center py-12 text-jolshaa-on-surface-variant">No requests</div>
       ) : (
         <div className="space-y-2">
           {requests.map(r => (
@@ -5313,10 +5313,10 @@ const RecoveryPanel = () => {
                     <Badge variant={statusColors[r.status]} size="xs">{r.status}</Badge>
                     <Badge variant="neutral" size="xs">{typeLabels[r.type]}</Badge>
                   </div>
-                  <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100">{r.user?.name}</p>
-                  <p className="text-xs text-neutral-500">{r.user?.email}</p>
-                  <p className="text-xs text-neutral-400 mt-1">{r.reason}</p>
-                  {r.adminNote && <p className="text-xs text-primary-500 mt-1">Admin: {r.adminNote}</p>}
+                  <p className="text-sm font-medium text-jolshaa-on-surface">{r.user?.name}</p>
+                  <p className="text-xs text-jolshaa-on-surface-variant">{r.user?.email}</p>
+                  <p className="text-xs text-jolshaa-on-surface-variant mt-1">{r.reason}</p>
+                  {r.adminNote && <p className="text-xs text-jolshaa-teal mt-1">Admin: {r.adminNote}</p>}
                 </div>
                 {r.status === 'pending' && (
                   <div className="flex gap-1">
@@ -5333,10 +5333,10 @@ const RecoveryPanel = () => {
         <Modal isOpen={!!selected} onClose={() => setSelected(null)} title="Review Recovery Request">
           <div className="p-5 space-y-4">
             <div className="text-xs space-y-1">
-              <p><span className="text-neutral-500">User:</span> {selected.user?.name} ({selected.user?.email})</p>
-              <p><span className="text-neutral-500">Type:</span> {typeLabels[selected.type]}</p>
-              <p><span className="text-neutral-500">Reason:</span> {selected.reason}</p>
-              <p><span className="text-neutral-500">Requested:</span> {new Date(selected.createdAt).toLocaleString()}</p>
+              <p><span className="text-jolshaa-on-surface-variant">User:</span> {selected.user?.name} ({selected.user?.email})</p>
+              <p><span className="text-jolshaa-on-surface-variant">Type:</span> {typeLabels[selected.type]}</p>
+              <p><span className="text-jolshaa-on-surface-variant">Reason:</span> {selected.reason}</p>
+              <p><span className="text-jolshaa-on-surface-variant">Requested:</span> {new Date(selected.createdAt).toLocaleString()}</p>
             </div>
             <Input label="Admin Note" value={adminNote} onChange={e => setAdminNote(e.target.value)} placeholder="Optional note..." />
             <div className="flex justify-end gap-2">
@@ -5364,31 +5364,31 @@ const EmailDeliveryPanel = () => {
     ]).then(([s, l]) => { setStats(s.data); setLogs(l.data.logs); }).finally(() => setLoading(false));
   }, [filter]);
 
-  if (loading) return <div className="text-center py-8 text-neutral-500">Loading...</div>;
+  if (loading) return <div className="text-center py-8 text-jolshaa-on-surface-variant">Loading...</div>;
 
   return (
     <div className="space-y-4">
       {stats && (
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
-          <Card><p className="text-xs text-neutral-500">Total</p><p className="text-xl font-bold text-neutral-900 dark:text-neutral-100">{stats.total}</p></Card>
-          <Card><p className="text-xs text-neutral-500">Sent</p><p className="text-xl font-bold text-blue-600">{stats.sent}</p></Card>
-          <Card><p className="text-xs text-neutral-500">Delivered</p><p className="text-xl font-bold text-green-600">{stats.delivered}</p></Card>
-          <Card><p className="text-xs text-neutral-500">Failed</p><p className="text-xl font-bold text-red-600">{stats.failed}</p></Card>
-          <Card><p className="text-xs text-neutral-500">Bounced</p><p className="text-xl font-bold text-amber-600">{stats.bounced}</p></Card>
-          <Card><p className="text-xs text-neutral-500">Last 24h</p><p className="text-xl font-bold text-primary-600">{stats.last24h}</p></Card>
+          <Card><p className="text-xs text-jolshaa-on-surface-variant">Total</p><p className="text-xl font-bold text-jolshaa-on-surface">{stats.total}</p></Card>
+          <Card><p className="text-xs text-jolshaa-on-surface-variant">Sent</p><p className="text-xl font-bold text-blue-600">{stats.sent}</p></Card>
+          <Card><p className="text-xs text-jolshaa-on-surface-variant">Delivered</p><p className="text-xl font-bold text-green-600">{stats.delivered}</p></Card>
+          <Card><p className="text-xs text-jolshaa-on-surface-variant">Failed</p><p className="text-xl font-bold text-red-600">{stats.failed}</p></Card>
+          <Card><p className="text-xs text-jolshaa-on-surface-variant">Bounced</p><p className="text-xl font-bold text-amber-600">{stats.bounced}</p></Card>
+          <Card><p className="text-xs text-jolshaa-on-surface-variant">Last 24h</p><p className="text-xl font-bold text-jolshaa-teal">{stats.last24h}</p></Card>
         </div>
       )}
 
       {stats?.recentErrors?.length > 0 && (
         <Card>
-          <h4 className="text-xs font-semibold text-neutral-700 dark:text-neutral-300 mb-2">Recent Errors</h4>
+          <h4 className="font-display text-xs font-semibold text-jolshaa-on-surface-variant mb-2">Recent Errors</h4>
           <div className="space-y-1">
             {stats.recentErrors.map((e, i) => (
               <div key={i} className="text-xs flex items-center gap-2">
                 <Badge variant="danger" size="xs">{e.template}</Badge>
-                <span className="text-neutral-500">{e.to}</span>
+                <span className="text-jolshaa-on-surface-variant">{e.to}</span>
                 <span className="text-red-500 flex-1 truncate">{e.error}</span>
-                <span className="text-neutral-400">{new Date(e.createdAt).toLocaleString()}</span>
+                <span className="text-jolshaa-on-surface-variant">{new Date(e.createdAt).toLocaleString()}</span>
               </div>
             ))}
           </div>
@@ -5406,27 +5406,27 @@ const EmailDeliveryPanel = () => {
       <Card padding={false}>
         <div className="overflow-x-auto max-h-[40vh] overflow-y-auto">
           <table className="w-full text-sm">
-            <thead className="sticky top-0 bg-white dark:bg-neutral-800">
-              <tr className="border-b border-neutral-200 dark:border-neutral-700">
-                <th className="text-left px-4 py-3 font-medium text-neutral-500">Type</th>
-                <th className="text-left px-4 py-3 font-medium text-neutral-500">To</th>
-                <th className="text-left px-4 py-3 font-medium text-neutral-500">Subject</th>
-                <th className="text-left px-4 py-3 font-medium text-neutral-500">Status</th>
-                <th className="text-left px-4 py-3 font-medium text-neutral-500">Template</th>
-                <th className="text-left px-4 py-3 font-medium text-neutral-500">Time</th>
+            <thead className="sticky top-0 bg-jolshaa-surface-container-lowest">
+              <tr className="border-b border-jolshaa-outline-variant">
+                <th className="text-left px-4 py-3 font-medium text-jolshaa-on-surface-variant">Type</th>
+                <th className="text-left px-4 py-3 font-medium text-jolshaa-on-surface-variant">To</th>
+                <th className="text-left px-4 py-3 font-medium text-jolshaa-on-surface-variant">Subject</th>
+                <th className="text-left px-4 py-3 font-medium text-jolshaa-on-surface-variant">Status</th>
+                <th className="text-left px-4 py-3 font-medium text-jolshaa-on-surface-variant">Template</th>
+                <th className="text-left px-4 py-3 font-medium text-jolshaa-on-surface-variant">Time</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-neutral-100 dark:divide-neutral-700">
+            <tbody className="divide-y divide-jolshaa-outline-variant">
               {logs.map(log => (
-                <tr key={log._id} className="hover:bg-neutral-50 dark:hover:bg-neutral-700/50">
+                <tr key={log._id} className="hover:bg-jolshaa-surface-container-low">
                   <td className="px-4 py-3"><Badge variant={log.type === 'email' ? 'primary' : log.type === 'sms' ? 'success' : 'neutral'} size="xs">{log.type}</Badge></td>
                   <td className="px-4 py-3 text-xs">{log.to}</td>
                   <td className="px-4 py-3 text-xs max-w-[200px] truncate">{log.subject || '-'}</td>
                   <td className="px-4 py-3">
                     <Badge variant={log.status === 'delivered' ? 'success' : log.status === 'failed' ? 'danger' : log.status === 'bounced' ? 'warning' : 'neutral'} size="xs">{log.status}</Badge>
                   </td>
-                  <td className="px-4 py-3 text-xs text-neutral-500">{log.template}</td>
-                  <td className="px-4 py-3 text-xs text-neutral-400">{new Date(log.createdAt).toLocaleString()}</td>
+                  <td className="px-4 py-3 text-xs text-jolshaa-on-surface-variant">{log.template}</td>
+                  <td className="px-4 py-3 text-xs text-jolshaa-on-surface-variant">{new Date(log.createdAt).toLocaleString()}</td>
                 </tr>
               ))}
             </tbody>
@@ -5487,7 +5487,7 @@ const FAQPanel = () => {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">FAQ Management</h3>
+        <h3 className="text-sm font-semibold font-display text-jolshaa-on-surface">FAQ Management</h3>
         <div className="flex gap-2">
           <Button size="sm" variant="ghost" onClick={fetchFAQs}>Refresh</Button>
           <Button size="sm" onClick={() => { setShowCreate(true); setEditItem(null); setForm({ question: '', answer: '', category: 'general', order: 0, isVisible: true }); }}>
@@ -5496,8 +5496,8 @@ const FAQPanel = () => {
         </div>
       </div>
 
-      {loading ? <div className="text-center py-8 text-neutral-500">Loading...</div> : faqs.length === 0 ? (
-        <div className="text-center py-12 text-neutral-500">No FAQs yet</div>
+      {loading ? <div className="text-center py-8 text-jolshaa-on-surface-variant">Loading...</div> : faqs.length === 0 ? (
+        <div className="text-center py-12 text-jolshaa-on-surface-variant">No FAQs yet</div>
       ) : (
         <div className="space-y-2">
           {faqs.map(f => (
@@ -5507,10 +5507,10 @@ const FAQPanel = () => {
                   <div className="flex items-center gap-2 mb-1">
                     <Badge variant={f.isVisible ? 'success' : 'neutral'} size="xs">{f.isVisible ? 'Visible' : 'Hidden'}</Badge>
                     <Badge variant="neutral" size="xs">{f.category}</Badge>
-                    <span className="text-xs text-neutral-400">Order: {f.order}</span>
+                    <span className="text-xs text-jolshaa-on-surface-variant">Order: {f.order}</span>
                   </div>
-                  <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100">{f.question}</p>
-                  <p className="text-xs text-neutral-500 mt-1 line-clamp-2">{f.answer}</p>
+                  <p className="text-sm font-medium text-jolshaa-on-surface">{f.question}</p>
+                  <p className="text-xs text-jolshaa-on-surface-variant mt-1 line-clamp-2">{f.answer}</p>
                 </div>
                 <div className="flex gap-1">
                   <Button size="xs" variant="ghost" onClick={() => { setEditItem(f); setForm({ question: f.question, answer: f.answer, category: f.category, order: f.order, isVisible: f.isVisible }); setShowCreate(true); }}>Edit</Button>
@@ -5528,13 +5528,13 @@ const FAQPanel = () => {
           <div className="p-5 space-y-3">
             <Input label="Question" value={form.question} onChange={e => setForm(p => ({ ...p, question: e.target.value }))} />
             <div>
-              <label className="block text-xs font-medium text-neutral-700 dark:text-neutral-300 mb-1">Answer</label>
-              <textarea value={form.answer} onChange={e => setForm(p => ({ ...p, answer: e.target.value }))} rows={4} className="w-full border border-neutral-300 dark:border-neutral-600 rounded-lg px-3 py-2 text-sm bg-white dark:bg-neutral-800 resize-none" />
+              <label className="block text-xs font-medium text-jolshaa-on-surface-variant mb-1">Answer</label>
+              <textarea value={form.answer} onChange={e => setForm(p => ({ ...p, answer: e.target.value }))} rows={4} className="w-full border border-jolshaa-outline-variant rounded-lg px-3 py-2 text-sm bg-jolshaa-surface-container-lowest resize-none" />
             </div>
             <div className="flex gap-3">
               <div className="flex-1">
-                <label className="block text-xs font-medium text-neutral-700 dark:text-neutral-300 mb-1">Category</label>
-                <select value={form.category} onChange={e => setForm(p => ({ ...p, category: e.target.value }))} className="w-full border border-neutral-300 dark:border-neutral-600 rounded-lg px-3 py-2 text-sm bg-white dark:bg-neutral-800">
+                <label className="block text-xs font-medium text-jolshaa-on-surface-variant mb-1">Category</label>
+                <select value={form.category} onChange={e => setForm(p => ({ ...p, category: e.target.value }))} className="w-full border border-jolshaa-outline-variant rounded-lg px-3 py-2 text-sm bg-jolshaa-surface-container-lowest">
                   <option value="general">General</option>
                   <option value="account">Account</option>
                   <option value="features">Features</option>
@@ -5550,7 +5550,7 @@ const FAQPanel = () => {
             </div>
             <div className="flex items-center gap-2">
               <input type="checkbox" checked={form.isVisible} onChange={e => setForm(p => ({ ...p, isVisible: e.target.checked }))} className="rounded" />
-              <label className="text-xs text-neutral-600 dark:text-neutral-400">Visible to users</label>
+              <label className="text-xs text-jolshaa-on-surface-variant">Visible to users</label>
             </div>
             <div className="flex justify-end gap-2">
               <Button variant="secondary" onClick={() => { setShowCreate(false); setEditItem(null); }}>Cancel</Button>
@@ -5592,9 +5592,9 @@ const MergeUsersPanel = () => {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">Duplicate Account Detection</h3>
+        <h3 className="text-sm font-semibold font-display text-jolshaa-on-surface">Duplicate Account Detection</h3>
         <div className="flex gap-2">
-          <select value={method} onChange={e => setMethod(e.target.value)} className="text-xs border border-neutral-300 dark:border-neutral-600 rounded px-2 py-1 bg-white dark:bg-neutral-800">
+          <select value={method} onChange={e => setMethod(e.target.value)} className="text-xs border border-jolshaa-outline-variant rounded px-2 py-1 bg-jolshaa-surface-container-lowest">
             <option value="email">Similar Email</option>
             <option value="name">Same Name</option>
           </select>
@@ -5603,16 +5603,16 @@ const MergeUsersPanel = () => {
       </div>
 
       <Card>
-        <p className="text-xs text-neutral-500">Find and merge duplicate accounts. The primary account will keep all data from both accounts.</p>
+        <p className="text-xs text-jolshaa-on-surface-variant">Find and merge duplicate accounts. The primary account will keep all data from both accounts.</p>
       </Card>
 
-      {loading ? <div className="text-center py-8 text-neutral-500">Scanning...</div> : duplicates.length === 0 ? (
+      {loading ? <div className="text-center py-8 text-jolshaa-on-surface-variant">Scanning...</div> : duplicates.length === 0 ? (
         <Card>
           <div className="text-center py-8">
-            <div className="w-12 h-12 bg-green-100 dark:bg-green-900/20 rounded-full flex items-center justify-center mx-auto mb-3">
+            <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
               <svg className="w-6 h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
             </div>
-            <p className="text-sm text-neutral-500">No duplicates found</p>
+            <p className="text-sm text-jolshaa-on-surface-variant">No duplicates found</p>
           </div>
         </Card>
       ) : (
@@ -5620,16 +5620,16 @@ const MergeUsersPanel = () => {
           {duplicates.map((group, i) => (
             <Card key={i}>
               <div className="flex items-center justify-between mb-2">
-                <p className="text-xs font-medium text-neutral-500">Match: {group._id} ({group.count} accounts)</p>
+                <p className="text-xs font-medium text-jolshaa-on-surface-variant">Match: {group._id} ({group.count} accounts)</p>
               </div>
               <div className="space-y-2">
                 {group.users.map(u => (
-                  <div key={u._id} className="flex items-center gap-3 text-xs p-2 bg-neutral-50 dark:bg-neutral-700 rounded">
+                  <div key={u._id} className="flex items-center gap-3 text-xs p-2 bg-jolshaa-surface-container-low rounded">
                     <div className="flex-1">
-                      <p className="font-medium text-neutral-900 dark:text-neutral-100">{u.name}</p>
-                      <p className="text-neutral-400">{u.email}</p>
+                      <p className="font-medium text-jolshaa-on-surface">{u.name}</p>
+                      <p className="text-jolshaa-on-surface-variant">{u.email}</p>
                     </div>
-                    <span className="text-neutral-400">Joined: {new Date(u.createdAt).toLocaleDateString()}</span>
+                    <span className="text-jolshaa-on-surface-variant">Joined: {new Date(u.createdAt).toLocaleDateString()}</span>
                     {u.isAdmin && <Badge variant="danger" size="xs">Admin</Badge>}
                   </div>
                 ))}
@@ -5696,18 +5696,18 @@ const ContentOverviewPanel = () => {
     API.get('/admin/content/dashboard').then(res => setData(res.data)).finally(() => setLoading(false));
   }, []);
 
-  if (loading) return <div className="text-center py-8 text-neutral-500">Loading...</div>;
+  if (loading) return <div className="text-center py-8 text-jolshaa-on-surface-variant">Loading...</div>;
   if (!data) return null;
 
   const cards = [
-    { label: 'Total Posts', value: data.totalPosts, color: 'text-neutral-600', bg: 'bg-neutral-100 dark:bg-neutral-700' },
-    { label: 'Active Hashtags', value: data.totalHashtags, color: 'text-primary-600', bg: 'bg-primary-50 dark:bg-primary-900/20' },
-    { label: 'Trending Topics', value: data.trendingTopics, color: 'text-blue-600', bg: 'bg-blue-50 dark:bg-blue-900/20' },
-    { label: 'Pinned Posts', value: data.pinnedPosts, color: 'text-amber-600', bg: 'bg-amber-50 dark:bg-amber-900/20' },
-    { label: 'Featured', value: data.featuredContent, color: 'text-purple-600', bg: 'bg-purple-50 dark:bg-purple-900/20' },
-    { label: 'Pending Approvals', value: data.pendingApprovals, color: 'text-red-600', bg: 'bg-red-50 dark:bg-red-900/20' },
-    { label: 'Active Boosts', value: data.activeBoosts, color: 'text-green-600', bg: 'bg-green-50 dark:bg-green-900/20' },
-    { label: 'Active Ads', value: data.activeAds, color: 'text-emerald-600', bg: 'bg-emerald-50 dark:bg-emerald-900/20' },
+    { label: 'Total Posts', value: data.totalPosts, color: 'text-jolshaa-on-surface-variant', bg: 'bg-jolshaa-surface-container-low' },
+    { label: 'Active Hashtags', value: data.totalHashtags, color: 'text-jolshaa-teal', bg: 'bg-jolshaa-teal/10' },
+    { label: 'Trending Topics', value: data.trendingTopics, color: 'text-blue-600', bg: 'bg-blue-50' },
+    { label: 'Pinned Posts', value: data.pinnedPosts, color: 'text-amber-600', bg: 'bg-amber-50' },
+    { label: 'Featured', value: data.featuredContent, color: 'text-purple-600', bg: 'bg-purple-50' },
+    { label: 'Pending Approvals', value: data.pendingApprovals, color: 'text-red-600', bg: 'bg-red-50' },
+    { label: 'Active Boosts', value: data.activeBoosts, color: 'text-green-600', bg: 'bg-green-50' },
+    { label: 'Active Ads', value: data.activeAds, color: 'text-emerald-600', bg: 'bg-emerald-50' },
   ];
 
   return (
@@ -5715,7 +5715,7 @@ const ContentOverviewPanel = () => {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         {cards.map(c => (
           <Card key={c.label} className={c.bg}>
-            <p className="text-xs font-medium text-neutral-500">{c.label}</p>
+            <p className="text-xs font-medium text-jolshaa-on-surface-variant">{c.label}</p>
             <p className={`text-2xl font-bold ${c.color}`}>{c.value}</p>
           </Card>
         ))}
@@ -5724,12 +5724,12 @@ const ContentOverviewPanel = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {data.recentHashtags?.length > 0 && (
           <Card>
-            <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-3">Top Hashtags</h3>
+            <h3 className="font-display text-sm font-semibold text-jolshaa-on-surface mb-3">Top Hashtags</h3>
             <div className="space-y-2">
               {data.recentHashtags.map(h => (
                 <div key={h._id} className="flex items-center justify-between text-xs">
-                  <span className="text-primary-600 font-medium">#{h.name}</span>
-                  <span className="text-neutral-500">{h.postCount} posts</span>
+                  <span className="text-jolshaa-teal font-medium">#{h.name}</span>
+                  <span className="text-jolshaa-on-surface-variant">{h.postCount} posts</span>
                 </div>
               ))}
             </div>
@@ -5738,12 +5738,12 @@ const ContentOverviewPanel = () => {
 
         {data.recentTopics?.length > 0 && (
           <Card>
-            <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-3">Top Topics</h3>
+            <h3 className="font-display text-sm font-semibold text-jolshaa-on-surface mb-3">Top Topics</h3>
             <div className="space-y-2">
               {data.recentTopics.map(t => (
                 <div key={t._id} className="flex items-center justify-between text-xs">
-                  <span className="text-neutral-900 dark:text-neutral-100 font-medium">{t.displayName}</span>
-                  <span className="text-neutral-500">Score: {t.trendingScore}</span>
+                  <span className="text-jolshaa-on-surface font-medium">{t.displayName}</span>
+                  <span className="text-jolshaa-on-surface-variant">Score: {t.trendingScore}</span>
                 </div>
               ))}
             </div>
@@ -5793,16 +5793,16 @@ const TrendingPanel = () => {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">Trending Topics</h3>
+        <h3 className="font-display text-sm font-semibold text-jolshaa-on-surface">Trending Topics</h3>
         <div className="flex gap-2">
           <Button size="sm" variant="ghost" onClick={fetchTopics}>Refresh</Button>
           <Button size="sm" onClick={handleRecalculate}>Recalculate</Button>
         </div>
       </div>
 
-      {loading ? <div className="text-center py-8 text-neutral-500">Loading...</div> : topics.length === 0 ? (
+      {loading ? <div className="text-center py-8 text-jolshaa-on-surface-variant">Loading...</div> : topics.length === 0 ? (
         <Card>
-          <div className="text-center py-8 text-neutral-500">
+          <div className="text-center py-8 text-jolshaa-on-surface-variant">
             <p className="text-sm">No topics yet. Create topics in the Topics tab first.</p>
           </div>
         </Card>
@@ -5811,20 +5811,20 @@ const TrendingPanel = () => {
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-neutral-200 dark:border-neutral-700">
-                  <th className="text-left px-4 py-3 font-medium text-neutral-500">Topic</th>
-                  <th className="text-right px-4 py-3 font-medium text-neutral-500">Posts</th>
-                  <th className="text-right px-4 py-3 font-medium text-neutral-500">Score</th>
-                  <th className="text-left px-4 py-3 font-medium text-neutral-500">Status</th>
-                  <th className="text-right px-4 py-3 font-medium text-neutral-500">Actions</th>
+                <tr className="border-b border-jolshaa-outline-variant">
+                  <th className="text-left px-4 py-3 font-medium text-jolshaa-on-surface-variant">Topic</th>
+                  <th className="text-right px-4 py-3 font-medium text-jolshaa-on-surface-variant">Posts</th>
+                  <th className="text-right px-4 py-3 font-medium text-jolshaa-on-surface-variant">Score</th>
+                  <th className="text-left px-4 py-3 font-medium text-jolshaa-on-surface-variant">Status</th>
+                  <th className="text-right px-4 py-3 font-medium text-jolshaa-on-surface-variant">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-neutral-100 dark:divide-neutral-700">
+              <tbody className="divide-y divide-jolshaa-outline-variant">
                 {topics.map(t => (
-                  <tr key={t._id} className="hover:bg-neutral-50 dark:hover:bg-neutral-700/50">
+                  <tr key={t._id} className="hover:bg-jolshaa-surface-container-low">
                     <td className="px-4 py-3">
-                      <p className="font-medium text-neutral-900 dark:text-neutral-100">{t.displayName || t.name}</p>
-                      <p className="text-xs text-neutral-400">{t.name}</p>
+                      <p className="font-medium text-jolshaa-on-surface">{t.displayName || t.name}</p>
+                      <p className="text-xs text-jolshaa-on-surface-variant">{t.name}</p>
                     </td>
                     <td className="px-4 py-3 text-right text-xs">{t.postCount}</td>
                     <td className="px-4 py-3 text-right">
@@ -5832,7 +5832,7 @@ const TrendingPanel = () => {
                         type="number"
                         value={t.trendingScore}
                         onChange={e => handleUpdateScore(t._id, e.target.value)}
-                        className="w-16 text-right text-xs border border-neutral-300 dark:border-neutral-600 rounded px-1 py-0.5 bg-white dark:bg-neutral-800"
+                        className="w-16 text-right text-xs border border-jolshaa-outline-variant rounded px-1 py-0.5 bg-jolshaa-surface-container-lowest"
                       />
                     </td>
                     <td className="px-4 py-3">
@@ -5887,31 +5887,31 @@ const HashtagsPanel = () => {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">Hashtag Management</h3>
+        <h3 className="font-display text-sm font-semibold text-jolshaa-on-surface">Hashtag Management</h3>
         <div className="flex gap-2">
           <Button size="sm" variant="ghost" onClick={fetchHashtags}>Refresh</Button>
           <Button size="sm" onClick={handleSync}>Sync Counts</Button>
         </div>
       </div>
 
-      {loading ? <div className="text-center py-8 text-neutral-500">Loading...</div> : (
+      {loading ? <div className="text-center py-8 text-jolshaa-on-surface-variant">Loading...</div> : (
         <Card padding={false}>
           <div className="overflow-x-auto max-h-[50vh] overflow-y-auto">
             <table className="w-full text-sm">
-              <thead className="sticky top-0 bg-white dark:bg-neutral-800">
-                <tr className="border-b border-neutral-200 dark:border-neutral-700">
-                  <th className="text-left px-4 py-3 font-medium text-neutral-500">Hashtag</th>
-                  <th className="text-right px-4 py-3 font-medium text-neutral-500">Posts</th>
-                  <th className="text-left px-4 py-3 font-medium text-neutral-500">Description</th>
-                  <th className="text-right px-4 py-3 font-medium text-neutral-500">Actions</th>
+              <thead className="sticky top-0 bg-jolshaa-surface-container-lowest">
+                <tr className="border-b border-jolshaa-outline-variant">
+                  <th className="text-left px-4 py-3 font-medium text-jolshaa-on-surface-variant">Hashtag</th>
+                  <th className="text-right px-4 py-3 font-medium text-jolshaa-on-surface-variant">Posts</th>
+                  <th className="text-left px-4 py-3 font-medium text-jolshaa-on-surface-variant">Description</th>
+                  <th className="text-right px-4 py-3 font-medium text-jolshaa-on-surface-variant">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-neutral-100 dark:divide-neutral-700">
+              <tbody className="divide-y divide-jolshaa-outline-variant">
                 {hashtags.map(h => (
-                  <tr key={h._id} className="hover:bg-neutral-50 dark:hover:bg-neutral-700/50">
-                    <td className="px-4 py-3 font-medium text-primary-600">#{h.name}</td>
+                  <tr key={h._id} className="hover:bg-jolshaa-surface-container-low">
+                    <td className="px-4 py-3 font-medium text-jolshaa-teal">#{h.name}</td>
                     <td className="px-4 py-3 text-right text-xs">{h.postCount}</td>
-                    <td className="px-4 py-3 text-xs text-neutral-500 max-w-[200px] truncate">{h.description || '-'}</td>
+                    <td className="px-4 py-3 text-xs text-jolshaa-on-surface-variant max-w-[200px] truncate">{h.description || '-'}</td>
                     <td className="px-4 py-3 text-right">
                       <Button size="xs" variant="danger" onClick={() => handleDelete(h._id)}>Delete</Button>
                     </td>
@@ -5920,7 +5920,7 @@ const HashtagsPanel = () => {
               </tbody>
             </table>
           </div>
-          {hashtags.length === 0 && <p className="text-center py-6 text-neutral-500 text-sm">No hashtags found. Run Sync Counts to populate.</p>}
+          {hashtags.length === 0 && <p className="text-center py-6 text-jolshaa-on-surface-variant text-sm">No hashtags found. Run Sync Counts to populate.</p>}
         </Card>
       )}
     </div>
@@ -5981,7 +5981,7 @@ const TopicsPanel = () => {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">Topic / Category Management</h3>
+        <h3 className="font-display text-sm font-semibold text-jolshaa-on-surface">Topic / Category Management</h3>
         <div className="flex gap-2">
           <Button size="sm" variant="ghost" onClick={fetchTopics}>Refresh</Button>
           <Button size="sm" onClick={() => { setShowCreate(true); setEditItem(null); setForm({ name: '', displayName: '', description: '', keywords: '', order: 0 }); }}>
@@ -5990,28 +5990,28 @@ const TopicsPanel = () => {
         </div>
       </div>
 
-      {loading ? <div className="text-center py-8 text-neutral-500">Loading...</div> : topics.length === 0 ? (
-        <div className="text-center py-12 text-neutral-500">No topics yet</div>
+      {loading ? <div className="text-center py-8 text-jolshaa-on-surface-variant">Loading...</div> : topics.length === 0 ? (
+        <div className="text-center py-12 text-jolshaa-on-surface-variant">No topics yet</div>
       ) : (
         <Card padding={false}>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-neutral-200 dark:border-neutral-700">
-                  <th className="text-left px-4 py-3 font-medium text-neutral-500">Topic</th>
-                  <th className="text-right px-4 py-3 font-medium text-neutral-500">Posts</th>
-                  <th className="text-right px-4 py-3 font-medium text-neutral-500">Followers</th>
-                  <th className="text-right px-4 py-3 font-medium text-neutral-500">Order</th>
-                  <th className="text-left px-4 py-3 font-medium text-neutral-500">Status</th>
-                  <th className="text-right px-4 py-3 font-medium text-neutral-500">Actions</th>
+                <tr className="border-b border-jolshaa-outline-variant">
+                  <th className="text-left px-4 py-3 font-medium text-jolshaa-on-surface-variant">Topic</th>
+                  <th className="text-right px-4 py-3 font-medium text-jolshaa-on-surface-variant">Posts</th>
+                  <th className="text-right px-4 py-3 font-medium text-jolshaa-on-surface-variant">Followers</th>
+                  <th className="text-right px-4 py-3 font-medium text-jolshaa-on-surface-variant">Order</th>
+                  <th className="text-left px-4 py-3 font-medium text-jolshaa-on-surface-variant">Status</th>
+                  <th className="text-right px-4 py-3 font-medium text-jolshaa-on-surface-variant">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-neutral-100 dark:divide-neutral-700">
+              <tbody className="divide-y divide-jolshaa-outline-variant">
                 {topics.map(t => (
-                  <tr key={t._id} className="hover:bg-neutral-50 dark:hover:bg-neutral-700/50">
+                  <tr key={t._id} className="hover:bg-jolshaa-surface-container-low">
                     <td className="px-4 py-3">
-                      <p className="font-medium text-neutral-900 dark:text-neutral-100">{t.displayName}</p>
-                      <p className="text-xs text-neutral-400">{t.name}</p>
+                      <p className="font-medium text-jolshaa-on-surface">{t.displayName}</p>
+                      <p className="text-xs text-jolshaa-on-surface-variant">{t.name}</p>
                     </td>
                     <td className="px-4 py-3 text-right text-xs">{t.postCount}</td>
                     <td className="px-4 py-3 text-right text-xs">{t.followerCount}</td>
@@ -6083,16 +6083,16 @@ const PinnedPanel = () => {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">Pinned Posts</h3>
-          <p className="text-[10px] text-neutral-500">{pinned.length} pinned items</p>
+          <h3 className="font-display text-sm font-semibold text-jolshaa-on-surface">Pinned Posts</h3>
+          <p className="text-[10px] text-jolshaa-on-surface-variant">{pinned.length} pinned items</p>
         </div>
         <Button size="sm" variant="ghost" onClick={fetchPinned}>Refresh</Button>
       </div>
 
-      {loading ? <div className="text-center py-8 text-neutral-500">Loading...</div> : pinned.length === 0 ? (
+      {loading ? <div className="text-center py-8 text-jolshaa-on-surface-variant">Loading...</div> : pinned.length === 0 ? (
         <Card>
           <div className="text-center py-12">
-            <p className="text-sm text-neutral-500">No pinned posts</p>
+            <p className="text-sm text-jolshaa-on-surface-variant">No pinned posts</p>
           </div>
         </Card>
       ) : (
@@ -6101,8 +6101,8 @@ const PinnedPanel = () => {
             <Card key={p._id} className="hover:shadow-sm transition-shadow">
               <div className="flex items-start gap-3">
                 {/* Position number */}
-                <div className="w-6 h-6 rounded bg-neutral-100 dark:bg-neutral-800 flex items-center justify-center flex-shrink-0">
-                  <span className="text-[10px] font-bold text-neutral-500">{i + 1}</span>
+                <div className="w-6 h-6 rounded bg-jolshaa-surface-container-low flex items-center justify-center flex-shrink-0">
+                  <span className="text-[10px] font-bold text-jolshaa-on-surface-variant">{i + 1}</span>
                 </div>
                 {/* Content */}
                 <div className="flex-1 min-w-0">
@@ -6111,13 +6111,13 @@ const PinnedPanel = () => {
                     <Badge variant={scopeColors[p.scope]} size="xs">{p.scope}</Badge>
                     {p.expiresAt && <Badge variant="warning" size="xs">Expires {new Date(p.expiresAt).toLocaleDateString()}</Badge>}
                   </div>
-                  <p className="text-sm text-neutral-700 dark:text-neutral-300 line-clamp-2">{p.post?.text || 'Media post'}</p>
-                  <div className="flex items-center gap-3 mt-1 text-[10px] text-neutral-400">
+                  <p className="text-sm text-jolshaa-on-surface line-clamp-2">{p.post?.text || 'Media post'}</p>
+                  <div className="flex items-center gap-3 mt-1 text-[10px] text-jolshaa-on-surface-variant">
                     <span>By {p.post?.author?.name}</span>
                     <span>Pinned by {p.pinnedBy?.name}</span>
                     <span>{new Date(p.createdAt).toLocaleDateString()}</span>
                   </div>
-                  {p.reason && <p className="text-[10px] text-neutral-500 mt-1 italic">"{p.reason}"</p>}
+                  {p.reason && <p className="text-[10px] text-jolshaa-on-surface-variant mt-1 italic">"{p.reason}"</p>}
                 </div>
                 {/* Actions */}
                 <Button size="xs" variant="danger" onClick={() => handleUnpin(p._id)}>Unpin</Button>
@@ -6158,7 +6158,7 @@ const SponsoredPanel = () => {
     } catch (err) { alert('Failed'); }
   };
 
-  if (loading) return <div className="text-center py-8 text-neutral-500">Loading...</div>;
+  if (loading) return <div className="text-center py-8 text-jolshaa-on-surface-variant">Loading...</div>;
 
   return (
     <div className="space-y-4">
@@ -6169,16 +6169,16 @@ const SponsoredPanel = () => {
 
       {tab === 'ads' && (
         <div className="space-y-2">
-          {ads.length === 0 ? <div className="text-center py-12 text-neutral-500">No ads</div> : ads.map(ad => (
+          {ads.length === 0 ? <div className="text-center py-12 text-jolshaa-on-surface-variant">No ads</div> : ads.map(ad => (
             <Card key={ad._id}>
               <div className="flex items-start justify-between gap-3">
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-1">
                     <Badge variant={ad.status === 'active' ? 'success' : ad.status === 'rejected' ? 'danger' : 'warning'} size="xs">{ad.status}</Badge>
-                    <span className="text-xs text-neutral-400">Budget: ${ad.budget} | Spent: ${ad.spent || 0}</span>
+                    <span className="text-xs text-jolshaa-on-surface-variant">Budget: ${ad.budget} | Spent: ${ad.spent || 0}</span>
                   </div>
-                  <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100">{ad.title}</p>
-                  <p className="text-xs text-neutral-500">{ad.advertiser?.name} - {new Date(ad.createdAt).toLocaleDateString()}</p>
+                  <p className="text-sm font-medium text-jolshaa-on-surface">{ad.title}</p>
+                  <p className="text-xs text-jolshaa-on-surface-variant">{ad.advertiser?.name} - {new Date(ad.createdAt).toLocaleDateString()}</p>
                 </div>
                 {ad.status === 'pending' && (
                   <div className="flex gap-1">
@@ -6194,13 +6194,13 @@ const SponsoredPanel = () => {
 
       {tab === 'boosts' && (
         <div className="space-y-2">
-          {boosted.length === 0 ? <div className="text-center py-12 text-neutral-500">No boosted posts</div> : boosted.map(b => (
+          {boosted.length === 0 ? <div className="text-center py-12 text-jolshaa-on-surface-variant">No boosted posts</div> : boosted.map(b => (
             <Card key={b._id}>
               <div className="flex items-start justify-between gap-3">
                 <div className="flex-1">
                   <Badge variant="success" size="xs">Boosted</Badge>
-                  <p className="text-sm text-neutral-700 dark:text-neutral-300 mt-1">{b.text?.substring(0, 100) || 'Media post'}</p>
-                  <p className="text-xs text-neutral-400 mt-1">By {b.author?.name} - Ends: {new Date(b.boostEndsAt).toLocaleString()}</p>
+                  <p className="text-sm text-jolshaa-on-surface mt-1">{b.text?.substring(0, 100) || 'Media post'}</p>
+                  <p className="text-xs text-jolshaa-on-surface-variant mt-1">By {b.author?.name} - Ends: {new Date(b.boostEndsAt).toLocaleString()}</p>
                 </div>
                 <div className="flex gap-1">
                   <Button size="xs" variant="danger" onClick={() => handleReviewBoost(b._id, 'reject')}>Remove Boost</Button>
@@ -6261,15 +6261,15 @@ const FeaturedPanel = () => {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">Featured Content Control</h3>
+        <h3 className="font-display text-sm font-semibold text-jolshaa-on-surface">Featured Content Control</h3>
         <div className="flex gap-2">
           <Button size="sm" variant="ghost" onClick={fetchFeatured}>Refresh</Button>
           <Button size="sm" onClick={() => setShowCreate(true)}>Add Featured</Button>
         </div>
       </div>
 
-      {loading ? <div className="text-center py-8 text-neutral-500">Loading...</div> : featured.length === 0 ? (
-        <div className="text-center py-12 text-neutral-500">No featured content</div>
+      {loading ? <div className="text-center py-8 text-jolshaa-on-surface-variant">Loading...</div> : featured.length === 0 ? (
+        <div className="text-center py-12 text-jolshaa-on-surface-variant">No featured content</div>
       ) : (
         <div className="space-y-2">
           {featured.map(f => (
@@ -6279,11 +6279,11 @@ const FeaturedPanel = () => {
                   <div className="flex items-center gap-2 mb-1">
                     <Badge variant={categoryColors[f.category]} size="xs">{f.category.replace(/_/g, ' ')}</Badge>
                     <Badge variant={f.isActive ? 'success' : 'neutral'} size="xs">{f.isActive ? 'Active' : 'Inactive'}</Badge>
-                    <span className="text-xs text-neutral-400">Priority: {f.priority}</span>
+                    <span className="text-xs text-jolshaa-on-surface-variant">Priority: {f.priority}</span>
                   </div>
-                  {f.title && <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100">{f.title}</p>}
-                  <p className="text-xs text-neutral-500 mt-1">{f.post?.text?.substring(0, 80) || 'Media post'} - By {f.post?.author?.name}</p>
-                  <p className="text-xs text-neutral-400">Curated by {f.curatedBy?.name} - {new Date(f.createdAt).toLocaleDateString()}</p>
+                  {f.title && <p className="text-sm font-medium text-jolshaa-on-surface">{f.title}</p>}
+                  <p className="text-xs text-jolshaa-on-surface-variant mt-1">{f.post?.text?.substring(0, 80) || 'Media post'} - By {f.post?.author?.name}</p>
+                  <p className="text-xs text-jolshaa-on-surface-variant">Curated by {f.curatedBy?.name} - {new Date(f.createdAt).toLocaleDateString()}</p>
                 </div>
                 <div className="flex gap-1">
                   <Button size="xs" variant="ghost" onClick={() => handleToggle(f._id, f.isActive)}>{f.isActive ? 'Hide' : 'Show'}</Button>
@@ -6300,8 +6300,8 @@ const FeaturedPanel = () => {
           <div className="p-5 space-y-3">
             <Input label="Post ID" value={form.postId} onChange={e => setForm(p => ({ ...p, postId: e.target.value }))} placeholder="Enter post ID" />
             <div>
-              <label className="block text-xs font-medium text-neutral-700 dark:text-neutral-300 mb-1">Category</label>
-              <select value={form.category} onChange={e => setForm(p => ({ ...p, category: e.target.value }))} className="w-full border border-neutral-300 dark:border-neutral-600 rounded-lg px-3 py-2 text-sm bg-white dark:bg-neutral-800">
+              <label className="block text-xs font-medium text-jolshaa-on-surface mb-1">Category</label>
+              <select value={form.category} onChange={e => setForm(p => ({ ...p, category: e.target.value }))} className="w-full border border-jolshaa-outline-variant rounded-lg px-3 py-2 text-sm bg-jolshaa-surface-container-lowest">
                 <option value="editor_pick">Editor's Pick</option>
                 <option value="trending">Trending</option>
                 <option value="community">Community</option>
@@ -6363,10 +6363,10 @@ const ApprovalsPanel = () => {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">Approval Queue</h3>
-          <p className="text-[10px] text-neutral-500">{pendingCount} pending review</p>
+          <h3 className="font-display text-sm font-semibold text-jolshaa-on-surface">Approval Queue</h3>
+          <p className="text-[10px] text-jolshaa-on-surface-variant">{pendingCount} pending review</p>
         </div>
-        <div className="flex gap-1 bg-neutral-100 dark:bg-neutral-800 rounded-lg p-0.5">
+        <div className="flex gap-1 bg-jolshaa-surface-container-low rounded-lg p-0.5">
           {[
             { key: '', label: 'All' },
             { key: 'ad', label: 'Ads' },
@@ -6374,19 +6374,19 @@ const ApprovalsPanel = () => {
             { key: 'page_verification', label: 'Pages' },
             { key: 'group_creation', label: 'Groups' },
           ].map(t => (
-            <button key={t.key} onClick={() => setFilter(t.key)} className={`px-2.5 py-1 text-xs font-medium rounded-md transition-all ${filter === t.key ? 'bg-white dark:bg-neutral-700 text-neutral-900 dark:text-neutral-100 shadow-sm' : 'text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300'}`}>{t.label}</button>
+            <button key={t.key} onClick={() => setFilter(t.key)} className={`px-2.5 py-1 text-xs font-medium rounded-md transition-all ${filter === t.key ? 'bg-jolshaa-surface-container-lowest text-jolshaa-on-surface shadow-sm' : 'text-jolshaa-on-surface-variant hover:text-jolshaa-on-surface'}`}>{t.label}</button>
           ))}
         </div>
       </div>
 
-      {loading ? <div className="text-center py-8 text-neutral-500">Loading...</div> : approvals.length === 0 ? (
+      {loading ? <div className="text-center py-8 text-jolshaa-on-surface-variant">Loading...</div> : approvals.length === 0 ? (
         <Card>
           <div className="text-center py-12">
-            <div className="w-12 h-12 bg-green-100 dark:bg-green-900/20 rounded-full flex items-center justify-center mx-auto mb-3">
+            <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
               <svg className="w-6 h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
             </div>
-            <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100">Queue clear</p>
-            <p className="text-xs text-neutral-500">No pending approvals</p>
+            <p className="text-sm font-medium text-jolshaa-on-surface">Queue clear</p>
+            <p className="text-xs text-jolshaa-on-surface-variant">No pending approvals</p>
           </div>
         </Card>
       ) : (
@@ -6395,18 +6395,18 @@ const ApprovalsPanel = () => {
             <Card key={a._id} className={a.status === 'pending' ? 'border-l-4 border-l-amber-400' : a.status === 'approved' ? 'border-l-4 border-l-green-400' : a.status === 'rejected' ? 'border-l-4 border-l-red-400' : ''}>
               <div className="flex items-start gap-3">
                 {/* Type Icon */}
-                <div className="w-8 h-8 rounded-lg bg-neutral-100 dark:bg-neutral-800 flex items-center justify-center flex-shrink-0 text-sm">{typeIcons[a.type] || '📄'}</div>
+                <div className="w-8 h-8 rounded-lg bg-jolshaa-surface-container-low flex items-center justify-center flex-shrink-0 text-sm">{typeIcons[a.type] || '📄'}</div>
                 {/* Content */}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1">
                     <Badge variant={statusColors[a.status]} size="xs">{a.status}</Badge>
                     <Badge variant="neutral" size="xs">{typeLabels[a.type]}</Badge>
-                    {a.target?.name && <span className="text-xs font-medium text-neutral-900 dark:text-neutral-100 truncate">{a.target.name}</span>}
+                    {a.target?.name && <span className="text-xs font-medium text-jolshaa-on-surface truncate">{a.target.name}</span>}
                   </div>
-                  <p className="text-xs text-neutral-500">by {a.submittedBy?.name} &middot; {new Date(a.createdAt).toLocaleString()}</p>
+                  <p className="text-xs text-jolshaa-on-surface-variant">by {a.submittedBy?.name} &middot; {new Date(a.createdAt).toLocaleString()}</p>
                   {a.status === 'pending' && (
                     <div className="mt-2 space-y-2">
-                      <input type="text" placeholder="Admin note (optional)" value={adminNotes[a._id] || ''} onChange={e => setAdminNotes(prev => ({ ...prev, [a._id]: e.target.value }))} className="w-full text-xs border border-neutral-300 dark:border-neutral-600 rounded px-2 py-1.5 bg-white dark:bg-neutral-800 focus:ring-2 focus:ring-primary-500" />
+                      <input type="text" placeholder="Admin note (optional)" value={adminNotes[a._id] || ''} onChange={e => setAdminNotes(prev => ({ ...prev, [a._id]: e.target.value }))} className="w-full text-xs border border-jolshaa-outline-variant rounded px-2 py-1.5 bg-jolshaa-surface-container-lowest focus:ring-2 focus:ring-jolshaa-teal" />
                       <div className="flex gap-1.5">
                         <Button size="xs" variant="danger" onClick={() => handleAction(a._id, 'rejected')} disabled={actionLoading === a._id}>{actionLoading === a._id ? '...' : 'Reject'}</Button>
                         <Button size="xs" variant="success" onClick={() => handleAction(a._id, 'approved')} disabled={actionLoading === a._id}>{actionLoading === a._id ? '...' : 'Approve'}</Button>
@@ -6450,37 +6450,37 @@ const RecommendationsPanel = () => {
     }));
   };
 
-  if (loading) return <div className="text-center py-8 text-neutral-500">Loading...</div>;
+  if (loading) return <div className="text-center py-8 text-jolshaa-on-surface-variant">Loading...</div>;
 
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">Recommendations Tuning</h3>
+        <h3 className="font-display text-sm font-semibold text-jolshaa-on-surface">Recommendations Tuning</h3>
         <Button size="sm" onClick={handleSave}>Save Config</Button>
       </div>
 
       {stats && (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          <Card><p className="text-xs text-neutral-500">Total Posts</p><p className="text-xl font-bold text-neutral-900 dark:text-neutral-100">{stats.totalPosts}</p></Card>
-          <Card><p className="text-xs text-neutral-500">Boosted</p><p className="text-xl font-bold text-green-600">{stats.boostedPosts}</p></Card>
-          <Card><p className="text-xs text-neutral-500">Featured</p><p className="text-xl font-bold text-purple-600">{stats.featuredPosts}</p></Card>
-          <Card><p className="text-xs text-neutral-500">Active Topics</p><p className="text-xl font-bold text-blue-600">{stats.activeTopics}</p></Card>
+          <Card><p className="text-xs text-jolshaa-on-surface-variant">Total Posts</p><p className="text-xl font-bold text-jolshaa-on-surface">{stats.totalPosts}</p></Card>
+          <Card><p className="text-xs text-jolshaa-on-surface-variant">Boosted</p><p className="text-xl font-bold text-green-600">{stats.boostedPosts}</p></Card>
+          <Card><p className="text-xs text-jolshaa-on-surface-variant">Featured</p><p className="text-xl font-bold text-purple-600">{stats.featuredPosts}</p></Card>
+          <Card><p className="text-xs text-jolshaa-on-surface-variant">Active Topics</p><p className="text-xl font-bold text-blue-600">{stats.activeTopics}</p></Card>
         </div>
       )}
 
       {config && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <Card>
-            <h4 className="text-xs font-semibold text-neutral-700 dark:text-neutral-300 mb-3">Feed Ranker Weights</h4>
+            <h4 className="font-display text-xs font-semibold text-jolshaa-on-surface mb-3">Feed Ranker Weights</h4>
             <div className="space-y-2">
               {Object.entries(config.feedRanker).map(([key, value]) => (
                 <div key={key} className="flex items-center gap-2 text-xs">
-                  <label className="w-40 text-neutral-500 truncate">{key.replace(/([A-Z])/g, ' $1')}</label>
+                  <label className="w-40 text-jolshaa-on-surface-variant truncate">{key.replace(/([A-Z])/g, ' $1')}</label>
                   <input
                     type="number"
                     value={value}
                     onChange={e => handleChange('feedRanker', key, e.target.value)}
-                    className="flex-1 border border-neutral-300 dark:border-neutral-600 rounded px-2 py-1 bg-white dark:bg-neutral-800 text-right"
+                    className="flex-1 border border-jolshaa-outline-variant rounded px-2 py-1 bg-jolshaa-surface-container-lowest text-right"
                   />
                 </div>
               ))}
@@ -6488,16 +6488,16 @@ const RecommendationsPanel = () => {
           </Card>
 
           <Card>
-            <h4 className="text-xs font-semibold text-neutral-700 dark:text-neutral-300 mb-3">Content Preferences</h4>
+            <h4 className="font-display text-xs font-semibold text-jolshaa-on-surface mb-3">Content Preferences</h4>
             <div className="space-y-2">
               {Object.entries(config.contentPreferences).map(([key, value]) => (
                 <div key={key} className="flex items-center gap-2 text-xs">
-                  <label className="w-40 text-neutral-500 truncate">{key.replace(/([A-Z])/g, ' $1')}</label>
+                  <label className="w-40 text-jolshaa-on-surface-variant truncate">{key.replace(/([A-Z])/g, ' $1')}</label>
                   <input
                     type="number"
                     value={value}
                     onChange={e => handleChange('contentPreferences', key, e.target.value)}
-                    className="flex-1 border border-neutral-300 dark:border-neutral-600 rounded px-2 py-1 bg-white dark:bg-neutral-800 text-right"
+                    className="flex-1 border border-jolshaa-outline-variant rounded px-2 py-1 bg-jolshaa-surface-container-lowest text-right"
                     step="0.1"
                   />
                 </div>
@@ -6509,13 +6509,13 @@ const RecommendationsPanel = () => {
 
       {stats?.topTopics?.length > 0 && (
         <Card>
-          <h4 className="text-xs font-semibold text-neutral-700 dark:text-neutral-300 mb-2">Top Topics by Trending Score</h4>
+          <h4 className="font-display text-xs font-semibold text-jolshaa-on-surface mb-2">Top Topics by Trending Score</h4>
           <div className="space-y-1.5">
             {stats.topTopics.map(t => (
               <div key={t._id} className="flex items-center justify-between text-xs">
-                <span className="text-neutral-900 dark:text-neutral-100">{t.displayName}</span>
+                <span className="text-jolshaa-on-surface">{t.displayName}</span>
                 <div className="flex items-center gap-3">
-                  <span className="text-neutral-500">{t.postCount} posts</span>
+                  <span className="text-jolshaa-on-surface-variant">{t.postCount} posts</span>
                   <Badge variant="primary" size="xs">Score: {t.trendingScore}</Badge>
                 </div>
               </div>
@@ -6554,11 +6554,11 @@ const BulkActionsTab = () => {
   return (
     <div className="space-y-4">
       <Card>
-        <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4">Bulk Content Actions</h3>
+        <h3 className="font-display text-sm font-semibold text-jolshaa-on-surface mb-4">Bulk Content Actions</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
-            <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Content Type</label>
-            <select value={type} onChange={e => setType(e.target.value)} className="w-full border border-neutral-300 dark:border-neutral-600 rounded-lg px-3 py-2 text-sm bg-white dark:bg-neutral-800">
+            <label className="block text-sm font-medium text-jolshaa-on-surface mb-1">Content Type</label>
+            <select value={type} onChange={e => setType(e.target.value)} className="w-full border border-jolshaa-outline-variant rounded-lg px-3 py-2 text-sm bg-jolshaa-surface-container-lowest">
               <option value="post">Posts</option>
               <option value="comment">Comments</option>
               <option value="story">Stories</option>
@@ -6567,8 +6567,8 @@ const BulkActionsTab = () => {
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Action</label>
-            <select value={action} onChange={e => setAction(e.target.value)} className="w-full border border-neutral-300 dark:border-neutral-600 rounded-lg px-3 py-2 text-sm bg-white dark:bg-neutral-800">
+            <label className="block text-sm font-medium text-jolshaa-on-surface mb-1">Action</label>
+            <select value={action} onChange={e => setAction(e.target.value)} className="w-full border border-jolshaa-outline-variant rounded-lg px-3 py-2 text-sm bg-jolshaa-surface-container-lowest">
               <option value="remove">Remove</option>
               <option value="flag">Flag</option>
               <option value="unflag">Unflag</option>
@@ -6578,7 +6578,7 @@ const BulkActionsTab = () => {
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">IDs (comma separated)</label>
+            <label className="block text-sm font-medium text-jolshaa-on-surface mb-1">IDs (comma separated)</label>
             <Input value={ids} onChange={e => setIds(e.target.value)} placeholder="id1, id2, id3..." />
           </div>
         </div>
@@ -6612,12 +6612,12 @@ const ShadowModerationSection = () => {
 
   return (
     <Card>
-      <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-2">Shadow Moderation</h3>
-      <p className="text-xs text-neutral-500 mb-4">Shadow hidden content is invisible to everyone except the author. The author still sees their own content but nobody else does.</p>
+      <h3 className="font-display text-sm font-semibold text-jolshaa-on-surface mb-2">Shadow Moderation</h3>
+      <p className="text-xs text-jolshaa-on-surface-variant mb-4">Shadow hidden content is invisible to everyone except the author. The author still sees their own content but nobody else does.</p>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div>
-          <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Content Type</label>
-          <select value={shadowType} onChange={e => setShadowType(e.target.value)} className="w-full border border-neutral-300 dark:border-neutral-600 rounded-lg px-3 py-2 text-sm bg-white dark:bg-neutral-800">
+          <label className="block text-sm font-medium text-jolshaa-on-surface mb-1">Content Type</label>
+          <select value={shadowType} onChange={e => setShadowType(e.target.value)} className="w-full border border-jolshaa-outline-variant rounded-lg px-3 py-2 text-sm bg-jolshaa-surface-container-lowest">
             <option value="post">Post</option>
             <option value="comment">Comment</option>
             <option value="story">Story</option>
@@ -6626,7 +6626,7 @@ const ShadowModerationSection = () => {
           </select>
         </div>
         <div>
-          <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Content ID</label>
+          <label className="block text-sm font-medium text-jolshaa-on-surface mb-1">Content ID</label>
           <Input placeholder="Enter content ID..." value={shadowId} onChange={e => setShadowId(e.target.value)} />
         </div>
         <div className="flex items-end">
@@ -6684,40 +6684,40 @@ const GroupsPanel = () => {
 
   useEffect(() => { fetchData(); }, []);
 
-  if (loading) return <div className="text-center py-8 text-neutral-500">Loading...</div>;
+  if (loading) return <div className="text-center py-8 text-jolshaa-on-surface-variant">Loading...</div>;
   if (!data) return null;
 
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <Card className="bg-blue-50 dark:bg-blue-900/20">
-          <p className="text-xs text-neutral-500">Total Groups</p>
+        <Card className="bg-blue-50">
+          <p className="text-xs text-jolshaa-on-surface-variant">Total Groups</p>
           <p className="text-2xl font-bold text-blue-600">{data.totalGroups}</p>
         </Card>
-        <Card className="bg-amber-50 dark:bg-amber-900/20">
-          <p className="text-xs text-neutral-500">Pending Approval</p>
+        <Card className="bg-amber-50">
+          <p className="text-xs text-jolshaa-on-surface-variant">Pending Approval</p>
           <p className="text-2xl font-bold text-amber-600">{data.pendingGroups}</p>
         </Card>
-        <Card className="bg-green-50 dark:bg-green-900/20">
-          <p className="text-xs text-neutral-500">Public</p>
+        <Card className="bg-green-50">
+          <p className="text-xs text-jolshaa-on-surface-variant">Public</p>
           <p className="text-2xl font-bold text-green-600">{data.publicGroups}</p>
         </Card>
-        <Card className="bg-purple-50 dark:bg-purple-900/20">
-          <p className="text-xs text-neutral-500">Private</p>
+        <Card className="bg-purple-50">
+          <p className="text-xs text-jolshaa-on-surface-variant">Private</p>
           <p className="text-2xl font-bold text-purple-600">{data.privateGroups}</p>
         </Card>
       </div>
 
       <Card>
-        <h3 className="font-semibold mb-4">Recent Groups</h3>
+        <h3 className="text-sm font-semibold font-display text-jolshaa-on-surface mb-4">Recent Groups</h3>
         <div className="space-y-3">
           {data.recentGroups.map(group => (
-            <div key={group._id} className="flex items-center justify-between p-3 bg-neutral-50 dark:bg-neutral-800 rounded-lg">
+            <div key={group._id} className="flex items-center justify-between p-3 bg-jolshaa-surface-container-low rounded-lg">
               <div className="flex items-center gap-3">
                 {group.coverPhoto && <img src={group.coverPhoto} className="w-10 h-10 rounded-lg object-cover" alt="" />}
                 <div>
                   <p className="font-medium">{group.name}</p>
-                  <p className="text-xs text-neutral-500">by {group.creator?.name} &middot; {group.privacy}</p>
+                  <p className="text-xs text-jolshaa-on-surface-variant">by {group.creator?.name} &middot; {group.privacy}</p>
                 </div>
               </div>
               <div className="flex items-center gap-2">
@@ -6748,47 +6748,47 @@ const PagesPanel = () => {
 
   useEffect(() => { fetchData(); }, []);
 
-  if (loading) return <div className="text-center py-8 text-neutral-500">Loading...</div>;
+  if (loading) return <div className="text-center py-8 text-jolshaa-on-surface-variant">Loading...</div>;
   if (!data) return null;
 
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-        <Card className="bg-blue-50 dark:bg-blue-900/20">
-          <p className="text-xs text-neutral-500">Total Pages</p>
+        <Card className="bg-blue-50">
+          <p className="text-xs text-jolshaa-on-surface-variant">Total Pages</p>
           <p className="text-2xl font-bold text-blue-600">{data.totalPages}</p>
         </Card>
-        <Card className="bg-green-50 dark:bg-green-900/20">
-          <p className="text-xs text-neutral-500">Verified</p>
+        <Card className="bg-green-50">
+          <p className="text-xs text-jolshaa-on-surface-variant">Verified</p>
           <p className="text-2xl font-bold text-green-600">{data.verifiedPages}</p>
         </Card>
-        <Card className="bg-amber-50 dark:bg-amber-900/20">
-          <p className="text-xs text-neutral-500">Pending Verification</p>
+        <Card className="bg-amber-50">
+          <p className="text-xs text-jolshaa-on-surface-variant">Pending Verification</p>
           <p className="text-2xl font-bold text-amber-600">{data.pendingVerification}</p>
         </Card>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Card>
-          <h3 className="font-semibold mb-3">Categories</h3>
+          <h3 className="text-sm font-semibold font-display text-jolshaa-on-surface mb-3">Categories</h3>
           <div className="space-y-2">
             {data.categories.map(c => (
               <div key={c._id} className="flex justify-between text-sm">
                 <span>{c._id}</span>
-                <span className="text-neutral-500">{c.count}</span>
+                <span className="text-jolshaa-on-surface-variant">{c.count}</span>
               </div>
             ))}
           </div>
         </Card>
 
         <Card>
-          <h3 className="font-semibold mb-3">Recent Pages</h3>
+          <h3 className="text-sm font-semibold font-display text-jolshaa-on-surface mb-3">Recent Pages</h3>
           <div className="space-y-2">
             {data.recentPages.map(page => (
-              <div key={page._id} className="flex items-center justify-between p-2 bg-neutral-50 dark:bg-neutral-800 rounded">
+              <div key={page._id} className="flex items-center justify-between p-2 bg-jolshaa-surface-container-low rounded">
                 <div>
                   <p className="text-sm font-medium">{page.name}</p>
-                  <p className="text-xs text-neutral-500">{page.category}</p>
+                  <p className="text-xs text-jolshaa-on-surface-variant">{page.category}</p>
                 </div>
                 <div className="flex gap-1">
                   {!page.isVerified && (
@@ -6824,36 +6824,36 @@ const EventsPanel = () => {
 
   useEffect(() => { fetchData(); }, []);
 
-  if (loading) return <div className="text-center py-8 text-neutral-500">Loading...</div>;
+  if (loading) return <div className="text-center py-8 text-jolshaa-on-surface-variant">Loading...</div>;
   if (!data) return null;
 
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-3 gap-3">
-        <Card className="bg-blue-50 dark:bg-blue-900/20">
-          <p className="text-xs text-neutral-500">Total Events</p>
+        <Card className="bg-blue-50">
+          <p className="text-xs text-jolshaa-on-surface-variant">Total Events</p>
           <p className="text-2xl font-bold text-blue-600">{data.totalEvents}</p>
         </Card>
-        <Card className="bg-green-50 dark:bg-green-900/20">
-          <p className="text-xs text-neutral-500">Upcoming</p>
+        <Card className="bg-green-50">
+          <p className="text-xs text-jolshaa-on-surface-variant">Upcoming</p>
           <p className="text-2xl font-bold text-green-600">{data.upcomingEvents}</p>
         </Card>
-        <Card className="bg-neutral-50 dark:bg-neutral-700">
-          <p className="text-xs text-neutral-500">Past</p>
-          <p className="text-2xl font-bold text-neutral-600">{data.pastEvents}</p>
+        <Card className="bg-jolshaa-surface-container-low">
+          <p className="text-xs text-jolshaa-on-surface-variant">Past</p>
+          <p className="text-2xl font-bold text-jolshaa-on-surface-variant">{data.pastEvents}</p>
         </Card>
       </div>
 
       <Card>
-        <h3 className="font-semibold mb-4">Recent Events</h3>
+        <h3 className="text-sm font-semibold font-display text-jolshaa-on-surface mb-4">Recent Events</h3>
         <div className="space-y-3">
           {data.recentEvents.map(event => (
-            <div key={event._id} className="flex items-center justify-between p-3 bg-neutral-50 dark:bg-neutral-800 rounded-lg">
+            <div key={event._id} className="flex items-center justify-between p-3 bg-jolshaa-surface-container-low rounded-lg">
               <div className="flex items-center gap-3">
                 {event.coverPhoto && <img src={event.coverPhoto} className="w-10 h-10 rounded-lg object-cover" alt="" />}
                 <div>
                   <p className="font-medium">{event.title}</p>
-                  <p className="text-xs text-neutral-500">by {event.creator?.name} &middot; {new Date(event.startDate).toLocaleDateString()}</p>
+                  <p className="text-xs text-jolshaa-on-surface-variant">by {event.creator?.name} &middot; {new Date(event.startDate).toLocaleDateString()}</p>
                 </div>
               </div>
               <div className="flex items-center gap-2">
@@ -6890,7 +6890,7 @@ const ViolationsPanel = () => {
 
   useEffect(() => { fetchData(); }, []);
 
-  if (loading) return <div className="text-center py-8 text-neutral-500">Loading...</div>;
+  if (loading) return <div className="text-center py-8 text-jolshaa-on-surface-variant">Loading...</div>;
   if (!data) return null;
 
   const actionColors = { warn: 'warning', mute: 'neutral', ban: 'danger', remove: 'danger', flag: 'info', restrict: 'warning' };
@@ -6900,11 +6900,11 @@ const ViolationsPanel = () => {
       {/* Stats */}
       <div className="grid grid-cols-2 gap-3">
         <Card>
-          <p className="text-[10px] font-medium text-neutral-500 uppercase tracking-wider">Total Violations</p>
-          <p className="text-2xl font-bold text-neutral-900 dark:text-neutral-100 mt-1">{data.totalViolations}</p>
+          <p className="text-[10px] font-medium text-jolshaa-on-surface-variant uppercase tracking-wider">Total Violations</p>
+          <p className="text-2xl font-bold text-jolshaa-on-surface mt-1">{data.totalViolations}</p>
         </Card>
-        <Card className={data.activeViolations > 0 ? 'border-red-200 dark:border-red-800' : ''}>
-          <p className="text-[10px] font-medium text-neutral-500 uppercase tracking-wider">Active</p>
+        <Card className={data.activeViolations > 0 ? 'border-red-200' : ''}>
+          <p className="text-[10px] font-medium text-jolshaa-on-surface-variant uppercase tracking-wider">Active</p>
           <p className={`text-2xl font-bold mt-1 ${data.activeViolations > 0 ? 'text-red-600' : 'text-green-600'}`}>{data.activeViolations}</p>
         </Card>
       </div>
@@ -6912,17 +6912,17 @@ const ViolationsPanel = () => {
       {/* By Guideline */}
       {data.byGuideline?.length > 0 && (
         <Card>
-          <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-3">By Guideline</h3>
+          <h3 className="text-sm font-semibold font-display text-jolshaa-on-surface mb-3">By Guideline</h3>
           <div className="space-y-2">
             {data.byGuideline.map(g => {
               const max = data.byGuideline[0]?.count || 1;
               return (
                 <div key={g._id} className="flex items-center gap-2 text-xs">
                   <span className="w-28 capitalize truncate">{g._id?.replace(/_/g, ' ')}</span>
-                  <div className="flex-1 h-3 bg-neutral-100 dark:bg-neutral-700 rounded-full overflow-hidden">
+                  <div className="flex-1 h-3 bg-jolshaa-surface-container-high rounded-full overflow-hidden">
                     <div className="h-full bg-red-400 rounded-full" style={{ width: `${(g.count / max) * 100}%` }} />
                   </div>
-                  <span className="w-8 text-right font-medium text-neutral-700 dark:text-neutral-300">{g.count}</span>
+                  <span className="w-8 text-right font-medium text-jolshaa-on-surface-variant">{g.count}</span>
                 </div>
               );
             })}
@@ -6932,25 +6932,25 @@ const ViolationsPanel = () => {
 
       {/* Violation Timeline */}
       <Card>
-        <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-3">Violation Timeline</h3>
+        <h3 className="text-sm font-semibold font-display text-jolshaa-on-surface mb-3">Violation Timeline</h3>
         <div className="space-y-0">
           {data.recentViolations?.length === 0 ? (
-            <div className="text-center py-8 text-neutral-500 text-sm">No recent violations</div>
+            <div className="text-center py-8 text-jolshaa-on-surface-variant text-sm">No recent violations</div>
           ) : data.recentViolations?.map((v, i) => (
             <div key={v._id} className="flex items-start gap-3 py-2 relative">
               {/* Timeline dot */}
               <div className="flex flex-col items-center">
                 <div className={`w-2.5 h-2.5 rounded-full flex-shrink-0 ${v.status === 'active' ? 'bg-red-500' : 'bg-green-500'}`} />
-                {i < (data.recentViolations.length - 1) && <div className="w-0.5 h-full bg-neutral-200 dark:bg-neutral-700 absolute left-[5px] top-3" />}
+                {i < (data.recentViolations.length - 1) && <div className="w-0.5 h-full bg-jolshaa-outline-variant absolute left-[5px] top-3" />}
               </div>
               {/* Content */}
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
-                  <span className="text-sm font-medium text-neutral-900 dark:text-neutral-100">{v.user?.name}</span>
+                  <span className="text-sm font-medium text-jolshaa-on-surface">{v.user?.name}</span>
                   <Badge variant={actionColors[v.action] || 'neutral'} size="xs">{v.action}</Badge>
                   <Badge variant={v.status === 'active' ? 'danger' : 'success'} size="xs">{v.status}</Badge>
                 </div>
-                <p className="text-[10px] text-neutral-400 mt-0.5 capitalize">{v.guideline?.replace(/_/g, ' ')}</p>
+                <p className="text-[10px] text-jolshaa-on-surface-variant mt-0.5 capitalize">{v.guideline?.replace(/_/g, ' ')}</p>
               </div>
             </div>
           ))}
@@ -6976,18 +6976,18 @@ const AutoModPanel = () => {
 
   useEffect(() => { fetchData(); }, []);
 
-  if (loading) return <div className="text-center py-8 text-neutral-500">Loading...</div>;
+  if (loading) return <div className="text-center py-8 text-jolshaa-on-surface-variant">Loading...</div>;
 
   return (
     <div className="space-y-4">
       <Card>
         <div className="flex items-center justify-between mb-4">
-          <h3 className="font-semibold">Auto-Moderation Rules</h3>
+          <h3 className="text-sm font-semibold font-display text-jolshaa-on-surface">Auto-Moderation Rules</h3>
           <Button size="sm" onClick={() => setShowCreate(!showCreate)}>{showCreate ? 'Cancel' : 'Add Rule'}</Button>
         </div>
 
         {showCreate && (
-          <div className="p-4 bg-neutral-50 dark:bg-neutral-800 rounded-lg mb-4 space-y-3">
+          <div className="p-4 bg-jolshaa-surface-container-low rounded-lg mb-4 space-y-3">
             <Input placeholder="Rule name" value={automodName} onChange={e => setAutomodName(e.target.value)} />
             <select value={automodAction} onChange={e => setAutomodAction(e.target.value)} className="w-full text-sm border rounded px-3 py-2">
               <option value="flag">Flag</option>
@@ -7015,10 +7015,10 @@ const AutoModPanel = () => {
 
         <div className="space-y-2">
           {rules.map(rule => (
-            <div key={rule._id} className="flex items-center justify-between p-3 bg-neutral-50 dark:bg-neutral-800 rounded-lg">
+            <div key={rule._id} className="flex items-center justify-between p-3 bg-jolshaa-surface-container-low rounded-lg">
               <div>
                 <p className="font-medium text-sm">{rule.name}</p>
-                <p className="text-xs text-neutral-500">Action: {rule.action} &middot; Target: {rule.targetType} &middot; Hits: {rule.hitCount}</p>
+                <p className="text-xs text-jolshaa-on-surface-variant">Action: {rule.action} &middot; Target: {rule.targetType} &middot; Hits: {rule.hitCount}</p>
               </div>
               <div className="flex items-center gap-2">
                 <Badge variant={rule.isActive ? 'success' : 'danger'}>{rule.isActive ? 'Active' : 'Inactive'}</Badge>
@@ -7058,13 +7058,13 @@ const KeywordsPanel = () => {
 
   useEffect(() => { fetchData(); }, []);
 
-  if (loading) return <div className="text-center py-8 text-neutral-500">Loading...</div>;
+  if (loading) return <div className="text-center py-8 text-jolshaa-on-surface-variant">Loading...</div>;
 
   return (
     <div className="space-y-4">
       <Card>
         <div className="flex items-center justify-between mb-4">
-          <h3 className="font-semibold">Keyword Blacklist ({keywords.length})</h3>
+          <h3 className="text-sm font-semibold font-display text-jolshaa-on-surface">Keyword Blacklist ({keywords.length})</h3>
           <div className="flex gap-2">
             <Button size="sm" variant="ghost" onClick={() => setBulkMode(!bulkMode)}>{bulkMode ? 'Single' : 'Bulk'}</Button>
             <Button size="sm" onClick={() => setShowAdd(!showAdd)}>{showAdd ? 'Cancel' : 'Add'}</Button>
@@ -7072,7 +7072,7 @@ const KeywordsPanel = () => {
         </div>
 
         {showAdd && (
-          <div className="p-4 bg-neutral-50 dark:bg-neutral-800 rounded-lg mb-4 space-y-3">
+          <div className="p-4 bg-jolshaa-surface-container-low rounded-lg mb-4 space-y-3">
             {bulkMode ? (
               <textarea value={kwBulk} onChange={e => setKwBulk(e.target.value)} className="w-full text-sm border rounded px-3 py-2 h-24" placeholder="One keyword per line" />
             ) : (
@@ -7109,10 +7109,10 @@ const KeywordsPanel = () => {
 
         <div className="space-y-2">
           {keywords.map(kw => (
-            <div key={kw._id} className="flex items-center justify-between p-3 bg-neutral-50 dark:bg-neutral-800 rounded-lg">
+            <div key={kw._id} className="flex items-center justify-between p-3 bg-jolshaa-surface-container-low rounded-lg">
               <div>
                 <p className="font-medium text-sm">"{kw.keyword}"</p>
-                <p className="text-xs text-neutral-500">Category: {kw.category} &middot; Action: {kw.action} &middot; Hits: {kw.hitCount}</p>
+                <p className="text-xs text-jolshaa-on-surface-variant">Category: {kw.category} &middot; Action: {kw.action} &middot; Hits: {kw.hitCount}</p>
               </div>
               <div className="flex items-center gap-2">
                 <Badge variant={kw.isActive ? 'success' : 'danger'}>{kw.isActive ? 'Active' : 'Off'}</Badge>
@@ -7151,13 +7151,13 @@ const LinksPanel = () => {
 
   useEffect(() => { fetchData(); }, []);
 
-  if (loading) return <div className="text-center py-8 text-neutral-500">Loading...</div>;
+  if (loading) return <div className="text-center py-8 text-jolshaa-on-surface-variant">Loading...</div>;
 
   return (
     <div className="space-y-4">
       <Card>
         <div className="flex items-center justify-between mb-4">
-          <h3 className="font-semibold">Link Blacklist ({links.length})</h3>
+          <h3 className="text-sm font-semibold font-display text-jolshaa-on-surface">Link Blacklist ({links.length})</h3>
           <div className="flex gap-2">
             <Button size="sm" variant="ghost" onClick={() => setBulkMode(!bulkMode)}>{bulkMode ? 'Single' : 'Bulk'}</Button>
             <Button size="sm" onClick={() => setShowAdd(!showAdd)}>{showAdd ? 'Cancel' : 'Add'}</Button>
@@ -7165,7 +7165,7 @@ const LinksPanel = () => {
         </div>
 
         {showAdd && (
-          <div className="p-4 bg-neutral-50 dark:bg-neutral-800 rounded-lg mb-4 space-y-3">
+          <div className="p-4 bg-jolshaa-surface-container-low rounded-lg mb-4 space-y-3">
             {bulkMode ? (
               <textarea value={linkBulk} onChange={e => setLinkBulk(e.target.value)} className="w-full text-sm border rounded px-3 py-2 h-24" placeholder="One domain per line (e.g. spam.com)" />
             ) : (
@@ -7196,10 +7196,10 @@ const LinksPanel = () => {
 
         <div className="space-y-2">
           {links.map(link => (
-            <div key={link._id} className="flex items-center justify-between p-3 bg-neutral-50 dark:bg-neutral-800 rounded-lg">
+            <div key={link._id} className="flex items-center justify-between p-3 bg-jolshaa-surface-container-low rounded-lg">
               <div>
                 <p className="font-medium text-sm">{link.domain}</p>
-                <p className="text-xs text-neutral-500">Severity: {link.severity} &middot; Hits: {link.hitCount}{link.reason ? ` - ${link.reason}` : ''}</p>
+                <p className="text-xs text-jolshaa-on-surface-variant">Severity: {link.severity} &middot; Hits: {link.hitCount}{link.reason ? ` - ${link.reason}` : ''}</p>
               </div>
               <div className="flex items-center gap-2">
                 <Badge variant={link.isActive ? 'success' : 'danger'}>{link.isActive ? 'Active' : 'Off'}</Badge>
@@ -7239,18 +7239,18 @@ const MediaRestrictionsPanel = () => {
 
   useEffect(() => { fetchData(); }, []);
 
-  if (loading) return <div className="text-center py-8 text-neutral-500">Loading...</div>;
+  if (loading) return <div className="text-center py-8 text-jolshaa-on-surface-variant">Loading...</div>;
 
   return (
     <div className="space-y-4">
       <Card>
         <div className="flex items-center justify-between mb-4">
-          <h3 className="font-semibold">Media Upload Restrictions ({restrictions.length})</h3>
+          <h3 className="text-sm font-semibold font-display text-jolshaa-on-surface">Media Upload Restrictions ({restrictions.length})</h3>
           <Button size="sm" onClick={() => setShowAdd(!showAdd)}>{showAdd ? 'Cancel' : 'Add Restriction'}</Button>
         </div>
 
         {showAdd && (
-          <div className="p-4 bg-neutral-50 dark:bg-neutral-800 rounded-lg mb-4 space-y-3">
+          <div className="p-4 bg-jolshaa-surface-container-low rounded-lg mb-4 space-y-3">
             <Input placeholder="Name" value={mediaName} onChange={e => setMediaName(e.target.value)} />
             <select value={mediaType} onChange={e => setMediaType(e.target.value)} className="w-full text-sm border rounded px-3 py-2">
               <option value="file_type">File Type</option>
@@ -7289,12 +7289,12 @@ const MediaRestrictionsPanel = () => {
 
         <div className="space-y-2">
           {restrictions.map(r => (
-            <div key={r._id} className="flex items-center justify-between p-3 bg-neutral-50 dark:bg-neutral-800 rounded-lg">
+            <div key={r._id} className="flex items-center justify-between p-3 bg-jolshaa-surface-container-low rounded-lg">
               <div>
                 <p className="font-medium text-sm">{r.name}</p>
-                <p className="text-xs text-neutral-500">Type: {r.type} &middot; Applies: {r.appliesTo} &middot; Action: {r.action}</p>
-                {r.config?.maxSizeMB && <p className="text-xs text-neutral-400">Max: {r.config.maxSizeMB}MB</p>}
-                {r.config?.maxDurationSec && <p className="text-xs text-neutral-400">Max: {r.config.maxDurationSec}s</p>}
+                <p className="text-xs text-jolshaa-on-surface-variant">Type: {r.type} &middot; Applies: {r.appliesTo} &middot; Action: {r.action}</p>
+                {r.config?.maxSizeMB && <p className="text-xs text-jolshaa-on-surface-variant">Max: {r.config.maxSizeMB}MB</p>}
+                {r.config?.maxDurationSec && <p className="text-xs text-jolshaa-on-surface-variant">Max: {r.config.maxDurationSec}s</p>}
               </div>
               <div className="flex items-center gap-2">
                 <Badge variant={r.isActive ? 'success' : 'danger'}>{r.isActive ? 'Active' : 'Off'}</Badge>
@@ -7360,7 +7360,7 @@ const OpsOverviewPanel = () => {
 
   useEffect(() => { fetchData(); }, []);
 
-  if (loading) return <div className="text-center py-8 text-neutral-500">Loading...</div>;
+  if (loading) return <div className="text-center py-8 text-jolshaa-on-surface-variant">Loading...</div>;
   if (!data) return null;
 
   return (
@@ -7368,8 +7368,8 @@ const OpsOverviewPanel = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">Operations Dashboard</h3>
-          <p className="text-[10px] text-neutral-500">Platform health at a glance</p>
+          <h3 className="text-sm font-semibold font-display text-jolshaa-on-surface">Operations Dashboard</h3>
+          <p className="text-[10px] text-jolshaa-on-surface-variant">Platform health at a glance</p>
         </div>
         <Button size="sm" variant="ghost" onClick={fetchData}>Refresh</Button>
       </div>
@@ -7377,19 +7377,19 @@ const OpsOverviewPanel = () => {
       {/* Primary Metrics */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <Card>
-          <p className="text-[10px] font-medium text-neutral-500 uppercase tracking-wider">Total Users</p>
+          <p className="text-[10px] font-medium text-jolshaa-on-surface-variant uppercase tracking-wider">Total Users</p>
           <p className="text-2xl font-bold text-blue-600 mt-1">{data.totalUsers?.toLocaleString()}</p>
         </Card>
         <Card>
-          <p className="text-[10px] font-medium text-neutral-500 uppercase tracking-wider">Total Posts</p>
+          <p className="text-[10px] font-medium text-jolshaa-on-surface-variant uppercase tracking-wider">Total Posts</p>
           <p className="text-2xl font-bold text-green-600 mt-1">{data.totalPosts?.toLocaleString()}</p>
         </Card>
         <Card>
-          <p className="text-[10px] font-medium text-neutral-500 uppercase tracking-wider">Total Reports</p>
+          <p className="text-[10px] font-medium text-jolshaa-on-surface-variant uppercase tracking-wider">Total Reports</p>
           <p className="text-2xl font-bold text-amber-600 mt-1">{data.totalReports?.toLocaleString()}</p>
         </Card>
-        <Card className={data.pendingReports > 0 ? 'border-red-200 dark:border-red-800' : ''}>
-          <p className="text-[10px] font-medium text-neutral-500 uppercase tracking-wider">Pending Reports</p>
+        <Card className={data.pendingReports > 0 ? 'border-red-200' : ''}>
+          <p className="text-[10px] font-medium text-jolshaa-on-surface-variant uppercase tracking-wider">Pending Reports</p>
           <p className={`text-2xl font-bold mt-1 ${data.pendingReports > 0 ? 'text-red-600' : 'text-green-600'}`}>{data.pendingReports}</p>
         </Card>
       </div>
@@ -7397,19 +7397,19 @@ const OpsOverviewPanel = () => {
       {/* Activity & Ops */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <Card>
-          <p className="text-[10px] font-medium text-neutral-500 uppercase tracking-wider">Actions Today</p>
+          <p className="text-[10px] font-medium text-jolshaa-on-surface-variant uppercase tracking-wider">Actions Today</p>
           <p className="text-2xl font-bold text-purple-600 mt-1">{data.todayActions}</p>
         </Card>
         <Card>
-          <p className="text-[10px] font-medium text-neutral-500 uppercase tracking-wider">Actions This Week</p>
+          <p className="text-[10px] font-medium text-jolshaa-on-surface-variant uppercase tracking-wider">Actions This Week</p>
           <p className="text-2xl font-bold text-indigo-600 mt-1">{data.weekActions}</p>
         </Card>
-        <Card className={data.pendingUndos > 0 ? 'border-orange-200 dark:border-orange-800' : ''}>
-          <p className="text-[10px] font-medium text-neutral-500 uppercase tracking-wider">Pending Undos</p>
+        <Card className={data.pendingUndos > 0 ? 'border-orange-200' : ''}>
+          <p className="text-[10px] font-medium text-jolshaa-on-surface-variant uppercase tracking-wider">Pending Undos</p>
           <p className={`text-2xl font-bold mt-1 ${data.pendingUndos > 0 ? 'text-orange-600' : 'text-green-600'}`}>{data.pendingUndos}</p>
         </Card>
         <Card>
-          <p className="text-[10px] font-medium text-neutral-500 uppercase tracking-wider">Notes This Week</p>
+          <p className="text-[10px] font-medium text-jolshaa-on-surface-variant uppercase tracking-wider">Notes This Week</p>
           <p className="text-2xl font-bold text-teal-600 mt-1">{data.recentNotes}</p>
         </Card>
       </div>
@@ -7447,21 +7447,21 @@ const GlobalSearchPanel = () => {
         </div>
       </Card>
 
-      {loading && <div className="text-center py-4 text-neutral-500">Searching...</div>}
+      {loading && <div className="text-center py-4 text-jolshaa-on-surface-variant">Searching...</div>}
 
       {results && (
         <div className="space-y-4">
           {results.users && results.users.data.length > 0 && (
             <Card>
-              <h3 className="font-semibold mb-3">Users ({results.users.total})</h3>
+              <h3 className="text-sm font-semibold font-display text-jolshaa-on-surface mb-3">Users ({results.users.total})</h3>
               <div className="space-y-2">
                 {results.users.data.map(u => (
-                  <div key={u._id} className="flex items-center justify-between p-2 bg-neutral-50 dark:bg-neutral-800 rounded">
+                  <div key={u._id} className="flex items-center justify-between p-2 bg-jolshaa-surface-container-low rounded">
                     <div className="flex items-center gap-2">
                       {u.profilePhoto && <img src={u.profilePhoto} className="w-8 h-8 rounded-full" alt="" />}
                       <div>
                         <p className="text-sm font-medium">{u.name}</p>
-                        <p className="text-xs text-neutral-500">{u.email}</p>
+                        <p className="text-xs text-jolshaa-on-surface-variant">{u.email}</p>
                       </div>
                     </div>
                     <div className="flex gap-1">
@@ -7477,12 +7477,12 @@ const GlobalSearchPanel = () => {
 
           {results.posts && results.posts.data.length > 0 && (
             <Card>
-              <h3 className="font-semibold mb-3">Posts ({results.posts.total})</h3>
+              <h3 className="text-sm font-semibold font-display text-jolshaa-on-surface mb-3">Posts ({results.posts.total})</h3>
               <div className="space-y-2">
                 {results.posts.data.map(p => (
-                  <div key={p._id} className="p-2 bg-neutral-50 dark:bg-neutral-800 rounded">
+                  <div key={p._id} className="p-2 bg-jolshaa-surface-container-low rounded">
                     <p className="text-sm">{p.text?.substring(0, 200)}</p>
-                    <p className="text-xs text-neutral-500 mt-1">by {p.author?.name} &middot; {new Date(p.createdAt).toLocaleDateString()}</p>
+                    <p className="text-xs text-jolshaa-on-surface-variant mt-1">by {p.author?.name} &middot; {new Date(p.createdAt).toLocaleDateString()}</p>
                   </div>
                 ))}
               </div>
@@ -7491,13 +7491,13 @@ const GlobalSearchPanel = () => {
 
           {results.reports && results.reports.data.length > 0 && (
             <Card>
-              <h3 className="font-semibold mb-3">Reports ({results.reports.total})</h3>
+              <h3 className="text-sm font-semibold font-display text-jolshaa-on-surface mb-3">Reports ({results.reports.total})</h3>
               <div className="space-y-2">
                 {results.reports.data.map(r => (
-                  <div key={r._id} className="flex items-center justify-between p-2 bg-neutral-50 dark:bg-neutral-800 rounded">
+                  <div key={r._id} className="flex items-center justify-between p-2 bg-jolshaa-surface-container-low rounded">
                     <div>
                       <p className="text-sm">{r.reason} - {r.targetType}</p>
-                      <p className="text-xs text-neutral-500">by {r.reporter?.name}</p>
+                      <p className="text-xs text-jolshaa-on-surface-variant">by {r.reporter?.name}</p>
                     </div>
                     <Badge variant={r.status === 'pending' ? 'warning' : 'success'}>{r.status}</Badge>
                   </div>
@@ -7508,7 +7508,7 @@ const GlobalSearchPanel = () => {
 
           {results.users?.total === 0 && results.posts?.total === 0 && results.reports?.total === 0 && results.comments?.total === 0 && (
             <Card>
-              <p className="text-center text-neutral-500 py-4">No results found</p>
+              <p className="text-center text-jolshaa-on-surface-variant py-4">No results found</p>
             </Card>
           )}
         </div>
@@ -7591,13 +7591,13 @@ const FiltersSortingPanel = () => {
         </div>
 
         {loading ? (
-          <div className="text-center py-4 text-neutral-500">Loading...</div>
+          <div className="text-center py-4 text-jolshaa-on-surface-variant">Loading...</div>
         ) : (
           <>
-            <p className="text-xs text-neutral-500 mb-2">{total} results</p>
+            <p className="text-xs text-jolshaa-on-surface-variant mb-2">{total} results</p>
             <div className="space-y-2">
               {data.map(item => (
-                <div key={item._id} className="p-2 bg-neutral-50 dark:bg-neutral-800 rounded text-sm">
+                <div key={item._id} className="p-2 bg-jolshaa-surface-container-low rounded text-sm">
                   {entity === 'users' && (
                     <div className="flex justify-between">
                       <span>{item.name} ({item.email})</span>
@@ -7607,7 +7607,7 @@ const FiltersSortingPanel = () => {
                   {entity === 'posts' && (
                     <div>
                       <p>{item.text?.substring(0, 150)}</p>
-                      <p className="text-xs text-neutral-500">by {item.author?.name}</p>
+                      <p className="text-xs text-jolshaa-on-surface-variant">by {item.author?.name}</p>
                     </div>
                   )}
                   {entity === 'reports' && (
@@ -7622,7 +7622,7 @@ const FiltersSortingPanel = () => {
             {total > 20 && (
               <div className="flex justify-center gap-2 mt-4">
                 <Button size="sm" disabled={page === 1} onClick={() => setPage(p => p - 1)}>Prev</Button>
-                <span className="text-sm text-neutral-500 py-1">Page {page}</span>
+                <span className="text-sm text-jolshaa-on-surface-variant py-1">Page {page}</span>
                 <Button size="sm" disabled={data.length < 20} onClick={() => setPage(p => p + 1)}>Next</Button>
               </div>
             )}
@@ -7660,7 +7660,7 @@ const ExportCSVPanel = () => {
   return (
     <div className="space-y-4">
       <Card>
-        <h3 className="font-semibold mb-4">Export Data as CSV</h3>
+        <h3 className="text-sm font-semibold font-display text-jolshaa-on-surface mb-4">Export Data as CSV</h3>
         <div className="space-y-3">
           <div>
             <label className="text-sm font-medium">Export Type</label>
@@ -7734,7 +7734,7 @@ const AuditTrailPanel = () => {
 
   useEffect(() => { fetchData(); }, [page]);
 
-  if (loading) return <div className="text-center py-8 text-neutral-500">Loading...</div>;
+  if (loading) return <div className="text-center py-8 text-jolshaa-on-surface-variant">Loading...</div>;
   if (!data) return null;
 
   const actionColors = {
@@ -7760,7 +7760,7 @@ const AuditTrailPanel = () => {
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b text-left text-neutral-500">
+              <tr className="border-b text-left text-jolshaa-on-surface-variant">
                 <th className="pb-2">Admin</th>
                 <th className="pb-2">Action</th>
                 <th className="pb-2">Target</th>
@@ -7776,8 +7776,8 @@ const AuditTrailPanel = () => {
                     <Badge variant={actionColors[a.action.split('.')[0]] || 'neutral'}>{a.action}</Badge>
                   </td>
                   <td className="py-2 text-xs">{a.targetType}: {a.targetName || a.targetId?.slice(-8)}</td>
-                  <td className="py-2 text-xs text-neutral-500 max-w-xs truncate">{JSON.stringify(a.details || {}).substring(0, 80)}</td>
-                  <td className="py-2 text-xs text-neutral-500">{new Date(a.createdAt).toLocaleString()}</td>
+                  <td className="py-2 text-xs text-jolshaa-on-surface-variant max-w-xs truncate">{JSON.stringify(a.details || {}).substring(0, 80)}</td>
+                  <td className="py-2 text-xs text-jolshaa-on-surface-variant">{new Date(a.createdAt).toLocaleString()}</td>
                 </tr>
               ))}
             </tbody>
@@ -7786,7 +7786,7 @@ const AuditTrailPanel = () => {
         {data.pages > 1 && (
           <div className="flex justify-center gap-2 mt-4">
             <Button size="sm" disabled={page === 1} onClick={() => setPage(p => p - 1)}>Prev</Button>
-            <span className="text-sm text-neutral-500 py-1">Page {page} of {data.pages}</span>
+            <span className="text-sm text-jolshaa-on-surface-variant py-1">Page {page} of {data.pages}</span>
             <Button size="sm" disabled={page >= data.pages} onClick={() => setPage(p => p + 1)}>Next</Button>
           </div>
         )}
@@ -7812,18 +7812,18 @@ const CaseNotesPanel = () => {
 
   useEffect(() => { fetchData(); }, []);
 
-  if (loading) return <div className="text-center py-8 text-neutral-500">Loading...</div>;
+  if (loading) return <div className="text-center py-8 text-jolshaa-on-surface-variant">Loading...</div>;
 
   return (
     <div className="space-y-4">
       <Card>
         <div className="flex items-center justify-between mb-4">
-          <h3 className="font-semibold">Case Notes</h3>
+          <h3 className="text-sm font-semibold font-display text-jolshaa-on-surface">Case Notes</h3>
           <Button size="sm" onClick={() => setShowAdd(!showAdd)}>{showAdd ? 'Cancel' : 'Add Note'}</Button>
         </div>
 
         {showAdd && (
-          <div className="p-4 bg-neutral-50 dark:bg-neutral-800 rounded-lg mb-4 space-y-3">
+          <div className="p-4 bg-jolshaa-surface-container-low rounded-lg mb-4 space-y-3">
             <div className="grid grid-cols-2 gap-2">
               <select value={targetType} onChange={e => setTargetType(e.target.value)} className="text-sm border rounded px-2 py-1">
                 <option value="user">User</option>
@@ -7855,16 +7855,16 @@ const CaseNotesPanel = () => {
 
         <div className="space-y-2">
           {notes.map(n => (
-            <div key={n._id} className="p-3 bg-neutral-50 dark:bg-neutral-800 rounded-lg">
+            <div key={n._id} className="p-3 bg-jolshaa-surface-container-low rounded-lg">
               <div className="flex items-center justify-between mb-1">
                 <div className="flex items-center gap-2">
                   <Badge variant="neutral">{n.targetType}</Badge>
                   {n.tags?.map(t => <Badge key={t} variant="warning">{t}</Badge>)}
                 </div>
-                <span className="text-xs text-neutral-500">{new Date(n.createdAt).toLocaleString()}</span>
+                <span className="text-xs text-jolshaa-on-surface-variant">{new Date(n.createdAt).toLocaleString()}</span>
               </div>
               <p className="text-sm">{n.note}</p>
-              <p className="text-xs text-neutral-500 mt-1">by {n.author?.name}</p>
+              <p className="text-xs text-jolshaa-on-surface-variant mt-1">by {n.author?.name}</p>
             </div>
           ))}
         </div>
@@ -7908,7 +7908,7 @@ const BulkImportPanel = () => {
   return (
     <div className="space-y-4">
       <Card>
-        <h3 className="font-semibold mb-4">Bulk Import</h3>
+        <h3 className="text-sm font-semibold font-display text-jolshaa-on-surface mb-4">Bulk Import</h3>
         <div className="space-y-3">
           <select value={type} onChange={e => setType(e.target.value)} className="w-full text-sm border rounded px-3 py-2">
             <option value="keywords">Keywords (one per line)</option>
@@ -7921,7 +7921,7 @@ const BulkImportPanel = () => {
         </div>
 
         {result && (
-          <div className="mt-4 p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
+          <div className="mt-4 p-3 bg-green-50 rounded-lg">
             <p className="text-sm">Imported: {result.imported} / {result.total}</p>
             {result.failed > 0 && <p className="text-sm text-red-600">Failed: {result.failed}</p>}
           </div>
@@ -7961,38 +7961,38 @@ const UndoPanel = () => {
   return (
     <div className="space-y-4">
       {/* Header */}
-      <Card className="border-orange-200 dark:border-orange-800 bg-orange-50 dark:bg-orange-900/20">
+      <Card className="border-orange-200 bg-orange-50">
         <div className="flex items-center gap-2">
           <svg className="w-4 h-4 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" /></svg>
           <div>
-            <p className="text-xs font-medium text-orange-700 dark:text-orange-400">Undo History</p>
-            <p className="text-[10px] text-orange-600 dark:text-orange-500">Snapshots of data before admin actions. Click Undo to restore.</p>
+            <p className="text-xs font-medium text-orange-700">Undo History</p>
+            <p className="text-[10px] text-orange-600">Snapshots of data before admin actions. Click Undo to restore.</p>
           </div>
         </div>
       </Card>
 
       {/* Pagination */}
       <div className="flex items-center justify-between">
-        <span className="text-xs text-neutral-500">Page {page} of {totalPages}</span>
+        <span className="text-xs text-jolshaa-on-surface-variant">Page {page} of {totalPages}</span>
         <div className="flex gap-1">
           <Button size="xs" variant="ghost" onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page <= 1}>Prev</Button>
           <Button size="xs" variant="ghost" onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page >= totalPages}>Next</Button>
         </div>
       </div>
 
-      {loading ? <div className="text-center py-8 text-neutral-500">Loading...</div> : (
+      {loading ? <div className="text-center py-8 text-jolshaa-on-surface-variant">Loading...</div> : (
         <div className="space-y-2">
           {snapshots.length === 0 ? (
             <Card>
-              <div className="text-center py-8 text-neutral-500 text-sm">No undo history</div>
+              <div className="text-center py-8 text-jolshaa-on-surface-variant text-sm">No undo history</div>
             </Card>
           ) : snapshots.map(s => (
             <Card key={s._id} className={s.undone ? 'opacity-60' : ''}>
               <div className="flex items-center gap-3">
                 <div className={`w-2 h-2 rounded-full flex-shrink-0 ${s.undone ? 'bg-green-500' : 'bg-orange-500'}`} />
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100">{s.action} <span className="text-neutral-500">on</span> {s.targetType}</p>
-                  <p className="text-[10px] text-neutral-400">by {s.admin?.name} &middot; {new Date(s.createdAt).toLocaleString()}</p>
+                  <p className="text-sm font-medium text-jolshaa-on-surface">{s.action} <span className="text-jolshaa-on-surface-variant">on</span> {s.targetType}</p>
+                  <p className="text-[10px] text-jolshaa-on-surface-variant">by {s.admin?.name} &middot; {new Date(s.createdAt).toLocaleString()}</p>
                 </div>
                 <div className="flex-shrink-0">
                   {s.undone ? (
@@ -8010,11 +8010,11 @@ const UndoPanel = () => {
       {/* Confirmation Modal */}
       <Modal isOpen={!!confirmModal} onClose={() => setConfirmModal(null)} title="Confirm Undo">
         <div className="p-5 space-y-4">
-          <div className="p-3 bg-orange-50 dark:bg-orange-900/20 rounded-lg">
-            <p className="text-sm font-medium text-orange-800 dark:text-orange-300">{confirmModal?.action} on {confirmModal?.targetType}</p>
-            <p className="text-xs text-orange-600 dark:text-orange-400 mt-0.5">by {confirmModal?.admin?.name}</p>
+          <div className="p-3 bg-orange-50 rounded-lg">
+            <p className="text-sm font-medium text-orange-800">{confirmModal?.action} on {confirmModal?.targetType}</p>
+            <p className="text-xs text-orange-600 mt-0.5">by {confirmModal?.admin?.name}</p>
           </div>
-          <p className="text-sm text-neutral-600">Are you sure you want to undo this action? This will restore the data to its previous state.</p>
+          <p className="text-sm text-jolshaa-on-surface-variant">Are you sure you want to undo this action? This will restore the data to its previous state.</p>
           <div className="flex justify-end gap-2">
             <Button variant="secondary" onClick={() => setConfirmModal(null)}>Cancel</Button>
             <Button variant="danger" onClick={() => handleUndo(confirmModal._id)} disabled={undoing === confirmModal?._id}>{undoing === confirmModal?._id ? 'Undoing...' : 'Undo Action'}</Button>
@@ -8083,14 +8083,14 @@ const FactCheckReviewTab = () => {
     return `${days}d ago`;
   };
 
-  if (loading) return <div className="text-center py-8 text-neutral-500">Loading flagged posts...</div>;
+  if (loading) return <div className="text-center py-8 text-jolshaa-on-surface-variant">Loading flagged posts...</div>;
 
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h2 className="text-xl font-bold text-neutral-900 dark:text-neutral-100">Fact Check Review</h2>
-          <p className="text-sm text-neutral-500 mt-1">
+          <h2 className="text-xl font-bold font-display text-jolshaa-on-surface">Fact Check Review</h2>
+          <p className="text-sm text-jolshaa-on-surface-variant mt-1">
             Posts flagged by community votes for admin review
           </p>
         </div>
@@ -8099,7 +8099,7 @@ const FactCheckReviewTab = () => {
 
       {posts.length === 0 ? (
         <Card className="p-8 text-center">
-          <p className="text-neutral-500">No flagged posts to review. All clear!</p>
+          <p className="text-jolshaa-on-surface-variant">No flagged posts to review. All clear!</p>
         </Card>
       ) : (
         <div className="space-y-3">
@@ -8109,10 +8109,10 @@ const FactCheckReviewTab = () => {
                 <Avatar src={post.author?.profilePhoto} alt={post.author?.name} size="md" />
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1">
-                    <span className="font-semibold text-sm text-neutral-900 dark:text-neutral-100">
+                    <span className="font-semibold text-sm text-jolshaa-on-surface">
                       {post.author?.name}
                     </span>
-                    <span className="text-xs text-neutral-500">{timeAgo(post.createdAt)}</span>
+                    <span className="text-xs text-jolshaa-on-surface-variant">{timeAgo(post.createdAt)}</span>
                     <Badge variant={
                       post.factCheck?.status === 'false' ? 'danger' :
                       post.factCheck?.status === 'misleading' ? 'warning' : 'neutral'
@@ -8122,13 +8122,13 @@ const FactCheckReviewTab = () => {
                   </div>
 
                   {post.text && (
-                    <p className="text-sm text-neutral-700 dark:text-neutral-300 line-clamp-2 mb-2">
+                    <p className="text-sm text-jolshaa-on-surface-variant line-clamp-2 mb-2">
                       {post.text}
                     </p>
                   )}
 
                   {/* Vote stats */}
-                  <div className="flex items-center gap-4 text-xs text-neutral-500 mb-2">
+                  <div className="flex items-center gap-4 text-xs text-jolshaa-on-surface-variant mb-2">
                     <span className="text-green-600">✓ {post.factCheck?.trueVotes?.length || 0} true</span>
                     <span className="text-red-600">✗ {post.factCheck?.falseVotes?.length || 0} false</span>
                     <span className="text-orange-600">~ {post.factCheck?.misleadingVotes?.length || 0} misleading</span>
@@ -8138,15 +8138,15 @@ const FactCheckReviewTab = () => {
                   {/* Reports */}
                   {post.reports?.length > 0 && (
                     <div className="space-y-1.5 mb-3">
-                      <p className="text-xs font-medium text-neutral-600 dark:text-neutral-400">
+                      <p className="text-xs font-medium text-jolshaa-on-surface-variant">
                         Reports ({post.reports.length}):
                       </p>
                       {post.reports.slice(0, 3).map((r, i) => (
-                        <div key={i} className="text-xs bg-neutral-50 dark:bg-neutral-900 rounded-lg p-2">
-                          <span className="font-medium text-neutral-700 dark:text-neutral-300">
+                        <div key={i} className="text-xs bg-jolshaa-surface-container-low rounded-lg p-2">
+                          <span className="font-medium text-jolshaa-on-surface-variant">
                             {r.reporter?.name}:
                           </span>{' '}
-                          <span className="text-neutral-600 dark:text-neutral-400">{r.reason}</span>
+                          <span className="text-jolshaa-on-surface-variant">{r.reason}</span>
                         </div>
                       ))}
                     </div>
@@ -8194,7 +8194,7 @@ const FactCheckReviewTab = () => {
           >
             Previous
           </Button>
-          <span className="text-sm text-neutral-500 py-1">Page {page} of {totalPages}</span>
+          <span className="text-sm text-jolshaa-on-surface-variant py-1">Page {page} of {totalPages}</span>
           <Button
             variant="secondary"
             size="sm"
@@ -8209,17 +8209,17 @@ const FactCheckReviewTab = () => {
       {/* Verdict Modal */}
       <Modal isOpen={!!verdictModal} onClose={() => setVerdictModal(null)} title="Admin Verdict">
         <div className="p-5 space-y-4">
-          <div className="p-3 bg-neutral-50 dark:bg-neutral-900 rounded-lg">
-            <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100">
+          <div className="p-3 bg-jolshaa-surface-container-low rounded-lg">
+            <p className="text-sm font-medium text-jolshaa-on-surface">
               {verdictModal?.author?.name}
             </p>
-            <p className="text-xs text-neutral-500 mt-0.5 line-clamp-2">
+            <p className="text-xs text-jolshaa-on-surface-variant mt-0.5 line-clamp-2">
               {verdictModal?.text || 'No text'}
             </p>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
+            <label className="block text-sm font-medium text-jolshaa-on-surface-variant mb-2">
               Verdict: <span className="font-bold">
                 {verdictType === 'true' ? 'True' : verdictType === 'false' ? 'Fake' : 'Misleading'}
               </span>
@@ -8228,7 +8228,7 @@ const FactCheckReviewTab = () => {
               value={verdictNote}
               onChange={(e) => setVerdictNote(e.target.value)}
               placeholder="Add a note explaining the verdict (optional)"
-              className="w-full border border-neutral-300 dark:border-neutral-600 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/30 bg-white dark:bg-neutral-700 resize-none"
+              className="w-full border border-jolshaa-outline-variant rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-jolshaa-teal/30 bg-jolshaa-surface-container-lowest resize-none"
               rows={3}
             />
           </div>

@@ -81,31 +81,31 @@ const CreatePage = () => {
   return (
     <Layout logout={logout}>
       <div className="max-w-2xl mx-auto mt-8 px-4">
-        <div className="card rounded-lg p-6">
-          <h2 className="text-xl font-semibold mb-6 text-on-surface">Create Page</h2>
+        <div className="bg-jolshaa-surface-container-lowest rounded-2xl shadow-ambient p-6">
+          <h2 className="font-display text-xl font-semibold mb-6 text-jolshaa-on-surface">Create Page</h2>
 
           {error && <div className="bg-red-500/15 text-red-400 border border-red-500/25 px-4 py-2 rounded mb-4 text-sm">{error}</div>}
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-on-surface-variant mb-1">Page Name *</label>
+              <label className="block text-sm font-medium text-jolshaa-on-surface-variant mb-1">Page Name *</label>
               <input
                 type="text"
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
-                className="input w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                className="w-full px-4 py-2 rounded-lg bg-jolshaa-surface-container-lowest border border-jolshaa-outline-variant text-jolshaa-on-surface focus:outline-none focus:ring-2 focus:ring-jolshaa-teal"
                 placeholder="My Awesome Page"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-on-surface-variant mb-1">Category *</label>
+              <label className="block text-sm font-medium text-jolshaa-on-surface-variant mb-1">Category *</label>
               <select
                 name="category"
                 value={formData.category}
                 onChange={handleChange}
-                className="input w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                className="w-full px-4 py-2 rounded-lg bg-jolshaa-surface-container-lowest border border-jolshaa-outline-variant text-jolshaa-on-surface focus:outline-none focus:ring-2 focus:ring-jolshaa-teal"
               >
                 <option value="">Select a category</option>
                 {CATEGORIES.map(cat => (
@@ -115,19 +115,19 @@ const CreatePage = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-on-surface-variant mb-1">Description</label>
+              <label className="block text-sm font-medium text-jolshaa-on-surface-variant mb-1">Description</label>
               <textarea
                 name="description"
                 value={formData.description}
                 onChange={handleChange}
                 rows={3}
-                className="input w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                className="w-full px-4 py-2 rounded-lg bg-jolshaa-surface-container-lowest border border-jolshaa-outline-variant text-jolshaa-on-surface focus:outline-none focus:ring-2 focus:ring-jolshaa-teal"
                 placeholder="What's this page about?"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-on-surface-variant mb-1">Profile Photo</label>
+              <label className="block text-sm font-medium text-jolshaa-on-surface-variant mb-1">Profile Photo</label>
               <input
                 type="file"
                 accept="image/*"
@@ -140,7 +140,7 @@ const CreatePage = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-on-surface-variant mb-1">Cover Photo</label>
+              <label className="block text-sm font-medium text-jolshaa-on-surface-variant mb-1">Cover Photo</label>
               <input
                 type="file"
                 accept="image/*"
@@ -155,7 +155,7 @@ const CreatePage = () => {
             <button
               type="submit"
               disabled={loading}
-              className="btn-primary w-full py-2 rounded-lg disabled:opacity-50 transition"
+              className="bg-jolshaa-teal text-jolshaa-on-teal hover:bg-jolshaa-teal-container w-full py-2 rounded-lg text-sm font-medium disabled:opacity-50 transition-colors"
             >
               {loading ? 'Creating...' : 'Create Page'}
             </button>

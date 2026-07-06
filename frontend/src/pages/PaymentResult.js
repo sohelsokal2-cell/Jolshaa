@@ -10,7 +10,7 @@ const PaymentResult = ({ success }) => {
     <Layout>
       <div className="max-w-md mx-auto p-8 text-center">
         <div className={`w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 ${
-          success ? 'bg-green-100 dark:bg-green-900/20' : 'bg-red-100 dark:bg-red-900/20'
+          success ? 'bg-green-100' : 'bg-red-100'
         }`}>
           {success ? (
             <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -22,20 +22,20 @@ const PaymentResult = ({ success }) => {
             </svg>
           )}
         </div>
-        <h2 className="text-xl font-bold text-neutral-900 dark:text-neutral-100 mb-2">
+        <h2 className="font-display text-xl font-bold text-jolshaa-on-surface mb-2">
           {success ? 'Payment Successful!' : 'Payment Failed'}
         </h2>
-        <p className="text-sm text-neutral-500 mb-6">
+        <p className="text-sm text-jolshaa-on-surface-variant mb-6">
           {success
             ? 'Your payment has been processed successfully.'
             : 'Something went wrong. Please try again.'}
         </p>
         {sessionId && (
-          <p className="text-xs text-neutral-400 mb-4">Session: {sessionId}</p>
+          <p className="text-xs text-jolshaa-on-surface-variant mb-4">Session: {sessionId}</p>
         )}
         <Link
           to="/feed"
-          className="inline-block px-6 py-2.5 bg-primary-600 text-white rounded-lg font-medium hover:bg-primary-700 transition-colors"
+          className="inline-block px-6 py-2.5 bg-jolshaa-teal text-white rounded-lg font-medium hover:bg-jolshaa-teal-container transition-colors"
         >
           Back to Feed
         </Link>

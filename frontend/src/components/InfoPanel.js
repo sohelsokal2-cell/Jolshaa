@@ -169,7 +169,7 @@ const InfoPanel = ({ conversation, onClose, onUpdateConversation }) => {
         <button onClick={onClose} className="p-1 text-jolshaa-on-surface-variant hover:text-jolshaa-on-surface">
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
         </button>
-        <h3 className="font-semibold text-sm">
+        <h3 className="font-display font-semibold text-sm">
           {isGroup ? 'Group Info' : 'Conversation Info'}
         </h3>
         <div className="w-7" />
@@ -219,7 +219,7 @@ const InfoPanel = ({ conversation, onClose, onUpdateConversation }) => {
                     </div>
                   ) : (
                     <>
-                      <h4 className="font-semibold">{conversation.groupName || 'Group Chat'}</h4>
+                      <h4 className="font-display font-semibold">{conversation.groupName || 'Group Chat'}</h4>
                       <p className="text-xs text-jolshaa-on-surface-variant">{conversation.participants?.length} members</p>
                       {isCreator && (
                         <button onClick={() => { setGroupName(conversation.groupName || ''); setShowEditGroup(true); }}
@@ -230,7 +230,7 @@ const InfoPanel = ({ conversation, onClose, onUpdateConversation }) => {
                 </>
               ) : (
                 <>
-                  <h4 className="font-semibold">{otherUser?.name}</h4>
+                  <h4 className="font-display font-semibold">{otherUser?.name}</h4>
                   <p className="text-xs text-jolshaa-on-surface-variant">{getMemberStatus(otherUser)}</p>
                 </>
               )}
@@ -386,7 +386,7 @@ const InfoPanel = ({ conversation, onClose, onUpdateConversation }) => {
           <div className="fixed inset-0 bg-black/50 z-30" onClick={() => setShowAddMembers(false)} />
           <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-40 bg-jolshaa-surface-container-lowest rounded-2xl shadow-2xl w-80 max-h-[70vh] flex flex-col">
             <div className="p-4 border-b border-jolshaa-outline-variant flex items-center justify-between">
-              <h3 className="font-bold text-sm">Add Members</h3>
+              <h3 className="font-display font-bold text-sm">Add Members</h3>
               <button onClick={() => setShowAddMembers(false)} className="text-jolshaa-on-surface-variant hover:text-jolshaa-on-surface-variant">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
               </button>

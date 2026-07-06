@@ -79,13 +79,13 @@ const Toast = () => {
         >
           <button
             onClick={(e) => { e.stopPropagation(); handleDismiss(toast.id); }}
-            className="absolute top-2 right-2 text-gray-400 hover:text-gray-600"
+            className="absolute top-2 right-2 text-jolshaa-on-surface-variant/60 hover:text-jolshaa-on-surface-variant"
           >
             x
           </button>
           <div className="flex items-center gap-2">
             <div className={`w-2 h-2 rounded-full ${toast.type === 'message' ? 'bg-blue-500' : 'bg-green-500'}`} />
-            <p className="text-sm text-gray-800">{toast.text}</p>
+            <p className="text-sm text-jolshaa-on-surface">{toast.text}</p>
           </div>
         </div>
       ))}
