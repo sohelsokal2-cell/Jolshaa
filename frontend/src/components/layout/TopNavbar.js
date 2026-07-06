@@ -37,31 +37,23 @@ const TopNavbar = () => {
   };
 
   return (
-    <nav className="glass-nav fixed top-0 left-0 right-0 z-50 h-14">
+    <nav className="fixed top-0 left-0 right-0 z-50 h-14 bg-jolshaa-surface-container-lowest/95 backdrop-blur-xl border-b border-jolshaa-outline-variant shadow-ambient">
       <div className="h-full max-w-[1920px] mx-auto px-4 flex items-center justify-between">
 
         {/* Left: Logo + Search */}
         <div className="flex items-center gap-4">
           <Link to="/feed" className="flex items-center gap-2.5 flex-shrink-0 group">
-            {/* Logo mark with violet glow */}
+            {/* Logo mark */}
             <div
               className="w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-300 group-hover:scale-105"
               style={{
-                background: 'linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%)',
-                boxShadow: '0 0 16px rgba(139, 92, 246, 0.5)',
+                background: 'linear-gradient(135deg, #00685f 0%, #008378 100%)',
+                boxShadow: '0 2px 8px rgba(0, 104, 95, 0.35)',
               }}
             >
               <span className="text-white font-bold text-lg tracking-tight">J</span>
             </div>
-            <span
-              className="text-xl font-bold hidden sm:block"
-              style={{
-                background: 'linear-gradient(135deg, #d0bcff, #a78bfa)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                backgroundClip: 'text',
-              }}
-            >
+            <span className="text-xl font-bold font-display hidden sm:block text-jolshaa-teal">
               Jolshaa
             </span>
           </Link>
@@ -73,11 +65,11 @@ const TopNavbar = () => {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search Jolshaa…"
-              className="input w-60 lg:w-72 rounded-full px-4 py-2 pl-10 text-sm transition-all duration-200 focus:outline-none bg-white/5 border border-white/10 text-on-surface focus:bg-white/8 focus:border-violet-500/40 focus:ring-3 focus:ring-violet-500/10"
+              className="w-60 lg:w-72 rounded-full px-4 py-2 pl-10 text-sm transition-all duration-200 focus:outline-none bg-jolshaa-surface-container-low border border-jolshaa-outline-variant text-jolshaa-on-surface placeholder-jolshaa-on-surface-variant focus:bg-jolshaa-surface-container-lowest focus:border-jolshaa-teal/40 focus:ring-3 focus:ring-jolshaa-teal/10"
               aria-label="Search"
             />
             <svg
-              className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-on-surface-variant"
+              className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-jolshaa-on-surface-variant"
               fill="none" stroke="currentColor" viewBox="0 0 24 24"
             >
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -87,7 +79,7 @@ const TopNavbar = () => {
           {/* Mobile search toggle */}
           <button
             onClick={() => setShowMobileSearch(!showMobileSearch)}
-            className="md:hidden p-2 rounded-full transition-colors text-on-surface-variant hover:bg-white/5"
+            className="md:hidden p-2 rounded-full transition-colors text-jolshaa-on-surface-variant hover:bg-jolshaa-surface-container-low"
             aria-label="Toggle search"
             aria-expanded={showMobileSearch}
           >
@@ -104,7 +96,7 @@ const TopNavbar = () => {
           {/* Dark mode toggle */}
           <button
             onClick={toggleDark}
-            className="p-2 rounded-full transition-all duration-200 text-on-surface-variant hover:bg-white/5 hover:text-violet-300"
+            className="p-2 rounded-full transition-all duration-200 text-jolshaa-on-surface-variant hover:bg-jolshaa-surface-container-low hover:text-jolshaa-teal"
             title={isDark ? 'Light mode' : 'Dark mode'}
             aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
           >
@@ -122,8 +114,8 @@ const TopNavbar = () => {
           {/* Data saver toggle */}
           <button
             onClick={toggleDataSaver}
-            className={`p-2 rounded-full transition-all duration-200 hover:bg-white/5 ${
-              dataSaver ? 'text-green-400 hover:text-green-300' : 'text-on-surface-variant hover:text-violet-300'
+            className={`p-2 rounded-full transition-all duration-200 hover:bg-jolshaa-surface-container-low ${
+              dataSaver ? 'text-green-600 hover:text-green-500' : 'text-jolshaa-on-surface-variant hover:text-jolshaa-teal'
             }`}
             title={dataSaver ? 'Data saver ON — tap to disable' : 'Data saver OFF — tap to enable'}
             aria-label={dataSaver ? 'Disable data saver' : 'Enable data saver'}
@@ -137,16 +129,16 @@ const TopNavbar = () => {
           <div className="relative" ref={profileMenuRef}>
             <button
               onClick={() => setShowProfileMenu(!showProfileMenu)}
-              className="flex items-center gap-2 p-1.5 rounded-full transition-all duration-200 hover:bg-white/5"
+              className="flex items-center gap-2 p-1.5 rounded-full transition-all duration-200 hover:bg-jolshaa-surface-container-low"
               aria-expanded={showProfileMenu}
               aria-haspopup="true"
               aria-label="Profile menu"
             >
-              <div className="outline outline-2 outline-violet-500/50 outline-offset-2 rounded-full">
+              <div className="outline outline-2 outline-jolshaa-teal/50 outline-offset-2 rounded-full">
                 <Avatar src={user?.profilePhoto} alt={user?.name} size="sm" />
               </div>
               <svg
-                className={`w-4 h-4 hidden sm:block transition-transform duration-200 text-on-surface-variant ${showProfileMenu ? 'rotate-180' : ''}`}
+                className={`w-4 h-4 hidden sm:block transition-transform duration-200 text-jolshaa-on-surface-variant ${showProfileMenu ? 'rotate-180' : ''}`}
                 fill="none" stroke="currentColor" viewBox="0 0 24 24"
               >
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
@@ -155,17 +147,17 @@ const TopNavbar = () => {
 
             {showProfileMenu && (
               <div
-                className="dropdown absolute right-0 mt-2 w-64 max-w-[calc(100vw-2rem)] rounded-2xl z-50 py-2 animate-scale-in bg-surface border border-white/10 backdrop-blur-xl shadow-2xl shadow-black/70 ring-1 ring-violet-500/10"
+                className="absolute right-0 mt-2 w-64 max-w-[calc(100vw-2rem)] rounded-2xl z-50 py-2 animate-scale-in bg-jolshaa-surface-container-lowest border border-jolshaa-outline-variant shadow-ambient-hover"
               >
                 {/* Profile header */}
-                <div className="px-4 py-3 mb-1 border-b border-white/7">
+                <div className="px-4 py-3 mb-1 border-b border-jolshaa-outline-variant">
                   <div className="flex items-center gap-3">
-                    <div className="outline outline-2 outline-violet-500 outline-offset-2 rounded-full shadow-lg shadow-violet-500/40">
+                    <div className="outline outline-2 outline-jolshaa-teal outline-offset-2 rounded-full shadow-lg shadow-jolshaa-teal/30">
                       <Avatar src={user?.profilePhoto} alt={user?.name} size="lg" />
                     </div>
                     <div>
-                      <p className="font-semibold text-sm text-on-surface">{user?.name}</p>
-                      <p className="text-xs text-on-surface-variant">See your profile</p>
+                      <p className="font-semibold text-sm text-jolshaa-on-surface">{user?.name}</p>
+                      <p className="text-xs text-jolshaa-on-surface-variant">See your profile</p>
                     </div>
                   </div>
                 </div>
@@ -198,9 +190,9 @@ const TopNavbar = () => {
                       key={item.to}
                       to={item.to}
                       onClick={() => setShowProfileMenu(false)}
-                      className="dropdown-item flex items-center gap-3 px-4 py-2.5 text-sm transition-colors text-on-surface-variant hover:bg-violet-500/10 hover:text-on-surface"
+                      className="flex items-center gap-3 px-4 py-2.5 text-sm transition-colors text-jolshaa-on-surface-variant hover:bg-jolshaa-teal/10 hover:text-jolshaa-on-surface"
                     >
-                      <svg className="w-5 h-5 text-violet-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-5 h-5 text-jolshaa-teal" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         {item.icon}
                       </svg>
                       {item.label}
@@ -211,9 +203,9 @@ const TopNavbar = () => {
                     <Link
                       to="/admin"
                       onClick={() => setShowProfileMenu(false)}
-                      className="dropdown-item flex items-center gap-3 px-4 py-2.5 text-sm transition-colors text-on-surface-variant hover:bg-violet-500/10 hover:text-on-surface"
+                      className="flex items-center gap-3 px-4 py-2.5 text-sm transition-colors text-jolshaa-on-surface-variant hover:bg-jolshaa-teal/10 hover:text-jolshaa-on-surface"
                     >
-                      <svg className="w-5 h-5 text-violet-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-5 h-5 text-jolshaa-teal" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                       </svg>
                       Admin panel
@@ -222,10 +214,10 @@ const TopNavbar = () => {
                 </div>
 
                 {/* Logout */}
-                <div className="border-t border-white/7 pt-1">
+                <div className="border-t border-jolshaa-outline-variant pt-1">
                   <button
                     onClick={() => { logout(); setShowProfileMenu(false); }}
-                    className="flex items-center gap-3 px-4 py-2.5 text-sm transition-colors w-full text-red-400 hover:bg-red-500/10"
+                    className="flex items-center gap-3 px-4 py-2.5 text-sm transition-colors w-full text-red-500 hover:bg-red-500/10"
                   >
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
@@ -242,7 +234,7 @@ const TopNavbar = () => {
       {/* Mobile search bar */}
       {showMobileSearch && (
         <div
-          className="md:hidden absolute top-full left-0 right-0 p-3 animate-slide-down bg-surface border-b border-white/10 backdrop-blur-xl"
+          className="md:hidden absolute top-full left-0 right-0 p-3 animate-slide-down bg-jolshaa-surface-container-lowest border-b border-jolshaa-outline-variant backdrop-blur-xl"
         >
           <form onSubmit={handleSearch} className="relative">
             <input
@@ -251,10 +243,10 @@ const TopNavbar = () => {
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search Jolshaa…"
               autoFocus
-              className="input w-full rounded-full px-4 py-2.5 pl-10 text-sm focus:outline-none bg-white/6 border border-white/10 text-on-surface"
+              className="w-full rounded-full px-4 py-2.5 pl-10 text-sm focus:outline-none bg-jolshaa-surface-container-low border border-jolshaa-outline-variant text-jolshaa-on-surface"
               aria-label="Search"
             />
-            <svg className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-on-surface-variant" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-jolshaa-on-surface-variant" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
           </form>

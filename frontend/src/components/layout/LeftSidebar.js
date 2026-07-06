@@ -134,23 +134,23 @@ const LeftSidebar = () => {
 
   return (
     <aside className="hidden md:block w-[280px] xl:w-[320px] flex-shrink-0">
-      <div className="fixed top-14 left-0 w-[280px] xl:w-[320px] h-[calc(100vh-56px)] overflow-y-auto py-4 pl-4 pr-2 scrollbar-hide glass-panel">
+      <div className="fixed top-14 left-0 w-[280px] xl:w-[320px] h-[calc(100vh-56px)] overflow-y-auto py-4 pl-4 pr-2 scrollbar-hide bg-jolshaa-surface-container-lowest border-r border-jolshaa-outline-variant">
         {/* Profile link */}
         <Link
           to="/profile"
-          className="nav-link group text-on-surface hover:bg-violet-500/10 mb-2"
+          className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150 group text-jolshaa-on-surface hover:bg-jolshaa-teal/10 mb-2"
           aria-label="View your profile"
         >
-          <div className="rounded-full outline outline-2 outline-violet-500/50 outline-offset-2 transition-shadow group-hover:shadow-[0_0_12px_rgba(139,92,246,0.4)]">
+          <div className="rounded-full outline outline-2 outline-jolshaa-teal/50 outline-offset-2 transition-shadow group-hover:shadow-[0_0_12px_rgba(0,104,95,0.35)]">
             <Avatar src={user?.profilePhoto} alt={user?.name} size="md" />
           </div>
-          <span className="text-sm font-semibold truncate text-on-surface">
+          <span className="text-sm font-semibold truncate text-jolshaa-on-surface">
             {user?.name}
           </span>
         </Link>
 
         {/* Divider */}
-        <div className="h-px mx-3 my-2 bg-white/5" />
+        <div className="h-px mx-3 my-2 bg-jolshaa-outline-variant" />
 
         {/* Nav items */}
         <nav className="space-y-0.5">
@@ -164,12 +164,16 @@ const LeftSidebar = () => {
                 key={item.path}
                 to={item.path}
                 aria-label={item.label}
-                className={isActive ? 'nav-link-active relative' : 'nav-link relative group'}
+                className={
+                  isActive
+                    ? 'flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150 relative bg-jolshaa-teal/10 text-jolshaa-teal border border-jolshaa-teal/20'
+                    : 'flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150 relative group text-jolshaa-on-surface-variant hover:bg-jolshaa-surface-container-low hover:text-jolshaa-on-surface'
+                }
               >
                 {isActive && (
-                  <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-5 rounded-r-full bg-violet-500 shadow-[0_0_8px_rgba(139,92,246,0.7)]" />
+                  <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-5 rounded-r-full bg-jolshaa-teal shadow-[0_0_8px_rgba(0,104,95,0.5)]" />
                 )}
-                <span className={isActive ? 'text-violet-400' : 'text-on-surface-variant'}>
+                <span className={isActive ? 'text-jolshaa-teal' : 'text-jolshaa-on-surface-variant'}>
                   {item.icon(isActive)}
                 </span>
                 {item.label}
@@ -179,10 +183,10 @@ const LeftSidebar = () => {
         </nav>
 
         {/* Divider */}
-        <div className="h-px mx-3 my-3 bg-white/5" />
+        <div className="h-px mx-3 my-3 bg-jolshaa-outline-variant" />
 
         {/* Footer */}
-        <div className="px-3 space-y-1 text-xs text-on-surface-variant/60">
+        <div className="px-3 space-y-1 text-xs text-jolshaa-on-surface-variant/70">
           <p>Privacy · Terms · Advertising · Cookies</p>
           <p>© 2026 Jolshaa</p>
         </div>

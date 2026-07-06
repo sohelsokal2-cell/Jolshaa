@@ -38,7 +38,7 @@ const navItems = [
     ariaLabel: 'Create new post',
     isCreate: true,
     icon: () => (
-      <div className="w-11 h-11 rounded-full bg-gradient-to-br from-primary-500 to-primary-700 shadow-glow-violet flex items-center justify-center -mt-3 transition-all duration-300">
+      <div className="w-11 h-11 rounded-full bg-gradient-to-br from-jolshaa-teal to-jolshaa-teal-container shadow-ambient flex items-center justify-center -mt-3 transition-all duration-300">
         <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
         </svg>
@@ -161,7 +161,7 @@ const BottomNav = () => {
 
   return (
     <nav
-      className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-surface-base/92 border-t border-white/[0.07] backdrop-blur-[24px] shadow-nav safe-area-bottom"
+      className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-jolshaa-surface-container-lowest/95 border-t border-jolshaa-outline-variant backdrop-blur-[24px] shadow-ambient safe-area-bottom"
     >
       <div className="flex items-center justify-around h-14 px-2">
         {visibleItems.map((item) => {
@@ -185,7 +185,7 @@ const BottomNav = () => {
               key={item.path}
               to={item.path}
               className={`flex flex-col items-center justify-center py-1 min-w-0 flex-1 gap-0.5 transition-all duration-150 ${
-                active ? 'text-primary-400' : 'text-neutral-500'
+                active ? 'text-jolshaa-teal' : 'text-jolshaa-on-surface-variant'
               }`}
               aria-label={item.ariaLabel}
             >
@@ -196,13 +196,13 @@ const BottomNav = () => {
                 : item.icon(active)}
               <span
                 className={`font-medium text-2xs tracking-[0.02em] ${
-                  active ? 'text-primary-300' : 'text-neutral-500'
+                  active ? 'text-jolshaa-teal' : 'text-jolshaa-on-surface-variant'
                 }`}
               >
                 {item.label}
               </span>
               {active && (
-                <span className="absolute bottom-1 w-1 h-1 rounded-full bg-primary-500 shadow-[0_0_6px_rgba(139,92,246,0.8)]" />
+                <span className="absolute bottom-1 w-1 h-1 rounded-full bg-jolshaa-teal shadow-[0_0_6px_rgba(0,104,95,0.6)]" />
               )}
             </Link>
           );

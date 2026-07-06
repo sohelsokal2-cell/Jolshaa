@@ -32,26 +32,21 @@ const RightSidebar = () => {
 
   const GlassCard = ({ children, className = '' }) => (
     <div
-      className={`rounded-2xl p-4 mb-4 relative overflow-hidden bg-surface/60 border border-white/7 backdrop-blur-xl shadow-md shadow-black/40 ${className}`}
+      className={`rounded-2xl p-4 mb-4 relative overflow-hidden bg-jolshaa-surface-container-lowest border border-jolshaa-outline-variant shadow-ambient ${className}`}
     >
-      {/* Top edge highlight */}
-      <div
-        aria-hidden="true"
-        className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/12 to-transparent"
-      />
       {children}
     </div>
   );
 
   const sectionTitle = (text, linkTo, linkLabel) => (
     <div className="flex items-center justify-between mb-3">
-      <h3 className="text-[0.7rem] font-semibold tracking-[0.08em] uppercase text-on-surface-variant">
+      <h3 className="text-[0.7rem] font-semibold tracking-[0.08em] uppercase text-jolshaa-on-surface-variant">
         {text}
       </h3>
       {linkTo && (
         <Link
           to={linkTo}
-          className="text-xs font-medium transition-colors text-violet-500 hover:text-violet-400"
+          className="text-xs font-medium transition-colors text-jolshaa-teal hover:text-jolshaa-teal-container"
           aria-label={linkLabel}
         >
           {linkLabel}
@@ -63,7 +58,7 @@ const RightSidebar = () => {
   return (
     <aside className="hidden lg:block w-[320px] flex-shrink-0" aria-label="Right sidebar">
       <div
-        className="fixed top-14 right-0 w-[320px] h-[calc(100vh-56px)] overflow-y-auto py-4 pl-2 pr-4 scrollbar-hide bg-surface/60 backdrop-blur-md"
+        className="fixed top-14 right-0 w-[320px] h-[calc(100vh-56px)] overflow-y-auto py-4 pl-2 pr-4 scrollbar-hide bg-jolshaa-surface"
       >
 
         {/* ── Trending ─────────────────────────── */}
@@ -87,25 +82,25 @@ const RightSidebar = () => {
                 <Link
                   key={tag._id || i}
                   to={`/hashtag/${tag._id || tag.name}`}
-                  className="flex items-center gap-3 px-2 py-2 rounded-xl transition-all duration-150 group hover:bg-violet-500/10"
+                  className="flex items-center gap-3 px-2 py-2 rounded-xl transition-all duration-150 group hover:bg-jolshaa-teal/10"
                   aria-label={`View hashtag ${tag._id || tag.name}`}
                 >
                   <div
-                    className="w-8 h-8 rounded-lg flex items-center justify-center text-sm font-bold flex-shrink-0 bg-violet-500/15 text-violet-300 border border-violet-500/20"
+                    className="w-8 h-8 rounded-lg flex items-center justify-center text-sm font-bold flex-shrink-0 bg-jolshaa-teal/10 text-jolshaa-teal border border-jolshaa-teal/20"
                   >
                     #
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-on-surface">
+                    <p className="text-sm font-medium text-jolshaa-on-surface">
                       #{tag._id || tag.name}
                     </p>
-                    <p className="text-[0.7rem] text-on-surface-variant">{tag.count || 0} posts</p>
+                    <p className="text-[0.7rem] text-jolshaa-on-surface-variant">{tag.count || 0} posts</p>
                   </div>
                 </Link>
               ))}
             </div>
           ) : (
-            <p className="text-sm text-center py-2 text-on-surface-variant">No trending topics yet</p>
+            <p className="text-sm text-center py-2 text-jolshaa-on-surface-variant">No trending topics yet</p>
           )}
         </GlassCard>
 
@@ -129,30 +124,30 @@ const RightSidebar = () => {
               {suggestions.map((person) => (
                 <div
                   key={person._id}
-                  className="flex items-center gap-3 px-2 py-2 rounded-xl transition-all duration-150 hover:bg-white/5"
+                  className="flex items-center gap-3 px-2 py-2 rounded-xl transition-all duration-150 hover:bg-jolshaa-surface-container-low"
                 >
                   <Link to={`/profile/${person._id}`} className="flex-shrink-0">
-                    <div className="ring-2 ring-violet-500/30 ring-offset-2 ring-offset-transparent rounded-full">
+                    <div className="ring-2 ring-jolshaa-teal/30 ring-offset-2 ring-offset-transparent rounded-full">
                       <Avatar src={person.profilePhoto} alt={person.name} size="md" />
                     </div>
                   </Link>
                   <div className="flex-1 min-w-0">
                     <Link
                       to={`/profile/${person._id}`}
-                      className="text-sm font-medium hover:underline truncate block text-on-surface"
+                      className="text-sm font-medium hover:underline truncate block text-jolshaa-on-surface"
                       aria-label={`View profile of ${person.name}`}
                     >
                       {person.name}
                     </Link>
                     {person.mutualFriends > 0 && (
-                      <p className="text-[0.7rem] text-on-surface-variant">
+                      <p className="text-[0.7rem] text-jolshaa-on-surface-variant">
                         {person.mutualFriends} mutual friends
                       </p>
                     )}
                   </div>
                   {/* Follow button */}
                   <button
-                    className="text-xs font-semibold px-3 py-1 rounded-full transition-all duration-200 flex-shrink-0 bg-violet-500/15 text-violet-300 border border-violet-500/25 hover:bg-violet-500/25 hover:shadow-[0_0_10px_rgba(139,92,246,0.2)]"
+                    className="text-xs font-semibold px-3 py-1 rounded-full transition-all duration-200 flex-shrink-0 bg-jolshaa-teal/10 text-jolshaa-teal border border-jolshaa-teal/25 hover:bg-jolshaa-teal/20"
                     aria-label={`Follow ${person.name}`}
                   >
                     Follow
@@ -161,7 +156,7 @@ const RightSidebar = () => {
               ))}
             </div>
           ) : (
-            <p className="text-sm text-center py-2 text-on-surface-variant">No suggestions yet</p>
+            <p className="text-sm text-center py-2 text-jolshaa-on-surface-variant">No suggestions yet</p>
           )}
         </GlassCard>
 
@@ -172,32 +167,32 @@ const RightSidebar = () => {
             {[
               {
                 to: '/creator', label: 'Creator Hub',
-                tailwindClass: 'bg-violet-500/12 text-violet-300 border border-violet-500/20',
+                tailwindClass: 'bg-jolshaa-teal/10 text-jolshaa-teal border border-jolshaa-teal/20',
                 icon: '⭐',
               },
               {
                 to: '/marketplace', label: 'Marketplace',
-                tailwindClass: 'bg-green-500/10 text-green-300 border border-green-500/20',
+                tailwindClass: 'bg-green-500/10 text-green-700 border border-green-500/20',
                 icon: '🛍️',
               },
               {
                 to: '/groups', label: 'Groups',
-                tailwindClass: 'bg-blue-500/10 text-blue-300 border border-blue-500/20',
+                tailwindClass: 'bg-blue-500/10 text-blue-700 border border-blue-500/20',
                 icon: '👥',
               },
               {
                 to: '/events', label: 'Events',
-                tailwindClass: 'bg-yellow-500/10 text-yellow-300 border border-yellow-500/20',
+                tailwindClass: 'bg-yellow-500/10 text-yellow-700 border border-yellow-500/20',
                 icon: '📅',
               },
               {
                 to: '/reels', label: 'Reels',
-                tailwindClass: 'bg-pink-500/10 text-pink-300 border border-pink-500/20',
+                tailwindClass: 'bg-pink-500/10 text-pink-700 border border-pink-500/20',
                 icon: '🎬',
               },
               {
                 to: '/trending', label: 'Trending',
-                tailwindClass: 'bg-orange-500/10 text-orange-300 border border-orange-500/20',
+                tailwindClass: 'bg-orange-500/10 text-orange-700 border border-orange-500/20',
                 icon: '🔥',
               },
             ].map((item) => (
@@ -215,7 +210,7 @@ const RightSidebar = () => {
         </GlassCard>
 
         {/* Footer */}
-        <p className="text-center mt-2 text-[0.6rem] text-on-surface-variant/50">
+        <p className="text-center mt-2 text-[0.6rem] text-jolshaa-on-surface-variant/60">
           Privacy · Terms · © 2026 Jolshaa
         </p>
       </div>
