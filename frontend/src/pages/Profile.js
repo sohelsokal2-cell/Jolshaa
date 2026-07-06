@@ -4,10 +4,6 @@ import { useAuth } from '../context/AuthContext';
 import API from '../api/axios';
 import Layout from '../components/layout/Layout';
 import Avatar from '../components/ui/Avatar';
-import Card from '../components/ui/Card';
-import Tabs from '../components/ui/Tabs';
-import Badge from '../components/ui/Badge';
-import Button from '../components/ui/Button';
 import { PostSkeleton } from '../components/ui/Skeleton';
 import AlbumGrid from '../components/AlbumGrid';
 import PostCard from '../components/PostCard';
@@ -162,7 +158,7 @@ const Profile = () => {
       <div className="max-w-2xl mx-auto">
         {/* Cover Photo */}
         <div className="relative">
-          <div className="h-48 sm:h-64 bg-gradient-to-r from-primary-400 to-primary-600 rounded-xl overflow-hidden">
+          <div className="h-48 sm:h-64 bg-gradient-to-r from-jolshaa-teal to-jolshaa-teal-container rounded-xl overflow-hidden shadow-ambient">
             {profileUser.coverPhoto && (
               <img src={profileUser.coverPhoto} alt="Cover" className="w-full h-full object-cover" />
             )}
@@ -173,20 +169,20 @@ const Profile = () => {
         <div className="relative px-4 sm:px-6">
           <div className="flex flex-col sm:flex-row sm:items-end gap-4 -mt-10 sm:-mt-12 mb-4">
             <div className="relative">
-              <Avatar src={profileUser.profilePhoto} alt={profileUser.name} size="3xl" className="ring-4 ring-white dark:ring-neutral-800 shadow-lg" />
+              <Avatar src={profileUser.profilePhoto} alt={profileUser.name} size="3xl" className="ring-4 ring-jolshaa-surface shadow-ambient-hover" />
             </div>
             <div className="flex-1 min-w-0 sm:pb-1">
               <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
-                <h1 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">{profileUser.name}</h1>
+                <h1 className="text-2xl font-bold font-display text-jolshaa-on-surface">{profileUser.name}</h1>
                 {profileUser.isVerified && (
-                  <Badge variant="primary" size="sm">
+                  <span className="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full text-2xs font-semibold bg-jolshaa-teal/10 text-jolshaa-teal border border-jolshaa-teal/20 w-fit">
                     <svg className="w-3 h-3 mr-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" /></svg>
                     Verified
-                  </Badge>
+                  </span>
                 )}
               </div>
               {profileUser.friendCount > 0 && (
-                <p className="text-sm text-neutral-500 mt-0.5">
+                <p className="text-sm text-jolshaa-on-surface-variant mt-0.5">
                   {profileUser.friendCount} friend{profileUser.friendCount !== 1 ? 's' : ''}
                 </p>
               )}
@@ -205,17 +201,22 @@ const Profile = () => {
                   )}
                 </>
               ) : (
-                <Link to="/edit-profile">
-                  <Button variant="secondary" size="sm">
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
-                    Edit profile
-                  </Button>
+                <Link
+                  to="/edit-profile"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium bg-jolshaa-teal text-jolshaa-on-teal hover:bg-jolshaa-teal-container transition-colors shadow-ambient"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
+                  Edit profile
                 </Link>
               )}
               {!isOwnProfile && (
-                <Button variant="ghost" size="sm" onClick={() => setShowReport(true)}>
+                <button
+                  onClick={() => setShowReport(true)}
+                  className="inline-flex items-center justify-center p-2.5 rounded-lg text-jolshaa-on-surface-variant hover:bg-jolshaa-surface-container-low transition-colors"
+                  aria-label="Report user"
+                >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4.5c-.77-.833-2.694-.833-3.464 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z" /></svg>
-                </Button>
+                </button>
               )}
             </div>
           </div>
@@ -225,46 +226,46 @@ const Profile = () => {
             <div className="flex items-center gap-2 mb-4">
               <div className="flex -space-x-2">
                 {profileUser.mutualFriends?.slice(0, 3).map((f) => (
-                  <Avatar key={f._id} src={f.profilePhoto} alt={f.name} size="xs" className="ring-2 ring-white dark:ring-neutral-800" />
+                  <Avatar key={f._id} src={f.profilePhoto} alt={f.name} size="xs" className="ring-2 ring-jolshaa-surface" />
                 ))}
               </div>
-              <p className="text-xs text-neutral-500">
+              <p className="text-xs text-jolshaa-on-surface-variant">
                 {profileUser.mutualFriendsCount} mutual friend{profileUser.mutualFriendsCount !== 1 ? 's' : ''}
               </p>
             </div>
           )}
 
           {/* Bio & Info */}
-          <Card className="mb-4">
+          <div className="bg-jolshaa-surface-container-lowest rounded-xl shadow-ambient p-4 mb-4">
             <div className="space-y-3">
               {profileUser.bio && (
-                <p className="text-sm text-neutral-700 dark:text-neutral-300">{profileUser.bio}</p>
+                <p className="text-sm text-jolshaa-on-surface">{profileUser.bio}</p>
               )}
-              <div className="flex flex-wrap gap-x-4 gap-y-2 text-sm text-neutral-500">
+              <div className="flex flex-wrap gap-x-4 gap-y-2 text-sm text-jolshaa-on-surface-variant">
                 {profileUser.work && (
                   <span className="flex items-center gap-1.5">
-                    <svg className="w-4 h-4 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+                    <svg className="w-4 h-4 text-jolshaa-outline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
                     {profileUser.work}
                   </span>
                 )}
                 {profileUser.education && (
                   <span className="flex items-center gap-1.5">
-                    <svg className="w-4 h-4 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 14l9-5-9-5-9 5 9 5z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222" /></svg>
+                    <svg className="w-4 h-4 text-jolshaa-outline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 14l9-5-9-5-9 5 9 5z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222" /></svg>
                     {profileUser.education}
                   </span>
                 )}
                 {profileUser.location && (
                   <span className="flex items-center gap-1.5">
-                    <svg className="w-4 h-4 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                    <svg className="w-4 h-4 text-jolshaa-outline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
                     {profileUser.location}
                   </span>
                 )}
               </div>
-              <p className="text-xs text-neutral-400">
+              <p className="text-xs text-jolshaa-on-surface-variant/80">
                 Joined {new Date(profileUser.createdAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
               </p>
             </div>
-          </Card>
+          </div>
         </div>
 
         {/* Story Highlights */}
@@ -275,16 +276,39 @@ const Profile = () => {
         {/* Subscription Tiers (for creators) */}
         {!isOwnProfile && profileUser.isCreator && (
           <div className="px-4 sm:px-0 mb-4">
-            <Card>
+            <div className="bg-jolshaa-surface-container-lowest rounded-xl shadow-ambient p-4">
               <SubscriptionTiersPage creatorId={profileUser.id || profileUser._id} />
-            </Card>
+            </div>
           </div>
         )}
 
         {/* Tabs */}
-        <Card padding={false} className="mb-4">
-          <Tabs tabs={tabs} activeTab={activeTab} onChange={setActiveTab} />
-        </Card>
+        <div className="bg-jolshaa-surface-container-lowest rounded-xl shadow-ambient mb-4">
+          <div className="flex overflow-x-auto border-b border-jolshaa-outline-variant scrollbar-hide">
+            {tabs.map((tab) => (
+              <button
+                key={tab.key}
+                onClick={() => setActiveTab(tab.key)}
+                className={`flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors whitespace-nowrap flex-shrink-0 ${
+                  activeTab === tab.key
+                    ? 'border-jolshaa-teal text-jolshaa-teal'
+                    : 'border-transparent text-jolshaa-on-surface-variant hover:text-jolshaa-on-surface hover:border-jolshaa-outline-variant'
+                }`}
+              >
+                {tab.label}
+                {tab.count !== undefined && (
+                  <span className={`ml-1 px-1.5 py-0.5 rounded-full text-2xs ${
+                    activeTab === tab.key
+                      ? 'bg-jolshaa-teal/10 text-jolshaa-teal'
+                      : 'bg-jolshaa-surface-container text-jolshaa-on-surface-variant'
+                  }`}>
+                    {tab.count}
+                  </span>
+                )}
+              </button>
+            ))}
+          </div>
+        </div>
 
         {/* Tab Content */}
         <div className="px-4 sm:px-0">
@@ -297,10 +321,10 @@ const Profile = () => {
                 </>
               ) : posts.length === 0 ? (
                 <div className="text-center py-12">
-                  <div className="w-16 h-16 bg-neutral-200 dark:bg-neutral-700 rounded-full flex items-center justify-center mx-auto mb-3">
-                    <svg className="w-8 h-8 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" /></svg>
+                  <div className="w-16 h-16 bg-jolshaa-surface-container rounded-full flex items-center justify-center mx-auto mb-3">
+                    <svg className="w-8 h-8 text-jolshaa-outline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" /></svg>
                   </div>
-                  <p className="text-sm text-neutral-500">
+                  <p className="text-sm text-jolshaa-on-surface-variant">
                     {isOwnProfile ? "You haven't posted anything yet" : `${profileUser.name} hasn't posted yet`}
                   </p>
                 </div>
@@ -311,9 +335,13 @@ const Profile = () => {
                   ))}
                   {page < totalPages && (
                     <div className="flex justify-center py-4">
-                      <Button variant="secondary" onClick={loadMore} loading={postsLoading}>
-                        Load more
-                      </Button>
+                      <button
+                        onClick={loadMore}
+                        disabled={postsLoading}
+                        className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium bg-jolshaa-surface-container-low text-jolshaa-on-surface hover:bg-jolshaa-surface-container transition-colors disabled:opacity-50"
+                      >
+                        {postsLoading ? 'Loading…' : 'Load more'}
+                      </button>
                     </div>
                   )}
                 </>
@@ -322,8 +350,8 @@ const Profile = () => {
           )}
 
           {activeTab === 'about' && (
-            <Card>
-              <h3 className="text-base font-semibold text-neutral-900 dark:text-neutral-100 mb-4">About {profileUser.name}</h3>
+            <div className="bg-jolshaa-surface-container-lowest rounded-xl shadow-ambient p-4">
+              <h3 className="text-base font-semibold font-display text-jolshaa-on-surface mb-4">About {profileUser.name}</h3>
               <div className="space-y-4">
                 {[
                   { label: 'Bio', value: profileUser.bio },
@@ -334,15 +362,15 @@ const Profile = () => {
                   { label: 'Date of Birth', value: profileUser.dateOfBirth ? new Date(profileUser.dateOfBirth).toLocaleDateString() : null },
                 ].filter(item => item.value).map(item => (
                   <div key={item.label}>
-                    <p className="text-xs font-medium text-neutral-500 uppercase tracking-wide">{item.label}</p>
-                    <p className="text-sm text-neutral-900 dark:text-neutral-100 mt-0.5 capitalize">{item.value}</p>
+                    <p className="text-xs font-medium text-jolshaa-on-surface-variant uppercase tracking-wide">{item.label}</p>
+                    <p className="text-sm text-jolshaa-on-surface mt-0.5 capitalize">{item.value}</p>
                   </div>
                 ))}
                 {!profileUser.bio && !profileUser.work && !profileUser.education && !profileUser.location && (
-                  <p className="text-sm text-neutral-400 text-center py-4">No info to show</p>
+                  <p className="text-sm text-jolshaa-on-surface-variant text-center py-4">No info to show</p>
                 )}
               </div>
-            </Card>
+            </div>
           )}
 
           {activeTab === 'albums' && <AlbumGrid userId={profileUser.id || profileUser._id} />}
@@ -357,10 +385,10 @@ const Profile = () => {
                 </div>
               ) : friends.length === 0 ? (
                 <div className="text-center py-12">
-                  <div className="w-16 h-16 bg-neutral-200 dark:bg-neutral-700 rounded-full flex items-center justify-center mx-auto mb-3">
-                    <svg className="w-8 h-8 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                  <div className="w-16 h-16 bg-jolshaa-surface-container rounded-full flex items-center justify-center mx-auto mb-3">
+                    <svg className="w-8 h-8 text-jolshaa-outline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
                   </div>
-                  <p className="text-sm text-neutral-500">
+                  <p className="text-sm text-jolshaa-on-surface-variant">
                     {isOwnProfile ? "You haven't added friends yet" : `${profileUser.name} hasn't added friends yet`}
                   </p>
                 </div>
@@ -370,13 +398,13 @@ const Profile = () => {
                     <Link
                       key={friend._id}
                       to={`/profile/${friend._id}`}
-                      className="flex items-center gap-3 p-3 rounded-xl hover:bg-neutral-50 dark:hover:bg-neutral-700/50 transition-colors"
+                      className="flex items-center gap-3 p-3 rounded-xl bg-jolshaa-surface-container-lowest shadow-ambient hover:bg-jolshaa-surface-container-low transition-colors"
                     >
                       <Avatar src={friend.profilePhoto} alt={friend.name} size="lg" />
                       <div className="min-w-0">
-                        <p className="font-medium text-sm text-neutral-900 dark:text-neutral-100 truncate">{friend.name}</p>
+                        <p className="font-medium text-sm text-jolshaa-on-surface truncate">{friend.name}</p>
                         {friend.bio && (
-                          <p className="text-xs text-neutral-500 truncate">{friend.bio}</p>
+                          <p className="text-xs text-jolshaa-on-surface-variant truncate">{friend.bio}</p>
                         )}
                       </div>
                     </Link>
@@ -389,77 +417,77 @@ const Profile = () => {
           {activeTab === 'help' && (
             <div className="space-y-4">
               {helpLoading ? (
-                <div className="text-center py-8 text-neutral-500">Loading help history...</div>
+                <div className="text-center py-8 text-jolshaa-on-surface-variant">Loading help history...</div>
               ) : helpHistory ? (
                 <>
                   {/* Stats */}
-                  <Card>
+                  <div className="bg-jolshaa-surface-container-lowest rounded-xl shadow-ambient p-4">
                     <div className="grid grid-cols-2 gap-4 text-center">
-                      <div className="p-3 bg-green-50 dark:bg-green-900/20 rounded-xl">
-                        <p className="text-2xl font-bold text-green-600 dark:text-green-400">{helpHistory.helpedOthersCount}</p>
-                        <p className="text-xs text-neutral-500 mt-0.5">🤝 Helped others</p>
+                      <div className="p-3 bg-jolshaa-teal/10 rounded-xl">
+                        <p className="text-2xl font-bold text-jolshaa-teal">{helpHistory.helpedOthersCount}</p>
+                        <p className="text-xs text-jolshaa-on-surface-variant mt-0.5">🤝 Helped others</p>
                       </div>
-                      <div className="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-xl">
-                        <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">{helpHistory.helpedCount}</p>
-                        <p className="text-xs text-neutral-500 mt-0.5">💙 Received help</p>
+                      <div className="p-3 bg-jolshaa-indigo/10 rounded-xl">
+                        <p className="text-2xl font-bold text-jolshaa-indigo">{helpHistory.helpedCount}</p>
+                        <p className="text-xs text-jolshaa-on-surface-variant mt-0.5">💙 Received help</p>
                       </div>
                     </div>
-                  </Card>
+                  </div>
 
                   {/* Given help */}
                   {helpHistory.given?.length > 0 && (
-                    <Card>
-                      <h3 className="text-sm font-bold text-neutral-900 dark:text-neutral-100 mb-3">🤝 Helped Others</h3>
+                    <div className="bg-jolshaa-surface-container-lowest rounded-xl shadow-ambient p-4">
+                      <h3 className="text-sm font-bold text-jolshaa-on-surface mb-3">🤝 Helped Others</h3>
                       <div className="space-y-2">
                         {helpHistory.given.map(req => (
                           <Link
                             key={req._id}
                             to={`/help/${req._id}`}
-                            className="flex items-center gap-3 p-2 rounded-lg hover:bg-neutral-50 dark:hover:bg-neutral-700/50 transition-colors"
+                            className="flex items-center gap-3 p-2 rounded-lg hover:bg-jolshaa-surface-container-low transition-colors"
                           >
                             <span className="text-lg">{req.helpType === 'medical' ? '🏥' : req.helpType === 'flood' ? '🌊' : req.helpType === 'fire' ? '🔥' : '🆘'}</span>
                             <div className="flex-1 min-w-0">
-                              <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100 truncate">{req.title}</p>
-                              <p className="text-xs text-neutral-500">{req.requester?.name} · {req.location?.district}</p>
+                              <p className="text-sm font-medium text-jolshaa-on-surface truncate">{req.title}</p>
+                              <p className="text-xs text-jolshaa-on-surface-variant">{req.requester?.name} · {req.location?.district}</p>
                             </div>
-                            <span className="text-xs text-green-600 dark:text-green-400">✓ Resolved</span>
+                            <span className="text-xs text-jolshaa-teal">✓ Resolved</span>
                           </Link>
                         ))}
                       </div>
-                    </Card>
+                    </div>
                   )}
 
                   {/* Received help */}
                   {helpHistory.received?.length > 0 && (
-                    <Card>
-                      <h3 className="text-sm font-bold text-neutral-900 dark:text-neutral-100 mb-3">💙 Received Help</h3>
+                    <div className="bg-jolshaa-surface-container-lowest rounded-xl shadow-ambient p-4">
+                      <h3 className="text-sm font-bold text-jolshaa-on-surface mb-3">💙 Received Help</h3>
                       <div className="space-y-2">
                         {helpHistory.received.map(req => (
                           <Link
                             key={req._id}
                             to={`/help/${req._id}`}
-                            className="flex items-center gap-3 p-2 rounded-lg hover:bg-neutral-50 dark:hover:bg-neutral-700/50 transition-colors"
+                            className="flex items-center gap-3 p-2 rounded-lg hover:bg-jolshaa-surface-container-low transition-colors"
                           >
                             <span className="text-lg">{req.helpType === 'medical' ? '🏥' : req.helpType === 'flood' ? '🌊' : req.helpType === 'fire' ? '🔥' : '🆘'}</span>
                             <div className="flex-1 min-w-0">
-                              <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100 truncate">{req.title}</p>
-                              <p className="text-xs text-neutral-500">{req.helpers?.length || 0} helpers · {req.location?.district}</p>
+                              <p className="text-sm font-medium text-jolshaa-on-surface truncate">{req.title}</p>
+                              <p className="text-xs text-jolshaa-on-surface-variant">{req.helpers?.length || 0} helpers · {req.location?.district}</p>
                             </div>
                             <span className={`text-xs px-2 py-0.5 rounded-full ${
-                              req.status === 'resolved' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300' : 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300'
+                              req.status === 'resolved' ? 'bg-jolshaa-teal/10 text-jolshaa-teal' : 'bg-yellow-100 text-yellow-700'
                             }`}>
                               {req.status === 'resolved' ? '✓ Resolved' : 'Active'}
                             </span>
                           </Link>
                         ))}
                       </div>
-                    </Card>
+                    </div>
                   )}
 
                   {helpHistory.given?.length === 0 && helpHistory.received?.length === 0 && (
                     <div className="text-center py-8">
                       <p className="text-4xl mb-2">🤝</p>
-                      <p className="text-sm text-neutral-500">No help history yet</p>
+                      <p className="text-sm text-jolshaa-on-surface-variant">No help history yet</p>
                     </div>
                   )}
                 </>
