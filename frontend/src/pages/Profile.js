@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import API from '../api/axios';
 import Layout from '../components/layout/Layout';
@@ -12,10 +12,12 @@ import FriendButton from '../components/FriendButton';
 import SubscribeButton from '../components/SubscribeButton';
 import SubscriptionTiersPage from './SubscriptionTiersPage';
 import StoryHighlights from '../components/StoryHighlights';
+import CreatePostBox from '../components/CreatePostBox';
 
 const Profile = () => {
   const { user: currentUser } = useAuth();
   const { id } = useParams();
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('posts');
   const [profileUser, setProfileUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -28,6 +30,7 @@ const Profile = () => {
   const [friendsLoading, setFriendsLoading] = useState(false);
   const [helpHistory, setHelpHistory] = useState(null);
   const [helpLoading, setHelpLoading] = useState(false);
+  const [messageLoading, setMessageLoading] = useState(false);
 
   const isOwnProfile = !id || id === currentUser?.id;
 
@@ -109,6 +112,22 @@ const Profile = () => {
     setPosts(posts.filter(p => p._id !== postId));
   };
 
+  const handlePostCreated = (newPost) => {
+    setPosts(prev => [newPost, ...prev]);
+  };
+
+  const handleMessage = async () => {
+    setMessageLoading(true);
+    try {
+      const res = await API.post('/conversations', { participantId: profileUser.id || profileUser._id });
+      navigate(`/messages/${res.data._id}`);
+    } catch (err) {
+      console.error('Failed to start conversation');
+    } finally {
+      setMessageLoading(false);
+    }
+  };
+
   const loadMore = () => {
     const nextPage = page + 1;
     setPage(nextPage);
@@ -128,8 +147,8 @@ const Profile = () => {
 
   if (loading || !profileUser) {
     return (
-      <Layout showSidebar={false}>
-        <div className="max-w-2xl mx-auto space-y-4">
+      <Layout showSidebar={true}>
+        <div className="space-y-4">
           <div className="h-48 skeleton rounded-xl" />
           <div className="h-24 skeleton rounded-xl" />
           <PostSkeleton />
@@ -137,6 +156,15 @@ const Profile = () => {
       </Layout>
     );
   }
+
+  const getMediaUrl = (item) => (typeof item === 'string' ? item : item.url);
+  const isImageMedia = (item) => {
+    const url = getMediaUrl(item);
+    return !(item?.type === 'video' || url?.endsWith('.mp4') || url?.endsWith('.webm') || url?.endsWith('.mov'));
+  };
+  const recentPhotos = posts
+    .flatMap(p => (p.media || []).filter(isImageMedia).map(getMediaUrl))
+    .slice(0, 4);
 
   const tabs = isOwnProfile
     ? [
@@ -154,8 +182,8 @@ const Profile = () => {
       ];
 
   return (
-    <Layout showSidebar={false}>
-      <div className="max-w-2xl mx-auto">
+    <Layout showSidebar={true}>
+      <div>
         {/* Cover Photo */}
         <div className="relative">
           <div className="h-48 sm:h-64 bg-gradient-to-r from-jolshaa-teal to-jolshaa-teal-container rounded-xl overflow-hidden shadow-ambient">
@@ -196,6 +224,14 @@ const Profile = () => {
                     initialRequestId={profileUser.friendRequestId}
                     onStatusChange={handleFriendStatusChange}
                   />
+                  <button
+                    onClick={handleMessage}
+                    disabled={messageLoading}
+                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium bg-jolshaa-indigo/10 text-jolshaa-indigo hover:bg-jolshaa-indigo/20 transition-colors disabled:opacity-50"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg>
+                    Message
+                  </button>
                   {profileUser.isCreator && (
                     <SubscribeButton userId={profileUser.id || profileUser._id} />
                   )}
@@ -313,39 +349,96 @@ const Profile = () => {
         {/* Tab Content */}
         <div className="px-4 sm:px-0">
           {activeTab === 'posts' && (
-            <div className="space-y-4">
-              {postsLoading && posts.length === 0 ? (
-                <>
-                  <PostSkeleton />
-                  <PostSkeleton />
-                </>
-              ) : posts.length === 0 ? (
-                <div className="text-center py-12">
-                  <div className="w-16 h-16 bg-jolshaa-surface-container rounded-full flex items-center justify-center mx-auto mb-3">
-                    <svg className="w-8 h-8 text-jolshaa-outline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" /></svg>
+            <div className="flex flex-col lg:flex-row gap-4 items-start">
+              {/* Intro + Recent Photos widgets */}
+              <div className="w-full lg:w-[280px] flex-shrink-0 space-y-4">
+                {(profileUser.work || profileUser.education || profileUser.location || profileUser.createdAt) && (
+                  <div className="bg-jolshaa-surface-container-lowest rounded-xl shadow-ambient p-4">
+                    <h3 className="text-base font-semibold font-display text-jolshaa-on-surface mb-3">Intro</h3>
+                    <div className="space-y-3 text-sm text-jolshaa-on-surface-variant">
+                      {profileUser.work && (
+                        <span className="flex items-center gap-2">
+                          <svg className="w-4 h-4 text-jolshaa-outline flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+                          {profileUser.work}
+                        </span>
+                      )}
+                      {profileUser.education && (
+                        <span className="flex items-center gap-2">
+                          <svg className="w-4 h-4 text-jolshaa-outline flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 14l9-5-9-5-9 5 9 5z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222" /></svg>
+                          {profileUser.education}
+                        </span>
+                      )}
+                      {profileUser.location && (
+                        <span className="flex items-center gap-2">
+                          <svg className="w-4 h-4 text-jolshaa-outline flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                          Lives in {profileUser.location}
+                        </span>
+                      )}
+                      <span className="flex items-center gap-2">
+                        <svg className="w-4 h-4 text-jolshaa-outline flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                        Joined {new Date(profileUser.createdAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+                      </span>
+                    </div>
                   </div>
-                  <p className="text-sm text-jolshaa-on-surface-variant">
-                    {isOwnProfile ? "You haven't posted anything yet" : `${profileUser.name} hasn't posted yet`}
-                  </p>
-                </div>
-              ) : (
-                <>
-                  {posts.map(post => (
-                    <PostCard key={post._id} post={post} onDelete={handleDeletePost} />
-                  ))}
-                  {page < totalPages && (
-                    <div className="flex justify-center py-4">
+                )}
+
+                {recentPhotos.length > 0 && (
+                  <div className="bg-jolshaa-surface-container-lowest rounded-xl shadow-ambient p-4">
+                    <div className="flex items-center justify-between mb-3">
+                      <h3 className="text-base font-semibold font-display text-jolshaa-on-surface">Recent Photos</h3>
                       <button
-                        onClick={loadMore}
-                        disabled={postsLoading}
-                        className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium bg-jolshaa-surface-container-low text-jolshaa-on-surface hover:bg-jolshaa-surface-container transition-colors disabled:opacity-50"
+                        onClick={() => setActiveTab('albums')}
+                        className="text-xs font-medium text-jolshaa-teal hover:underline"
                       >
-                        {postsLoading ? 'Loading…' : 'Load more'}
+                        See All
                       </button>
                     </div>
-                  )}
-                </>
-              )}
+                    <div className="grid grid-cols-2 gap-2">
+                      {recentPhotos.map((url, i) => (
+                        <img key={i} src={url} alt="" className="w-full h-20 object-cover rounded-lg" />
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Composer + Feed */}
+              <div className="flex-1 min-w-0 w-full space-y-4">
+                {isOwnProfile && <CreatePostBox onPostCreated={handlePostCreated} />}
+
+                {postsLoading && posts.length === 0 ? (
+                  <>
+                    <PostSkeleton />
+                    <PostSkeleton />
+                  </>
+                ) : posts.length === 0 ? (
+                  <div className="text-center py-12">
+                    <div className="w-16 h-16 bg-jolshaa-surface-container rounded-full flex items-center justify-center mx-auto mb-3">
+                      <svg className="w-8 h-8 text-jolshaa-outline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" /></svg>
+                    </div>
+                    <p className="text-sm text-jolshaa-on-surface-variant">
+                      {isOwnProfile ? "You haven't posted anything yet" : `${profileUser.name} hasn't posted yet`}
+                    </p>
+                  </div>
+                ) : (
+                  <>
+                    {posts.map(post => (
+                      <PostCard key={post._id} post={post} onDelete={handleDeletePost} />
+                    ))}
+                    {page < totalPages && (
+                      <div className="flex justify-center py-4">
+                        <button
+                          onClick={loadMore}
+                          disabled={postsLoading}
+                          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium bg-jolshaa-surface-container-low text-jolshaa-on-surface hover:bg-jolshaa-surface-container transition-colors disabled:opacity-50"
+                        >
+                          {postsLoading ? 'Loading…' : 'Load more'}
+                        </button>
+                      </div>
+                    )}
+                  </>
+                )}
+              </div>
             </div>
           )}
 
