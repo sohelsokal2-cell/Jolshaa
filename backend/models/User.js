@@ -308,7 +308,7 @@ const userSchema = new mongoose.Schema({
     availableBalance: { type: Number, default: 0 },
     pendingBalance: { type: Number, default: 0 },
     payoutMethod: {
-      type: { type: String, enum: ['bkash', 'nagad', 'rocket', 'bank'], default: null },
+      type: { type: String, enum: ['bkash', 'nagad', 'rocket', 'bank', null], default: null },
       accountNumber: { type: String },
       accountName: { type: String },
       bankName: { type: String },
