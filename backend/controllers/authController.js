@@ -22,7 +22,9 @@ const setTokenCookie = (res, token) => {
   res.cookie('token', token, {
     httpOnly: true,
     secure: isProduction,
-    sameSite: isProduction ? 'strict' : 'lax',
+    // Cross-site cookie (frontend and backend on different domains) requires
+    // SameSite=None; Secure so the browser sends it on cross-origin requests.
+    sameSite: isProduction ? 'none' : 'lax',
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     path: '/',
   });
