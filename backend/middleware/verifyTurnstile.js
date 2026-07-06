@@ -1,7 +1,12 @@
 const axios = require('axios');
 
 const verifyTurnstile = async (req, res, next) => {
-  const token = req.body.turnstileToken;
+  const token = req.body?.turnstileToken;
+  const turnstileSecretKey = process.env.TURNSTILE_SECRET_KEY;
+
+  if (!turnstileSecretKey) {
+    return next();
+  }
 
   if (!token) {
     return res.status(400).json({ message: 'Captcha verification required' });

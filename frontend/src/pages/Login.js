@@ -3,11 +3,14 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import Button from '../components/ui/Button';
 import Input from '../components/ui/Input';
+import TurnstileCaptcha from '../components/ui/TurnstileCaptcha';
 
 const Login = () => {
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [turnstileToken, setTurnstileToken] = useState('');
+  const [captchaError, setCaptchaError] = useState('');
   const { login } = useAuth();
   const navigate = useNavigate();
 
@@ -21,9 +24,15 @@ const Login = () => {
     const { email, password } = formData;
     if (!email || !password) return setError('All fields are required');
 
+    if (process.env.REACT_APP_TURNSTILE_SITE_KEY && !turnstileToken) {
+      setCaptchaError('Please complete captcha verification');
+      return;
+    }
+
     setLoading(true);
+    setCaptchaError('');
     try {
-      await login(email, password);
+      await login(email, password, turnstileToken);
       navigate('/feed');
     } catch (err) {
       setError(err.response?.data?.message || 'Login failed');
@@ -72,6 +81,12 @@ const Login = () => {
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
               }
             />
+            {process.env.REACT_APP_TURNSTILE_SITE_KEY && (
+              <div className="space-y-2">
+                <TurnstileCaptcha onTokenChange={setTurnstileToken} onErrorChange={setCaptchaError} />
+                {captchaError && <p className="text-xs text-red-600">{captchaError}</p>}
+              </div>
+            )}
             <Button type="submit" fullWidth loading={loading} size="lg">
               Log In
             </Button>

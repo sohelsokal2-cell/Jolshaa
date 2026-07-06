@@ -24,15 +24,15 @@ export const AuthProvider = ({ children }) => {
       .finally(() => setLoading(false));
   }, []);
 
-  const login = async (email, password) => {
-    const res = await API.post('/auth/login', { email, password });
+  const login = async (email, password, turnstileToken = '') => {
+    const res = await API.post('/auth/login', { email, password, turnstileToken });
     tokenRef.current = res.data.token; // Store in memory for socket.io
     setUser(res.data.user);
     return res.data;
   };
 
-  const signup = async (name, email, password) => {
-    const res = await API.post('/auth/signup', { name, email, password });
+  const signup = async (name, email, password, turnstileToken = '') => {
+    const res = await API.post('/auth/signup', { name, email, password, turnstileToken });
     tokenRef.current = res.data.token; // Store in memory for socket.io
     setUser(res.data.user);
     return res.data;

@@ -3,11 +3,14 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import Button from '../components/ui/Button';
 import Input from '../components/ui/Input';
+import TurnstileCaptcha from '../components/ui/TurnstileCaptcha';
 
 const Signup = () => {
   const [formData, setFormData] = useState({ name: '', email: '', password: '', confirmPassword: '' });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [turnstileToken, setTurnstileToken] = useState('');
+  const [captchaError, setCaptchaError] = useState('');
   const { signup } = useAuth();
   const navigate = useNavigate();
 
@@ -23,9 +26,15 @@ const Signup = () => {
     if (password.length < 8) return setError('Password must be at least 8 characters');
     if (password !== confirmPassword) return setError('Passwords do not match');
 
+    if (process.env.REACT_APP_TURNSTILE_SITE_KEY && !turnstileToken) {
+      setCaptchaError('Please complete captcha verification');
+      return;
+    }
+
     setLoading(true);
+    setCaptchaError('');
     try {
-      await signup(name, email, password);
+      await signup(name, email, password, turnstileToken);
       navigate('/feed');
     } catch (err) {
       setError(err.response?.data?.message || 'Signup failed');
@@ -94,6 +103,12 @@ const Signup = () => {
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
               }
             />
+            {process.env.REACT_APP_TURNSTILE_SITE_KEY && (
+              <div className="space-y-2">
+                <TurnstileCaptcha onTokenChange={setTurnstileToken} onErrorChange={setCaptchaError} />
+                {captchaError && <p className="text-xs text-red-600">{captchaError}</p>}
+              </div>
+            )}
             <Button type="submit" fullWidth loading={loading} size="lg">
               Sign Up
             </Button>
