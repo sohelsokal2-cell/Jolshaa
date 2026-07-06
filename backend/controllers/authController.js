@@ -71,6 +71,7 @@ exports.signup = async (req, res) => {
       }
     });
   } catch (error) {
+    console.error('Signup error:', error);
     res.status(500).json({ message: 'Server error' });
   }
 };
@@ -137,6 +138,7 @@ exports.login = async (req, res) => {
       isNewDevice
     });
   } catch (error) {
+    console.error('Login error:', error);
     res.status(500).json({ message: 'Server error' });
   }
 };
