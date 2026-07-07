@@ -37,9 +37,10 @@ const uploadVideoToCloudinary = (fileBuffer, isShortForm) => {
   });
 };
 
-// Generate thumbnail from video at specific timestamp
-const generateThumbnail = (videoUrl, timestamp = 1) => {
-  return cloudinary.url(videoUrl, {
+// Generate thumbnail from video at specific timestamp — requires a Cloudinary public_id, not a full URL
+const generateThumbnail = (publicId, timestamp = 1) => {
+  if (!publicId) return '';
+  return cloudinary.url(publicId, {
     resource_type: 'video',
     format: 'jpg',
     transformation: [
@@ -92,7 +93,7 @@ exports.uploadVideo = async (req, res) => {
     }
 
     // Validate MIME type
-    const allowedVideoTypes = ['video/mp4', 'video/webm', 'video/quicktime', 'video/x-msvideo'];
+    const { VIDEO_TYPES: allowedVideoTypes } = require('../middleware/upload');
     if (!allowedVideoTypes.includes(req.file.mimetype)) {
       return res.status(400).json({
         message: 'This video format is not supported. Please use MP4, MOV, or WebM.',
@@ -127,7 +128,7 @@ exports.uploadVideo = async (req, res) => {
       const result = await uploadVideoToCloudinary(req.file.buffer, isShort);
 
       // Generate thumbnail at 1 second
-      const thumbnailUrl = generateThumbnail(result.secure_url, 1);
+      const thumbnailUrl = generateThumbnail(result.public_id, 1);
 
       // Parse eager transformation results for quality URLs
       const qualities = [];
@@ -143,6 +144,7 @@ exports.uploadVideo = async (req, res) => {
       // Update post with video data
       await Post.findByIdAndUpdate(post._id, {
         'video.url': result.secure_url,
+        'video.publicId': result.public_id,
         'video.thumbnailUrl': thumbnailUrl,
         'video.duration': result.duration || 0,
         'video.width': result.width || 0,
@@ -308,7 +310,7 @@ exports.handleCloudinaryWebhook = async (req, res) => {
 
 const processWebhookForPost = async (post, webhookData, res) => {
   try {
-    const { status, secure_url, derived_attributes, width, height, duration, format } = webhookData;
+    const { status, secure_url, public_id, derived_attributes, width, height, duration, format } = webhookData;
 
     if (status === 'processing' || status === 'pending') {
       return res.status(200).json({ message: 'Processing' });
@@ -327,7 +329,7 @@ const processWebhookForPost = async (post, webhookData, res) => {
     }
 
     if (status === 'complete' || status === 'uploaded') {
-      const thumbnailUrl = generateThumbnail(secure_url || post.video.url, 1);
+      const thumbnailUrl = generateThumbnail(public_id || post.video.publicId, 1);
 
       // Parse derived qualities
       const qualities = [];
@@ -339,6 +341,7 @@ const processWebhookForPost = async (post, webhookData, res) => {
 
       await Post.findByIdAndUpdate(post._id, {
         'video.processingStatus': 'ready',
+        'video.publicId': public_id || post.video.publicId,
         'video.thumbnailUrl': thumbnailUrl,
         'video.duration': duration || post.video.duration,
         'video.width': width || post.video.width,

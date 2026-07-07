@@ -1,21 +1,36 @@
 import { useState, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import API from '../api/axios';
 import { useAuth } from '../context/AuthContext';
+import ReelCommentsDrawer from './ReelCommentsDrawer';
 
 const ReelsFeed = () => {
   const { user } = useAuth();
+  const { id: focusedReelId } = useParams();
+  const navigate = useNavigate();
   const [reels, setReels] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [currentReel, setCurrentReel] = useState(0);
+  const [commentsReelId, setCommentsReelId] = useState(null);
   const containerRef = useRef(null);
+  const reelRefs = useRef({});
 
   useEffect(() => {
     fetchReels();
   }, [page]);
+
+  useEffect(() => {
+    if (!focusedReelId || reels.length === 0) return;
+    const index = reels.findIndex((r) => r._id === focusedReelId);
+    if (index !== -1) {
+      setCurrentReel(index);
+      reelRefs.current[focusedReelId]?.scrollIntoView({ block: 'start' });
+      setCommentsReelId(focusedReelId);
+    }
+  }, [focusedReelId, reels]);
 
   const fetchReels = async () => {
     try {
@@ -107,19 +122,24 @@ const ReelsFeed = () => {
       onScroll={handleScroll}
       className="h-[calc(100dvh-56px)] lg:h-[calc(100vh-56px)] overflow-y-scroll snap-y snap-mandatory"
     >
-      {reels.map((reel, index) => (
+      {reels.map((reel, index) => {
+        const isNearActive = Math.abs(index - currentReel) <= 1;
+        return (
         <div
           key={reel._id}
+          ref={(el) => { reelRefs.current[reel._id] = el; }}
           className="h-[calc(100dvh-56px)] lg:h-[calc(100vh-56px)] snap-start flex items-center justify-center bg-black relative"
         >
           <div className="relative w-full max-w-md h-full">
             <video
-              src={reel.video}
+              src={isNearActive ? reel.video : undefined}
+              poster={reel.thumbnail || undefined}
               className="w-full h-full object-contain"
               autoPlay={index === currentReel}
               muted
               loop
               playsInline
+              preload={isNearActive ? 'auto' : 'none'}
             />
 
             {/* Reel info */}
@@ -150,10 +170,13 @@ const ReelsFeed = () => {
                 <span className="text-2xl">{reel.isLiked ? '❤️' : '🤍'}</span>
                 <span className="text-white text-xs">{reel.likeCount}</span>
               </button>
-              <Link to={`/reels/${reel._id}`} className="flex flex-col items-center">
+              <button
+                onClick={() => { setCommentsReelId(reel._id); navigate(`/reels/${reel._id}`, { replace: true }); }}
+                className="flex flex-col items-center"
+              >
                 <span className="text-2xl">💬</span>
                 <span className="text-white text-xs">{reel.commentCount}</span>
-              </Link>
+              </button>
               <button className="flex flex-col items-center">
                 <span className="text-2xl">↗️</span>
                 <span className="text-white text-xs">{reel.shares}</span>
@@ -161,12 +184,25 @@ const ReelsFeed = () => {
             </div>
           </div>
         </div>
-      ))}
+        );
+      })}
 
       {!hasMore && reels.length > 0 && (
         <div className="h-[calc(100vh-64px)] flex items-center justify-center text-white">
           <p>You've reached the end! 🎬</p>
         </div>
+      )}
+
+      {commentsReelId && (
+        <ReelCommentsDrawer
+          reelId={commentsReelId}
+          onCommentAdded={() =>
+            setReels((prev) =>
+              prev.map((r) => (r._id === commentsReelId ? { ...r, commentCount: r.commentCount + 1 } : r))
+            )
+          }
+          onClose={() => { setCommentsReelId(null); navigate('/reels', { replace: true }); }}
+        />
       )}
     </div>
   );

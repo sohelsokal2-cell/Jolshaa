@@ -20,6 +20,7 @@ const postSchema = new mongoose.Schema({
   }],
   video: {
     url: { type: String },
+    publicId: { type: String },
     thumbnailUrl: { type: String },
     duration: { type: Number },
     width: { type: Number },

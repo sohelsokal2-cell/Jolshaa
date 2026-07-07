@@ -25,6 +25,7 @@ const ShortsPlayer = ({ post, isActive, onLike, onComment }) => {
   const [isLiked, setIsLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
   const [sourceLoaded, setSourceLoaded] = useState(false);
+  const isLikedRef = useRef(false);
 
   const video = post.video || {};
   const author = post.author || {};
@@ -32,7 +33,9 @@ const ShortsPlayer = ({ post, isActive, onLike, onComment }) => {
 
   useEffect(() => {
     if (post.reactions) {
-      setIsLiked(!!post.reactions.myReaction);
+      const liked = !!post.reactions.myReaction;
+      setIsLiked(liked);
+      isLikedRef.current = liked;
       setLikeCount(post.reactions.count || 0);
     }
     setCommentCount(post.commentCount || 0);
@@ -143,6 +146,23 @@ const ShortsPlayer = ({ post, isActive, onLike, onComment }) => {
     }
   }, []);
 
+  // Like handler
+  const handleLike = useCallback(async () => {
+    try {
+      const res = await API.post(`/posts/${post._id}/react`, { type: 'like' });
+      if (res.data.myReaction) {
+        isLikedRef.current = true;
+        setIsLiked(true);
+        setLikeCount(prev => prev + 1);
+      } else {
+        isLikedRef.current = false;
+        setIsLiked(false);
+        setLikeCount(prev => Math.max(0, prev - 1));
+      }
+      if (onLike) onLike(post._id);
+    } catch (e) { /* ignore */ }
+  }, [post._id, onLike]);
+
   // Double-tap to like
   const handleTap = useCallback((e) => {
     const now = Date.now();
@@ -155,33 +175,14 @@ const ShortsPlayer = ({ post, isActive, onLike, onComment }) => {
       setHeartPos({ x, y });
       setShowHeart(true);
       setTimeout(() => setShowHeart(false), 800);
-      // Use functional state update to avoid stale closure
-      setIsLiked(prev => {
-        if (!prev) {
-          handleLike();
-        }
-        return prev;
-      });
+      if (!isLikedRef.current) {
+        handleLike();
+      }
     } else {
       togglePlay();
     }
     lastTapRef.current = now;
-  }, [togglePlay]);
-
-  // Like handler
-  const handleLike = useCallback(async () => {
-    try {
-      const res = await API.post(`/posts/${post._id}/react`, { type: 'like' });
-      if (res.data.myReaction) {
-        setIsLiked(true);
-        setLikeCount(prev => prev + 1);
-      } else {
-        setIsLiked(false);
-        setLikeCount(prev => Math.max(0, prev - 1));
-      }
-      if (onLike) onLike(post._id);
-    } catch (e) { /* ignore */ }
-  }, [post._id, onLike]);
+  }, [togglePlay, handleLike]);
 
   // Toggle mute
   const toggleMute = useCallback(() => {

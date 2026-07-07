@@ -3,6 +3,8 @@ const User = require('../models/User');
 const cloudinary = require('../config/cloudinary');
 const { hasId } = require('../utils/id');
 
+const MAX_REEL_DURATION_SECONDS = 60;
+
 const uploadToCloudinary = (buffer, folder, resourceType = 'auto') => {
   return new Promise((resolve, reject) => {
     const stream = cloudinary.uploader.upload_stream(
@@ -23,6 +25,13 @@ exports.createReel = async (req, res) => {
     const { caption, music, hashtags } = req.body;
     const result = await uploadToCloudinary(req.file.buffer, 'jolshaa/reels', 'video');
 
+    if (result.duration && result.duration > MAX_REEL_DURATION_SECONDS) {
+      cloudinary.uploader.destroy(result.public_id, { resource_type: 'video' }).catch(() => {});
+      return res.status(400).json({
+        message: `Reels must be ${MAX_REEL_DURATION_SECONDS}s or shorter (this video is ${Math.round(result.duration)}s).`,
+      });
+    }
+
     let parsedHashtags = [];
     if (hashtags) {
       parsedHashtags = hashtags.split(',').map((h) => h.trim().toLowerCase()).filter(Boolean);
@@ -36,9 +45,18 @@ exports.createReel = async (req, res) => {
       }
     }
 
+    const thumbnail = cloudinary.url(result.public_id, {
+      resource_type: 'video',
+      format: 'jpg',
+      transformation: [
+        { start_offset: '1', width: 640, height: 360, crop: 'limit', fetch_format: 'auto', quality: 'auto' },
+      ],
+    });
+
     const reel = await Reel.create({
       author: req.user._id,
       video: result.secure_url,
+      thumbnail,
       caption: caption || '',
       music: music || '',
       hashtags: parsedHashtags,
@@ -62,13 +80,13 @@ exports.getReelsFeed = async (req, res) => {
     const currentUser = await User.findById(req.user._id).select('blockedUsers');
     const blockedIds = currentUser?.blockedUsers || [];
 
-    const reels = await Reel.find({ author: { $nin: blockedIds } })
+    const reels = await Reel.find({ author: { $nin: blockedIds }, isHidden: { $ne: true } })
       .populate('author', 'name profilePhoto')
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit);
 
-    const total = await Reel.countDocuments({ author: { $nin: blockedIds } });
+    const total = await Reel.countDocuments({ author: { $nin: blockedIds }, isHidden: { $ne: true } });
 
     const reelsWithStatus = reels.map((reel) => ({
       ...reel.toObject(),
@@ -92,6 +110,9 @@ exports.getReel = async (req, res) => {
       .populate('comments.user', 'name profilePhoto');
 
     if (!reel) return res.status(404).json({ message: 'Reel not found' });
+    if (reel.isHidden && reel.author._id.toString() !== req.user._id.toString()) {
+      return res.status(404).json({ message: 'Reel not found' });
+    }
 
     if (!hasId(reel.views, req.user._id)) {
       reel.views.push(req.user._id);
@@ -195,7 +216,7 @@ exports.getTrendingReels = async (req, res) => {
     const twentyFourHoursAgo = new Date(Date.now() - 86400000);
 
     const reels = await Reel.aggregate([
-      { $match: { createdAt: { $gte: twentyFourHoursAgo } } },
+      { $match: { createdAt: { $gte: twentyFourHoursAgo }, isHidden: { $ne: true } } },
       {
         $addFields: {
           score: {
@@ -236,7 +257,12 @@ exports.deleteReel = async (req, res) => {
 
 exports.getUserReels = async (req, res) => {
   try {
-    const reels = await Reel.find({ author: req.params.userId })
+    const isOwnProfile = req.params.userId === req.user._id.toString();
+    const filter = isOwnProfile
+      ? { author: req.params.userId }
+      : { author: req.params.userId, isHidden: { $ne: true } };
+
+    const reels = await Reel.find(filter)
       .populate('author', 'name profilePhoto')
       .sort({ createdAt: -1 });
 

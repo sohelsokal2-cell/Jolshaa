@@ -2,6 +2,8 @@ import { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import API from '../api/axios';
 
+const MAX_REEL_DURATION_SECONDS = 60;
+
 const CreateReel = () => {
   const navigate = useNavigate();
   const [video, setVideo] = useState(null);
@@ -9,14 +11,27 @@ const CreateReel = () => {
   const [caption, setCaption] = useState('');
   const [music, setMusic] = useState('');
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
   const fileInputRef = useRef(null);
 
   const handleFileSelect = (e) => {
     const file = e.target.files[0];
-    if (file) {
+    if (!file) return;
+
+    setError('');
+    const objectUrl = URL.createObjectURL(file);
+    const probe = document.createElement('video');
+    probe.preload = 'metadata';
+    probe.onloadedmetadata = () => {
+      if (probe.duration > MAX_REEL_DURATION_SECONDS) {
+        setError(`Reels must be ${MAX_REEL_DURATION_SECONDS}s or shorter (this video is ${Math.round(probe.duration)}s).`);
+        URL.revokeObjectURL(objectUrl);
+        return;
+      }
       setVideo(file);
-      setVideoPreview(URL.createObjectURL(file));
-    }
+      setVideoPreview(objectUrl);
+    };
+    probe.src = objectUrl;
   };
 
   const handleUpload = async () => {
@@ -35,7 +50,7 @@ const CreateReel = () => {
 
       navigate('/reels');
     } catch (err) {
-      console.error('Failed to upload reel');
+      setError(err.response?.data?.message || 'Failed to upload reel');
     } finally {
       setLoading(false);
     }
@@ -46,6 +61,9 @@ const CreateReel = () => {
       <h2 className="font-display text-xl font-semibold mb-4">Create Reel</h2>
 
       <div className="bg-white rounded-lg shadow-sm p-4">
+        {error && (
+          <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg p-2 mb-3">{error}</p>
+        )}
         {!videoPreview ? (
           <div
             onClick={() => fileInputRef.current.click()}

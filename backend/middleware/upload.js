@@ -45,3 +45,5 @@ const checkMediaSize = (req, res, next) => {
 
 module.exports = upload;
 module.exports.checkMediaSize = checkMediaSize;
+module.exports.VIDEO_TYPES = VIDEO_TYPES;
+module.exports.IMAGE_TYPES = IMAGE_TYPES;
