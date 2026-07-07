@@ -4,6 +4,7 @@ const Group = require('../models/Group');
 const Page = require('../models/Page');
 const FriendRequest = require('../models/FriendRequest');
 const { hasId } = require('../utils/id');
+const { expandQueryVariants } = require('../utils/banglaPhonetic');
 
 exports.search = async (req, res) => {
   try {
@@ -13,7 +14,26 @@ exports.search = async (req, res) => {
     }
 
     const query = q.trim();
+    const queryVariants = expandQueryVariants(query);
     const results = {};
+
+    // Runs `queryFn(variant)` for each phonetic variant of the query (e.g. banglish + its
+    // Bangla-script transliteration) and merges/dedupes the results by _id.
+    const searchAllVariants = async (queryFn) => {
+      const batches = await Promise.all(queryVariants.map(queryFn));
+      const seen = new Set();
+      const merged = [];
+      for (const batch of batches) {
+        for (const doc of batch) {
+          const id = doc._id.toString();
+          if (!seen.has(id)) {
+            seen.add(id);
+            merged.push(doc);
+          }
+        }
+      }
+      return merged.slice(0, 20);
+    };
 
     const searchUsers = async () => {
       const currentUser = await User.findById(req.user._id).select('friends blockedUsers');
@@ -25,13 +45,13 @@ exports.search = async (req, res) => {
 
       const excludeIds = [...new Set([...blockedIds, ...blockerIds, req.user._id.toString()])];
 
-      const users = await User.find(
-        { $text: { $search: query }, _id: { $nin: excludeIds } },
+      const users = await searchAllVariants((variant) => User.find(
+        { $text: { $search: variant }, _id: { $nin: excludeIds } },
         { score: { $meta: 'textScore' } }
       )
         .select('name profilePhoto bio friends')
         .sort({ score: { $meta: 'textScore' } })
-        .limit(20);
+        .limit(20));
 
       return Promise.all(users.map(async (u) => {
         const isFriend = hasId(currentUser.friends, u._id);
@@ -66,33 +86,33 @@ exports.search = async (req, res) => {
     };
 
     const searchPosts = async () => {
-      return Post.find(
-        { $text: { $search: query }, visibility: 'public' },
+      return searchAllVariants((variant) => Post.find(
+        { $text: { $search: variant }, visibility: 'public' },
         { score: { $meta: 'textScore' } }
       )
         .populate('author', 'name profilePhoto')
         .sort({ score: { $meta: 'textScore' } })
-        .limit(20);
+        .limit(20));
     };
 
     const searchGroups = async () => {
-      return Group.find(
-        { $text: { $search: query } },
+      return searchAllVariants((variant) => Group.find(
+        { $text: { $search: variant } },
         { score: { $meta: 'textScore' } }
       )
         .populate('creator', 'name profilePhoto')
         .sort({ score: { $meta: 'textScore' } })
-        .limit(20);
+        .limit(20));
     };
 
     const searchPages = async () => {
-      return Page.find(
-        { $text: { $search: query } },
+      return searchAllVariants((variant) => Page.find(
+        { $text: { $search: variant } },
         { score: { $meta: 'textScore' } }
       )
         .populate('creator', 'name profilePhoto')
         .sort({ score: { $meta: 'textScore' } })
-        .limit(20);
+        .limit(20));
     };
 
     if (type === 'all') {

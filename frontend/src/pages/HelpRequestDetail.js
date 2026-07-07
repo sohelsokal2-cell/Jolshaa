@@ -207,6 +207,11 @@ const HelpRequestDetail = () => {
                       <Link to={`/profile/${h.user?._id}`} className="text-sm font-semibold text-jolshaa-on-surface hover:underline">
                         {h.user?.name}
                       </Link>
+                      {h.user?.helpedOthersCount >= 5 && (
+                        <span title={`Helped ${h.user.helpedOthersCount} people`} className="text-xs px-1.5 py-0.5 rounded-full bg-jolshaa-teal/10 text-jolshaa-teal font-medium">
+                          ✅ Verified Helper
+                        </span>
+                      )}
                       <span className={`text-xs px-2 py-0.5 rounded-full ${
                         h.status === 'accepted' ? 'bg-green-100 text-green-700' :
                         'bg-jolshaa-surface-container-high text-jolshaa-on-surface-variant'

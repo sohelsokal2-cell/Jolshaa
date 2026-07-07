@@ -57,7 +57,7 @@ exports.getEvents = async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 20;
     const skip = (page - 1) * limit;
-    const { past } = req.query;
+    const { past, district } = req.query;
 
     const query = {};
     if (past === 'true') {
@@ -65,6 +65,7 @@ exports.getEvents = async (req, res) => {
     } else {
       query.startDate = { $gte: new Date() };
     }
+    if (district) query.location = { $regex: district, $options: 'i' };
 
     const events = await Event.find(query)
       .sort({ startDate: past === 'true' ? -1 : 1 })

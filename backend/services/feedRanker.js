@@ -37,30 +37,49 @@ class FeedRanker {
       const shares = post.analytics?.shares || 0;
 
       let score = 0;
+      const reasons = [];
 
       // Relationship boost
-      if (friendIds.includes(post.author?._id?.toString())) score += 30;
-      if (followingIds.includes(post.author?._id?.toString())) score += 20;
+      if (friendIds.includes(post.author?._id?.toString())) {
+        score += 30;
+        reasons.push('From a friend');
+      }
+      if (followingIds.includes(post.author?._id?.toString())) {
+        score += 20;
+        reasons.push('From someone you follow');
+      }
 
       // Engagement score
       score += reactions * 3;
       score += comments * 5;
       score += shares * 4;
+      if (reactions + comments + shares >= 10) {
+        reasons.push('Popular with people you may know');
+      }
 
       // Content type boost
       if (post.media && post.media.length > 0) score += 5;
-      if (post.isBoosted) score += 50;
-      if (post.isAnnouncement) score += 25;
+      if (post.isBoosted) {
+        score += 50;
+        reasons.push('Boosted post');
+      }
+      if (post.isAnnouncement) {
+        score += 25;
+        reasons.push('Announcement');
+      }
 
       // Recency decay (half-life 6 hours)
       const hoursAgo = (Date.now() - new Date(post.createdAt).getTime()) / 3600000;
       const decay = Math.pow(0.5, hoursAgo / 6);
       score *= decay;
+      if (hoursAgo < 3) reasons.push('Recently posted');
 
       // Small random factor for variety
       score += Math.random() * 2;
 
-      return { ...post, _score: score };
+      if (reasons.length === 0) reasons.push('Based on your activity on Jolshaa');
+
+      return { ...post, _score: score, _reasons: reasons };
     });
 
     return scored.sort((a, b) => b._score - a._score);

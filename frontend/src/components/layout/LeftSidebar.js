@@ -119,6 +119,14 @@ const navItems = [
     ),
   },
   {
+    path: '/para', label: 'পাড়া (Para)',
+    icon: (active) => (
+      <svg className="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7m-9-2v10m4-8v8m5-8l2 2m-2-2v10a1 1 0 01-1 1H6a1 1 0 01-1-1V10" />
+      </svg>
+    ),
+  },
+  {
     path: '/creator', label: 'Creator Hub',
     icon: (active) => (
       <svg className="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">

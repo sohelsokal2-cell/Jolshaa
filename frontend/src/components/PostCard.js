@@ -17,6 +17,7 @@ import VideoPlayer from './VideoPlayer';
 import VideoAnalyticsDashboard from './VideoAnalyticsDashboard';
 import StarGiftButton from './StarGiftButton';
 import SponsoredPostLabel from './SponsoredPostLabel';
+import WhyAmISeeingThisModal from './WhyAmISeeingThisModal';
 
 const PostCard = ({ post, onDelete }) => {
   const { user } = useAuth();
@@ -30,6 +31,7 @@ const PostCard = ({ post, onDelete }) => {
   const [showMenu, setShowMenu] = useState(false);
   const [showReport, setShowReport] = useState(false);
   const [showShare, setShowShare] = useState(false);
+  const [showWhy, setShowWhy] = useState(false);
   const [showBoost, setShowBoost] = useState(false);
   const [showAnalytics, setShowAnalytics] = useState(false);
   const [contentRevealed, setContentRevealed] = useState(!post.contentWarning || post.contentWarning === 'none');
@@ -179,6 +181,11 @@ const PostCard = ({ post, onDelete }) => {
                     Report post
                   </button>
                 )}
+                <div className="h-px bg-jolshaa-outline-variant/50 my-1" />
+                <button onClick={() => { setShowWhy(true); setShowMenu(false); }} className="w-full text-left px-4 py-2.5 text-sm text-jolshaa-on-surface hover:bg-jolshaa-surface-container-high flex items-center gap-3">
+                  <svg className="w-4 h-4 text-jolshaa-on-surface-variant" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                  Why am I seeing this?
+                </button>
               </div>
             )}
           </div>
@@ -411,6 +418,7 @@ const PostCard = ({ post, onDelete }) => {
       {showReport && <ReportModal targetType="post" targetId={post._id} onClose={() => setShowReport(false)} />}
       {showShare && <ShareModal post={post} onClose={() => setShowShare(false)} />}
       {showBoost && <BoostPostModal postId={post._id} onClose={() => setShowBoost(false)} />}
+      {showWhy && <WhyAmISeeingThisModal reasons={post.whyReasons} onClose={() => setShowWhy(false)} />}
     </article>
   );
 };

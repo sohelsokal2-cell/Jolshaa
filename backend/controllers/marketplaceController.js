@@ -55,12 +55,13 @@ exports.createListing = async (req, res) => {
 
 exports.getListings = async (req, res) => {
   try {
-    const { category, search, minPrice, maxPrice, sort } = req.query;
+    const { category, search, minPrice, maxPrice, sort, district, limit } = req.query;
 
     const query = { status: 'active' };
 
     if (category) query.category = category;
     if (search) query.$text = { $search: search };
+    if (district) query.location = { $regex: district, $options: 'i' };
     if (minPrice || maxPrice) {
       query.price = {};
       if (minPrice) query.price.$gte = parseFloat(minPrice);
@@ -74,7 +75,7 @@ exports.getListings = async (req, res) => {
     const listings = await Listing.find(query)
       .populate('seller', 'name profilePhoto location')
       .sort(sortOption)
-      .limit(50);
+      .limit(limit ? parseInt(limit) : 50);
 
     res.json({ listings });
   } catch (error) {

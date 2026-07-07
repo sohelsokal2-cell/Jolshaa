@@ -236,7 +236,7 @@ exports.getRequest = async (req, res) => {
   try {
     const request = await HelpRequest.findById(req.params.id)
       .populate('requester', 'name profilePhoto helpedCount helpedOthersCount')
-      .populate('helpers.user', 'name profilePhoto');
+      .populate('helpers.user', 'name profilePhoto helpedOthersCount');
 
     if (!request) return res.status(404).json({ message: 'Help request not found' });
 

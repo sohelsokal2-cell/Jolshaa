@@ -1,5 +1,6 @@
 import { useState, useRef } from 'react';
 import VideoPlayer from './VideoPlayer';
+import DataSaverImage from './DataSaverImage';
 
 const MediaCarousel = ({ media, postVideo, postId }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -64,7 +65,7 @@ const MediaCarousel = ({ media, postVideo, postId }) => {
             className="w-full max-h-[500px]"
           />
         ) : (
-          <img
+          <DataSaverImage
             src={getUrl(item)}
             alt={getAltText(item) || 'Post image'}
             className="w-full object-cover max-h-[500px]"
@@ -103,7 +104,7 @@ const MediaCarousel = ({ media, postVideo, postId }) => {
                 className="w-full max-h-[500px]"
               />
             ) : (
-              <img
+              <DataSaverImage
                 src={getUrl(item)}
                 alt={getAltText(item) || `Photo ${i + 1}`}
                 className="w-full object-cover max-h-[500px]"

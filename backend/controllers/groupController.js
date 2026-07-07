@@ -64,9 +64,16 @@ exports.getGroups = async (req, res) => {
     const limit = parseInt(req.query.limit) || 12;
     const skip = (page - 1) * limit;
     const search = req.query.search;
+    const { district } = req.query;
 
     const query = {};
     if (search) query.$text = { $search: search };
+    else if (district) {
+      query.$or = [
+        { name: { $regex: district, $options: 'i' } },
+        { description: { $regex: district, $options: 'i' } },
+      ];
+    }
 
     const groups = await Group.find(query)
       .sort({ createdAt: -1 })

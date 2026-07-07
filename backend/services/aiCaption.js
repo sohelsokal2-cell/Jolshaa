@@ -41,6 +41,39 @@ const captionTemplates = {
   ],
 };
 
+const captionTemplatesBn = {
+  selfie: [
+    "আজকে নিজেকে অন্যরকম লাগছে ✨",
+    "ভালো মুড, ভালো দিন 🌟",
+    "নিজের মতো থাকাই সবচেয়ে ভালো 😊",
+  ],
+  food: [
+    "খাবারই আসল সুখ 🍽️",
+    "পেট ভরলে মনও ভরে 😋",
+    "জীবন অনিশ্চিত, আগে মিষ্টিটা খাই 🍰",
+  ],
+  travel: [
+    "ঘুরে বেড়ানোই জীবন ✈️",
+    "স্মৃতি জমাই, জিনিস না 🌍",
+    "নতুন জায়গা, নতুন গল্প 🗺️",
+  ],
+  nature: [
+    "প্রকৃতির কাছে গেলে মন ভালো হয়ে যায় 🌿",
+    "আকাশ, নদী আর সবুজ - এটাই শান্তি 🌈",
+  ],
+  fitness: [
+    "কষ্ট করলে ফল পাওয়া যায় 💪",
+    "আজকের পরিশ্রম, আগামীর শক্তি 🏋️",
+  ],
+  generic: [
+    "জীবনটা সুন্দর 🌸",
+    "ছোট ছোট মুহূর্তগুলোই আসল আনন্দ 💝",
+    "কৃতজ্ঞ এই মুহূর্তগুলোর জন্য 🙏",
+  ],
+};
+
+const isBanglaText = (text) => /[ঀ-৿]/.test(text || '');
+
 const imageKeywords = {
   selfie: ['face', 'selfie', 'portrait', 'smile', 'mirror'],
   food: ['food', 'meal', 'restaurant', 'coffee', 'cake', 'dinner', 'lunch', 'breakfast'],
@@ -64,12 +97,14 @@ class AICaptionSuggestion {
 
   static suggestCaption(text, mood, hasMedia) {
     const category = this.analyzeImageKeywords(text, hasMedia);
+    const bangla = isBanglaText(text);
 
-    const templates = captionTemplates[category] || captionTemplates.generic;
+    const templateSet = bangla ? captionTemplatesBn : captionTemplates;
+    const templates = templateSet[category] || templateSet.generic;
 
     const moodMap = {
       happy: templates.filter(t => !t.includes('😢') && !t.includes('💪')),
-      sad: captionTemplates.nature,
+      sad: templateSet.nature,
       excited: templates,
     };
 
@@ -82,10 +117,11 @@ class AICaptionSuggestion {
   static enhanceCaption(text) {
     if (!text) return [];
 
+    const bangla = isBanglaText(text);
     const suggestions = [];
 
-    if (!text.match(/[.!?]$/)) {
-      suggestions.push(text + '.');
+    if (!text.match(/[.!?।]$/)) {
+      suggestions.push(text + (bangla ? '।' : '.'));
     }
 
     const words = text.split(' ');
@@ -105,11 +141,15 @@ class AICaptionSuggestion {
   }
 
   static generateHashtags(text) {
-    const words = text.toLowerCase().split(/\s+/);
-    const stopWords = new Set(['i', 'am', 'is', 'are', 'was', 'the', 'a', 'an', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for', 'of', 'with', 'by', 'my', 'your', 'our', 'this', 'that']);
+    const bangla = isBanglaText(text);
+    const words = (bangla ? text : text.toLowerCase()).split(/\s+/);
+    const stopWords = bangla
+      ? new Set(['আমি', 'তুমি', 'আমরা', 'এবং', 'বা', 'কিন্তু', 'এই', 'সেই', 'একটি', 'একটা', 'এর', 'তার', 'আমার', 'তোমার', 'হয়', 'ছিল', 'হবে'])
+      : new Set(['i', 'am', 'is', 'are', 'was', 'the', 'a', 'an', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for', 'of', 'with', 'by', 'my', 'your', 'our', 'this', 'that']);
 
+    const minLen = bangla ? 2 : 3;
     const keywords = words
-      .filter(w => w.length > 3 && !stopWords.has(w) && !w.startsWith('#'))
+      .filter(w => w.length > minLen && !stopWords.has(w) && !w.startsWith('#'))
       .slice(0, 5);
 
     return keywords.map(k => '#' + k);

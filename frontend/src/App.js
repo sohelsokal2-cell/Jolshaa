@@ -50,6 +50,7 @@ import NotesPage from './pages/NotesPage';
 import NoteDetail from './pages/NoteDetail';
 import { PaymentSuccess, PaymentCancel, PaymentFail } from './pages/PaymentResult';
 import HelpFeed from './pages/HelpFeed';
+import Para from './pages/Para';
 import HelpRequestDetail from './pages/HelpRequestDetail';
 import { MultiAdNetworks } from './components/MultiAdNetworks';
 import AdNetworksManager from './pages/AdNetworksManager';
@@ -119,6 +120,7 @@ const AppContent = () => {
         <Route path="/payment/cancel" element={<PaymentCancel />} />
         <Route path="/payment/fail" element={<PaymentFail />} />
         <Route path="/help" element={<ProtectedRoute><HelpFeed /></ProtectedRoute>} />
+        <Route path="/para" element={<ProtectedRoute><Para /></ProtectedRoute>} />
         <Route path="/help/:id" element={<ProtectedRoute><HelpRequestDetail /></ProtectedRoute>} />
         <Route path="/contact" element={<ProtectedRoute><ContactUs /></ProtectedRoute>} />
         <Route path="/support/tickets" element={<ProtectedRoute><SupportTickets /></ProtectedRoute>} />

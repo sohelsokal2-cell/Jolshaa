@@ -168,7 +168,8 @@ exports.getFeed = async (req, res) => {
     const postsWithMeta = rankedResult.posts.map(post => ({
       ...post,
       reactions: reactionMap[post._id.toString()] || { count: 0, myReaction: null },
-      commentCount: commentMap[post._id.toString()] || 0
+      commentCount: commentMap[post._id.toString()] || 0,
+      whyReasons: post._reasons || []
     }));
 
     res.json({
