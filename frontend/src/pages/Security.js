@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import API from '../api/axios';
 import Layout from '../components/layout/Layout';
 import { useFestivalTheme, FESTIVAL_THEMES } from '../context/FestivalThemeContext';
+import { useLanguage } from '../context/LanguageContext';
+import { useDataSaver } from '../context/DataSaverContext';
 
 const Security = () => {
   const [activeTab, setActiveTab] = useState('password');
@@ -35,6 +37,8 @@ const Security = () => {
   const [dataExportMsg, setDataExportMsg] = useState('');
 
   const { festival, setFestival } = useFestivalTheme();
+  const { t } = useLanguage();
+  const { dataSaver, toggleDataSaver, mbSaved } = useDataSaver();
 
   useEffect(() => {
     if (activeTab === 'sessions') fetchSessions();
@@ -228,7 +232,7 @@ const Security = () => {
   return (
     <Layout>
       <div className="max-w-xl mx-auto mt-8 px-4 pb-8">
-        <h1 className="font-display text-xl font-bold text-jolshaa-on-surface mb-4">Security & Account</h1>
+        <h1 className="font-display text-xl font-bold text-jolshaa-on-surface mb-4">{t('security.title')}</h1>
 
         <div className="flex gap-2 mb-4">
           {tabs.map((tab) => (
@@ -249,7 +253,7 @@ const Security = () => {
         {/* Password Change */}
         {activeTab === 'password' && (
           <div className="bg-jolshaa-surface-container-lowest rounded-2xl shadow-ambient p-6">
-            <h2 className="font-display font-semibold text-jolshaa-on-surface mb-4">Change Password</h2>
+            <h2 className="font-display font-semibold text-jolshaa-on-surface mb-4">{t('security.changePassword')}</h2>
             <div className="space-y-3">
               <input
                 type="password"
@@ -282,7 +286,7 @@ const Security = () => {
                 disabled={passwordLoading}
                 className="px-4 py-2 bg-jolshaa-teal text-jolshaa-on-teal rounded-lg text-sm font-medium hover:bg-jolshaa-teal-container disabled:opacity-50 transition-colors"
               >
-                {passwordLoading ? 'Changing...' : 'Change Password'}
+                {passwordLoading ? 'Changing...' : t('security.changePassword')}
               </button>
             </div>
           </div>
@@ -292,7 +296,7 @@ const Security = () => {
         {activeTab === 'sessions' && (
           <div className="bg-jolshaa-surface-container-lowest rounded-2xl shadow-ambient p-6">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="font-display font-semibold text-jolshaa-on-surface">Active Sessions</h2>
+              <h2 className="font-display font-semibold text-jolshaa-on-surface">{t('security.activeSessions')}</h2>
               {sessions.length > 1 && (
                 <button onClick={handleRevokeAll} className="text-xs text-red-600 hover:underline">
                   Revoke all other sessions
@@ -334,7 +338,7 @@ const Security = () => {
         {/* Login History */}
         {activeTab === 'login-history' && (
           <div className="bg-jolshaa-surface-container-lowest rounded-2xl shadow-ambient p-6">
-            <h2 className="font-display font-semibold text-jolshaa-on-surface mb-4">Login History</h2>
+            <h2 className="font-display font-semibold text-jolshaa-on-surface mb-4">{t('security.loginHistory')}</h2>
             {historyLoading ? (
               <p className="text-jolshaa-on-surface-variant text-sm">Loading...</p>
             ) : loginHistory.length === 0 ? (
@@ -380,13 +384,13 @@ const Security = () => {
               <div className="p-3 bg-jolshaa-surface-container-high/50 rounded-lg">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-jolshaa-on-surface-variant">Two-Factor Authentication</p>
+                    <p className="text-sm font-medium text-jolshaa-on-surface-variant">{t('security.twoFactor')}</p>
                     <p className="text-xs text-jolshaa-on-surface-variant">Secure your account with an authenticator app</p>
                   </div>
                   {twoFAEnabled ? (
-                    <span className="text-xs text-green-600 font-medium">Enabled</span>
+                    <span className="text-xs text-green-600 font-medium">{t('security.enable')}</span>
                   ) : (
-                    <span className="text-xs text-jolshaa-on-surface-variant">Disabled</span>
+                    <span className="text-xs text-jolshaa-on-surface-variant">{t('security.disable')}</span>
                   )}
                 </div>
 
@@ -461,7 +465,7 @@ const Security = () => {
               <div className="p-3 bg-jolshaa-surface-container-high/50 rounded-lg">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-jolshaa-on-surface-variant">Download Your Data</p>
+                    <p className="text-sm font-medium text-jolshaa-on-surface-variant">{t('security.downloadData')}</p>
                     <p className="text-xs text-jolshaa-on-surface-variant">Get a copy of your profile, posts, comments and messages</p>
                   </div>
                   <button
@@ -517,6 +521,20 @@ const Security = () => {
                   className={`w-10 h-6 rounded-full transition-colors relative ${safety.restrictedDMs ? 'bg-jolshaa-teal' : 'bg-jolshaa-outline-variant'}`}
                 >
                   <span className={`absolute top-0.5 w-5 h-5 bg-white rounded-full transition-transform shadow ${safety.restrictedDMs ? 'left-4.5' : 'left-0.5'}`} />
+                </button>
+              </div>
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-jolshaa-on-surface-variant">{t('signup.dataSaver.title')}</p>
+                  <p className="text-xs text-jolshaa-on-surface-variant">
+                    {dataSaver ? `${t('signup.dataSaver.desc')} — ${mbSaved > 1024 ? `${(mbSaved / 1024).toFixed(1)} GB` : `${mbSaved} MB`} saved` : t('signup.dataSaver.desc')}
+                  </p>
+                </div>
+                <button
+                  onClick={toggleDataSaver}
+                  className={`w-10 h-6 rounded-full transition-colors relative ${dataSaver ? 'bg-jolshaa-teal' : 'bg-jolshaa-outline-variant'}`}
+                >
+                  <span className={`absolute top-0.5 w-5 h-5 bg-white rounded-full transition-transform shadow ${dataSaver ? 'left-4.5' : 'left-0.5'}`} />
                 </button>
               </div>
             </div>

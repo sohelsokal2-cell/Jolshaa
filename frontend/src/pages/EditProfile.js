@@ -3,10 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import API from '../api/axios';
 import Layout from '../components/layout/Layout';
+import { useLanguage } from '../context/LanguageContext';
 
 const EditProfile = () => {
   const { user, updateUser } = useAuth();
   const navigate = useNavigate();
+  const { t } = useLanguage();
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
@@ -98,7 +100,7 @@ const EditProfile = () => {
     <Layout showSidebar={false}>
       <div className="max-w-lg mx-auto mt-8 px-4">
         <div className="bg-jolshaa-surface-container-lowest rounded-2xl shadow-ambient p-6">
-          <h2 className="font-display text-xl font-semibold mb-6 text-jolshaa-on-surface">Edit Profile</h2>
+          <h2 className="font-display text-xl font-semibold mb-6 text-jolshaa-on-surface">{t('editProfile.title')}</h2>
 
           {error && <div className="bg-red-500/15 text-red-400 border border-red-500/25 px-4 py-2 rounded mb-4 text-sm">{error}</div>}
           {success && <div className="bg-green-500/15 text-green-400 border border-green-500/25 px-4 py-2 rounded mb-4 text-sm">{success}</div>}
@@ -159,7 +161,7 @@ const EditProfile = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-jolshaa-on-surface-variant mb-1">Name</label>
+              <label className="block text-sm font-medium text-jolshaa-on-surface-variant mb-1">{t('editProfile.name')}</label>
               <input
                 type="text"
                 name="name"
@@ -181,7 +183,7 @@ const EditProfile = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-jolshaa-on-surface-variant mb-1">Bio</label>
+              <label className="block text-sm font-medium text-jolshaa-on-surface-variant mb-1">{t('editProfile.bio')}</label>
               <textarea
                 name="bio"
                 value={formData.bio}
@@ -218,7 +220,7 @@ const EditProfile = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-jolshaa-on-surface-variant mb-1">Location</label>
+              <label className="block text-sm font-medium text-jolshaa-on-surface-variant mb-1">{t('editProfile.location')}</label>
               <input
                 type="text"
                 name="location"
@@ -260,7 +262,7 @@ const EditProfile = () => {
               disabled={loading || uploading}
               className="bg-jolshaa-teal text-jolshaa-on-teal hover:bg-jolshaa-teal-container w-full disabled:opacity-50 rounded-lg px-4 py-2 text-sm font-medium transition-colors"
             >
-              {loading ? 'Saving...' : 'Save Changes'}
+              {loading ? 'Saving...' : t('editProfile.saveChanges')}
             </button>
           </form>
         </div>

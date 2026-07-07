@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { protect } = require('../middleware/auth');
 const upload = require('../middleware/upload');
+const { postLimiter } = require('../middleware/rateLimiter');
 const {
   createReel,
   getReelsFeed,
@@ -17,7 +18,7 @@ const {
 
 router.use(protect);
 
-router.post('/', upload.single('video'), createReel);
+router.post('/', postLimiter, upload.single('video'), createReel);
 router.get('/feed', getReelsFeed);
 router.get('/trending', getTrendingReels);
 router.get('/user/:userId', getUserReels);

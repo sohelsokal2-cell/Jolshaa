@@ -46,6 +46,27 @@ const noteSchema = new mongoose.Schema({
     type: Boolean,
     default: true,
   },
+  isFlagged: {
+    type: Boolean,
+    default: false,
+  },
+  flagReason: {
+    type: String,
+    default: '',
+  },
+  isHidden: {
+    type: Boolean,
+    default: false,
+  },
+  hiddenBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    default: null,
+  },
+  hiddenAt: {
+    type: Date,
+    default: null,
+  },
 }, {
   timestamps: true,
 });

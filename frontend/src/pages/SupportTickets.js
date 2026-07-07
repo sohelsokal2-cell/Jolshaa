@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import API from '../api/axios';
 import Layout from '../components/layout/Layout';
+import { useLanguage } from '../context/LanguageContext';
 import Button from '../components/ui/Button';
 
 const CATEGORIES = [
@@ -24,6 +25,7 @@ const STATUS_STYLES = {
 
 const SupportTickets = () => {
   const navigate = useNavigate();
+  const { t } = useLanguage();
   const [tickets, setTickets] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
@@ -85,10 +87,10 @@ const SupportTickets = () => {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
               </svg>
             </button>
-            <h1 className="font-display text-xl font-bold text-jolshaa-on-surface">Support Tickets</h1>
+            <h1 className="font-display text-xl font-bold text-jolshaa-on-surface">{t('support.title')}</h1>
           </div>
           <Button size="sm" onClick={() => setShowForm(prev => !prev)}>
-            {showForm ? 'Cancel' : 'New Ticket'}
+            {showForm ? t('editProfile.cancel') : t('support.createTicket')}
           </Button>
         </div>
 
@@ -98,21 +100,21 @@ const SupportTickets = () => {
             className="rounded-xl border border-jolshaa-outline-variant bg-jolshaa-surface-container-lowest p-3 text-center hover:bg-jolshaa-surface-container-low transition-colors"
           >
             <div className="text-lg mb-1">✉️</div>
-            <span className="text-xs font-medium text-jolshaa-on-surface">Contact Us</span>
+            <span className="text-xs font-medium text-jolshaa-on-surface">{t('support.contactUs')}</span>
           </button>
           <button
             onClick={() => navigate('/feedback')}
             className="rounded-xl border border-jolshaa-outline-variant bg-jolshaa-surface-container-lowest p-3 text-center hover:bg-jolshaa-surface-container-low transition-colors"
           >
             <div className="text-lg mb-1">💡</div>
-            <span className="text-xs font-medium text-jolshaa-on-surface">Feedback</span>
+            <span className="text-xs font-medium text-jolshaa-on-surface">{t('support.feedback')}</span>
           </button>
           <button
             onClick={() => navigate('/appeal')}
             className="rounded-xl border border-jolshaa-outline-variant bg-jolshaa-surface-container-lowest p-3 text-center hover:bg-jolshaa-surface-container-low transition-colors"
           >
             <div className="text-lg mb-1">⚖️</div>
-            <span className="text-xs font-medium text-jolshaa-on-surface">Appeal</span>
+            <span className="text-xs font-medium text-jolshaa-on-surface">{t('support.appeal')}</span>
           </button>
         </div>
 
@@ -153,7 +155,7 @@ const SupportTickets = () => {
 
         {tickets.length === 0 ? (
           <div className="text-center py-16 text-sm text-jolshaa-on-surface-variant">
-            No support tickets yet.
+            {t('support.noTickets')}
           </div>
         ) : (
           <div className="space-y-3">

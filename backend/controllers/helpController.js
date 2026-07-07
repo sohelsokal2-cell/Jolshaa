@@ -75,7 +75,7 @@ exports.createRequest = async (req, res) => {
       expiresAt,
     });
 
-    await helpRequest.populate('requester', 'name profilePhoto');
+    await helpRequest.populate('requester', 'name profilePhoto helpedOthersCount');
 
     // Emit to district room
     const districtRoom = `district_${location.district}`;
@@ -135,7 +135,7 @@ exports.createPostHelp = async (req, res) => {
       expiresAt,
     });
 
-    await helpRequest.populate('requester', 'name profilePhoto');
+    await helpRequest.populate('requester', 'name profilePhoto helpedOthersCount');
 
     const districtRoom = `district_${helpRequest.location.district}`;
     getIO().to(districtRoom).emit('newHelpRequest', {
@@ -202,7 +202,7 @@ exports.getNearby = async (req, res) => {
         .sort({ createdAt: -1 })
         .skip(skip)
         .limit(limit)
-        .populate('requester', 'name profilePhoto')
+        .populate('requester', 'name profilePhoto helpedOthersCount')
         .select('-helpers');
     }
 
@@ -439,7 +439,7 @@ exports.getHelpHistory = async (req, res) => {
       })
         .sort({ resolvedAt: -1 })
         .limit(20)
-        .populate('requester', 'name profilePhoto')
+        .populate('requester', 'name profilePhoto helpedOthersCount')
         .select('title helpType status resolvedAt resolvedNote helpers'),
 
       HelpRequest.find({
@@ -448,7 +448,7 @@ exports.getHelpHistory = async (req, res) => {
       })
         .sort({ createdAt: -1 })
         .limit(20)
-        .populate('requester', 'name profilePhoto')
+        .populate('requester', 'name profilePhoto helpedOthersCount')
         .select('title helpType status createdAt resolvedAt resolvedNote helpers'),
     ]);
 

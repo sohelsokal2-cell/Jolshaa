@@ -138,6 +138,9 @@ const Login = () => {
             <Button type="submit" fullWidth loading={loading} size="lg">
               {t('login.submit')}
             </Button>
+            <Link to="/forgot-password" className="block text-center text-xs text-jolshaa-on-surface-variant hover:text-jolshaa-teal transition-colors">
+              {t('login.forgotPassword')}
+            </Link>
           </form>
           )}
         </div>

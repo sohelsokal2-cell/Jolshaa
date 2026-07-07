@@ -145,7 +145,12 @@ const HelpRequestDetail = () => {
               <Link to={`/profile/${request.requester?._id}`} className="flex items-center gap-2 hover:underline">
                 <Avatar src={request.requester?.profilePhoto} alt={request.requester?.name} size="md" />
                 <div>
-                  <p className="text-sm font-semibold text-jolshaa-on-surface">{request.requester?.name}</p>
+                  <div className="flex items-center gap-2">
+                    <p className="text-sm font-semibold text-jolshaa-on-surface">{request.requester?.name}</p>
+                    {request.requester?.helpedOthersCount >= 5 && (
+                      <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 bg-green-100 text-green-700 text-2xs rounded-full font-medium">✓ Helper</span>
+                    )}
+                  </div>
                   <p className="text-xs text-jolshaa-on-surface-variant">
                     {request.location?.upazila && `${request.location.upazila}, `}
                     {request.location?.district}, {request.location?.division}

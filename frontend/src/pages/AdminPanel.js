@@ -630,6 +630,12 @@ const ReportsTab = () => {
       else if (report.targetType === 'reel') await API.delete(`/admin/moderation/reels/${report.targetId}`);
       else if (report.targetType === 'listing') await API.put(`/admin/moderation/listings/${report.targetId}/remove`);
       else if (report.targetType === 'group_post') await API.delete(`/admin/posts/${report.targetId}`);
+      else if (report.targetType === 'note') await API.delete(`/admin/moderation/notes/${report.targetId}`);
+      else if (report.targetType === 'poll') await API.delete(`/admin/moderation/polls/${report.targetId}`);
+      else if (report.targetType === 'qa') await API.delete(`/admin/moderation/qa/${report.targetId}`);
+      else if (report.targetType === 'help_request') await API.delete(`/admin/moderation/help-requests/${report.targetId}`);
+      else if (report.targetType === 'highlight') await API.delete(`/admin/moderation/highlights/${report.targetId}`);
+      else if (report.targetType === 'message') await API.delete(`/admin/moderation/messages/${report.targetId}`);
       const res = await API.put(`/admin/safety/reports/${report._id}/resolve`, { resolution: 'content_removed' });
       setReports(prev => prev.map(r => r._id === report._id ? res.data.report : r));
     } catch (err) { alert('Failed'); }
@@ -789,7 +795,7 @@ const ReportsTab = () => {
                     <>
                       <Button size="xs" variant="ghost" onClick={() => setAssignModal(report._id)}>Assign</Button>
                       <Button size="xs" variant="ghost" onClick={() => setEscalateModal(report._id)}>Escalate</Button>
-                      {(report.targetType === 'post' || report.targetType === 'comment' || report.targetType === 'story' || report.targetType === 'reel' || report.targetType === 'listing' || report.targetType === 'group_post') && (
+                      {(report.targetType === 'post' || report.targetType === 'comment' || report.targetType === 'story' || report.targetType === 'reel' || report.targetType === 'listing' || report.targetType === 'group_post' || report.targetType === 'note' || report.targetType === 'poll' || report.targetType === 'qa' || report.targetType === 'help_request' || report.targetType === 'highlight' || report.targetType === 'message') && (
                         <Button size="xs" variant="danger" onClick={() => handleRemoveContent(report)}>Remove</Button>
                       )}
                       <Button size="xs" variant="success" onClick={() => setResolveModal(report._id)}>Resolve</Button>

@@ -76,6 +76,11 @@ const HelpRequestCard = ({ request, onOfferSubmitted }) => {
               <Link to={`/profile/${request.requester?._id}`} className="flex items-center gap-1.5 hover:underline">
                 <Avatar src={request.requester?.profilePhoto} alt={request.requester?.name} size="xs" />
                 <span className="text-xs text-jolshaa-on-surface-variant">{request.requester?.name}</span>
+                {request.requester?.helpedOthersCount >= 5 && (
+                  <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 bg-green-100 text-green-700 text-2xs rounded-full font-medium" title="Verified Helper">
+                    ✓ Helper
+                  </span>
+                )}
               </Link>
               <span className="text-xs text-jolshaa-on-surface-variant">·</span>
               <span className="text-xs text-jolshaa-on-surface-variant">{request.location?.district}, {request.location?.division}</span>

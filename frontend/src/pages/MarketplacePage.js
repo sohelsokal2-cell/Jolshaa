@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import API from '../api/axios';
 import Layout from '../components/layout/Layout';
+import { useLanguage } from '../context/LanguageContext';
 
 const MarketplacePage = () => {
   const [listings, setListings] = useState([]);
@@ -14,6 +15,7 @@ const MarketplacePage = () => {
   });
   const [images, setImages] = useState([]);
   const [creating, setCreating] = useState(false);
+  const { t } = useLanguage();
 
   useEffect(() => {
     fetchListings();
@@ -58,25 +60,25 @@ const MarketplacePage = () => {
   };
 
   const categories = [
-    { value: '', label: 'All' },
-    { value: 'electronics', label: 'Electronics' },
-    { value: 'clothing', label: 'Clothing' },
-    { value: 'home', label: 'Home' },
-    { value: 'vehicles', label: 'Vehicles' },
-    { value: 'services', label: 'Services' },
-    { value: 'other', label: 'Other' },
+    { value: '', label: t('marketplace.allCategories') },
+    { value: 'electronics', label: t('marketplace.electronics') },
+    { value: 'clothing', label: t('marketplace.clothing') },
+    { value: 'home', label: t('marketplace.home') },
+    { value: 'vehicles', label: t('marketplace.vehicles') },
+    { value: 'services', label: t('marketplace.services') },
+    { value: 'other', label: t('marketplace.other') },
   ];
 
   return (
     <Layout>
       <div className="mt-2 pb-8">
       <div className="flex items-center justify-between mb-4">
-        <h1 className="text-2xl font-bold font-display text-jolshaa-on-surface">Marketplace</h1>
+        <h1 className="text-2xl font-bold font-display text-jolshaa-on-surface">{t('marketplace.title')}</h1>
         <button
           onClick={() => setShowCreate(!showCreate)}
           className="bg-jolshaa-teal text-jolshaa-on-teal px-4 py-2 rounded-lg text-sm font-medium hover:bg-jolshaa-teal-container transition-colors shadow-ambient"
         >
-          {showCreate ? 'Cancel' : '+ Sell Item'}
+          {showCreate ? 'Cancel' : t('marketplace.createListing')}
         </button>
       </div>
 
@@ -87,7 +89,7 @@ const MarketplacePage = () => {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && fetchListings()}
-          placeholder="Search..."
+          placeholder={t('marketplace.search')}
           className="flex-1 px-4 py-2 bg-jolshaa-surface-container-lowest border border-jolshaa-outline-variant rounded-lg text-jolshaa-on-surface focus:outline-none focus:ring-2 focus:ring-jolshaa-teal"
         />
         <select
@@ -123,7 +125,7 @@ const MarketplacePage = () => {
               type="number"
               value={formData.price}
               onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-              placeholder="Price"
+              placeholder={t('marketplace.price')}
               className="px-3 py-2 text-sm bg-jolshaa-surface-container-lowest border border-jolshaa-outline-variant rounded-lg text-jolshaa-on-surface focus:outline-none focus:ring-2 focus:ring-jolshaa-teal"
             />
             <select
@@ -151,7 +153,7 @@ const MarketplacePage = () => {
             type="text"
             value={formData.location}
             onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-            placeholder="Location"
+            placeholder={t('marketplace.location')}
             className="w-full px-3 py-2 text-sm bg-jolshaa-surface-container-lowest border border-jolshaa-outline-variant rounded-lg text-jolshaa-on-surface focus:outline-none focus:ring-2 focus:ring-jolshaa-teal"
           />
           <input

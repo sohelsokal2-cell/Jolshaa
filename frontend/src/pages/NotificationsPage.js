@@ -3,12 +3,14 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import API from '../api/axios';
 import Layout from '../components/layout/Layout';
+import { useLanguage } from '../context/LanguageContext';
 import Avatar from '../components/ui/Avatar';
 import Button from '../components/ui/Button';
 import Badge from '../components/ui/Badge';
 
 const NotificationsPage = () => {
   const { user } = useAuth();
+  const { t } = useLanguage();
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
@@ -75,9 +77,9 @@ const NotificationsPage = () => {
     <Layout>
       <div className="mt-2 pb-8">
         <div className="flex items-center justify-between gap-3 mb-6">
-          <h1 className="text-xl sm:text-2xl font-bold font-display text-jolshaa-on-surface">Notifications</h1>
+          <h1 className="text-xl sm:text-2xl font-bold font-display text-jolshaa-on-surface">{t('notifications.title')}</h1>
           {notifications.some(n => !n.isRead) && (
-            <Button size="sm" variant="ghost" onClick={markAllAsRead}>Mark all read</Button>
+            <Button size="sm" variant="ghost" onClick={markAllAsRead}>{t('notifications.markAllRead')}</Button>
           )}
         </div>
 
@@ -98,7 +100,7 @@ const NotificationsPage = () => {
             <div className="w-16 h-16 bg-jolshaa-surface-container-low rounded-full flex items-center justify-center mx-auto mb-4">
               <span className="text-2xl">🔔</span>
             </div>
-            <p className="text-jolshaa-on-surface-variant">No notifications yet</p>
+            <p className="text-jolshaa-on-surface-variant">{t('notifications.noNotifications')}</p>
           </div>
         ) : (
           <div className="space-y-2">

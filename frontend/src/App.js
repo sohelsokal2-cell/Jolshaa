@@ -60,6 +60,8 @@ import SupportTicketDetail from './pages/SupportTicketDetail';
 import FeedbackPage from './pages/FeedbackPage';
 import AppealPage from './pages/AppealPage';
 import VerificationRequestPage from './pages/VerificationRequestPage';
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
 
 const PublicRoute = ({ children }) => {
   const { user, loading } = useAuth();
@@ -74,6 +76,8 @@ const AppContent = () => {
         <Route path="/" element={<Landing />} />
         <Route path="/signup" element={<PublicRoute><Signup /></PublicRoute>} />
         <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
+        <Route path="/forgot-password" element={<PublicRoute><ForgotPassword /></PublicRoute>} />
+        <Route path="/reset-password" element={<PublicRoute><ResetPassword /></PublicRoute>} />
         <Route path="/feed" element={<ProtectedRoute><NewsFeed /></ProtectedRoute>} />
         <Route path="/messages" element={<ProtectedRoute><Messages /></ProtectedRoute>} />
         <Route path="/messages/:id" element={<ProtectedRoute><Messages /></ProtectedRoute>} />

@@ -270,19 +270,27 @@ exports.forwardMessage = async (req, res) => {
     }
 
     const originalMessages = await Message.find({ _id: { $in: messageIds } });
-    const forwardedMessages = [];
+    if (originalMessages.length === 0) {
+      return res.status(404).json({ message: 'Messages not found' });
+    }
 
-    for (const targetConvId of targetConversationIds) {
-      const conversation = await Conversation.findOne({
-        _id: targetConvId,
-        participants: req.user._id,
-      });
+    const validConversations = await Conversation.find({
+      _id: { $in: targetConversationIds },
+      participants: req.user._id,
+    }).select('_id');
 
-      if (!conversation) continue;
+    const validConvIds = validConversations.map(c => c._id.toString());
+    if (validConvIds.length === 0) {
+      return res.status(404).json({ message: 'No valid target conversations' });
+    }
 
+    const docsToInsert = [];
+    const lastMessagePerConv = {};
+
+    for (const convId of validConvIds) {
       for (const origMsg of originalMessages) {
-        const message = await Message.create({
-          conversation: targetConvId,
+        const doc = {
+          conversation: convId,
           sender: req.user._id,
           text: origMsg.text,
           media: origMsg.media,
@@ -293,25 +301,42 @@ exports.forwardMessage = async (req, res) => {
           mediaMetadata: origMsg.mediaMetadata,
           forwardedFrom: origMsg._id,
           readBy: [req.user._id],
-        });
-
-        await message.populate('sender', 'name profilePhoto');
-
-        await Conversation.findByIdAndUpdate(targetConvId, {
-          lastMessage: message._id,
-          updatedAt: new Date(),
-        });
-
-        getIO().to(`conversation:${targetConvId}`).emit('newMessage', {
-          ...message.toObject(),
-          conversationId: targetConvId,
-        });
-
-        forwardedMessages.push(message);
+        };
+        docsToInsert.push(doc);
+        lastMessagePerConv[convId] = null;
       }
     }
 
-    res.json({ messages: forwardedMessages });
+    const insertedMessages = await Message.insertMany(docsToInsert, { ordered: true });
+
+    const sender = await User.findById(req.user._id).select('name profilePhoto');
+
+    const convUpdates = [];
+    for (const msg of insertedMessages) {
+      lastMessagePerConv[msg.conversation.toString()] = msg._id;
+    }
+    for (const [convId, lastMsgId] of Object.entries(lastMessagePerConv)) {
+      if (lastMsgId) {
+        convUpdates.push(
+          Conversation.findByIdAndUpdate(convId, { lastMessage: lastMsgId, updatedAt: new Date() })
+        );
+      }
+    }
+    await Promise.all(convUpdates);
+
+    const populatedMessages = insertedMessages.map(msg => ({
+      ...msg.toObject(),
+      sender: sender ? { _id: sender._id, name: sender.name, profilePhoto: sender.profilePhoto } : req.user._id,
+    }));
+
+    for (const msg of populatedMessages) {
+      getIO().to(`conversation:${msg.conversation}`).emit('newMessage', {
+        ...msg,
+        conversationId: msg.conversation,
+      });
+    }
+
+    res.json({ messages: populatedMessages });
   } catch (error) {
     res.status(500).json({ message: 'Server error' });
   }

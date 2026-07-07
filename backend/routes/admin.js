@@ -20,6 +20,12 @@ const {
   getFlaggedReels, flagReel, hideReel, approveReel, removeReel,
   getGroupPosts,
   getListings, flagListing, hideListing, approveListing, removeListing,
+  getFlaggedHelpRequests, flagHelpRequest, hideHelpRequest, approveHelpRequest, removeHelpRequest,
+  getFlaggedNotes, flagNote, hideNote, approveNote, removeNote,
+  getFlaggedPolls, flagPoll, hidePoll, approvePoll, removePoll,
+  getFlaggedQA, flagQA, hideQA, approveQA, removeQA,
+  getFlaggedHighlights, flagHighlight, hideHighlight, approveHighlight, removeHighlight,
+  getFlaggedMessages, flagMessage, removeMessage,
   bulkAction, shadowHide, getContentStats,
 } = require('../controllers/moderationController');
 
@@ -189,6 +195,46 @@ router.put('/moderation/listings/:id/flag', flagListing);
 router.put('/moderation/listings/:id/hide', hideListing);
 router.put('/moderation/listings/:id/approve', approveListing);
 router.put('/moderation/listings/:id/remove', removeListing);
+
+// Help request moderation
+router.get('/moderation/help-requests', getFlaggedHelpRequests);
+router.put('/moderation/help-requests/:id/flag', flagHelpRequest);
+router.put('/moderation/help-requests/:id/hide', hideHelpRequest);
+router.put('/moderation/help-requests/:id/approve', approveHelpRequest);
+router.delete('/moderation/help-requests/:id', removeHelpRequest);
+
+// Note moderation
+router.get('/moderation/notes', getFlaggedNotes);
+router.put('/moderation/notes/:id/flag', flagNote);
+router.put('/moderation/notes/:id/hide', hideNote);
+router.put('/moderation/notes/:id/approve', approveNote);
+router.delete('/moderation/notes/:id', removeNote);
+
+// Poll moderation
+router.get('/moderation/polls', getFlaggedPolls);
+router.put('/moderation/polls/:id/flag', flagPoll);
+router.put('/moderation/polls/:id/hide', hidePoll);
+router.put('/moderation/polls/:id/approve', approvePoll);
+router.delete('/moderation/polls/:id', removePoll);
+
+// Q&A moderation
+router.get('/moderation/qa', getFlaggedQA);
+router.put('/moderation/qa/:id/flag', flagQA);
+router.put('/moderation/qa/:id/hide', hideQA);
+router.put('/moderation/qa/:id/approve', approveQA);
+router.delete('/moderation/qa/:id', removeQA);
+
+// Highlight moderation
+router.get('/moderation/highlights', getFlaggedHighlights);
+router.put('/moderation/highlights/:id/flag', flagHighlight);
+router.put('/moderation/highlights/:id/hide', hideHighlight);
+router.put('/moderation/highlights/:id/approve', approveHighlight);
+router.delete('/moderation/highlights/:id', removeHighlight);
+
+// Message moderation
+router.get('/moderation/messages', getFlaggedMessages);
+router.put('/moderation/messages/:id/flag', flagMessage);
+router.delete('/moderation/messages/:id', removeMessage);
 
 // Bulk actions
 router.post('/moderation/bulk', bulkAction);

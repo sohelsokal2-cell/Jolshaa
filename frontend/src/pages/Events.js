@@ -3,11 +3,13 @@ import { Link } from 'react-router-dom';
 import API from '../api/axios';
 import EventCard from '../components/EventCard';
 import Layout from '../components/layout/Layout';
+import { useLanguage } from '../context/LanguageContext';
 
 const Events = () => {
   const [activeTab, setActiveTab] = useState('upcoming');
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { t } = useLanguage();
 
   useEffect(() => {
     fetchEvents();
@@ -32,21 +34,21 @@ const Events = () => {
   };
 
   const tabs = [
-    { key: 'upcoming', label: 'Upcoming' },
-    { key: 'past', label: 'Past' },
-    { key: 'my', label: 'My Events' },
+    { key: 'upcoming', label: t('events.upcoming') },
+    { key: 'past', label: t('events.past') },
+    { key: 'my', label: t('events.myEvents') },
   ];
 
   return (
     <Layout>
       <div className="mt-2 pb-8">
         <div className="flex items-center justify-between mb-4">
-          <h1 className="text-2xl font-bold font-display text-jolshaa-on-surface">Events</h1>
+          <h1 className="text-2xl font-bold font-display text-jolshaa-on-surface">{t('events.title')}</h1>
           <Link
             to="/events/create"
             className="px-4 py-2 bg-jolshaa-coral text-jolshaa-on-teal rounded-lg text-sm font-medium hover:bg-jolshaa-coral-container transition-colors shadow-ambient"
           >
-            Create Event
+            {t('events.createEvent')}
           </Link>
         </div>
 
@@ -70,7 +72,7 @@ const Events = () => {
           <div className="text-center py-8 text-jolshaa-on-surface-variant">Loading events...</div>
         ) : events.length === 0 ? (
           <div className="text-center py-8 text-jolshaa-on-surface-variant">
-            {activeTab === 'my' ? 'You have no events' : `No ${activeTab} events`}
+            {t('events.noEvents')}
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

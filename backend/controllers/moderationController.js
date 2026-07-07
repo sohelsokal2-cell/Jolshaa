@@ -4,6 +4,12 @@ const Story = require('../models/Story');
 const Reel = require('../models/Reel');
 const Listing = require('../models/Listing');
 const Group = require('../models/Group');
+const HelpRequest = require('../models/HelpRequest');
+const Note = require('../models/Note');
+const Poll = require('../models/Poll');
+const QA = require('../models/QA');
+const Highlight = require('../models/Highlight');
+const Message = require('../models/Message');
 const Report = require('../models/Report');
 const Reaction = require('../models/Reaction');
 const AdminAction = require('../models/AdminAction');
@@ -462,6 +468,515 @@ exports.removeListing = async (req, res) => {
 };
 
 // ============================================================
+// HELP REQUEST MODERATION
+// ============================================================
+
+exports.getFlaggedHelpRequests = async (req, res) => {
+  try {
+    const { status, page = 1, limit = 20 } = req.query;
+    const query = {};
+    if (status === 'flagged') query.isFlagged = true;
+    else if (status === 'hidden') query.isHidden = true;
+    else query.$or = [{ isFlagged: true }, { isHidden: true }];
+
+    const helpRequests = await HelpRequest.find(query)
+      .populate('requester', 'name email profilePhoto')
+      .sort({ createdAt: -1 })
+      .skip((page - 1) * limit)
+      .limit(parseInt(limit));
+
+    const total = await HelpRequest.countDocuments(query);
+    res.json({ helpRequests, page: parseInt(page), totalPages: Math.ceil(total / limit), total });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+exports.flagHelpRequest = async (req, res) => {
+  try {
+    const { reason } = req.body;
+    const helpRequest = await HelpRequest.findById(req.params.id);
+    if (!helpRequest) return res.status(404).json({ message: 'Help request not found' });
+
+    helpRequest.isFlagged = !helpRequest.isFlagged;
+    helpRequest.flagReason = helpRequest.isFlagged ? (reason || '') : '';
+    await helpRequest.save();
+
+    await logAction(req.user._id, helpRequest.isFlagged ? 'content.flag_help_request' : 'content.approve_help_request', 'HelpRequest', helpRequest._id, helpRequest.title, { reason });
+    res.json({ message: helpRequest.isFlagged ? 'Help request flagged' : 'Help request unflagged', helpRequest });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+exports.hideHelpRequest = async (req, res) => {
+  try {
+    const helpRequest = await HelpRequest.findById(req.params.id);
+    if (!helpRequest) return res.status(404).json({ message: 'Help request not found' });
+
+    helpRequest.isHidden = !helpRequest.isHidden;
+    helpRequest.hiddenBy = helpRequest.isHidden ? req.user._id : null;
+    helpRequest.hiddenAt = helpRequest.isHidden ? new Date() : null;
+    await helpRequest.save();
+
+    await logAction(req.user._id, helpRequest.isHidden ? 'content.hide_help_request' : 'content.approve_help_request', 'HelpRequest', helpRequest._id, helpRequest.title);
+    res.json({ message: helpRequest.isHidden ? 'Help request hidden' : 'Help request visible', helpRequest });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+exports.approveHelpRequest = async (req, res) => {
+  try {
+    const helpRequest = await HelpRequest.findById(req.params.id);
+    if (!helpRequest) return res.status(404).json({ message: 'Help request not found' });
+
+    helpRequest.isFlagged = false;
+    helpRequest.flagReason = '';
+    helpRequest.isHidden = false;
+    await helpRequest.save();
+
+    await logAction(req.user._id, 'content.approve_help_request', 'HelpRequest', helpRequest._id, helpRequest.title);
+    res.json({ message: 'Help request approved', helpRequest });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+exports.removeHelpRequest = async (req, res) => {
+  try {
+    const helpRequest = await HelpRequest.findById(req.params.id);
+    if (!helpRequest) return res.status(404).json({ message: 'Help request not found' });
+
+    await logAction(req.user._id, 'content.remove_help_request', 'HelpRequest', helpRequest._id, helpRequest.title);
+    await helpRequest.deleteOne();
+    await Report.deleteMany({ targetType: 'help_request', targetId: req.params.id });
+
+    res.json({ message: 'Help request removed' });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+// ============================================================
+// NOTE MODERATION
+// ============================================================
+
+exports.getFlaggedNotes = async (req, res) => {
+  try {
+    const { status, page = 1, limit = 20 } = req.query;
+    const query = {};
+    if (status === 'flagged') query.isFlagged = true;
+    else if (status === 'hidden') query.isHidden = true;
+    else query.$or = [{ isFlagged: true }, { isHidden: true }];
+
+    const notes = await Note.find(query)
+      .populate('author', 'name email profilePhoto')
+      .sort({ createdAt: -1 })
+      .skip((page - 1) * limit)
+      .limit(parseInt(limit));
+
+    const total = await Note.countDocuments(query);
+    res.json({ notes, page: parseInt(page), totalPages: Math.ceil(total / limit), total });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+exports.flagNote = async (req, res) => {
+  try {
+    const { reason } = req.body;
+    const note = await Note.findById(req.params.id);
+    if (!note) return res.status(404).json({ message: 'Note not found' });
+
+    note.isFlagged = !note.isFlagged;
+    note.flagReason = note.isFlagged ? (reason || '') : '';
+    await note.save();
+
+    await logAction(req.user._id, note.isFlagged ? 'content.flag_note' : 'content.approve_note', 'Note', note._id, note.title, { reason });
+    res.json({ message: note.isFlagged ? 'Note flagged' : 'Note unflagged', note });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+exports.hideNote = async (req, res) => {
+  try {
+    const note = await Note.findById(req.params.id);
+    if (!note) return res.status(404).json({ message: 'Note not found' });
+
+    note.isHidden = !note.isHidden;
+    note.hiddenBy = note.isHidden ? req.user._id : null;
+    note.hiddenAt = note.isHidden ? new Date() : null;
+    await note.save();
+
+    await logAction(req.user._id, note.isHidden ? 'content.hide_note' : 'content.approve_note', 'Note', note._id, note.title);
+    res.json({ message: note.isHidden ? 'Note hidden' : 'Note visible', note });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+exports.approveNote = async (req, res) => {
+  try {
+    const note = await Note.findById(req.params.id);
+    if (!note) return res.status(404).json({ message: 'Note not found' });
+
+    note.isFlagged = false;
+    note.flagReason = '';
+    note.isHidden = false;
+    await note.save();
+
+    await logAction(req.user._id, 'content.approve_note', 'Note', note._id, note.title);
+    res.json({ message: 'Note approved', note });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+exports.removeNote = async (req, res) => {
+  try {
+    const note = await Note.findById(req.params.id);
+    if (!note) return res.status(404).json({ message: 'Note not found' });
+
+    await logAction(req.user._id, 'content.remove_note', 'Note', note._id, note.title);
+    await note.deleteOne();
+    await Report.deleteMany({ targetType: 'note', targetId: req.params.id });
+
+    res.json({ message: 'Note removed' });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+// ============================================================
+// POLL MODERATION
+// ============================================================
+
+exports.getFlaggedPolls = async (req, res) => {
+  try {
+    const { status, page = 1, limit = 20 } = req.query;
+    const query = {};
+    if (status === 'flagged') query.isFlagged = true;
+    else if (status === 'hidden') query.isHidden = true;
+    else query.$or = [{ isFlagged: true }, { isHidden: true }];
+
+    const polls = await Poll.find(query)
+      .populate({ path: 'post', populate: { path: 'author', select: 'name email profilePhoto' } })
+      .sort({ createdAt: -1 })
+      .skip((page - 1) * limit)
+      .limit(parseInt(limit));
+
+    const total = await Poll.countDocuments(query);
+    res.json({ polls, page: parseInt(page), totalPages: Math.ceil(total / limit), total });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+exports.flagPoll = async (req, res) => {
+  try {
+    const { reason } = req.body;
+    const poll = await Poll.findById(req.params.id);
+    if (!poll) return res.status(404).json({ message: 'Poll not found' });
+
+    poll.isFlagged = !poll.isFlagged;
+    poll.flagReason = poll.isFlagged ? (reason || '') : '';
+    await poll.save();
+
+    await logAction(req.user._id, poll.isFlagged ? 'content.flag_poll' : 'content.approve_poll', 'Poll', poll._id, poll.question, { reason });
+    res.json({ message: poll.isFlagged ? 'Poll flagged' : 'Poll unflagged', poll });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+exports.hidePoll = async (req, res) => {
+  try {
+    const poll = await Poll.findById(req.params.id);
+    if (!poll) return res.status(404).json({ message: 'Poll not found' });
+
+    poll.isHidden = !poll.isHidden;
+    poll.hiddenBy = poll.isHidden ? req.user._id : null;
+    poll.hiddenAt = poll.isHidden ? new Date() : null;
+    await poll.save();
+
+    await logAction(req.user._id, poll.isHidden ? 'content.hide_poll' : 'content.approve_poll', 'Poll', poll._id, poll.question);
+    res.json({ message: poll.isHidden ? 'Poll hidden' : 'Poll visible', poll });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+exports.approvePoll = async (req, res) => {
+  try {
+    const poll = await Poll.findById(req.params.id);
+    if (!poll) return res.status(404).json({ message: 'Poll not found' });
+
+    poll.isFlagged = false;
+    poll.flagReason = '';
+    poll.isHidden = false;
+    await poll.save();
+
+    await logAction(req.user._id, 'content.approve_poll', 'Poll', poll._id, poll.question);
+    res.json({ message: 'Poll approved', poll });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+exports.removePoll = async (req, res) => {
+  try {
+    const poll = await Poll.findById(req.params.id);
+    if (!poll) return res.status(404).json({ message: 'Poll not found' });
+
+    await logAction(req.user._id, 'content.remove_poll', 'Poll', poll._id, poll.question);
+    await poll.deleteOne();
+    await Report.deleteMany({ targetType: 'poll', targetId: req.params.id });
+
+    res.json({ message: 'Poll removed' });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+// ============================================================
+// Q&A MODERATION
+// ============================================================
+
+exports.getFlaggedQA = async (req, res) => {
+  try {
+    const { status, page = 1, limit = 20 } = req.query;
+    const query = {};
+    if (status === 'flagged') query.isFlagged = true;
+    else if (status === 'hidden') query.isHidden = true;
+    else query.$or = [{ isFlagged: true }, { isHidden: true }];
+
+    const qaItems = await QA.find(query)
+      .populate({ path: 'post', populate: { path: 'author', select: 'name email profilePhoto' } })
+      .sort({ createdAt: -1 })
+      .skip((page - 1) * limit)
+      .limit(parseInt(limit));
+
+    const total = await QA.countDocuments(query);
+    res.json({ qaItems, page: parseInt(page), totalPages: Math.ceil(total / limit), total });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+exports.flagQA = async (req, res) => {
+  try {
+    const { reason } = req.body;
+    const qa = await QA.findById(req.params.id);
+    if (!qa) return res.status(404).json({ message: 'Q&A not found' });
+
+    qa.isFlagged = !qa.isFlagged;
+    qa.flagReason = qa.isFlagged ? (reason || '') : '';
+    await qa.save();
+
+    await logAction(req.user._id, qa.isFlagged ? 'content.flag_qa' : 'content.approve_qa', 'QA', qa._id, qa.question?.substring(0, 50), { reason });
+    res.json({ message: qa.isFlagged ? 'Q&A flagged' : 'Q&A unflagged', qa });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+exports.hideQA = async (req, res) => {
+  try {
+    const qa = await QA.findById(req.params.id);
+    if (!qa) return res.status(404).json({ message: 'Q&A not found' });
+
+    qa.isHidden = !qa.isHidden;
+    qa.hiddenBy = qa.isHidden ? req.user._id : null;
+    qa.hiddenAt = qa.isHidden ? new Date() : null;
+    await qa.save();
+
+    await logAction(req.user._id, qa.isHidden ? 'content.hide_qa' : 'content.approve_qa', 'QA', qa._id, qa.question?.substring(0, 50));
+    res.json({ message: qa.isHidden ? 'Q&A hidden' : 'Q&A visible', qa });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+exports.approveQA = async (req, res) => {
+  try {
+    const qa = await QA.findById(req.params.id);
+    if (!qa) return res.status(404).json({ message: 'Q&A not found' });
+
+    qa.isFlagged = false;
+    qa.flagReason = '';
+    qa.isHidden = false;
+    await qa.save();
+
+    await logAction(req.user._id, 'content.approve_qa', 'QA', qa._id, qa.question?.substring(0, 50));
+    res.json({ message: 'Q&A approved', qa });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+exports.removeQA = async (req, res) => {
+  try {
+    const qa = await QA.findById(req.params.id);
+    if (!qa) return res.status(404).json({ message: 'Q&A not found' });
+
+    await logAction(req.user._id, 'content.remove_qa', 'QA', qa._id, qa.question?.substring(0, 50));
+    await qa.deleteOne();
+    await Report.deleteMany({ targetType: 'qa', targetId: req.params.id });
+
+    res.json({ message: 'Q&A removed' });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+// ============================================================
+// HIGHLIGHT MODERATION
+// ============================================================
+
+exports.getFlaggedHighlights = async (req, res) => {
+  try {
+    const { status, page = 1, limit = 20 } = req.query;
+    const query = {};
+    if (status === 'flagged') query.isFlagged = true;
+    else if (status === 'hidden') query.isHidden = true;
+    else query.$or = [{ isFlagged: true }, { isHidden: true }];
+
+    const highlights = await Highlight.find(query)
+      .populate('author', 'name email profilePhoto')
+      .sort({ createdAt: -1 })
+      .skip((page - 1) * limit)
+      .limit(parseInt(limit));
+
+    const total = await Highlight.countDocuments(query);
+    res.json({ highlights, page: parseInt(page), totalPages: Math.ceil(total / limit), total });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+exports.flagHighlight = async (req, res) => {
+  try {
+    const { reason } = req.body;
+    const highlight = await Highlight.findById(req.params.id);
+    if (!highlight) return res.status(404).json({ message: 'Highlight not found' });
+
+    highlight.isFlagged = !highlight.isFlagged;
+    highlight.flagReason = highlight.isFlagged ? (reason || '') : '';
+    await highlight.save();
+
+    await logAction(req.user._id, highlight.isFlagged ? 'content.flag_highlight' : 'content.approve_highlight', 'Highlight', highlight._id, highlight.title, { reason });
+    res.json({ message: highlight.isFlagged ? 'Highlight flagged' : 'Highlight unflagged', highlight });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+exports.hideHighlight = async (req, res) => {
+  try {
+    const highlight = await Highlight.findById(req.params.id);
+    if (!highlight) return res.status(404).json({ message: 'Highlight not found' });
+
+    highlight.isHidden = !highlight.isHidden;
+    highlight.hiddenBy = highlight.isHidden ? req.user._id : null;
+    highlight.hiddenAt = highlight.isHidden ? new Date() : null;
+    await highlight.save();
+
+    await logAction(req.user._id, highlight.isHidden ? 'content.hide_highlight' : 'content.approve_highlight', 'Highlight', highlight._id, highlight.title);
+    res.json({ message: highlight.isHidden ? 'Highlight hidden' : 'Highlight visible', highlight });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+exports.approveHighlight = async (req, res) => {
+  try {
+    const highlight = await Highlight.findById(req.params.id);
+    if (!highlight) return res.status(404).json({ message: 'Highlight not found' });
+
+    highlight.isFlagged = false;
+    highlight.flagReason = '';
+    highlight.isHidden = false;
+    await highlight.save();
+
+    await logAction(req.user._id, 'content.approve_highlight', 'Highlight', highlight._id, highlight.title);
+    res.json({ message: 'Highlight approved', highlight });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+exports.removeHighlight = async (req, res) => {
+  try {
+    const highlight = await Highlight.findById(req.params.id);
+    if (!highlight) return res.status(404).json({ message: 'Highlight not found' });
+
+    await logAction(req.user._id, 'content.remove_highlight', 'Highlight', highlight._id, highlight.title);
+    await highlight.deleteOne();
+
+    res.json({ message: 'Highlight removed' });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+// ============================================================
+// MESSAGE MODERATION
+// ============================================================
+
+exports.getFlaggedMessages = async (req, res) => {
+  try {
+    const { status, page = 1, limit = 20 } = req.query;
+    const query = { isFlagged: true };
+
+    const messages = await Message.find(query)
+      .populate('sender', 'name email profilePhoto')
+      .populate('conversation', 'name isGroup')
+      .sort({ createdAt: -1 })
+      .skip((page - 1) * limit)
+      .limit(parseInt(limit));
+
+    const total = await Message.countDocuments(query);
+    res.json({ messages, page: parseInt(page), totalPages: Math.ceil(total / limit), total });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+exports.flagMessage = async (req, res) => {
+  try {
+    const { reason } = req.body;
+    const message = await Message.findById(req.params.id);
+    if (!message) return res.status(404).json({ message: 'Message not found' });
+
+    message.isFlagged = !message.isFlagged;
+    message.flagReason = message.isFlagged ? (reason || '') : '';
+    await message.save();
+
+    await logAction(req.user._id, message.isFlagged ? 'content.flag_message' : 'content.approve_message', 'Message', message._id, message.text?.substring(0, 50), { reason });
+    res.json({ message: message.isFlagged ? 'Message flagged' : 'Message unflagged', message });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+exports.removeMessage = async (req, res) => {
+  try {
+    const message = await Message.findById(req.params.id);
+    if (!message) return res.status(404).json({ message: 'Message not found' });
+
+    await logAction(req.user._id, 'content.remove_message', 'Message', message._id, message.text?.substring(0, 50));
+    await message.deleteOne();
+    await Report.deleteMany({ targetType: 'message', targetId: req.params.id });
+
+    res.json({ message: 'Message removed' });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+// ============================================================
 // BULK ACTIONS
 // ============================================================
 
@@ -475,13 +990,13 @@ exports.bulkAction = async (req, res) => {
       return res.status(400).json({ message: 'ids must contain between 1 and 100 items' });
     }
 
-    const validTypes = ['post', 'comment', 'story', 'reel', 'listing'];
+    const validTypes = ['post', 'comment', 'story', 'reel', 'listing', 'help_request', 'note', 'poll', 'qa', 'highlight', 'message'];
     const validActions = ['remove', 'flag', 'hide', 'approve', 'unflag', 'unhide'];
 
     if (!validTypes.includes(type)) return res.status(400).json({ message: 'Invalid content type' });
     if (!validActions.includes(action)) return res.status(400).json({ message: 'Invalid action' });
 
-    const Model = { post: Post, comment: Comment, story: Story, reel: Reel, listing: Listing }[type];
+    const Model = { post: Post, comment: Comment, story: Story, reel: Reel, listing: Listing, help_request: HelpRequest, note: Note, poll: Poll, qa: QA, highlight: Highlight, message: Message }[type];
     let result;
 
     if (action === 'remove') {
@@ -524,7 +1039,7 @@ exports.bulkAction = async (req, res) => {
 exports.shadowHide = async (req, res) => {
   try {
     const { type, id } = req.params;
-    const validTypes = { post: Post, comment: Comment, story: Story, reel: Reel, listing: Listing };
+    const validTypes = { post: Post, comment: Comment, story: Story, reel: Reel, listing: Listing, help_request: HelpRequest, note: Note, poll: Poll, qa: QA, highlight: Highlight };
     const Model = validTypes[type];
     if (!Model) return res.status(400).json({ message: 'Invalid content type' });
 

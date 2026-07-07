@@ -40,7 +40,7 @@ const {
 router.use(protect);
 
 // Video upload — must be before /:id routes to avoid conflicts
-router.post('/video-upload', upload.single('video'), uploadVideo);
+router.post('/video-upload', postLimiter, upload.single('video'), uploadVideo);
 
 router.post('/', postLimiter, checkRestriction('post'), upload.array('media', 5), upload.checkMediaSize, createPost);
 router.get('/feed', getFeed);

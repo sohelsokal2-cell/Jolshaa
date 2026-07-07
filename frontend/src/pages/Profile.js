@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useLanguage } from '../context/LanguageContext';
 import API from '../api/axios';
 import Layout from '../components/layout/Layout';
 import Avatar from '../components/ui/Avatar';
@@ -16,6 +17,7 @@ import CreatePostBox from '../components/CreatePostBox';
 
 const Profile = () => {
   const { user: currentUser } = useAuth();
+  const { t } = useLanguage();
   const { id } = useParams();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('posts');
@@ -168,16 +170,16 @@ const Profile = () => {
 
   const tabs = isOwnProfile
     ? [
-        { key: 'posts', label: 'Posts' },
-        { key: 'about', label: 'About' },
+        { key: 'posts', label: t('profile.posts') },
+        { key: 'about', label: t('profile.about') },
         { key: 'albums', label: 'Albums' },
         { key: 'help', label: '🤝 Help' },
       ]
     : [
-        { key: 'posts', label: 'Posts' },
-        { key: 'about', label: 'About' },
+        { key: 'posts', label: t('profile.posts') },
+        { key: 'about', label: t('profile.about') },
         { key: 'albums', label: 'Albums' },
-        { key: 'friends', label: 'Friends', count: profileUser.friendCount || 0 },
+        { key: 'friends', label: t('profile.friends'), count: profileUser.friendCount || 0 },
         { key: 'help', label: '🤝 Help' },
       ];
 
@@ -242,7 +244,7 @@ const Profile = () => {
                   className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium bg-jolshaa-teal text-jolshaa-on-teal hover:bg-jolshaa-teal-container transition-colors shadow-ambient"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
-                  Edit profile
+                  {t('profile.editProfile')}
                 </Link>
               )}
               {!isOwnProfile && (
@@ -298,7 +300,7 @@ const Profile = () => {
                 )}
               </div>
               <p className="text-xs text-jolshaa-on-surface-variant/80">
-                Joined {new Date(profileUser.createdAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+                {t('profile.joined')} {new Date(profileUser.createdAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
               </p>
             </div>
           </div>
@@ -376,7 +378,7 @@ const Profile = () => {
                       )}
                       <span className="flex items-center gap-2">
                         <svg className="w-4 h-4 text-jolshaa-outline flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
-                        Joined {new Date(profileUser.createdAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+                        {t('profile.joined')} {new Date(profileUser.createdAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
                       </span>
                     </div>
                   </div>
@@ -417,7 +419,7 @@ const Profile = () => {
                       <svg className="w-8 h-8 text-jolshaa-outline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" /></svg>
                     </div>
                     <p className="text-sm text-jolshaa-on-surface-variant">
-                      {isOwnProfile ? "You haven't posted anything yet" : `${profileUser.name} hasn't posted yet`}
+                      {t('profile.noPosts')}
                     </p>
                   </div>
                 ) : (

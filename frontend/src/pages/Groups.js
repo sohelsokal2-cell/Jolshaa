@@ -4,6 +4,7 @@ import API from '../api/axios';
 import GroupCard from '../components/GroupCard';
 import Toast from '../components/Toast';
 import Layout from '../components/layout/Layout';
+import { useLanguage } from '../context/LanguageContext';
 
 const Groups = () => {
   const [groups, setGroups] = useState([]);
@@ -11,6 +12,7 @@ const Groups = () => {
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
+  const { t } = useLanguage();
 
   useEffect(() => {
     fetchGroups();
@@ -40,12 +42,12 @@ const Groups = () => {
     <Layout>
       <div className="mt-2">
         <div className="flex items-center justify-between mb-6">
-          <h1 className="text-2xl font-bold font-display text-jolshaa-on-surface">Groups</h1>
+          <h1 className="text-2xl font-bold font-display text-jolshaa-on-surface">{t('groups.title')}</h1>
           <Link
             to="/groups/create"
             className="bg-jolshaa-teal text-jolshaa-on-teal px-4 py-2 rounded-lg text-sm font-medium hover:bg-jolshaa-teal-container transition-colors shadow-ambient"
           >
-            Create Group
+            {t('groups.createGroup')}
           </Link>
         </div>
 
@@ -69,7 +71,7 @@ const Groups = () => {
           <div className="text-center py-8 text-jolshaa-on-surface-variant">Loading groups...</div>
         ) : groups.length === 0 ? (
           <div className="text-center py-8 text-jolshaa-on-surface-variant">
-            No groups found. Create the first one!
+            {t('groups.noGroups')}
           </div>
         ) : (
           <>
