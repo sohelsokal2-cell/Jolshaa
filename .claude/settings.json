@@ -21,7 +21,8 @@
       "Bash(node -e \"require\\('./models/User.js'\\); require\\('./controllers/userController.js'\\); require\\('./routes/users.js'\\); console.log\\('backend OK'\\)\")",
       "Bash(node -e \"require\\('./models/Post.js'\\); require\\('./controllers/postController.js'\\); require\\('./controllers/userController.js'\\); require\\('./routes/posts.js'\\); require\\('./routes/users.js'\\); console.log\\('backend OK'\\)\")",
       "Bash(npm install *)",
-      "Bash(git commit -m ' *)"
+      "Bash(git commit -m ' *)",
+      "Bash(git push *)"
     ]
   }
 }
