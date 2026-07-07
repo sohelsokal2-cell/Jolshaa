@@ -23,9 +23,10 @@ const {
 } = require('../controllers/authController');
 const { protect } = require('../middleware/auth');
 const { verifyTurnstile } = require('../middleware/verifyTurnstile');
+const { authLimiter } = require('../middleware/rateLimiter');
 
-router.post('/signup', verifyTurnstile, signup);
-router.post('/login', verifyTurnstile, login);
+router.post('/signup', authLimiter, verifyTurnstile, signup);
+router.post('/login', authLimiter, verifyTurnstile, login);
 router.post('/login/2fa', loginVerify2FA);
 router.post('/logout', protect, logout);
 router.get('/me', protect, getMe);

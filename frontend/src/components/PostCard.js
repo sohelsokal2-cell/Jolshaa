@@ -18,6 +18,7 @@ import VideoAnalyticsDashboard from './VideoAnalyticsDashboard';
 import StarGiftButton from './StarGiftButton';
 import SponsoredPostLabel from './SponsoredPostLabel';
 import WhyAmISeeingThisModal from './WhyAmISeeingThisModal';
+import VerifiedBadge from './VerifiedBadge';
 
 const PostCard = ({ post, onDelete }) => {
   const { user } = useAuth();
@@ -124,8 +125,9 @@ const PostCard = ({ post, onDelete }) => {
               <Avatar src={post.author?.profilePhoto} alt={post.author?.name} size="md" />
             </Link>
             <div>
-              <Link to={`/profile/${post.author?._id}`} className="font-semibold text-sm text-jolshaa-on-surface hover:underline">
+              <Link to={`/profile/${post.author?._id}`} className="font-semibold text-sm text-jolshaa-on-surface hover:underline inline-flex items-center">
                 {post.author?.name}
+                {post.author?.isVerified && <VerifiedBadge size="sm" />}
               </Link>
               {post.collaborators?.length > 0 && (
                 <span className="text-xs text-jolshaa-on-surface-variant">

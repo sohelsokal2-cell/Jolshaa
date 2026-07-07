@@ -99,7 +99,7 @@ class FeedRanker {
       author: { $in: friendIds, $nin: blockedIds },
       visibility: { $in: ['public', 'friends'] },
     })
-      .populate('author', 'name profilePhoto')
+      .populate('author', 'name profilePhoto isVerified')
       .sort({ createdAt: -1 })
       .limit(50)
       .lean();
@@ -108,7 +108,7 @@ class FeedRanker {
       author: { $nin: [...friendIds, ...blockedIds, userId] },
       visibility: 'public',
     })
-      .populate('author', 'name profilePhoto')
+      .populate('author', 'name profilePhoto isVerified')
       .sort({ createdAt: -1 })
       .limit(50)
       .lean();

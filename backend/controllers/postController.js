@@ -98,23 +98,27 @@ exports.createPost = async (req, res) => {
       footnotes: footnotes || '',
     });
 
-    await post.populate('author', 'name profilePhoto');
+    await post.populate('author', 'name profilePhoto isVerified');
 
     // Notify tagged users
     if (tagged.length > 0) {
       const { getIO } = require('../socket');
-      for (const taggedUserId of tagged) {
-        if (taggedUserId.toString() === req.user._id.toString()) continue;
-        const notification = await Notification.create({
-          recipient: taggedUserId,
+      const taggedUserIds = tagged.filter(id => id.toString() !== req.user._id.toString());
+      if (taggedUserIds.length > 0) {
+        const notificationDocs = taggedUserIds.map(userId => ({
+          recipient: userId,
           sender: req.user._id,
           type: 'tag',
-          relatedPost: post._id
-        });
-        getIO().to(`user:${taggedUserId}`).emit('newNotification', {
-          ...notification.toObject(),
-          sender: { _id: req.user._id, name: req.user.name, profilePhoto: req.user.profilePhoto }
-        });
+          relatedPost: post._id,
+        }));
+        const notifications = await Notification.insertMany(notificationDocs);
+        const senderData = { _id: req.user._id, name: req.user.name, profilePhoto: req.user.profilePhoto };
+        for (const notification of notifications) {
+          getIO().to(`user:${notification.recipient}`).emit('newNotification', {
+            ...notification.toObject(),
+            sender: senderData,
+          });
+        }
       }
     }
 
@@ -198,7 +202,7 @@ exports.updatePost = async (req, res) => {
     post.isEdited = true;
 
     await post.save();
-    await post.populate('author', 'name profilePhoto');
+    await post.populate('author', 'name profilePhoto isVerified');
 
     res.json(post);
   } catch (error) {
@@ -376,7 +380,7 @@ exports.sharePost = async (req, res) => {
       sharedPost: originalPost._id
     });
 
-    await post.populate('author', 'name profilePhoto');
+    await post.populate('author', 'name profilePhoto isVerified');
     await post.populate({
       path: 'sharedPost',
       populate: { path: 'author', select: 'name profilePhoto' }
@@ -569,7 +573,7 @@ exports.schedulePost = async (req, res) => {
 exports.getPublicPost = async (req, res) => {
   try {
     const post = await Post.findById(req.params.id)
-      .populate('author', 'name profilePhoto')
+      .populate('author', 'name profilePhoto isVerified')
       .populate('sharedPost');
 
     if (!post) return res.status(404).json({ message: 'Post not found' });
