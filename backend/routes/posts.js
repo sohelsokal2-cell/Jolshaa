@@ -20,6 +20,9 @@ const {
   inviteCollaborator,
   acceptCollaboration,
   removeCollaborator,
+  toggleArchivePost,
+  toggleHidePostFromProfile,
+  bulkArchivePosts,
 } = require('../controllers/postController');
 const {
   addComment,
@@ -42,6 +45,8 @@ router.use(protect);
 // Video upload — must be before /:id routes to avoid conflicts
 router.post('/video-upload', postLimiter, upload.single('video'), uploadVideo);
 
+router.put('/bulk-archive', bulkArchivePosts);
+
 router.post('/', postLimiter, checkRestriction('post'), upload.array('media', 5), upload.checkMediaSize, createPost);
 router.get('/feed', getFeed);
 router.get('/saved/:userId', getSavedPosts);
@@ -57,6 +62,8 @@ router.put('/:id/save', toggleSavePost);
 router.post('/:id/comments', commentLimiter, addComment);
 router.get('/:id/comments', getComments);
 router.put('/:id/schedule', schedulePost);
+router.put('/:id/archive', toggleArchivePost);
+router.put('/:id/hide-from-profile', toggleHidePostFromProfile);
 router.post('/:id/collaborators', inviteCollaborator);
 router.put('/:id/collaborators/accept', acceptCollaboration);
 router.delete('/:id/collaborators/:userId', removeCollaborator);

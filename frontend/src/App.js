@@ -20,6 +20,8 @@ import CreateGroup from './pages/CreateGroup';
 import Pages from './pages/Pages';
 import PagePage from './pages/PagePage';
 import CreatePage from './pages/CreatePage';
+import ReviewsGivenPage from './pages/ReviewsGivenPage';
+import CheckinsListPage from './pages/CheckinsListPage';
 import SearchResults from './pages/SearchResults';
 import PrivacySettings from './pages/PrivacySettings';
 import Security from './pages/Security';
@@ -83,6 +85,8 @@ const AppContent = () => {
         <Route path="/messages/:id" element={<ProtectedRoute><Messages /></ProtectedRoute>} />
         <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
         <Route path="/profile/:id" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+        <Route path="/profile/:id/reviews-given" element={<ProtectedRoute><ReviewsGivenPage /></ProtectedRoute>} />
+        <Route path="/profile/:id/checkins" element={<ProtectedRoute><CheckinsListPage /></ProtectedRoute>} />
         <Route path="/edit-profile" element={<ProtectedRoute><EditProfile /></ProtectedRoute>} />
         <Route path="/groups" element={<ProtectedRoute><Groups /></ProtectedRoute>} />
         <Route path="/groups/create" element={<ProtectedRoute><CreateGroup /></ProtectedRoute>} />

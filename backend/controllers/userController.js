@@ -107,6 +107,10 @@ exports.getUserById = async (req, res) => {
       educationHistory: user.educationHistory || [],
       location: user.location,
       website: user.website || '',
+      hometown: user.hometown || '',
+      currentCity: user.currentCity || '',
+      languagesSpoken: user.languagesSpoken || [],
+      relationshipStatus: user.relationshipStatus || 'prefer not to say',
       createdAt: user.createdAt,
       friendStatus,
       friendRequestId,
@@ -116,7 +120,17 @@ exports.getUserById = async (req, res) => {
       friends,
       followerCount,
       followingCount,
-      pinnedPost: user.pinnedPost || null
+      pinnedPost: user.pinnedPost || null,
+      profileSectionSettings: user.profileSectionSettings && user.profileSectionSettings.length > 0
+        ? user.profileSectionSettings
+        : [
+            { key: 'posts', enabled: true, order: 0 },
+            { key: 'about', enabled: true, order: 1 },
+            { key: 'albums', enabled: true, order: 2 },
+            { key: 'friends', enabled: true, order: 3 },
+            { key: 'reels', enabled: true, order: 4 },
+          ],
+      profileLocked: !!user.profileLocked
     };
 
     // Show email only to self
@@ -133,6 +147,27 @@ exports.getUserById = async (req, res) => {
       profile.gender = user.gender;
     }
 
+    // Profile Lock: non-friend visitors get a stripped-down view
+    const isLockedFromViewer = user.profileLocked && !isOwnProfile && friendStatus !== 'friends';
+    if (isLockedFromViewer) {
+      profile.isLimitedView = true;
+      profile.bio = '';
+      profile.education = '';
+      profile.work = '';
+      profile.workHistory = [];
+      profile.educationHistory = [];
+      profile.location = '';
+      profile.website = '';
+      profile.hometown = '';
+      profile.currentCity = '';
+      profile.languagesSpoken = [];
+      profile.relationshipStatus = 'prefer not to say';
+      profile.friends = [];
+      profile.mutualFriends = [];
+      profile.pinnedPost = null;
+      profile.profileSectionSettings = profile.profileSectionSettings.map(s => ({ ...s, enabled: false }));
+    }
+
     res.json(profile);
   } catch (error) {
     res.status(500).json({ message: 'Server error' });
@@ -146,17 +181,23 @@ exports.getUserPosts = async (req, res) => {
     const Comment = require('../models/Comment');
 
     // Check block status
-    const targetUser = await User.findById(req.params.id).select('blockedUsers');
+    const targetUser = await User.findById(req.params.id).select('blockedUsers friends profileLocked');
     if (!targetUser) return res.status(404).json({ message: 'User not found' });
     if (hasId(targetUser.blockedUsers, req.user._id)) {
       return res.status(403).json({ message: 'User not found' });
     }
-    const currentUser = await User.findById(req.user._id).select('blockedUsers');
+    const currentUser = await User.findById(req.user._id).select('blockedUsers friends');
     if (hasId(currentUser.blockedUsers, req.params.id)) {
       return res.status(403).json({ message: 'You have blocked this user' });
     }
 
     const isOwnProfile = req.user._id.toString() === req.params.id;
+    const isFriend = hasId(targetUser.friends, req.user._id);
+
+    // Profile Lock: non-friend visitors see no posts
+    if (targetUser.profileLocked && !isOwnProfile && !isFriend) {
+      return res.json({ posts: [], page: 1, totalPages: 0, total: 0, isLimitedView: true });
+    }
 
     // Determine visibility filter
     let visibilityFilter;
@@ -164,10 +205,6 @@ exports.getUserPosts = async (req, res) => {
       // Own profile: see all own posts
       visibilityFilter = {};
     } else {
-      // Check if viewer is a friend
-      const viewer = await User.findById(req.user._id).select('friends');
-      const isFriend = hasId(viewer.friends, req.params.id);
-
       if (isFriend) {
         // Friends can see public + friends-only posts
         visibilityFilter = { visibility: { $in: ['public', 'friends'] } };
@@ -180,11 +217,31 @@ exports.getUserPosts = async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
     const skip = (page - 1) * limit;
+    const manage = isOwnProfile && req.query.manage === 'true';
 
     const query = { author: req.params.id, ...visibilityFilter };
 
+    // Manage Posts mode (owner only): show only archived/hidden posts.
+    // Default mode: exclude archived and hidden-from-profile posts for everyone, including the owner's normal view.
+    if (manage) {
+      query.$or = [{ status: 'archived' }, { hiddenFromProfile: true }];
+    } else {
+      query.status = { $ne: 'archived' };
+      query.hiddenFromProfile = { $ne: true };
+    }
+
+    if (req.query.type === 'photos') {
+      query['media.type'] = 'image';
+    } else if (req.query.type === 'videos') {
+      query['media.type'] = 'video';
+    } else if (req.query.type === 'text') {
+      query.$and = [{ $or: [{ media: { $exists: false } }, { media: { $size: 0 } }] }];
+    }
+
+    const sortOrder = req.query.sort === 'oldest' ? 1 : -1;
+
     const posts = await Post.find(query)
-      .sort({ createdAt: -1 })
+      .sort({ createdAt: sortOrder })
       .skip(skip)
       .limit(limit)
       .populate('author', 'name profilePhoto')
@@ -243,13 +300,52 @@ exports.getUserPosts = async (req, res) => {
   }
 };
 
+// ── Get User Reels (Short-form videos) ──────────────────────────────
+
+exports.getUserReels = async (req, res) => {
+  try {
+    const Post = require('../models/Post');
+
+    const isOwnProfile = req.user._id.toString() === req.params.id;
+    const targetUser = await User.findById(req.params.id).select('friends profileLocked');
+    if (!targetUser) return res.status(404).json({ message: 'User not found' });
+    const isFriend = hasId(targetUser.friends, req.user._id);
+
+    if (targetUser.profileLocked && !isOwnProfile && !isFriend) {
+      return res.json({ reels: [], isLimitedView: true });
+    }
+
+    let visibilityFilter;
+    if (isOwnProfile) {
+      visibilityFilter = {};
+    } else {
+      visibilityFilter = isFriend
+        ? { visibility: { $in: ['public', 'friends'] } }
+        : { visibility: 'public' };
+    }
+
+    const reels = await Post.find({
+      author: req.params.id,
+      isShortForm: true,
+      ...visibilityFilter
+    })
+      .sort({ createdAt: -1 })
+      .limit(50)
+      .select('mediaUrl mediaType viewCount createdAt caption');
+
+    res.json({ reels });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
 exports.updateProfile = async (req, res) => {
   try {
     if (req.user._id.toString() !== req.params.id) {
       return res.status(403).json({ message: 'You can only update your own profile' });
     }
 
-    const allowedFields = ['name', 'phone', 'bio', 'dateOfBirth', 'gender', 'education', 'work', 'location', 'website'];
+    const allowedFields = ['name', 'phone', 'bio', 'dateOfBirth', 'gender', 'education', 'work', 'location', 'website', 'relationshipStatus', 'hometown', 'currentCity', 'languagesSpoken'];
     const updates = {};
     allowedFields.forEach(field => {
       if (req.body[field] !== undefined) updates[field] = req.body[field];
@@ -289,6 +385,58 @@ exports.updateProfile = async (req, res) => {
       website: user.website,
       createdAt: user.createdAt
     });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+exports.toggleProfileLock = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    user.profileLocked = !user.profileLocked;
+    await user.save();
+
+    res.json({ profileLocked: user.profileLocked });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+const VALID_SECTION_KEYS = ['posts', 'about', 'albums', 'friends', 'reels'];
+
+exports.updateProfileSections = async (req, res) => {
+  try {
+    const { sections } = req.body;
+    if (!Array.isArray(sections) || sections.length === 0) {
+      return res.status(400).json({ message: 'sections must be a non-empty array' });
+    }
+
+    const seen = new Set();
+    for (const s of sections) {
+      if (!VALID_SECTION_KEYS.includes(s.key) || seen.has(s.key)) {
+        return res.status(400).json({ message: `Invalid or duplicate section key: ${s.key}` });
+      }
+      seen.add(s.key);
+    }
+    if (seen.size !== VALID_SECTION_KEYS.length) {
+      return res.status(400).json({ message: 'All profile sections must be included' });
+    }
+
+    const normalized = sections.map((s, i) => ({
+      key: s.key,
+      enabled: s.enabled !== false,
+      order: i,
+    }));
+
+    const user = await User.findByIdAndUpdate(
+      req.user._id,
+      { profileSectionSettings: normalized },
+      { new: true, runValidators: true }
+    ).select('profileSectionSettings');
+
+    res.json({ profileSectionSettings: user.profileSectionSettings });
   } catch (error) {
     res.status(500).json({ message: 'Server error' });
   }

@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
@@ -14,6 +14,7 @@ import FriendButton from '../components/FriendButton';
 import SubscribeButton from '../components/SubscribeButton';
 import SubscriptionTiersPage from './SubscriptionTiersPage';
 import StoryHighlights from '../components/StoryHighlights';
+import FriendsPreviewGrid from '../components/FriendsPreviewGrid';
 import CreatePostBox from '../components/CreatePostBox';
 import WorkHistoryList from '../components/WorkHistoryList';
 import EducationHistoryList from '../components/EducationHistoryList';
@@ -22,6 +23,9 @@ import FollowingListModal from '../components/FollowingListModal';
 import PinnedPostCard from '../components/PinnedPostCard';
 import ProfileCompletionCard from '../components/ProfileCompletionCard';
 import SharedInCommonCard from '../components/SharedInCommonCard';
+import FriendsTabContent from '../components/FriendsTabContent';
+import ReelsTabContent from '../components/ReelsTabContent';
+import ManageSectionsModal from '../components/ManageSectionsModal';
 
 const Profile = () => {
   const { user: currentUser } = useAuth();
@@ -43,16 +47,36 @@ const Profile = () => {
   const [helpLoading, setHelpLoading] = useState(false);
   const [messageLoading, setMessageLoading] = useState(false);
   const [profileError, setProfileError] = useState(null);
+  const [showManageSections, setShowManageSections] = useState(false);
   const [postsError, setPostsError] = useState(null);
+  const [postFilter, setPostFilter] = useState('all');
+  const [postSort, setPostSort] = useState('newest');
+  const [postViewMode, setPostViewMode] = useState('list');
+  const [managePostsMode, setManagePostsMode] = useState(false);
+  const [selectedPostIds, setSelectedPostIds] = useState([]);
+  const [bulkActionLoading, setBulkActionLoading] = useState(false);
   const [friendsError, setFriendsError] = useState(null);
   const [helpError, setHelpError] = useState(null);
   const [onlineStatus, setOnlineStatus] = useState(null);
   const [showFollowers, setShowFollowers] = useState(false);
   const [showFollowing, setShowFollowing] = useState(false);
   const [pinnedPost, setPinnedPost] = useState(null);
+  const [showMoreMenu, setShowMoreMenu] = useState(false);
+  const moreMenuRef = useRef(null);
 
   const isOwnProfile = !id || id === currentUser?.id;
   const profileUserId = profileUser?.id || profileUser?._id;
+
+  // If a visitor lands on a section the owner has hidden, fall back to Posts
+  useEffect(() => {
+    if (!profileUser || isOwnProfile) return;
+    const settings = profileUser.profileSectionSettings;
+    if (!settings || settings.length === 0) return;
+    const visibleKeys = settings.filter(s => s.enabled).map(s => s.key);
+    if (activeTab !== 'more' && !visibleKeys.includes(activeTab)) {
+      setActiveTab('posts');
+    }
+  }, [profileUser, isOwnProfile]);
 
   // Real-time online status from Socket.io
   const isSocketOnline = useMemo(() => {
@@ -110,12 +134,31 @@ const Profile = () => {
     }
   }, [activeTab, profileUser]);
 
+  useEffect(() => {
+    if (activeTab === 'posts' && profileUser) {
+      setPosts([]);
+      setPage(1);
+      fetchPosts(1);
+    }
+  }, [postFilter, postSort, managePostsMode]);
+
   // Fetch online status when viewing another user's profile
   useEffect(() => {
     if (!isOwnProfile && profileUser) {
       fetchOnlineStatus(profileUser.id || profileUser._id);
     }
   }, [isOwnProfile, profileUser]);
+
+  // Close more menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (moreMenuRef.current && !moreMenuRef.current.contains(e.target)) {
+        setShowMoreMenu(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const fetchUserProfile = async (userId) => {
     setProfileError(null);
@@ -155,11 +198,23 @@ const Profile = () => {
     refreshProfile();
   };
 
+  const handleToggleProfileLock = async () => {
+    try {
+      const res = await API.put('/users/profile-lock');
+      setProfileUser(prev => ({ ...prev, profileLocked: res.data.profileLocked }));
+    } catch (err) {
+      console.error('Failed to toggle profile lock');
+    }
+  };
+
   const fetchPosts = async (pageNum) => {
     setPostsLoading(true);
     setPostsError(null);
     try {
-      const res = await API.get(`/users/${profileUser.id}/posts?page=${pageNum}&limit=10`);
+      const params = new URLSearchParams({ page: pageNum, limit: 10, sort: postSort });
+      if (postFilter !== 'all') params.set('type', postFilter);
+      if (isOwnProfile && managePostsMode) params.set('manage', 'true');
+      const res = await API.get(`/users/${profileUser.id}/posts?${params.toString()}`);
       if (pageNum === 1) setPosts(res.data.posts);
       else setPosts(prev => [...prev, ...res.data.posts]);
       setTotalPages(res.data.totalPages);
@@ -207,6 +262,35 @@ const Profile = () => {
 
   const handlePostCreated = (newPost) => {
     setPosts(prev => [newPost, ...prev]);
+  };
+
+  const handlePostArchiveToggle = (postId) => {
+    // Whichever mode we're in, the post no longer belongs in the current list once toggled
+    setPosts(prev => prev.filter(p => p._id !== postId));
+  };
+
+  const handlePostHideToggle = (postId) => {
+    setPosts(prev => prev.filter(p => p._id !== postId));
+  };
+
+  const toggleSelectPost = (postId) => {
+    setSelectedPostIds(prev =>
+      prev.includes(postId) ? prev.filter(id => id !== postId) : [...prev, postId]
+    );
+  };
+
+  const handleBulkAction = async (action) => {
+    if (selectedPostIds.length === 0) return;
+    setBulkActionLoading(true);
+    try {
+      await API.put('/posts/bulk-archive', { postIds: selectedPostIds, action });
+      setPosts(prev => prev.filter(p => !selectedPostIds.includes(p._id)));
+      setSelectedPostIds([]);
+    } catch (err) {
+      console.error('Bulk action failed');
+    } finally {
+      setBulkActionLoading(false);
+    }
   };
 
   const handleMessage = async () => {
@@ -292,21 +376,35 @@ const Profile = () => {
     .flatMap(p => (p.media || []).filter(isImageMedia).map(getMediaUrl))
     .slice(0, 4);
 
-  const tabs = isOwnProfile
-    ? [
-        { key: 'posts', label: t('profile.posts') },
-        { key: 'about', label: t('profile.about') },
-        { key: 'albums', label: 'Albums' },
-        { key: 'friends', label: t('profile.friends'), count: profileUser.friendCount || 0 },
-        { key: 'help', label: '🤝 Help' },
-      ]
-    : [
-        { key: 'posts', label: t('profile.posts') },
-        { key: 'about', label: t('profile.about') },
-        { key: 'albums', label: 'Albums' },
-        { key: 'friends', label: t('profile.friends'), count: profileUser.friendCount || 0 },
-        { key: 'help', label: '🤝 Help' },
-      ];
+  const sectionLabels = {
+    posts: t('profile.posts'),
+    about: t('profile.about'),
+    albums: 'Albums',
+    friends: t('profile.friends'),
+    reels: 'Reels',
+  };
+  const defaultSectionSettings = [
+    { key: 'posts', enabled: true, order: 0 },
+    { key: 'about', enabled: true, order: 1 },
+    { key: 'albums', enabled: true, order: 2 },
+    { key: 'friends', enabled: true, order: 3 },
+    { key: 'reels', enabled: true, order: 4 },
+  ];
+  const sectionSettings = profileUser.profileSectionSettings && profileUser.profileSectionSettings.length > 0
+    ? profileUser.profileSectionSettings
+    : defaultSectionSettings;
+  const orderedSections = [...sectionSettings].sort((a, b) => a.order - b.order);
+  const visibleSections = orderedSections.filter(s => isOwnProfile || s.enabled);
+
+  const tabs = [
+    ...visibleSections.map(s => ({
+      key: s.key,
+      label: sectionLabels[s.key] || s.key,
+      count: s.key === 'friends' ? (profileUser.friendCount || 0) : undefined,
+      hidden: isOwnProfile && !s.enabled,
+    })),
+    { key: 'more', label: 'More ▾' },
+  ];
 
   return (
     <Layout showSidebar={true}>
@@ -487,9 +585,20 @@ const Profile = () => {
           </div>
         </div>
 
+        {/* Friends Preview Grid */}
+        {profileUser.friendCount > 0 && (
+          <div className="px-4 sm:px-0 mb-4">
+            <FriendsPreviewGrid
+              friends={profileUser.friends || []}
+              friendCount={profileUser.friendCount}
+              onSeeAll={visibleSections.some(s => s.key === 'friends') ? () => setActiveTab('friends') : undefined}
+            />
+          </div>
+        )}
+
         {/* Story Highlights */}
         <div className="px-4 sm:px-0 mb-4">
-          <StoryHighlights userId={profileUser.id || profileUser._id} />
+          <StoryHighlights userId={profileUser.id || profileUser._id} isOwnProfile={isOwnProfile} />
         </div>
 
         {/* Subscription Tiers (for creators) */}
@@ -497,6 +606,32 @@ const Profile = () => {
           <div className="px-4 sm:px-0 mb-4">
             <div className="bg-jolshaa-surface-container-lowest rounded-xl shadow-ambient p-4">
               <SubscriptionTiersPage creatorId={profileUser.id || profileUser._id} />
+            </div>
+          </div>
+        )}
+
+        {/* Profile Lock banners */}
+        {isOwnProfile && profileUser.profileLocked && (
+          <div className="px-4 sm:px-0 mb-4">
+            <div className="flex items-center gap-3 bg-jolshaa-teal/10 border border-jolshaa-teal/20 rounded-xl p-4">
+              <svg className="w-5 h-5 text-jolshaa-teal flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+              </svg>
+              <p className="text-sm text-jolshaa-on-surface">
+                Your profile is locked. Only friends can see your posts, photos, and full profile details.
+              </p>
+            </div>
+          </div>
+        )}
+        {!isOwnProfile && profileUser.isLimitedView && (
+          <div className="px-4 sm:px-0 mb-4">
+            <div className="flex items-center gap-3 bg-jolshaa-surface-container-low border border-jolshaa-outline-variant rounded-xl p-4">
+              <svg className="w-5 h-5 text-jolshaa-on-surface-variant flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+              </svg>
+              <p className="text-sm text-jolshaa-on-surface-variant">
+                {profileUser.name} has a locked profile. Add them as a friend to see their posts and full profile.
+              </p>
             </div>
           </div>
         )}
@@ -519,26 +654,108 @@ const Profile = () => {
         <div className="bg-jolshaa-surface-container-lowest rounded-xl shadow-ambient mb-4">
           <div className="flex overflow-x-auto border-b border-jolshaa-outline-variant scrollbar-hide">
             {tabs.map((tab) => (
-              <button
-                key={tab.key}
-                onClick={() => setActiveTab(tab.key)}
-                className={`flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors whitespace-nowrap flex-shrink-0 ${
-                  activeTab === tab.key
-                    ? 'border-jolshaa-teal text-jolshaa-teal'
-                    : 'border-transparent text-jolshaa-on-surface-variant hover:text-jolshaa-on-surface hover:border-jolshaa-outline-variant'
-                }`}
-              >
-                {tab.label}
-                {tab.count !== undefined && (
-                  <span className={`ml-1 px-1.5 py-0.5 rounded-full text-2xs ${
+              tab.key === 'more' ? (
+                <div key="more" className="relative" ref={moreMenuRef}>
+                  <button
+                    onClick={() => setShowMoreMenu(!showMoreMenu)}
+                    className={`flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors whitespace-nowrap flex-shrink-0 ${
+                      showMoreMenu
+                        ? 'border-jolshaa-teal text-jolshaa-teal'
+                        : 'border-transparent text-jolshaa-on-surface-variant hover:text-jolshaa-on-surface hover:border-jolshaa-outline-variant'
+                    }`}
+                  >
+                    {tab.label}
+                  </button>
+                  {showMoreMenu && (
+                    <div className="absolute left-0 top-full mt-0 w-56 bg-jolshaa-surface-container-lowest rounded-xl shadow-elevated border border-jolshaa-outline-variant z-30 py-1">
+                      <Link
+                        to={`/profile/${id || ''}/checkins`}
+                        onClick={() => setShowMoreMenu(false)}
+                        className="flex items-center gap-3 px-4 py-2.5 text-sm text-jolshaa-on-surface hover:bg-jolshaa-surface-container-low transition-colors"
+                      >
+                        <svg className="w-4 h-4 text-jolshaa-on-surface-variant" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                        </svg>
+                        Check-ins
+                      </Link>
+                      <Link
+                        to="/events"
+                        onClick={() => setShowMoreMenu(false)}
+                        className="flex items-center gap-3 px-4 py-2.5 text-sm text-jolshaa-on-surface hover:bg-jolshaa-surface-container-low transition-colors"
+                      >
+                        <svg className="w-4 h-4 text-jolshaa-on-surface-variant" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                        Events
+                      </Link>
+                      <Link
+                        to={`/profile/${id || ''}/reviews-given`}
+                        onClick={() => setShowMoreMenu(false)}
+                        className="flex items-center gap-3 px-4 py-2.5 text-sm text-jolshaa-on-surface hover:bg-jolshaa-surface-container-low transition-colors"
+                      >
+                        <svg className="w-4 h-4 text-jolshaa-on-surface-variant" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.196-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+                        </svg>
+                        Reviews
+                      </Link>
+                      <Link
+                        to="/groups"
+                        onClick={() => setShowMoreMenu(false)}
+                        className="flex items-center gap-3 px-4 py-2.5 text-sm text-jolshaa-on-surface hover:bg-jolshaa-surface-container-low transition-colors"
+                      >
+                        <svg className="w-4 h-4 text-jolshaa-on-surface-variant" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a4 4 0 00-3-3.87M9 20H4v-2a4 4 0 013-3.87m6-2.13a4 4 0 10-4-4 4 4 0 004 4zm6 0a4 4 0 10-4-4" />
+                        </svg>
+                        Groups
+                      </Link>
+                      {isOwnProfile && (
+                        <>
+                          <div className="border-t border-jolshaa-outline-variant my-1" />
+                          <button
+                            onClick={() => { setShowMoreMenu(false); setShowManageSections(true); }}
+                            className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-jolshaa-on-surface hover:bg-jolshaa-surface-container-low transition-colors"
+                          >
+                            <svg className="w-4 h-4 text-jolshaa-on-surface-variant" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+                            </svg>
+                            Manage Sections
+                          </button>
+                          <button
+                            onClick={() => { setShowMoreMenu(false); handleToggleProfileLock(); }}
+                            className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-jolshaa-on-surface hover:bg-jolshaa-surface-container-low transition-colors"
+                          >
+                            <svg className="w-4 h-4 text-jolshaa-on-surface-variant" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                            </svg>
+                            {profileUser.profileLocked ? 'Unlock Profile' : 'Lock Profile'}
+                          </button>
+                        </>
+                      )}
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <button
+                  key={tab.key}
+                  onClick={() => setActiveTab(tab.key)}
+                  className={`flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors whitespace-nowrap flex-shrink-0 ${
                     activeTab === tab.key
-                      ? 'bg-jolshaa-teal/10 text-jolshaa-teal'
-                      : 'bg-jolshaa-surface-container text-jolshaa-on-surface-variant'
-                  }`}>
-                    {tab.count}
-                  </span>
-                )}
-              </button>
+                      ? 'border-jolshaa-teal text-jolshaa-teal'
+                      : 'border-transparent text-jolshaa-on-surface-variant hover:text-jolshaa-on-surface hover:border-jolshaa-outline-variant'
+                  }`}
+                >
+                  {tab.label}
+                  {tab.count !== undefined && (
+                    <span className={`ml-1 px-1.5 py-0.5 rounded-full text-2xs ${
+                      activeTab === tab.key
+                        ? 'bg-jolshaa-teal/10 text-jolshaa-teal'
+                        : 'bg-jolshaa-surface-container text-jolshaa-on-surface-variant'
+                    }`}>
+                      {tab.count}
+                    </span>
+                  )}
+                </button>
+              )
             ))}
           </div>
         </div>
@@ -607,6 +824,88 @@ const Profile = () => {
               <div className="flex-1 min-w-0 w-full space-y-4">
                 {isOwnProfile && <CreatePostBox onPostCreated={handlePostCreated} />}
 
+                {/* Post Filters + Manage Posts + View Toggle */}
+                <div className="flex flex-wrap items-center gap-2 bg-jolshaa-surface-container-lowest rounded-xl shadow-ambient p-3">
+                  <select
+                    value={postFilter}
+                    onChange={(e) => setPostFilter(e.target.value)}
+                    className="px-3 py-1.5 rounded-lg text-sm bg-jolshaa-surface-container border border-jolshaa-outline-variant text-jolshaa-on-surface focus:outline-none"
+                  >
+                    <option value="all">All Posts</option>
+                    <option value="photos">Photos</option>
+                    <option value="videos">Videos</option>
+                    <option value="text">Text Only</option>
+                  </select>
+                  <select
+                    value={postSort}
+                    onChange={(e) => setPostSort(e.target.value)}
+                    className="px-3 py-1.5 rounded-lg text-sm bg-jolshaa-surface-container border border-jolshaa-outline-variant text-jolshaa-on-surface focus:outline-none"
+                  >
+                    <option value="newest">Newest First</option>
+                    <option value="oldest">Oldest First</option>
+                  </select>
+                  <div className="flex items-center gap-1 ml-auto">
+                    <button
+                      onClick={() => setPostViewMode('list')}
+                      aria-label="List view"
+                      className={`p-2 rounded-lg transition-colors ${postViewMode === 'list' ? 'bg-jolshaa-teal/10 text-jolshaa-teal' : 'text-jolshaa-on-surface-variant hover:bg-jolshaa-surface-container'}`}
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" /></svg>
+                    </button>
+                    <button
+                      onClick={() => setPostViewMode('grid')}
+                      aria-label="Grid view"
+                      className={`p-2 rounded-lg transition-colors ${postViewMode === 'grid' ? 'bg-jolshaa-teal/10 text-jolshaa-teal' : 'text-jolshaa-on-surface-variant hover:bg-jolshaa-surface-container'}`}
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4h7v7H4V4zm9 0h7v7h-7V4zM4 13h7v7H4v-7zm9 0h7v7h-7v-7z" /></svg>
+                    </button>
+                    {isOwnProfile && (
+                      <button
+                        onClick={() => { setManagePostsMode(!managePostsMode); setSelectedPostIds([]); }}
+                        className={`ml-1 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${managePostsMode ? 'bg-jolshaa-teal text-jolshaa-on-teal' : 'bg-jolshaa-surface-container text-jolshaa-on-surface hover:bg-jolshaa-surface-container-low'}`}
+                      >
+                        {managePostsMode ? 'Exit Manage Posts' : 'Manage Posts'}
+                      </button>
+                    )}
+                  </div>
+                </div>
+                {managePostsMode && (
+                  <p className="text-xs text-jolshaa-on-surface-variant px-1">
+                    Showing archived and hidden posts only. Unarchive or unhide a post to bring it back to your profile.
+                  </p>
+                )}
+                {managePostsMode && selectedPostIds.length > 0 && (
+                  <div className="flex flex-wrap items-center gap-2 bg-jolshaa-teal/10 rounded-xl p-3">
+                    <span className="text-sm font-medium text-jolshaa-on-surface">
+                      {selectedPostIds.length} selected
+                    </span>
+                    <div className="flex items-center gap-2 ml-auto">
+                      <button
+                        onClick={() => handleBulkAction('unarchive')}
+                        disabled={bulkActionLoading}
+                        className="px-3 py-1.5 rounded-lg text-sm font-medium bg-jolshaa-surface-container-lowest text-jolshaa-on-surface hover:bg-jolshaa-surface-container disabled:opacity-50"
+                      >
+                        Unarchive
+                      </button>
+                      <button
+                        onClick={() => handleBulkAction('unhide')}
+                        disabled={bulkActionLoading}
+                        className="px-3 py-1.5 rounded-lg text-sm font-medium bg-jolshaa-surface-container-lowest text-jolshaa-on-surface hover:bg-jolshaa-surface-container disabled:opacity-50"
+                      >
+                        Unhide
+                      </button>
+                      <button
+                        onClick={() => setSelectedPostIds([])}
+                        disabled={bulkActionLoading}
+                        className="px-3 py-1.5 rounded-lg text-sm font-medium text-jolshaa-on-surface-variant hover:bg-jolshaa-surface-container-lowest disabled:opacity-50"
+                      >
+                        Clear
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+
                 {postsLoading && posts.length === 0 ? (
                   <>
                     <PostSkeleton />
@@ -628,13 +927,52 @@ const Profile = () => {
                       <svg className="w-8 h-8 text-jolshaa-outline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" /></svg>
                     </div>
                     <p className="text-sm text-jolshaa-on-surface-variant">
-                      {t('profile.noPosts')}
+                      {managePostsMode ? 'No archived or hidden posts' : t('profile.noPosts')}
                     </p>
                   </div>
+                ) : postViewMode === 'grid' ? (
+                  <>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                      {posts.map(post => {
+                        const thumb = post.video?.thumbnailUrl || post.media?.[0]?.thumbnailUrl || post.media?.[0]?.url;
+                        return (
+                          <button
+                            key={post._id}
+                            onClick={() => { setPostViewMode('list'); }}
+                            className="relative aspect-square rounded-lg overflow-hidden bg-jolshaa-surface-container group"
+                          >
+                            {thumb ? (
+                              <img src={thumb} alt="" className="w-full h-full object-cover group-hover:opacity-90 transition-opacity" />
+                            ) : (
+                              <div className="w-full h-full flex items-center justify-center p-3 text-xs text-jolshaa-on-surface-variant text-center">
+                                {post.text?.slice(0, 80) || 'Post'}
+                              </div>
+                            )}
+                            {post.media?.[0]?.type === 'video' && (
+                              <div className="absolute top-1.5 right-1.5 bg-black/50 rounded-full p-1">
+                                <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>
+                              </div>
+                            )}
+                          </button>
+                        );
+                      })}
+                    </div>
+                    {page < totalPages && (
+                      <div className="flex justify-center py-4">
+                        <button
+                          onClick={loadMore}
+                          disabled={postsLoading}
+                          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium bg-jolshaa-surface-container-low text-jolshaa-on-surface hover:bg-jolshaa-surface-container transition-colors disabled:opacity-50"
+                        >
+                          {postsLoading ? 'Loading…' : 'Load more'}
+                        </button>
+                      </div>
+                    )}
+                  </>
                 ) : (
                   <>
                     {/* Pinned Post */}
-                    {pinnedPost && (
+                    {!managePostsMode && pinnedPost && (
                       <PinnedPostCard
                         post={pinnedPost}
                         onDelete={handleDeletePost}
@@ -642,15 +980,28 @@ const Profile = () => {
                       />
                     )}
                     {posts
-                      .filter(post => !pinnedPost || post._id !== pinnedPost._id)
+                      .filter(post => managePostsMode || !pinnedPost || post._id !== pinnedPost._id)
                       .map(post => (
-                        <PostCard
-                          key={post._id}
-                          post={post}
-                          onDelete={handleDeletePost}
-                          isPinned={false}
-                          onPin={isOwnProfile ? () => { fetchPinnedPost(); } : undefined}
-                        />
+                        <div key={post._id} className="flex items-start gap-2">
+                          {managePostsMode && (
+                            <input
+                              type="checkbox"
+                              checked={selectedPostIds.includes(post._id)}
+                              onChange={() => toggleSelectPost(post._id)}
+                              className="mt-4 w-4 h-4 accent-jolshaa-teal flex-shrink-0"
+                            />
+                          )}
+                          <div className="flex-1 min-w-0">
+                            <PostCard
+                              post={post}
+                              onDelete={handleDeletePost}
+                              isPinned={false}
+                              onPin={isOwnProfile ? () => { fetchPinnedPost(); } : undefined}
+                              onArchiveToggle={handlePostArchiveToggle}
+                              onHideToggle={handlePostHideToggle}
+                            />
+                          </div>
+                        </div>
                       ))}
                     {page < totalPages && (
                       <div className="flex justify-center py-4">
@@ -670,107 +1021,152 @@ const Profile = () => {
           )}
 
           {activeTab === 'about' && (
-            <div className="bg-jolshaa-surface-container-lowest rounded-xl shadow-ambient p-4">
-              <h3 className="text-base font-semibold font-display text-jolshaa-on-surface mb-4">About {profileUser.name}</h3>
-              <div className="space-y-5">
-                {profileUser.bio && (
-                  <div>
-                    <p className="text-xs font-medium text-jolshaa-on-surface-variant uppercase tracking-wide mb-1">Bio</p>
-                    <p className="text-sm text-jolshaa-on-surface">{profileUser.bio}</p>
-                  </div>
-                )}
-
-                {/* Structured Work History */}
-                <WorkHistoryList
-                  workHistory={profileUser.workHistory || []}
-                  isOwner={isOwnProfile}
-                  onUpdate={refreshProfile}
-                />
-
-                {/* Structured Education History */}
-                <EducationHistoryList
-                  educationHistory={profileUser.educationHistory || []}
-                  isOwner={isOwnProfile}
-                  onUpdate={refreshProfile}
-                />
-
-                {profileUser.location && (
-                  <div>
-                    <p className="text-xs font-medium text-jolshaa-on-surface-variant uppercase tracking-wide mb-1">Location</p>
-                    <p className="text-sm text-jolshaa-on-surface">{profileUser.location}</p>
-                  </div>
-                )}
-
-                {profileUser.gender && profileUser.gender !== 'prefer not to say' && (
-                  <div>
-                    <p className="text-xs font-medium text-jolshaa-on-surface-variant uppercase tracking-wide mb-1">Gender</p>
-                    <p className="text-sm text-jolshaa-on-surface capitalize">{profileUser.gender}</p>
-                  </div>
-                )}
-
-                {profileUser.dateOfBirth && (
-                  <div>
-                    <p className="text-xs font-medium text-jolshaa-on-surface-variant uppercase tracking-wide mb-1">Date of Birth</p>
-                    <p className="text-sm text-jolshaa-on-surface">{new Date(profileUser.dateOfBirth).toLocaleDateString()}</p>
-                  </div>
-                )}
-
-                {!profileUser.bio && (!profileUser.workHistory || profileUser.workHistory.length === 0) && (!profileUser.educationHistory || profileUser.educationHistory.length === 0) && !profileUser.location && (
-                  <p className="text-sm text-jolshaa-on-surface-variant text-center py-4">No info to show</p>
+            <div className="space-y-4">
+              {/* Overview */}
+              <div className="bg-jolshaa-surface-container-lowest rounded-xl shadow-ambient p-4">
+                <h3 className="text-base font-semibold font-display text-jolshaa-on-surface mb-4">Overview</h3>
+                {profileUser.bio ? (
+                  <p className="text-sm text-jolshaa-on-surface">{profileUser.bio}</p>
+                ) : (
+                  <p className="text-sm text-jolshaa-on-surface-variant">No bio to show</p>
                 )}
               </div>
+
+              {/* Work and Education */}
+              {((profileUser.workHistory && profileUser.workHistory.length > 0) || (profileUser.educationHistory && profileUser.educationHistory.length > 0) || isOwnProfile) && (
+                <div className="bg-jolshaa-surface-container-lowest rounded-xl shadow-ambient p-4">
+                  <h3 className="text-base font-semibold font-display text-jolshaa-on-surface mb-4">Work and Education</h3>
+                  <div className="space-y-5">
+                    <WorkHistoryList
+                      workHistory={profileUser.workHistory || []}
+                      isOwner={isOwnProfile}
+                      onUpdate={refreshProfile}
+                    />
+                    <EducationHistoryList
+                      educationHistory={profileUser.educationHistory || []}
+                      isOwner={isOwnProfile}
+                      onUpdate={refreshProfile}
+                    />
+                  </div>
+                </div>
+              )}
+
+              {/* Places */}
+              {(profileUser.location || profileUser.hometown || profileUser.currentCity) && (
+                <div className="bg-jolshaa-surface-container-lowest rounded-xl shadow-ambient p-4">
+                  <h3 className="text-base font-semibold font-display text-jolshaa-on-surface mb-4">Places</h3>
+                  <div className="space-y-3">
+                    {profileUser.currentCity && (
+                      <div className="flex items-center gap-2 text-sm text-jolshaa-on-surface">
+                        <svg className="w-4 h-4 text-jolshaa-outline flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                        Lives in {profileUser.currentCity}
+                      </div>
+                    )}
+                    {profileUser.hometown && (
+                      <div className="flex items-center gap-2 text-sm text-jolshaa-on-surface">
+                        <svg className="w-4 h-4 text-jolshaa-outline flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7m-9-2v10a1 1 0 001 1h3m6-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>
+                        From {profileUser.hometown}
+                      </div>
+                    )}
+                    {profileUser.location && profileUser.location !== profileUser.currentCity && (
+                      <div className="flex items-center gap-2 text-sm text-jolshaa-on-surface">
+                        <svg className="w-4 h-4 text-jolshaa-outline flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                        {profileUser.location}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Contact and Basic Info */}
+              {(profileUser.email || profileUser.phone || profileUser.website || profileUser.gender || profileUser.dateOfBirth || profileUser.createdAt || (profileUser.relationshipStatus && profileUser.relationshipStatus !== 'prefer not to say') || (profileUser.languagesSpoken && profileUser.languagesSpoken.length > 0)) && (
+                <div className="bg-jolshaa-surface-container-lowest rounded-xl shadow-ambient p-4">
+                  <h3 className="text-base font-semibold font-display text-jolshaa-on-surface mb-4">Contact and Basic Info</h3>
+                  <div className="space-y-4">
+                    {profileUser.email && (
+                      <div className="flex items-center gap-3 text-sm">
+                        <svg className="w-4 h-4 text-jolshaa-outline flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+                        <span className="text-jolshaa-on-surface">{profileUser.email}</span>
+                      </div>
+                    )}
+                    {profileUser.phone && (
+                      <div className="flex items-center gap-3 text-sm">
+                        <svg className="w-4 h-4 text-jolshaa-outline flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>
+                        <span className="text-jolshaa-on-surface">{profileUser.phone}</span>
+                      </div>
+                    )}
+                    {profileUser.website && (
+                      <div className="flex items-center gap-3 text-sm">
+                        <svg className="w-4 h-4 text-jolshaa-outline flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" /></svg>
+                        <a
+                          href={profileUser.website.startsWith('http') ? profileUser.website : `https://${profileUser.website}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-jolshaa-teal hover:underline"
+                        >
+                          {profileUser.website.replace(/^https?:\/\//, '')}
+                        </a>
+                      </div>
+                    )}
+                    {profileUser.relationshipStatus && profileUser.relationshipStatus !== 'prefer not to say' && (
+                      <div className="flex items-center gap-3 text-sm">
+                        <svg className="w-4 h-4 text-jolshaa-outline flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 10-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>
+                        <span className="text-jolshaa-on-surface capitalize">{profileUser.relationshipStatus}</span>
+                      </div>
+                    )}
+                    {profileUser.languagesSpoken && profileUser.languagesSpoken.length > 0 && (
+                      <div className="flex items-center gap-3 text-sm">
+                        <svg className="w-4 h-4 text-jolshaa-outline flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9l4.5-9 4.5 9m-8.25-2h7.5" /></svg>
+                        <span className="text-jolshaa-on-surface">{profileUser.languagesSpoken.join(', ')}</span>
+                      </div>
+                    )}
+                    {profileUser.gender && profileUser.gender !== 'prefer not to say' && (
+                      <div className="flex items-center gap-3 text-sm">
+                        <svg className="w-4 h-4 text-jolshaa-outline flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+                        <span className="text-jolshaa-on-surface capitalize">{profileUser.gender}</span>
+                      </div>
+                    )}
+                    {profileUser.dateOfBirth && (
+                      <div className="flex items-center gap-3 text-sm">
+                        <svg className="w-4 h-4 text-jolshaa-outline flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                        <span className="text-jolshaa-on-surface">{new Date(profileUser.dateOfBirth).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</span>
+                      </div>
+                    )}
+                    {profileUser.createdAt && (
+                      <div className="flex items-center gap-3 text-sm">
+                        <svg className="w-4 h-4 text-jolshaa-outline flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                        <span className="text-jolshaa-on-surface-variant">
+                          {t('profile.joined')} {new Date(profileUser.createdAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {!profileUser.bio && (!profileUser.workHistory || profileUser.workHistory.length === 0) && (!profileUser.educationHistory || profileUser.educationHistory.length === 0) && !profileUser.location && !profileUser.hometown && !profileUser.currentCity && !profileUser.email && !profileUser.phone && !profileUser.website && !profileUser.gender && !profileUser.dateOfBirth && (!profileUser.relationshipStatus || profileUser.relationshipStatus === 'prefer not to say') && (!profileUser.languagesSpoken || profileUser.languagesSpoken.length === 0) && !isOwnProfile && (
+                <div className="bg-jolshaa-surface-container-lowest rounded-xl shadow-ambient p-4">
+                  <p className="text-sm text-jolshaa-on-surface-variant text-center py-4">No info to show</p>
+                </div>
+              )}
             </div>
           )}
 
           {activeTab === 'albums' && <AlbumGrid userId={profileUser.id || profileUser._id} />}
 
           {activeTab === 'friends' && (
-            <div>
-              {friendsLoading ? (
-                <div className="grid grid-cols-2 gap-3">
-                  {[...Array(6)].map((_, i) => (
-                    <div key={i} className="flex items-center gap-3 p-3 rounded-xl skeleton h-16" />
-                  ))}
-                </div>
-              ) : friendsError ? (
-                <div className="text-center py-12">
-                  <p className="text-sm text-jolshaa-on-surface-variant mb-3">{friendsError}</p>
-                  <button
-                    onClick={fetchFriends}
-                    className="px-4 py-2 rounded-lg text-sm font-medium bg-jolshaa-surface-container-low text-jolshaa-on-surface hover:bg-jolshaa-surface-container transition-colors"
-                  >
-                    Retry
-                  </button>
-                </div>
-              ) : friends.length === 0 ? (
-                <div className="text-center py-12">
-                  <div className="w-16 h-16 bg-jolshaa-surface-container rounded-full flex items-center justify-center mx-auto mb-3">
-                    <svg className="w-8 h-8 text-jolshaa-outline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
-                  </div>
-                  <p className="text-sm text-jolshaa-on-surface-variant">
-                    {isOwnProfile ? "You haven't added friends yet" : `${profileUser.name} hasn't added friends yet`}
-                  </p>
-                </div>
-              ) : (
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                  {friends.map((friend) => (
-                    <Link
-                      key={friend._id}
-                      to={`/profile/${friend._id}`}
-                      className="flex items-center gap-3 p-3 rounded-xl bg-jolshaa-surface-container-lowest shadow-ambient hover:bg-jolshaa-surface-container-low transition-colors"
-                    >
-                      <Avatar src={friend.profilePhoto} alt={friend.name} size="lg" />
-                      <div className="min-w-0">
-                        <p className="font-medium text-sm text-jolshaa-on-surface truncate">{friend.name}</p>
-                        {friend.bio && (
-                          <p className="text-xs text-jolshaa-on-surface-variant truncate">{friend.bio}</p>
-                        )}
-                      </div>
-                    </Link>
-                  ))}
-                </div>
-              )}
-            </div>
+            <FriendsTabContent
+              userId={profileUser.id || profileUser._id}
+              isOwnProfile={isOwnProfile}
+              onUnfriend={() => setProfileUser(prev => ({ ...prev, friendCount: Math.max(0, (prev.friendCount || 0) - 1) }))}
+            />
+          )}
+
+          {activeTab === 'reels' && (
+            <ReelsTabContent
+              userId={profileUser.id || profileUser._id}
+              isOwnProfile={isOwnProfile}
+            />
           )}
 
           {activeTab === 'help' && (
@@ -883,6 +1279,15 @@ const Profile = () => {
         userId={profileUser.id || profileUser._id}
         isOwner={isOwnProfile}
       />
+
+      {isOwnProfile && showManageSections && (
+        <ManageSectionsModal
+          isOpen={showManageSections}
+          onClose={() => setShowManageSections(false)}
+          sections={sectionSettings}
+          onSaved={(updated) => setProfileUser(prev => ({ ...prev, profileSectionSettings: updated }))}
+        />
+      )}
     </Layout>
   );
 };

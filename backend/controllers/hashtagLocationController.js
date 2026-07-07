@@ -36,14 +36,22 @@ exports.getTrendingHashtags = async (req, res) => {
 
 exports.createCheckin = async (req, res) => {
   try {
-    const { locationName, address, lat, lng, category, message, postId, taggedUsers } = req.body;
+    const { locationName, address, lat, lng, category, division, district, upazila, message, postId, taggedUsers } = req.body;
 
     if (!locationName) return res.status(400).json({ message: 'Location name is required' });
 
     const checkin = await Checkin.create({
       user: req.user._id,
       post: postId || null,
-      location: { name: locationName, address, lat, lng, category },
+      location: {
+        name: locationName,
+        address: address || '',
+        category: category || '',
+        division: division || '',
+        district: district || '',
+        upazila: upazila || '',
+        coordinates: { lat: lat || null, lng: lng || null },
+      },
       message: message || '',
       taggedUsers: taggedUsers || [],
     });
@@ -115,5 +123,19 @@ exports.getNearbyLocations = async (req, res) => {
     res.json({ locations: locations.map(l => ({ ...l.location, checkinCount: l.count })) });
   } catch (error) {
     res.json({ locations: [] });
+  }
+};
+
+exports.deleteCheckin = async (req, res) => {
+  try {
+    const checkin = await Checkin.findById(req.params.id);
+    if (!checkin) return res.status(404).json({ message: 'Check-in not found' });
+    if (checkin.user.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ message: 'Not authorized' });
+    }
+    await checkin.deleteOne();
+    res.json({ message: 'Check-in deleted' });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
   }
 };

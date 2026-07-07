@@ -15,9 +15,14 @@ const checkinSchema = new mongoose.Schema(
     location: {
       name: { type: String, required: true },
       address: { type: String, default: '' },
-      lat: { type: Number, default: null },
-      lng: { type: Number, default: null },
       category: { type: String, default: '' },
+      division: { type: String, default: '' },
+      district: { type: String, default: '' },
+      upazila: { type: String, default: '' },
+      coordinates: {
+        lat: { type: Number, default: null },
+        lng: { type: Number, default: null },
+      },
     },
     message: {
       type: String,

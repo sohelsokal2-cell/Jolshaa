@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import API from '../api/axios';
 import PostCard from '../components/PostCard';
 import CreatePostBox from '../components/CreatePostBox';
+import ReviewSection from '../components/ReviewSection';
 import Layout from '../components/layout/Layout';
 import Toast from '../components/Toast';
 
@@ -124,7 +125,7 @@ const PagePage = () => {
         </div>
 
         <div className="flex gap-4 mt-4 border-b border-jolshaa-outline-variant bg-jolshaa-surface-container-lowest rounded-t-xl px-4">
-          {['posts', ...(page.isAdmin ? ['insights', 'settings'] : [])].map(tab => (
+          {['posts', 'reviews', ...(page.isAdmin ? ['insights', 'settings'] : [])].map(tab => (
             <button key={tab} onClick={() => handleTabChange(tab)} className={`py-3 text-sm font-medium border-b-2 capitalize transition-colors ${activeTab === tab ? 'border-jolshaa-teal text-jolshaa-teal' : 'border-transparent text-jolshaa-on-surface-variant hover:text-jolshaa-on-surface'}`}>
               {tab}
             </button>
@@ -159,6 +160,10 @@ const PagePage = () => {
               ))
             }
           </>)}
+
+          {activeTab === 'reviews' && (
+            <ReviewSection pageId={id} isFollowing={page.isFollowing} isAdmin={page.isAdmin} />
+          )}
 
           {activeTab === 'insights' && page.isAdmin && insights && (
             <div className="bg-jolshaa-surface-container-lowest rounded-xl shadow-ambient p-6">

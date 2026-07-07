@@ -88,6 +88,44 @@ const userSchema = new mongoose.Schema({
     default: '',
     maxlength: 200
   },
+  relationshipStatus: {
+    type: String,
+    enum: ['single', 'in a relationship', 'engaged', 'married', "it's complicated", 'separated', 'divorced', 'widowed', 'prefer not to say'],
+    default: 'prefer not to say'
+  },
+  hometown: {
+    type: String,
+    default: '',
+    maxlength: 200
+  },
+  currentCity: {
+    type: String,
+    default: '',
+    maxlength: 200
+  },
+  languagesSpoken: {
+    type: [String],
+    default: []
+  },
+  profileSectionSettings: {
+    type: [{
+      key: { type: String, required: true },
+      enabled: { type: Boolean, default: true },
+      order: { type: Number, default: 0 },
+      _id: false
+    }],
+    default: () => ([
+      { key: 'posts', enabled: true, order: 0 },
+      { key: 'about', enabled: true, order: 1 },
+      { key: 'albums', enabled: true, order: 2 },
+      { key: 'friends', enabled: true, order: 3 },
+      { key: 'reels', enabled: true, order: 4 },
+    ])
+  },
+  profileLocked: {
+    type: Boolean,
+    default: false
+  },
   isAdmin: {
     type: Boolean,
     default: false

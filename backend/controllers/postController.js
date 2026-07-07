@@ -210,6 +210,62 @@ exports.updatePost = async (req, res) => {
   }
 };
 
+exports.toggleArchivePost = async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.id);
+    if (!post) return res.status(404).json({ message: 'Post not found' });
+    if (post.author.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ message: 'You can only archive your own posts' });
+    }
+    post.status = post.status === 'archived' ? 'published' : 'archived';
+    await post.save();
+    res.json({ status: post.status });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+exports.toggleHidePostFromProfile = async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.id);
+    if (!post) return res.status(404).json({ message: 'Post not found' });
+    if (post.author.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ message: 'You can only hide your own posts' });
+    }
+    post.hiddenFromProfile = !post.hiddenFromProfile;
+    await post.save();
+    res.json({ hiddenFromProfile: post.hiddenFromProfile });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+exports.bulkArchivePosts = async (req, res) => {
+  try {
+    const { postIds, action } = req.body;
+    if (!Array.isArray(postIds) || postIds.length === 0) {
+      return res.status(400).json({ message: 'postIds must be a non-empty array' });
+    }
+    if (!['archive', 'unarchive', 'hide', 'unhide'].includes(action)) {
+      return res.status(400).json({ message: 'Invalid action' });
+    }
+
+    const update = action === 'archive' ? { status: 'archived' }
+      : action === 'unarchive' ? { status: 'published' }
+      : action === 'hide' ? { hiddenFromProfile: true }
+      : { hiddenFromProfile: false };
+
+    const result = await Post.updateMany(
+      { _id: { $in: postIds }, author: req.user._id },
+      update
+    );
+
+    res.json({ matched: result.matchedCount, modified: result.modifiedCount });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
 exports.deletePost = async (req, res) => {
   try {
     const post = await Post.findById(req.params.id);

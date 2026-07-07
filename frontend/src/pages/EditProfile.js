@@ -26,7 +26,11 @@ const EditProfile = () => {
     education: '',
     work: '',
     location: '',
-    website: ''
+    website: '',
+    relationshipStatus: 'prefer not to say',
+    hometown: '',
+    currentCity: '',
+    languagesSpoken: ''
   });
 
   useEffect(() => {
@@ -42,7 +46,11 @@ const EditProfile = () => {
         education: user.education || '',
         work: user.work || '',
         location: user.location || '',
-        website: user.website || ''
+        website: user.website || '',
+        relationshipStatus: user.relationshipStatus || 'prefer not to say',
+        hometown: user.hometown || '',
+        currentCity: user.currentCity || '',
+        languagesSpoken: (user.languagesSpoken || []).join(', ')
       });
     }
   }, [user]);
@@ -87,7 +95,14 @@ const EditProfile = () => {
     setSuccess('');
 
     try {
-      await API.put(`/users/${user.id}`, formData);
+      const payload = {
+        ...formData,
+        languagesSpoken: formData.languagesSpoken
+          .split(',')
+          .map(s => s.trim())
+          .filter(Boolean)
+      };
+      await API.put(`/users/${user.id}`, payload);
       const fresh = await API.get(`/users/${user.id}`);
       updateUser(fresh.data);
       setSuccess('Profile updated successfully');
@@ -244,6 +259,63 @@ const EditProfile = () => {
                 placeholder="e.g. Dhaka, Bangladesh"
                 className="w-full rounded-lg px-3 py-2 text-sm bg-jolshaa-surface-container-lowest border border-jolshaa-outline-variant text-jolshaa-on-surface focus:outline-none focus:ring-2 focus:ring-jolshaa-teal"
               />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-jolshaa-on-surface-variant mb-1">Hometown</label>
+              <input
+                type="text"
+                name="hometown"
+                value={formData.hometown}
+                onChange={handleChange}
+                placeholder="e.g. Sylhet, Bangladesh"
+                className="w-full rounded-lg px-3 py-2 text-sm bg-jolshaa-surface-container-lowest border border-jolshaa-outline-variant text-jolshaa-on-surface focus:outline-none focus:ring-2 focus:ring-jolshaa-teal"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-jolshaa-on-surface-variant mb-1">Current City</label>
+              <input
+                type="text"
+                name="currentCity"
+                value={formData.currentCity}
+                onChange={handleChange}
+                placeholder="e.g. Dhaka, Bangladesh"
+                className="w-full rounded-lg px-3 py-2 text-sm bg-jolshaa-surface-container-lowest border border-jolshaa-outline-variant text-jolshaa-on-surface focus:outline-none focus:ring-2 focus:ring-jolshaa-teal"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-jolshaa-on-surface-variant mb-1">Relationship Status</label>
+              <select
+                name="relationshipStatus"
+                value={formData.relationshipStatus}
+                onChange={handleChange}
+                className="w-full rounded-lg px-3 py-2 text-sm bg-jolshaa-surface-container-lowest border border-jolshaa-outline-variant text-jolshaa-on-surface focus:outline-none focus:ring-2 focus:ring-jolshaa-teal"
+              >
+                <option value="single">Single</option>
+                <option value="in a relationship">In a relationship</option>
+                <option value="engaged">Engaged</option>
+                <option value="married">Married</option>
+                <option value="it's complicated">It's complicated</option>
+                <option value="separated">Separated</option>
+                <option value="divorced">Divorced</option>
+                <option value="widowed">Widowed</option>
+                <option value="prefer not to say">Prefer not to say</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-jolshaa-on-surface-variant mb-1">Languages Spoken</label>
+              <input
+                type="text"
+                name="languagesSpoken"
+                value={formData.languagesSpoken}
+                onChange={handleChange}
+                placeholder="e.g. Bangla, English"
+                className="w-full rounded-lg px-3 py-2 text-sm bg-jolshaa-surface-container-lowest border border-jolshaa-outline-variant text-jolshaa-on-surface focus:outline-none focus:ring-2 focus:ring-jolshaa-teal"
+              />
+              <p className="text-xs text-jolshaa-on-surface-variant/60 mt-1">Comma-separated</p>
             </div>
 
             <div>

@@ -139,6 +139,10 @@ const postSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
+  hiddenFromProfile: {
+    type: Boolean,
+    default: false
+  },
   hiddenBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',

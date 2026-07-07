@@ -26,7 +26,11 @@ const {
   getPinnedPost,
   getProfileCompletion,
   getSharedGroupsAndPages,
+  getUserReels,
+  updateProfileSections,
+  toggleProfileLock,
 } = require('../controllers/userController');
+const { getUserReviewsGiven } = require('../controllers/reviewController');
 
 router.use(protect);
 
@@ -109,11 +113,19 @@ router.get('/pinned-post/:id', getPinnedPost);
 // Profile Completion - must be before /:id routes
 router.get('/profile-completion', getProfileCompletion);
 
+// Manage Sections - must be before /:id routes
+router.put('/profile-sections', updateProfileSections);
+
+// Profile Lock - must be before /:id routes
+router.put('/profile-lock', toggleProfileLock);
+
 // Shared Groups & Pages in Common - must be before /:id routes
 router.get('/shared/:id', getSharedGroupsAndPages);
 
 router.get('/:id/online', getUserOnlineStatus);
 router.get('/:id/posts', getUserPosts);
+router.get('/:id/reels', getUserReels);
+router.get('/:id/reviews-given', getUserReviewsGiven);
 router.get('/:id', getUserById);
 router.put('/:id', updateProfile);
 

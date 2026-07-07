@@ -78,6 +78,7 @@ app.use('/api/messages', messageLimiter, require('./routes/messages'));
 app.use('/api/notifications', require('./routes/notifications'));
 app.use('/api/groups', require('./routes/groups'));
 app.use('/api/pages', require('./routes/pages'));
+app.use('/api/reviews', require('./routes/reviews'));
 app.use('/api/stories', require('./routes/stories'));
 app.use('/api/albums', require('./routes/albums'));
 app.use('/api/friends', require('./routes/friends'));

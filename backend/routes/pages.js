@@ -14,6 +14,7 @@ const {
   featurePost,
   getPageInsights
 } = require('../controllers/pageController');
+const { createReview, getPageReviews } = require('../controllers/reviewController');
 
 router.use(protect);
 
@@ -33,5 +34,7 @@ router.get('/:id/feed', getPageFeed);
 router.put('/:id/feature/:postId', featurePost);
 router.get('/:id/insights', getPageInsights);
 router.post('/:id/posts', upload.array('media', 5), upload.checkMediaSize, createPagePost);
+router.post('/:id/reviews', createReview);
+router.get('/:id/reviews', getPageReviews);
 
 module.exports = router;
