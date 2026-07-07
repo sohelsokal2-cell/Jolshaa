@@ -57,7 +57,7 @@ const Para = () => {
           <p className="text-sm text-jolshaa-on-surface-variant mb-4">
             Your Para brings together local marketplace, events, groups and help requests in your area.
           </p>
-          <a href="/profile/edit" className="text-sm text-jolshaa-teal hover:underline">
+          <a href="/edit-profile" className="text-sm text-jolshaa-teal hover:underline">
             Edit profile →
           </a>
         </div>

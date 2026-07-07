@@ -112,7 +112,7 @@ const HelpFeed = () => {
           <p className="text-sm text-jolshaa-on-surface-variant mb-4">
             Set your location to see help requests in your area.
           </p>
-          <a href="/profile/edit" className="text-sm text-jolshaa-teal hover:underline">
+          <a href="/edit-profile" className="text-sm text-jolshaa-teal hover:underline">
             Edit profile →
           </a>
         </div>

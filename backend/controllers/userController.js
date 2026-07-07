@@ -1,5 +1,6 @@
 const User = require('../models/User');
 const FriendRequest = require('../models/FriendRequest');
+const mongoose = require('mongoose');
 const { isUserOnline } = require('../socket');
 const { hasId } = require('../utils/id');
 
@@ -36,6 +37,9 @@ exports.getUserOnlineStatus = async (req, res) => {
 
 exports.getUserById = async (req, res) => {
   try {
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(404).json({ message: 'User not found' });
+    }
     const user = await User.findById(req.params.id)
       .select('-password -loginHistory -sessions -blockedUsers -trustedDevices')
       .populate('friends', 'name profilePhoto bio');
