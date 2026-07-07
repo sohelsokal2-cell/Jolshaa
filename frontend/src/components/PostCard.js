@@ -20,7 +20,7 @@ import SponsoredPostLabel from './SponsoredPostLabel';
 import WhyAmISeeingThisModal from './WhyAmISeeingThisModal';
 import VerifiedBadge from './VerifiedBadge';
 
-const PostCard = ({ post, onDelete }) => {
+const PostCard = ({ post, onDelete, isPinned, onPin, onUnpin }) => {
   const { user } = useAuth();
   const [reactions, setReactions] = useState(post.reactions || { count: 0, myReaction: null });
   const [commentCount, setCommentCount] = useState(post.commentCount || 0);
@@ -79,6 +79,26 @@ const PostCard = ({ post, onDelete }) => {
       if (onDelete) onDelete(post._id);
     } catch (err) {
       console.error('Failed to delete post');
+    }
+  };
+
+  const handlePin = async () => {
+    try {
+      await API.put(`/users/pin-post/${post._id}`);
+      if (onPin) onPin(post._id);
+      setShowMenu(false);
+    } catch (err) {
+      console.error('Failed to pin post');
+    }
+  };
+
+  const handleUnpin = async () => {
+    try {
+      await API.delete('/users/pin-post');
+      if (onUnpin) onUnpin();
+      setShowMenu(false);
+    } catch (err) {
+      console.error('Failed to unpin post');
     }
   };
 
@@ -171,6 +191,17 @@ const PostCard = ({ post, onDelete }) => {
                       <svg className="w-4 h-4 text-jolshaa-on-surface-variant" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
                       Boost post
                     </button>
+                    {isPinned ? (
+                      <button onClick={() => { handleUnpin(); }} className="w-full text-left px-4 py-2.5 text-sm text-jolshaa-on-surface hover:bg-jolshaa-surface-container-high flex items-center gap-3">
+                        <svg className="w-4 h-4 text-jolshaa-on-surface-variant" fill="currentColor" viewBox="0 0 24 24"><path d="M16,12V4H17V2H7V4H8V12L6,14V16H11.2V22H12.8V16H18V14L16,12Z" /></svg>
+                        Unpin from profile
+                      </button>
+                    ) : (
+                      <button onClick={() => { handlePin(); }} className="w-full text-left px-4 py-2.5 text-sm text-jolshaa-on-surface hover:bg-jolshaa-surface-container-high flex items-center gap-3">
+                        <svg className="w-4 h-4 text-jolshaa-on-surface-variant" fill="currentColor" viewBox="0 0 24 24"><path d="M16,12V4H17V2H7V4H8V12L6,14V16H11.2V22H12.8V16H18V14L16,12Z" /></svg>
+                        Pin to profile
+                      </button>
+                    )}
                     <div className="h-px bg-jolshaa-outline-variant/50 my-1" />
                     <button onClick={() => { handleDelete(); setShowMenu(false); }} className="w-full text-left px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 flex items-center gap-3">
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>

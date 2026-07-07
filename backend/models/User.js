@@ -28,6 +28,11 @@ const userSchema = new mongoose.Schema({
     default: null,
     match: [/^[\d+\-\s()]{7,15}$/, 'Please enter a valid phone number']
   },
+  website: {
+    type: String,
+    default: '',
+    maxlength: 200
+  },
   profilePhoto: {
     type: String,
     default: 'https://ui-avatars.com/api/?name=U&background=494454&color=dae2fd&size=128'
@@ -60,6 +65,24 @@ const userSchema = new mongoose.Schema({
     default: '',
     maxlength: 200
   },
+  workHistory: [{
+    company: { type: String, required: true },
+    position: { type: String, default: '' },
+    location: { type: String, default: '' },
+    startDate: { type: Date },
+    endDate: { type: Date },
+    isCurrent: { type: Boolean, default: false },
+    description: { type: String, default: '' }
+  }],
+  educationHistory: [{
+    institution: { type: String, required: true },
+    degree: { type: String, default: '' },
+    fieldOfStudy: { type: String, default: '' },
+    startDate: { type: Date },
+    endDate: { type: Date },
+    isCurrent: { type: Boolean, default: false },
+    description: { type: String, default: '' }
+  }],
   location: {
     type: String,
     default: '',
@@ -152,6 +175,10 @@ const userSchema = new mongoose.Schema({
       type: String,
       enum: ['everyone', 'friends', 'none'],
       default: 'everyone'
+    },
+    showOnlineStatus: {
+      type: Boolean,
+      default: true
     }
   },
   storyHiddenFrom: [{
@@ -344,6 +371,11 @@ const userSchema = new mongoose.Schema({
   badges: {
     verified: { type: Boolean, default: false },
     verifiedAt: { type: Date }
+  },
+  pinnedPost: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Post',
+    default: null
   },
   createdAt: {
     type: Date,

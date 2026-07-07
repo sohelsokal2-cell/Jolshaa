@@ -62,7 +62,7 @@ export const AuthProvider = ({ children }) => {
   const getToken = () => tokenRef.current;
 
   const updateUser = (updatedUser) => {
-    setUser(updatedUser);
+    setUser(prev => ({ ...prev, ...updatedUser }));
   };
 
   return (

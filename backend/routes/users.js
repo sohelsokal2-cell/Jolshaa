@@ -11,6 +11,21 @@ const {
   updateStoryHiddenFrom,
   blockUser,
   getBlockedUsers,
+  addWork,
+  updateWork,
+  deleteWork,
+  addEducation,
+  updateEducation,
+  deleteEducation,
+  getFollowers,
+  getFollowing,
+  getFollowerCount,
+  toggleFollow,
+  pinPost,
+  unpinPost,
+  getPinnedPost,
+  getProfileCompletion,
+  getSharedGroupsAndPages,
 } = require('../controllers/userController');
 
 router.use(protect);
@@ -69,6 +84,33 @@ router.get('/my-appeals', async (req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
 });
+
+// Work history CRUD - must be before /:id routes
+router.post('/work', addWork);
+router.put('/work/:entryId', updateWork);
+router.delete('/work/:entryId', deleteWork);
+
+// Education history CRUD - must be before /:id routes
+router.post('/education', addEducation);
+router.put('/education/:entryId', updateEducation);
+router.delete('/education/:entryId', deleteEducation);
+
+// Followers / Following - must be before /:id routes
+router.get('/followers-count/:id', getFollowerCount);
+router.get('/followers/:id', getFollowers);
+router.get('/following/:id', getFollowing);
+router.post('/follow/:userId', toggleFollow);
+
+// Pinned Post - must be before /:id routes
+router.put('/pin-post/:postId', pinPost);
+router.delete('/pin-post', unpinPost);
+router.get('/pinned-post/:id', getPinnedPost);
+
+// Profile Completion - must be before /:id routes
+router.get('/profile-completion', getProfileCompletion);
+
+// Shared Groups & Pages in Common - must be before /:id routes
+router.get('/shared/:id', getSharedGroupsAndPages);
 
 router.get('/:id/online', getUserOnlineStatus);
 router.get('/:id/posts', getUserPosts);

@@ -11,6 +11,7 @@ const PrivacySettings = () => {
     commentPrivacy: 'everyone',
     storyVisibility: 'friends',
     messagePrivacy: 'everyone',
+    showOnlineStatus: true,
   });
   const [blockedUsers, setBlockedUsers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -186,6 +187,27 @@ const PrivacySettings = () => {
               <option value="friends">Friends Only</option>
               <option value="onlyme">Only Me</option>
             </select>
+          </div>
+
+          {/* Show Online Status */}
+          <div className="mb-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <label className="block text-sm font-medium text-jolshaa-on-surface-variant">Show When You're Active</label>
+                <p className="text-xs text-jolshaa-on-surface-variant/60 mt-0.5">Others will see when you're online or your last active time</p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setPrivacy({ ...privacy, showOnlineStatus: !privacy.showOnlineStatus })}
+                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                  privacy.showOnlineStatus ? 'bg-jolshaa-teal' : 'bg-jolshaa-surface-container'
+                }`}
+              >
+                <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                  privacy.showOnlineStatus ? 'translate-x-6' : 'translate-x-1'
+                }`} />
+              </button>
+            </div>
           </div>
 
           <button

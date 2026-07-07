@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
+import { useSocket } from '../context/SocketContext';
 import API from '../api/axios';
 import Layout from '../components/layout/Layout';
 import Avatar from '../components/ui/Avatar';
@@ -14,10 +15,18 @@ import SubscribeButton from '../components/SubscribeButton';
 import SubscriptionTiersPage from './SubscriptionTiersPage';
 import StoryHighlights from '../components/StoryHighlights';
 import CreatePostBox from '../components/CreatePostBox';
+import WorkHistoryList from '../components/WorkHistoryList';
+import EducationHistoryList from '../components/EducationHistoryList';
+import FollowersListModal from '../components/FollowersListModal';
+import FollowingListModal from '../components/FollowingListModal';
+import PinnedPostCard from '../components/PinnedPostCard';
+import ProfileCompletionCard from '../components/ProfileCompletionCard';
+import SharedInCommonCard from '../components/SharedInCommonCard';
 
 const Profile = () => {
   const { user: currentUser } = useAuth();
   const { t } = useLanguage();
+  const { onlineUsers } = useSocket();
   const { id } = useParams();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('posts');
@@ -33,13 +42,54 @@ const Profile = () => {
   const [helpHistory, setHelpHistory] = useState(null);
   const [helpLoading, setHelpLoading] = useState(false);
   const [messageLoading, setMessageLoading] = useState(false);
+  const [profileError, setProfileError] = useState(null);
+  const [postsError, setPostsError] = useState(null);
+  const [friendsError, setFriendsError] = useState(null);
+  const [helpError, setHelpError] = useState(null);
+  const [onlineStatus, setOnlineStatus] = useState(null);
+  const [showFollowers, setShowFollowers] = useState(false);
+  const [showFollowing, setShowFollowing] = useState(false);
+  const [pinnedPost, setPinnedPost] = useState(null);
 
   const isOwnProfile = !id || id === currentUser?.id;
+  const profileUserId = profileUser?.id || profileUser?._id;
+
+  // Real-time online status from Socket.io
+  const isSocketOnline = useMemo(() => {
+    if (!profileUserId) return false;
+    return onlineUsers.has(profileUserId);
+  }, [profileUserId, onlineUsers]);
+
+  // Determine effective online status (socket takes priority over fetched status)
+  const effectiveOnline = isOwnProfile ? false : (onlineStatus?.showStatus !== false && (isSocketOnline || onlineStatus?.online === true));
+
+  // Format last seen time
+  const formatLastSeen = (lastSeen) => {
+    if (!lastSeen) return '';
+    const now = new Date();
+    const then = new Date(lastSeen);
+    const diffMs = now - then;
+    const diffMin = Math.floor(diffMs / 60000);
+    const diffHr = Math.floor(diffMs / 3600000);
+    const diffDay = Math.floor(diffMs / 86400000);
+
+    if (diffMin < 1) return 'Active now';
+    if (diffMin < 60) return `Active ${diffMin}m ago`;
+    if (diffHr < 24) return `Active ${diffHr}h ago`;
+    return `Last seen ${then.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: diffDay > 365 ? 'numeric' : undefined })}`;
+  };
+
+  const statusText = effectiveOnline
+    ? 'Active now'
+    : onlineStatus?.showStatus !== false
+      ? formatLastSeen(onlineStatus?.lastSeen)
+      : '';
 
   useEffect(() => {
     if (isOwnProfile) {
       setProfileUser(currentUser);
       setLoading(false);
+      fetchOnlineStatus(currentUser?.id || currentUser?._id);
     } else {
       fetchUserProfile(id);
     }
@@ -50,6 +100,7 @@ const Profile = () => {
       setPosts([]);
       setPage(1);
       fetchPosts(1);
+      fetchPinnedPost();
     }
     if (activeTab === 'friends' && profileUser) {
       fetchFriends();
@@ -59,19 +110,54 @@ const Profile = () => {
     }
   }, [activeTab, profileUser]);
 
+  // Fetch online status when viewing another user's profile
+  useEffect(() => {
+    if (!isOwnProfile && profileUser) {
+      fetchOnlineStatus(profileUser.id || profileUser._id);
+    }
+  }, [isOwnProfile, profileUser]);
+
   const fetchUserProfile = async (userId) => {
+    setProfileError(null);
     try {
       const res = await API.get(`/users/${userId}`);
       setProfileUser(res.data);
     } catch (err) {
       console.error('Failed to fetch user profile');
+      setProfileError('Failed to load profile. Please try again.');
     } finally {
       setLoading(false);
     }
   };
 
+  const fetchOnlineStatus = async (userId) => {
+    try {
+      const res = await API.get(`/users/${userId}/online`);
+      setOnlineStatus(res.data);
+    } catch (_) {
+      // Non-critical — ignore silently
+    }
+  };
+
+  const fetchPinnedPost = async () => {
+    const userId = profileUser?.id || profileUser?._id;
+    if (!userId) return;
+    try {
+      const res = await API.get(`/users/pinned-post/${userId}`);
+      setPinnedPost(res.data.pinnedPost);
+    } catch (_) {
+      // Non-critical
+    }
+  };
+
+  const handlePinnedPostUnpin = () => {
+    setPinnedPost(null);
+    refreshProfile();
+  };
+
   const fetchPosts = async (pageNum) => {
     setPostsLoading(true);
+    setPostsError(null);
     try {
       const res = await API.get(`/users/${profileUser.id}/posts?page=${pageNum}&limit=10`);
       if (pageNum === 1) setPosts(res.data.posts);
@@ -79,6 +165,7 @@ const Profile = () => {
       setTotalPages(res.data.totalPages);
     } catch (err) {
       console.error('Failed to fetch posts');
+      setPostsError('Failed to load posts.');
     } finally {
       setPostsLoading(false);
     }
@@ -86,12 +173,14 @@ const Profile = () => {
 
   const fetchFriends = async () => {
     setFriendsLoading(true);
+    setFriendsError(null);
     try {
       const userId = profileUser.id || profileUser._id;
       const res = await API.get(`/friends/${userId}`);
       setFriends(res.data.friends);
     } catch (err) {
       console.error('Failed to fetch friends');
+      setFriendsError('Failed to load friends.');
     } finally {
       setFriendsLoading(false);
     }
@@ -99,12 +188,14 @@ const Profile = () => {
 
   const fetchHelpHistory = async () => {
     setHelpLoading(true);
+    setHelpError(null);
     try {
       const userId = profileUser.id || profileUser._id;
       const res = await API.get(`/help/user/${userId}/history`);
       setHelpHistory(res.data);
     } catch (err) {
       console.error('Failed to fetch help history');
+      setHelpError('Failed to load help history.');
     } finally {
       setHelpLoading(false);
     }
@@ -125,8 +216,22 @@ const Profile = () => {
       navigate(`/messages/${res.data._id}`);
     } catch (err) {
       console.error('Failed to start conversation');
+      alert('Failed to start conversation. Please try again.');
     } finally {
       setMessageLoading(false);
+    }
+  };
+
+  const refreshProfile = async () => {
+    if (isOwnProfile) {
+      try {
+        const res = await API.get(`/users/${currentUser.id || currentUser._id}`);
+        setProfileUser(res.data);
+      } catch (_) {
+        // ignore
+      }
+    } else {
+      fetchUserProfile(id);
     }
   };
 
@@ -159,6 +264,25 @@ const Profile = () => {
     );
   }
 
+  if (profileError) {
+    return (
+      <Layout showSidebar={true}>
+        <div className="text-center py-16">
+          <div className="w-16 h-16 bg-jolshaa-surface-container rounded-full flex items-center justify-center mx-auto mb-3">
+            <svg className="w-8 h-8 text-jolshaa-outline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4.5c-.77-.833-2.694-.833-3.464 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z" /></svg>
+          </div>
+          <p className="text-sm text-jolshaa-on-surface-variant mb-4">{profileError}</p>
+          <button
+            onClick={() => { setProfileError(null); setLoading(true); if (isOwnProfile) { setProfileUser(currentUser); setLoading(false); } else { fetchUserProfile(id); } }}
+            className="px-4 py-2 rounded-lg text-sm font-medium bg-jolshaa-teal text-jolshaa-on-teal hover:bg-jolshaa-teal-container transition-colors"
+          >
+            Retry
+          </button>
+        </div>
+      </Layout>
+    );
+  }
+
   const getMediaUrl = (item) => (typeof item === 'string' ? item : item.url);
   const isImageMedia = (item) => {
     const url = getMediaUrl(item);
@@ -173,6 +297,7 @@ const Profile = () => {
         { key: 'posts', label: t('profile.posts') },
         { key: 'about', label: t('profile.about') },
         { key: 'albums', label: 'Albums' },
+        { key: 'friends', label: t('profile.friends'), count: profileUser.friendCount || 0 },
         { key: 'help', label: '🤝 Help' },
       ]
     : [
@@ -200,6 +325,10 @@ const Profile = () => {
           <div className="flex flex-col sm:flex-row sm:items-end gap-4 -mt-10 sm:-mt-12 mb-4">
             <div className="relative">
               <Avatar src={profileUser.profilePhoto} alt={profileUser.name} size="3xl" className="ring-4 ring-jolshaa-surface shadow-ambient-hover" />
+              {/* Online indicator dot on profile photo */}
+              {!isOwnProfile && onlineStatus?.showStatus !== false && (
+                <span className={`absolute bottom-0 right-0 w-4 h-4 rounded-full border-2 border-jolshaa-surface ${effectiveOnline ? 'bg-green-500' : 'bg-gray-400'}`} />
+              )}
             </div>
             <div className="flex-1 min-w-0 sm:pb-1">
               <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
@@ -210,12 +339,41 @@ const Profile = () => {
                     Verified
                   </span>
                 )}
+                {!isOwnProfile && onlineStatus?.showStatus !== false && statusText && (
+                  <span className={`inline-flex items-center gap-1 text-xs ${effectiveOnline ? 'text-green-500' : 'text-jolshaa-on-surface-variant'}`}>
+                    <span className={`w-2 h-2 rounded-full ${effectiveOnline ? 'bg-green-500' : 'bg-gray-400'}`} />
+                    {statusText}
+                  </span>
+                )}
               </div>
-              {profileUser.friendCount > 0 && (
-                <p className="text-sm text-jolshaa-on-surface-variant mt-0.5">
-                  {profileUser.friendCount} friend{profileUser.friendCount !== 1 ? 's' : ''}
-                </p>
-              )}
+              <div className="flex items-center gap-3 mt-0.5">
+                {profileUser.friendCount > 0 && (
+                  <p className="text-sm text-jolshaa-on-surface-variant">
+                    {profileUser.friendCount} friend{profileUser.friendCount !== 1 ? 's' : ''}
+                  </p>
+                )}
+                {(profileUser.followerCount > 0 || profileUser.followingCount > 0) && (
+                  <div className="flex items-center gap-2 text-sm text-jolshaa-on-surface-variant">
+                    {profileUser.followerCount > 0 && (
+                      <button
+                        onClick={() => setShowFollowers(true)}
+                        className="hover:underline hover:text-jolshaa-on-surface transition-colors"
+                      >
+                        {profileUser.followerCount} follower{profileUser.followerCount !== 1 ? 's' : ''}
+                      </button>
+                    )}
+                    {profileUser.followerCount > 0 && profileUser.followingCount > 0 && ' · '}
+                    {profileUser.followingCount > 0 && (
+                      <button
+                        onClick={() => setShowFollowing(true)}
+                        className="hover:underline hover:text-jolshaa-on-surface transition-colors"
+                      >
+                        following {profileUser.followingCount}
+                      </button>
+                    )}
+                  </div>
+                )}
+              </div>
             </div>
             <div className="flex items-center gap-2 sm:pb-1">
               {!isOwnProfile ? (
@@ -280,22 +438,45 @@ const Profile = () => {
                 <p className="text-sm text-jolshaa-on-surface">{profileUser.bio}</p>
               )}
               <div className="flex flex-wrap gap-x-4 gap-y-2 text-sm text-jolshaa-on-surface-variant">
-                {profileUser.work && (
+                {profileUser.workHistory && profileUser.workHistory.length > 0 && (
                   <span className="flex items-center gap-1.5">
                     <svg className="w-4 h-4 text-jolshaa-outline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
-                    {profileUser.work}
+                    {profileUser.workHistory[0].position
+                      ? `${profileUser.workHistory[0].position} at ${profileUser.workHistory[0].company}`
+                      : profileUser.workHistory[0].company}
                   </span>
                 )}
-                {profileUser.education && (
+                {profileUser.educationHistory && profileUser.educationHistory.length > 0 && (
                   <span className="flex items-center gap-1.5">
                     <svg className="w-4 h-4 text-jolshaa-outline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 14l9-5-9-5-9 5 9 5z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222" /></svg>
-                    {profileUser.education}
+                    {profileUser.educationHistory[0].degree
+                      ? `${profileUser.educationHistory[0].degree} at ${profileUser.educationHistory[0].institution}`
+                      : profileUser.educationHistory[0].institution}
                   </span>
                 )}
                 {profileUser.location && (
                   <span className="flex items-center gap-1.5">
                     <svg className="w-4 h-4 text-jolshaa-outline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
                     {profileUser.location}
+                  </span>
+                )}
+                {profileUser.website && (
+                  <span className="flex items-center gap-1.5">
+                    <svg className="w-4 h-4 text-jolshaa-outline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" /></svg>
+                    <a
+                      href={profileUser.website.startsWith('http') ? profileUser.website : `https://${profileUser.website}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-jolshaa-teal hover:underline"
+                    >
+                      {profileUser.website.replace(/^https?:\/\//, '')}
+                    </a>
+                  </span>
+                )}
+                {profileUser.phone && (
+                  <span className="flex items-center gap-1.5">
+                    <svg className="w-4 h-4 text-jolshaa-outline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>
+                    {profileUser.phone}
                   </span>
                 )}
               </div>
@@ -317,6 +498,20 @@ const Profile = () => {
             <div className="bg-jolshaa-surface-container-lowest rounded-xl shadow-ambient p-4">
               <SubscriptionTiersPage creatorId={profileUser.id || profileUser._id} />
             </div>
+          </div>
+        )}
+
+        {/* Profile Completion (own profile only) */}
+        {isOwnProfile && (
+          <div className="px-4 sm:px-0 mb-4">
+            <ProfileCompletionCard />
+          </div>
+        )}
+
+        {/* Shared Groups & Pages in Common (other profiles only) */}
+        {!isOwnProfile && (
+          <div className="px-4 sm:px-0 mb-4">
+            <SharedInCommonCard profileUserId={id} />
           </div>
         )}
 
@@ -354,20 +549,24 @@ const Profile = () => {
             <div className="flex flex-col lg:flex-row gap-4 items-start">
               {/* Intro + Recent Photos widgets */}
               <div className="w-full lg:w-[280px] flex-shrink-0 space-y-4">
-                {(profileUser.work || profileUser.education || profileUser.location || profileUser.createdAt) && (
+                {((profileUser.workHistory && profileUser.workHistory.length > 0) || (profileUser.educationHistory && profileUser.educationHistory.length > 0) || profileUser.location || profileUser.createdAt) && (
                   <div className="bg-jolshaa-surface-container-lowest rounded-xl shadow-ambient p-4">
                     <h3 className="text-base font-semibold font-display text-jolshaa-on-surface mb-3">Intro</h3>
                     <div className="space-y-3 text-sm text-jolshaa-on-surface-variant">
-                      {profileUser.work && (
+                      {profileUser.workHistory && profileUser.workHistory.length > 0 && (
                         <span className="flex items-center gap-2">
                           <svg className="w-4 h-4 text-jolshaa-outline flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
-                          {profileUser.work}
+                          {profileUser.workHistory[0].position
+                            ? `${profileUser.workHistory[0].position} at ${profileUser.workHistory[0].company}`
+                            : profileUser.workHistory[0].company}
                         </span>
                       )}
-                      {profileUser.education && (
+                      {profileUser.educationHistory && profileUser.educationHistory.length > 0 && (
                         <span className="flex items-center gap-2">
                           <svg className="w-4 h-4 text-jolshaa-outline flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 14l9-5-9-5-9 5 9 5z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222" /></svg>
-                          {profileUser.education}
+                          {profileUser.educationHistory[0].degree
+                            ? `${profileUser.educationHistory[0].degree} at ${profileUser.educationHistory[0].institution}`
+                            : profileUser.educationHistory[0].institution}
                         </span>
                       )}
                       {profileUser.location && (
@@ -413,6 +612,16 @@ const Profile = () => {
                     <PostSkeleton />
                     <PostSkeleton />
                   </>
+                ) : postsError ? (
+                  <div className="text-center py-12">
+                    <p className="text-sm text-jolshaa-on-surface-variant mb-3">{postsError}</p>
+                    <button
+                      onClick={() => fetchPosts(1)}
+                      className="px-4 py-2 rounded-lg text-sm font-medium bg-jolshaa-surface-container-low text-jolshaa-on-surface hover:bg-jolshaa-surface-container transition-colors"
+                    >
+                      Retry
+                    </button>
+                  </div>
                 ) : posts.length === 0 ? (
                   <div className="text-center py-12">
                     <div className="w-16 h-16 bg-jolshaa-surface-container rounded-full flex items-center justify-center mx-auto mb-3">
@@ -424,9 +633,25 @@ const Profile = () => {
                   </div>
                 ) : (
                   <>
-                    {posts.map(post => (
-                      <PostCard key={post._id} post={post} onDelete={handleDeletePost} />
-                    ))}
+                    {/* Pinned Post */}
+                    {pinnedPost && (
+                      <PinnedPostCard
+                        post={pinnedPost}
+                        onDelete={handleDeletePost}
+                        onUnpin={handlePinnedPostUnpin}
+                      />
+                    )}
+                    {posts
+                      .filter(post => !pinnedPost || post._id !== pinnedPost._id)
+                      .map(post => (
+                        <PostCard
+                          key={post._id}
+                          post={post}
+                          onDelete={handleDeletePost}
+                          isPinned={false}
+                          onPin={isOwnProfile ? () => { fetchPinnedPost(); } : undefined}
+                        />
+                      ))}
                     {page < totalPages && (
                       <div className="flex justify-center py-4">
                         <button
@@ -447,21 +672,50 @@ const Profile = () => {
           {activeTab === 'about' && (
             <div className="bg-jolshaa-surface-container-lowest rounded-xl shadow-ambient p-4">
               <h3 className="text-base font-semibold font-display text-jolshaa-on-surface mb-4">About {profileUser.name}</h3>
-              <div className="space-y-4">
-                {[
-                  { label: 'Bio', value: profileUser.bio },
-                  { label: 'Work', value: profileUser.work },
-                  { label: 'Education', value: profileUser.education },
-                  { label: 'Location', value: profileUser.location },
-                  { label: 'Gender', value: profileUser.gender !== 'prefer not to say' ? profileUser.gender : null },
-                  { label: 'Date of Birth', value: profileUser.dateOfBirth ? new Date(profileUser.dateOfBirth).toLocaleDateString() : null },
-                ].filter(item => item.value).map(item => (
-                  <div key={item.label}>
-                    <p className="text-xs font-medium text-jolshaa-on-surface-variant uppercase tracking-wide">{item.label}</p>
-                    <p className="text-sm text-jolshaa-on-surface mt-0.5 capitalize">{item.value}</p>
+              <div className="space-y-5">
+                {profileUser.bio && (
+                  <div>
+                    <p className="text-xs font-medium text-jolshaa-on-surface-variant uppercase tracking-wide mb-1">Bio</p>
+                    <p className="text-sm text-jolshaa-on-surface">{profileUser.bio}</p>
                   </div>
-                ))}
-                {!profileUser.bio && !profileUser.work && !profileUser.education && !profileUser.location && (
+                )}
+
+                {/* Structured Work History */}
+                <WorkHistoryList
+                  workHistory={profileUser.workHistory || []}
+                  isOwner={isOwnProfile}
+                  onUpdate={refreshProfile}
+                />
+
+                {/* Structured Education History */}
+                <EducationHistoryList
+                  educationHistory={profileUser.educationHistory || []}
+                  isOwner={isOwnProfile}
+                  onUpdate={refreshProfile}
+                />
+
+                {profileUser.location && (
+                  <div>
+                    <p className="text-xs font-medium text-jolshaa-on-surface-variant uppercase tracking-wide mb-1">Location</p>
+                    <p className="text-sm text-jolshaa-on-surface">{profileUser.location}</p>
+                  </div>
+                )}
+
+                {profileUser.gender && profileUser.gender !== 'prefer not to say' && (
+                  <div>
+                    <p className="text-xs font-medium text-jolshaa-on-surface-variant uppercase tracking-wide mb-1">Gender</p>
+                    <p className="text-sm text-jolshaa-on-surface capitalize">{profileUser.gender}</p>
+                  </div>
+                )}
+
+                {profileUser.dateOfBirth && (
+                  <div>
+                    <p className="text-xs font-medium text-jolshaa-on-surface-variant uppercase tracking-wide mb-1">Date of Birth</p>
+                    <p className="text-sm text-jolshaa-on-surface">{new Date(profileUser.dateOfBirth).toLocaleDateString()}</p>
+                  </div>
+                )}
+
+                {!profileUser.bio && (!profileUser.workHistory || profileUser.workHistory.length === 0) && (!profileUser.educationHistory || profileUser.educationHistory.length === 0) && !profileUser.location && (
                   <p className="text-sm text-jolshaa-on-surface-variant text-center py-4">No info to show</p>
                 )}
               </div>
@@ -477,6 +731,16 @@ const Profile = () => {
                   {[...Array(6)].map((_, i) => (
                     <div key={i} className="flex items-center gap-3 p-3 rounded-xl skeleton h-16" />
                   ))}
+                </div>
+              ) : friendsError ? (
+                <div className="text-center py-12">
+                  <p className="text-sm text-jolshaa-on-surface-variant mb-3">{friendsError}</p>
+                  <button
+                    onClick={fetchFriends}
+                    className="px-4 py-2 rounded-lg text-sm font-medium bg-jolshaa-surface-container-low text-jolshaa-on-surface hover:bg-jolshaa-surface-container transition-colors"
+                  >
+                    Retry
+                  </button>
                 </div>
               ) : friends.length === 0 ? (
                 <div className="text-center py-12">
@@ -513,6 +777,16 @@ const Profile = () => {
             <div className="space-y-4">
               {helpLoading ? (
                 <div className="text-center py-8 text-jolshaa-on-surface-variant">Loading help history...</div>
+              ) : helpError ? (
+                <div className="text-center py-12">
+                  <p className="text-sm text-jolshaa-on-surface-variant mb-3">{helpError}</p>
+                  <button
+                    onClick={fetchHelpHistory}
+                    className="px-4 py-2 rounded-lg text-sm font-medium bg-jolshaa-surface-container-low text-jolshaa-on-surface hover:bg-jolshaa-surface-container transition-colors"
+                  >
+                    Retry
+                  </button>
+                </div>
               ) : helpHistory ? (
                 <>
                   {/* Stats */}
@@ -595,6 +869,20 @@ const Profile = () => {
       {showReport && (
         <ReportModal targetType="user" targetId={profileUser._id || profileUser.id} userId={profileUser._id || profileUser.id} onClose={() => setShowReport(false)} />
       )}
+
+      <FollowersListModal
+        isOpen={showFollowers}
+        onClose={() => setShowFollowers(false)}
+        userId={profileUser.id || profileUser._id}
+        isOwner={isOwnProfile}
+      />
+
+      <FollowingListModal
+        isOpen={showFollowing}
+        onClose={() => setShowFollowing(false)}
+        userId={profileUser.id || profileUser._id}
+        isOwner={isOwnProfile}
+      />
     </Layout>
   );
 };

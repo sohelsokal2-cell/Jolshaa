@@ -5,8 +5,20 @@ const { hasId } = require('../utils/id');
 
 exports.getUserOnlineStatus = async (req, res) => {
   try {
+    const targetUser = await User.findById(req.params.id).select('activeStatus lastSeen privacy');
+    if (!targetUser) return res.status(404).json({ message: 'User not found' });
+
+    const isOwner = req.user._id.toString() === targetUser._id.toString();
     const online = isUserOnline(req.params.id);
-    res.json({ online });
+
+    // Privacy: if user disabled showing online status, hide from non-owners
+    const showStatus = isOwner || targetUser.privacy?.showOnlineStatus !== false;
+
+    res.json({
+      online: showStatus ? online : null,
+      lastSeen: showStatus ? targetUser.lastSeen : null,
+      showStatus
+    });
   } catch (error) {
     res.status(500).json({ message: 'Server error' });
   }
@@ -14,7 +26,9 @@ exports.getUserOnlineStatus = async (req, res) => {
 
 exports.getUserById = async (req, res) => {
   try {
-    const user = await User.findById(req.params.id).select('-password -loginHistory -sessions -blockedUsers -trustedDevices');
+    const user = await User.findById(req.params.id)
+      .select('-password -loginHistory -sessions -blockedUsers -trustedDevices')
+      .populate('friends', 'name profilePhoto bio');
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
@@ -51,26 +65,21 @@ exports.getUserById = async (req, res) => {
       }
     }
 
-    // Get mutual friends count (reuse currentUser, fetch target user's friends once)
+    // Get mutual friends (reuse currentUser, use already-fetched friends from user doc)
     let mutualFriends = [];
     let mutualFriendsCount = 0;
-    let targetFriends = [];
     if (!isOwnProfile) {
-      const targetUserFull = await User.findById(user._id).select('friends');
-      targetFriends = targetUserFull?.friends || [];
-      const mutualIds = currentUser.friends.filter(f => hasId(targetFriends, f));
+      const targetFriendIds = (user.friends || []).map(f => f._id || f);
+      const mutualIds = currentUser.friends.filter(f => hasId(targetFriendIds, f));
       mutualFriendsCount = mutualIds.length;
       if (mutualIds.length > 0) {
         mutualFriends = await User.find({ _id: { $in: mutualIds.slice(0, 5) } })
           .select('name profilePhoto');
       }
-    } else {
-      const targetUserFull = await User.findById(user._id).select('friends');
-      targetFriends = targetUserFull?.friends || [];
     }
 
-    // Get friend count
-    const friendCount = targetFriends.length;
+    // Friend count from the already-fetched array
+    const friendCount = (user.friends || []).length;
 
     // Get friend list (if allowed by privacy)
     let friends = [];
@@ -78,11 +87,12 @@ exports.getUserById = async (req, res) => {
       user.privacy?.showFriendsList === 'everyone' ||
       (user.privacy?.showFriendsList === 'friends' && friendStatus === 'friends');
     if (canShowFriends && friendCount > 0) {
-      const fullUser = await User.findById(user._id)
-        .select('friends')
-        .populate('friends', 'name profilePhoto');
-      friends = fullUser.friends;
+      friends = user.friends;
     }
+
+    // Follower / following counts
+    const followerCount = (user.followers || []).length;
+    const followingCount = (user.following || []).length;
 
     // Privacy: hide sensitive fields from non-owners
     const profile = {
@@ -93,14 +103,20 @@ exports.getUserById = async (req, res) => {
       bio: user.bio,
       education: user.education,
       work: user.work,
+      workHistory: user.workHistory || [],
+      educationHistory: user.educationHistory || [],
       location: user.location,
+      website: user.website || '',
       createdAt: user.createdAt,
       friendStatus,
       friendRequestId,
       friendCount,
       mutualFriendsCount,
       mutualFriends,
-      friends
+      friends,
+      followerCount,
+      followingCount,
+      pinnedPost: user.pinnedPost || null
     };
 
     // Show email only to self
@@ -233,7 +249,7 @@ exports.updateProfile = async (req, res) => {
       return res.status(403).json({ message: 'You can only update your own profile' });
     }
 
-    const allowedFields = ['name', 'phone', 'bio', 'dateOfBirth', 'gender', 'education', 'work', 'location'];
+    const allowedFields = ['name', 'phone', 'bio', 'dateOfBirth', 'gender', 'education', 'work', 'location', 'website'];
     const updates = {};
     allowedFields.forEach(field => {
       if (req.body[field] !== undefined) updates[field] = req.body[field];
@@ -270,6 +286,7 @@ exports.updateProfile = async (req, res) => {
       education: user.education,
       work: user.work,
       location: user.location,
+      website: user.website,
       createdAt: user.createdAt
     });
   } catch (error) {
@@ -279,7 +296,7 @@ exports.updateProfile = async (req, res) => {
 
 exports.updatePrivacy = async (req, res) => {
   try {
-    const { postVisibility, friendRequests, showFriendsList, commentPrivacy, storyVisibility, messagePrivacy } = req.body;
+    const { postVisibility, friendRequests, showFriendsList, commentPrivacy, storyVisibility, messagePrivacy, showOnlineStatus } = req.body;
 
     const user = await User.findById(req.user._id);
     if (!user) {
@@ -292,6 +309,7 @@ exports.updatePrivacy = async (req, res) => {
     if (commentPrivacy) user.privacy.commentPrivacy = commentPrivacy;
     if (storyVisibility) user.privacy.storyVisibility = storyVisibility;
     if (messagePrivacy) user.privacy.messagePrivacy = messagePrivacy;
+    if (showOnlineStatus !== undefined) user.privacy.showOnlineStatus = showOnlineStatus;
 
     await user.save();
 
@@ -368,6 +386,473 @@ exports.getBlockedUsers = async (req, res) => {
       return res.status(404).json({ message: 'User not found' });
     }
     res.json({ blockedUsers: user.blockedUsers });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+// ── Work History CRUD ────────────────────────────────────────────────
+
+exports.addWork = async (req, res) => {
+  try {
+    const { company, position, location, startDate, endDate, isCurrent, description } = req.body;
+    if (!company) return res.status(400).json({ message: 'Company is required' });
+
+    const user = await User.findById(req.user._id);
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    user.workHistory.push({
+      company,
+      position: position || '',
+      location: location || '',
+      startDate: startDate || null,
+      endDate: isCurrent ? null : (endDate || null),
+      isCurrent: !!isCurrent,
+      description: description || ''
+    });
+
+    await user.save();
+    res.status(201).json({ workHistory: user.workHistory });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+exports.updateWork = async (req, res) => {
+  try {
+    const { entryId } = req.params;
+    const { company, position, location, startDate, endDate, isCurrent, description } = req.body;
+
+    const user = await User.findById(req.user._id);
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    const entry = user.workHistory.id(entryId);
+    if (!entry) return res.status(404).json({ message: 'Work entry not found' });
+
+    if (company !== undefined) entry.company = company;
+    if (position !== undefined) entry.position = position;
+    if (location !== undefined) entry.location = location;
+    if (startDate !== undefined) entry.startDate = startDate || null;
+    if (isCurrent !== undefined) entry.isCurrent = isCurrent;
+    if (isCurrent) {
+      entry.endDate = null;
+    } else if (endDate !== undefined) {
+      entry.endDate = endDate || null;
+    }
+    if (description !== undefined) entry.description = description;
+
+    await user.save();
+    res.json({ workHistory: user.workHistory });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+exports.deleteWork = async (req, res) => {
+  try {
+    const { entryId } = req.params;
+    const user = await User.findById(req.user._id);
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    const entry = user.workHistory.id(entryId);
+    if (!entry) return res.status(404).json({ message: 'Work entry not found' });
+
+    user.workHistory.pull(entryId);
+    await user.save();
+    res.json({ workHistory: user.workHistory });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+// ── Education History CRUD ───────────────────────────────────────────
+
+exports.addEducation = async (req, res) => {
+  try {
+    const { institution, degree, fieldOfStudy, startDate, endDate, isCurrent, description } = req.body;
+    if (!institution) return res.status(400).json({ message: 'Institution is required' });
+
+    const user = await User.findById(req.user._id);
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    user.educationHistory.push({
+      institution,
+      degree: degree || '',
+      fieldOfStudy: fieldOfStudy || '',
+      startDate: startDate || null,
+      endDate: isCurrent ? null : (endDate || null),
+      isCurrent: !!isCurrent,
+      description: description || ''
+    });
+
+    await user.save();
+    res.status(201).json({ educationHistory: user.educationHistory });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+exports.updateEducation = async (req, res) => {
+  try {
+    const { entryId } = req.params;
+    const { institution, degree, fieldOfStudy, startDate, endDate, isCurrent, description } = req.body;
+
+    const user = await User.findById(req.user._id);
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    const entry = user.educationHistory.id(entryId);
+    if (!entry) return res.status(404).json({ message: 'Education entry not found' });
+
+    if (institution !== undefined) entry.institution = institution;
+    if (degree !== undefined) entry.degree = degree;
+    if (fieldOfStudy !== undefined) entry.fieldOfStudy = fieldOfStudy;
+    if (startDate !== undefined) entry.startDate = startDate || null;
+    if (isCurrent !== undefined) entry.isCurrent = isCurrent;
+    if (isCurrent) {
+      entry.endDate = null;
+    } else if (endDate !== undefined) {
+      entry.endDate = endDate || null;
+    }
+    if (description !== undefined) entry.description = description;
+
+    await user.save();
+    res.json({ educationHistory: user.educationHistory });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+exports.deleteEducation = async (req, res) => {
+  try {
+    const { entryId } = req.params;
+    const user = await User.findById(req.user._id);
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    const entry = user.educationHistory.id(entryId);
+    if (!entry) return res.status(404).json({ message: 'Education entry not found' });
+
+    user.educationHistory.pull(entryId);
+    await user.save();
+    res.json({ educationHistory: user.educationHistory });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+// ── Followers / Following ────────────────────────────────────────────
+
+exports.getFollowers = async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 20;
+    const skip = (page - 1) * limit;
+    const search = req.query.search || '';
+
+    const user = await User.findById(req.params.id).select('followers');
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    const total = user.followers.length;
+
+    let followerIds = user.followers;
+    if (search) {
+      const matchingUsers = await User.find({
+        _id: { $in: followerIds },
+        name: { $regex: search, $options: 'i' }
+      }).select('_id');
+      followerIds = matchingUsers.map(u => u._id);
+    }
+
+    const paginatedIds = followerIds.slice(skip, skip + limit);
+
+    const followers = await User.find({ _id: { $in: paginatedIds } })
+      .select('name profilePhoto bio monetization.isCreator')
+      .populate('friends', '_id');
+
+    // Add mutual friends count and isFollowing for each follower
+    const currentUser = await User.findById(req.user._id).select('friends following');
+    const followersWithMutual = followers.map(f => {
+      const mutualCount = (currentUser.friends || []).filter(
+        cf => (f.friends || []).some(ff => ff.toString() === cf.toString())
+      ).length;
+      const isFollowing = (currentUser.following || []).some(
+        fid => fid.toString() === f._id.toString()
+      );
+      return { ...f.toObject(), mutualFriendsCount: mutualCount, isFollowing, friends: undefined };
+    });
+
+    res.json({
+      followers: followersWithMutual,
+      total,
+      page,
+      totalPages: Math.ceil(total / limit)
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+exports.getFollowing = async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 20;
+    const skip = (page - 1) * limit;
+    const search = req.query.search || '';
+
+    const user = await User.findById(req.params.id).select('following');
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    const total = user.following.length;
+
+    let followingIds = user.following;
+    if (search) {
+      const matchingUsers = await User.find({
+        _id: { $in: followingIds },
+        name: { $regex: search, $options: 'i' }
+      }).select('_id');
+      followingIds = matchingUsers.map(u => u._id);
+    }
+
+    const paginatedIds = followingIds.slice(skip, skip + limit);
+
+    const following = await User.find({ _id: { $in: paginatedIds } })
+      .select('name profilePhoto bio monetization.isCreator')
+      .populate('friends', '_id');
+
+    const currentUser = await User.findById(req.user._id).select('friends following');
+    const followingWithMutual = following.map(f => {
+      const mutualCount = (currentUser.friends || []).filter(
+        cf => (f.friends || []).some(ff => ff.toString() === cf.toString())
+      ).length;
+      const isFollowing = (currentUser.following || []).some(
+        fid => fid.toString() === f._id.toString()
+      );
+      return { ...f.toObject(), mutualFriendsCount: mutualCount, isFollowing, friends: undefined };
+    });
+
+    res.json({
+      following: followingWithMutual,
+      total,
+      page,
+      totalPages: Math.ceil(total / limit)
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+exports.getFollowerCount = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id).select('followers');
+    if (!user) return res.status(404).json({ message: 'User not found' });
+    res.json({ count: user.followers.length });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+exports.toggleFollow = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    if (userId === req.user._id.toString()) {
+      return res.status(400).json({ message: 'Cannot follow yourself' });
+    }
+
+    const targetUser = await User.findById(userId);
+    if (!targetUser) return res.status(404).json({ message: 'User not found' });
+
+    const currentUser = await User.findById(req.user._id);
+    const isFollowing = currentUser.following.some(id => id.toString() === userId);
+
+    if (isFollowing) {
+      currentUser.following.pull(userId);
+      targetUser.followers.pull(req.user._id);
+    } else {
+      currentUser.following.push(userId);
+      targetUser.followers.push(req.user._id);
+
+      // Notify
+      const Notification = require('../models/Notification');
+      const notification = await Notification.create({
+        recipient: userId,
+        sender: req.user._id,
+        type: 'follow',
+        message: `${currentUser.name} started following you`,
+      });
+
+      const { getIO } = require('../socket');
+      getIO().to(`user:${userId}`).emit('newNotification', {
+        ...notification.toObject(),
+        sender: { _id: currentUser._id, name: currentUser.name, profilePhoto: currentUser.profilePhoto },
+      });
+    }
+
+    if (targetUser.monetization?.isCreator) {
+      targetUser.monetization.followerCount = targetUser.followers.length;
+    }
+
+    await currentUser.save();
+    await targetUser.save();
+
+    res.json({
+      isFollowing: !isFollowing,
+      followerCount: targetUser.followers.length,
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+// ── Pinned Post ──────────────────────────────────────────────────────
+
+exports.pinPost = async (req, res) => {
+  try {
+    const { postId } = req.params;
+    const Post = require('../models/Post');
+
+    // Verify the post exists and belongs to the user
+    const post = await Post.findById(postId);
+    if (!post) return res.status(404).json({ message: 'Post not found' });
+    if (post.author.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ message: 'You can only pin your own posts' });
+    }
+
+    const user = await User.findById(req.user._id);
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    const isReplacing = user.pinnedPost && user.pinnedPost.toString() !== postId;
+
+    user.pinnedPost = postId;
+    await user.save();
+
+    res.json({
+      pinnedPost: postId,
+      replaced: isReplacing,
+      message: isReplacing ? 'Pinned post replaced' : 'Post pinned to profile'
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+exports.unpinPost = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    user.pinnedPost = null;
+    await user.save();
+
+    res.json({ message: 'Post unpinned from profile' });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+exports.getPinnedPost = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id).select('pinnedPost');
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    if (!user.pinnedPost) {
+      return res.json({ pinnedPost: null });
+    }
+
+    const Post = require('../models/Post');
+    const post = await Post.findById(user.pinnedPost)
+      .populate('author', 'name profilePhoto isVerified')
+      .populate('taggedUsers', 'name profilePhoto')
+      .populate({ path: 'sharedPost', populate: { path: 'author', select: 'name profilePhoto' } });
+
+    if (!post) {
+      // Post was deleted, clean up the reference
+      user.pinnedPost = null;
+      await user.save();
+      return res.json({ pinnedPost: null });
+    }
+
+    // Add reaction/comment counts
+    const Reaction = require('../models/Reaction');
+    const Comment = require('../models/Comment');
+
+    const reactions = await Reaction.aggregate([
+      { $match: { targetType: 'Post', targetId: post._id } },
+      { $group: { _id: '$targetId', count: { $sum: 1 }, types: { $push: '$type' } } }
+    ]);
+    const myReaction = await Reaction.findOne({ targetType: 'Post', targetId: post._id, user: req.user._id });
+    const commentCount = await Comment.countDocuments({ post: post._id });
+
+    const postObj = post.toObject();
+    postObj.reactions = reactions[0] ? { count: reactions[0].count, myReaction: myReaction?.type || null } : { count: 0, myReaction: null };
+    postObj.commentCount = commentCount;
+    postObj.isPinned = true;
+
+    res.json({ pinnedPost: postObj });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+// ── Profile Completion ───────────────────────────────────────────────
+
+exports.getProfileCompletion = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id)
+      .select('profilePhoto coverPhoto bio workHistory educationHistory dateOfBirth gender');
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    const Post = require('../models/Post');
+    const postCount = await Post.countDocuments({ author: req.user._id });
+
+    const defaultPhoto = 'https://ui-avatars.com/api/?name=U&background=494454&color=dae2fd&size=128';
+
+    const checks = [
+      { key: 'profilePhoto', label: 'Add a profile photo', done: user.profilePhoto && user.profilePhoto !== defaultPhoto },
+      { key: 'coverPhoto', label: 'Add a cover photo', done: !!user.coverPhoto },
+      { key: 'bio', label: 'Add a bio', done: !!user.bio && user.bio.trim().length > 0 },
+      { key: 'workHistory', label: 'Add work experience', done: user.workHistory && user.workHistory.length > 0 },
+      { key: 'educationHistory', label: 'Add education', done: user.educationHistory && user.educationHistory.length > 0 },
+      { key: 'dateOfBirth', label: 'Add your date of birth', done: !!user.dateOfBirth },
+      { key: 'gender', label: 'Add your gender', done: user.gender && user.gender !== 'prefer not to say' },
+      { key: 'post', label: 'Create your first post', done: postCount > 0 },
+    ];
+
+    const doneCount = checks.filter(c => c.done).length;
+    const percentage = Math.round((doneCount / checks.length) * 100);
+    const missingFields = checks.filter(c => !c.done).map(c => c.key);
+    const missingLabels = checks.filter(c => !c.done).map(c => ({ key: c.key, label: c.label }));
+
+    res.json({ percentage, missingFields, missingLabels, total: checks.length, done: doneCount });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+// ── Shared Groups & Pages in Common ─────────────────────────────────
+
+exports.getSharedGroupsAndPages = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const myId = req.user._id;
+
+    if (id === String(myId)) {
+      return res.json({ sharedGroups: [], sharedPages: [] });
+    }
+
+    const Group = require('../models/Group');
+    const Page = require('../models/Page');
+
+    const [sharedGroups, sharedPages] = await Promise.all([
+      Group.find({ members: { $all: [myId, id] } })
+        .select('name avatar members')
+        .limit(5)
+        .lean(),
+      Page.find({ followers: { $all: [myId, id] } })
+        .select('name avatar followers')
+        .limit(5)
+        .lean(),
+    ]);
+
+    res.json({ sharedGroups, sharedPages });
   } catch (error) {
     res.status(500).json({ message: 'Server error' });
   }

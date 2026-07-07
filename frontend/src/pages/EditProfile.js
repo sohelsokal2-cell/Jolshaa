@@ -25,7 +25,8 @@ const EditProfile = () => {
     dateOfBirth: '',
     education: '',
     work: '',
-    location: ''
+    location: '',
+    website: ''
   });
 
   useEffect(() => {
@@ -40,7 +41,8 @@ const EditProfile = () => {
         dateOfBirth: user.dateOfBirth ? user.dateOfBirth.split('T')[0] : '',
         education: user.education || '',
         work: user.work || '',
-        location: user.location || ''
+        location: user.location || '',
+        website: user.website || ''
       });
     }
   }, [user]);
@@ -85,8 +87,9 @@ const EditProfile = () => {
     setSuccess('');
 
     try {
-      const res = await API.put(`/users/${user.id}`, formData);
-      updateUser(res.data);
+      await API.put(`/users/${user.id}`, formData);
+      const fresh = await API.get(`/users/${user.id}`);
+      updateUser(fresh.data);
       setSuccess('Profile updated successfully');
       setTimeout(() => navigate('/feed'), 1000);
     } catch (err) {
@@ -215,6 +218,18 @@ const EditProfile = () => {
                 value={formData.education}
                 onChange={handleChange}
                 placeholder="e.g. MIT, Computer Science"
+                className="w-full rounded-lg px-3 py-2 text-sm bg-jolshaa-surface-container-lowest border border-jolshaa-outline-variant text-jolshaa-on-surface focus:outline-none focus:ring-2 focus:ring-jolshaa-teal"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-jolshaa-on-surface-variant mb-1">Website</label>
+              <input
+                type="text"
+                name="website"
+                value={formData.website}
+                onChange={handleChange}
+                placeholder="e.g. yourwebsite.com"
                 className="w-full rounded-lg px-3 py-2 text-sm bg-jolshaa-surface-container-lowest border border-jolshaa-outline-variant text-jolshaa-on-surface focus:outline-none focus:ring-2 focus:ring-jolshaa-teal"
               />
             </div>
