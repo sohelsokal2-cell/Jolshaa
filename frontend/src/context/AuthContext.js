@@ -29,22 +29,32 @@ export const AuthProvider = ({ children }) => {
     if (res.data.requires2FA) {
       return res.data;
     }
-    tokenRef.current = res.data.token; // Store in memory for socket.io
     setUser(res.data.user);
+    // Fetch socket token separately (stored in memory only)
+    try {
+      const tokenRes = await API.get('/auth/socket-token');
+      tokenRef.current = tokenRes.data.token;
+    } catch (_) { /* socket token fetch failed, will retry on next action */ }
     return res.data;
   };
 
   const verifyLogin2FA = async (userId, code) => {
     const res = await API.post('/auth/login/2fa', { userId, code });
-    tokenRef.current = res.data.token; // Store in memory for socket.io
     setUser(res.data.user);
+    try {
+      const tokenRes = await API.get('/auth/socket-token');
+      tokenRef.current = tokenRes.data.token;
+    } catch (_) { /* socket token fetch failed */ }
     return res.data;
   };
 
   const signup = async (name, email, password, turnstileToken = '') => {
     const res = await API.post('/auth/signup', { name, email, password, turnstileToken });
-    tokenRef.current = res.data.token; // Store in memory for socket.io
     setUser(res.data.user);
+    try {
+      const tokenRes = await API.get('/auth/socket-token');
+      tokenRef.current = tokenRes.data.token;
+    } catch (_) { /* socket token fetch failed */ }
     return res.data;
   };
 

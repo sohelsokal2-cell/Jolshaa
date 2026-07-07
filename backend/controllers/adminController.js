@@ -149,7 +149,7 @@ exports.warnUser = async (req, res) => {
       const notification = await Notification.create({
         recipient: user._id,
         sender: req.user._id,
-        type: 'tag',
+        type: 'warning',
       });
       getIO().to(`user:${user._id}`).emit('newNotification', {
         ...notification.toObject(),

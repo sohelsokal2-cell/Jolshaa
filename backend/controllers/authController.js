@@ -7,12 +7,17 @@ const safeCompare = (a, b) => {
   if (!a || !b) return false;
   const bufA = Buffer.from(a);
   const bufB = Buffer.from(b);
-  if (bufA.length !== bufB.length) return false;
-  return crypto.timingSafeEqual(bufA, bufB);
+  // Pad shorter buffer to avoid length leak
+  const maxLen = Math.max(bufA.length, bufB.length);
+  const paddedA = Buffer.alloc(maxLen, 0);
+  const paddedB = Buffer.alloc(maxLen, 0);
+  bufA.copy(paddedA);
+  bufB.copy(paddedB);
+  return crypto.timingSafeEqual(paddedA, paddedB);
 };
 
-const generateToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, {
+const generateToken = (id, tokenVersion = 0) => {
+  return jwt.sign({ id, v: tokenVersion }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRES_IN || '7d'
   });
 };
@@ -53,7 +58,7 @@ exports.signup = async (req, res) => {
     }
 
     const user = await User.create({ name, email, password });
-    const token = generateToken(user._id);
+    const token = generateToken(user._id, user.tokenVersion || 0);
 
     const ip = req.ip || req.connection?.remoteAddress || '';
     const userAgent = req.headers['user-agent'] || '';
@@ -65,7 +70,6 @@ exports.signup = async (req, res) => {
     setTokenCookie(res, token);
 
     res.status(201).json({
-      token, // Returned for socket.io auth (stored in memory, not localStorage)
       user: {
         id: user._id,
         name: user.name,
@@ -122,7 +126,7 @@ exports.login = async (req, res) => {
 };
 
 const completeLogin = async (req, res, user) => {
-  const token = generateToken(user._id);
+  const token = generateToken(user._id, user.tokenVersion || 0);
   const ip = req.ip || req.connection?.remoteAddress || '';
   const userAgent = req.headers['user-agent'] || '';
 
@@ -143,7 +147,6 @@ const completeLogin = async (req, res, user) => {
   setTokenCookie(res, token);
 
   res.json({
-    token, // Returned for socket.io auth (stored in memory, not localStorage)
     user: {
       id: user._id,
       name: user.name,
@@ -248,7 +251,8 @@ exports.getMe = async (req, res) => {
 // Returns a fresh token for socket.io auth (called on page refresh to restore in-memory token)
 exports.getSocketToken = async (req, res) => {
   try {
-    const token = generateToken(req.user._id);
+    const user = await User.findById(req.user._id).select('tokenVersion');
+    const token = generateToken(req.user._id, user.tokenVersion || 0);
     setTokenCookie(res, token);
     res.json({ token });
   } catch (error) {
@@ -275,10 +279,14 @@ exports.changePassword = async (req, res) => {
     }
 
     user.password = newPassword;
-    // Invalidate all sessions except current
-    const currentToken = req.cookies?.token || req.headers.authorization?.split(' ')[1];
-    user.sessions = user.sessions.filter(s => s.token === currentToken);
+    // Invalidate all sessions and increment token version
+    user.sessions = [];
+    user.tokenVersion = (user.tokenVersion || 0) + 1;
     await user.save();
+
+    // Issue new token with updated version
+    const newToken = generateToken(req.user._id, user.tokenVersion);
+    setTokenCookie(res, newToken);
 
     res.json({ message: 'Password changed successfully' });
   } catch (error) {
@@ -317,10 +325,14 @@ exports.revokeSession = async (req, res) => {
 
 exports.revokeAllSessions = async (req, res) => {
   try {
-    const currentToken = req.cookies?.token || req.headers.authorization?.split(' ')[1];
     await User.findByIdAndUpdate(req.user._id, {
-      $pull: { sessions: { token: { $ne: currentToken } } }
+      $pull: { sessions: { token: { $ne: null } } },
+      $inc: { tokenVersion: 1 }
     });
+    // Generate new token with incremented version
+    const user = await User.findById(req.user._id).select('tokenVersion');
+    const newToken = generateToken(req.user._id, user.tokenVersion);
+    setTokenCookie(res, newToken);
     res.json({ message: 'All other sessions revoked' });
   } catch (error) {
     res.status(500).json({ message: 'Server error' });
@@ -392,27 +404,84 @@ exports.deleteAccount = async (req, res) => {
     const Reel = require('../models/Reel');
     const Group = require('../models/Group');
     const Transaction = require('../models/Transaction');
+    const SavedFolder = require('../models/SavedFolder');
+    const StoryArchive = require('../models/StoryArchive');
+    const Subscription = require('../models/Subscription');
+    const Poll = require('../models/Poll');
+    const QA = require('../models/QA');
+    const Note = require('../models/Note');
+    const Review = require('../models/Review');
+    const Listing = require('../models/Listing');
+    const UserWallet = require('../models/UserWallet');
+    const PayoutRequest = require('../models/PayoutRequest');
+    const SupportTicket = require('../models/SupportTicket');
+    const Ad = require('../models/Ad');
+    const AdCampaign = require('../models/AdCampaign');
 
     // Cascade delete user data
-    await Post.deleteMany({ author: req.user._id });
-    await Comment.deleteMany({ author: req.user._id });
-    await Reaction.deleteMany({ user: req.user._id });
-    await Notification.deleteMany({ $or: [{ recipient: req.user._id }, { sender: req.user._id }] });
-    await Story.deleteMany({ author: req.user._id });
-    await Report.deleteMany({ reporter: req.user._id });
-    await Conversation.updateMany({ participants: req.user._id }, { $pull: { participants: req.user._id } });
-    await Message.deleteMany({ sender: req.user._id });
-    await Album.deleteMany({ owner: req.user._id });
-    await Reel.deleteMany({ author: req.user._id });
-    await Group.deleteMany({ creator: req.user._id });
+    await Promise.all([
+      Post.deleteMany({ author: req.user._id }),
+      Comment.deleteMany({ author: req.user._id }),
+      Reaction.deleteMany({ user: req.user._id }),
+      Notification.deleteMany({ $or: [{ recipient: req.user._id }, { sender: req.user._id }] }),
+      Story.deleteMany({ author: req.user._id }),
+      Report.deleteMany({ reporter: req.user._id }),
+      Message.deleteMany({ sender: req.user._id }),
+      Album.deleteMany({ owner: req.user._id }),
+      Reel.deleteMany({ author: req.user._id }),
+      Transaction.deleteMany({ user: req.user._id }),
+      SavedFolder.deleteMany({ user: req.user._id }),
+      StoryArchive.deleteMany({ author: req.user._id }),
+      Subscription.deleteMany({ $or: [{ subscriber: req.user._id }, { creator: req.user._id }] }),
+      Poll.deleteMany({ author: req.user._id }),
+      QA.deleteMany({ author: req.user._id }),
+      Note.deleteMany({ author: req.user._id }),
+      Review.deleteMany({ reviewer: req.user._id }),
+      Listing.deleteMany({ seller: req.user._id }),
+      UserWallet.deleteMany({ user: req.user._id }),
+      PayoutRequest.deleteMany({ user: req.user._id }),
+      SupportTicket.deleteMany({ user: req.user._id }),
+      Ad.deleteMany({ advertiser: req.user._id }),
+      AdCampaign.deleteMany({ advertiser: req.user._id }),
+    ]);
+
+    // Remove from groups (members, admins, moderators, pending)
     await Group.updateMany(
       { members: req.user._id },
       { $pull: { members: req.user._id, admins: req.user._id, moderators: req.user._id, pendingRequests: req.user._id } }
     );
-    await Transaction.deleteMany({ user: req.user._id });
+
+    // Remove from conversations (don't delete group conversations)
+    await Conversation.updateMany(
+      { participants: req.user._id, isGroup: { $ne: true } },
+      { $pull: { participants: req.user._id } }
+    );
+
+    // Remove from other users' friend lists
+    await User.updateMany(
+      { friends: req.user._id },
+      { $pull: { friends: req.user._id } }
+    );
+
+    // Remove from followers/following
+    await User.updateMany(
+      { followers: req.user._id },
+      { $pull: { followers: req.user._id } }
+    );
+    await User.updateMany(
+      { following: req.user._id },
+      { $pull: { following: req.user._id } }
+    );
+
+    // Delete empty conversations
+    await Conversation.deleteMany({ participants: { $size: 0 } });
+
+    // Invalidate all sessions before deleting
+    await User.findByIdAndUpdate(req.user._id, { sessions: [] });
 
     await User.findByIdAndDelete(req.user._id);
 
+    res.clearCookie('token', { path: '/' });
     res.json({ message: 'Account deleted successfully' });
   } catch (error) {
     res.status(500).json({ message: 'Server error' });
@@ -428,7 +497,6 @@ exports.forgotPassword = async (req, res) => {
     // Always return same message to prevent email enumeration
     if (!user) return res.json({ message: 'If an account exists with this email, a reset link has been sent.' });
 
-    const crypto = require('crypto');
     const token = crypto.randomBytes(32).toString('hex');
     user.passwordResetToken = token;
     user.passwordResetExpires = new Date(Date.now() + 3600000);
@@ -466,7 +534,8 @@ exports.resetPassword = async (req, res) => {
     user.password = newPassword;
     user.passwordResetToken = undefined;
     user.passwordResetExpires = undefined;
-    user.sessions = []; // invalidate all sessions on password reset
+    user.sessions = [];
+    user.tokenVersion = (user.tokenVersion || 0) + 1;
     await user.save();
 
     res.json({ message: 'Password reset successful' });

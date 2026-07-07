@@ -1,28 +1,28 @@
 {
   "permissions": {
     "allow": [
-      "Bash(awk '{print $5}')",
-      "Bash(xargs -r -I{} taskkill //PID {} //F)",
-      "Bash(command -v chromium-cli)",
-      "Bash(npm ls *)",
+      "Bash(git merge *)",
+      "Bash(git status *)",
+      "Bash(mv .claude/settings.json /tmp/settings.json.bak)",
+      "Read(//tmp/**)",
+      "Bash(rm -f /tmp/settings.json.bak)",
       "Bash(git checkout *)",
+      "Bash(git push *)",
+      "Bash(which vercel *)",
+      "Bash(vercel --version)",
+      "Bash(ls -la vercel.json frontend/vercel.json)",
+      "Bash(find . -maxdepth 2 -iname \"vercel.json\")",
+      "Bash(npx --yes vercel --version)",
+      "Bash(npx --yes vercel whoami)",
+      "Bash(npx --yes vercel ls)",
+      "Bash(npx --yes vercel git ls)",
+      "Bash(npx --yes vercel --prod --yes)",
+      "Bash(npm run *)",
+      "Bash(git clean *)",
       "Bash(git add *)",
-      "Bash(rm -f _start_memdb.js _memdb_uri.txt)",
-      "Bash(ls _start_memdb.js)",
-      "Bash(git commit *)",
-      "Bash(node _smoketest.js)",
-      "Bash(rm -f _smoketest.js _start_memdb.js _memdb_uri.txt)",
-      "Bash(git -C \"c:\\\\Users\\\\sohel\\\\OneDrive\\\\Desktop\\\\Jolshaa\" status --short)",
-      "Bash(CI=true npx --no-install eslint src/pages/Para.js src/components/DataSaverImage.js src/components/WhyAmISeeingThisModal.js src/components/MediaCarousel.js src/components/PostCard.js)",
-      "Bash(node -e ' *)",
-      "Bash(NODE_ENV=development BABEL_ENV=development node -e ' *)",
-      "Bash(grep -nE \"^#{1,3} |^PART |^Part |^## Part\" PRODUCT_STRATEGY.md)",
-      "Bash(node -e \"require\\('./models/Review.js'\\); require\\('./controllers/reviewController.js'\\); require\\('./routes/reviews.js'\\); console.log\\('backend OK'\\)\")",
-      "Bash(node -e \"require\\('./models/User.js'\\); require\\('./controllers/userController.js'\\); require\\('./routes/users.js'\\); console.log\\('backend OK'\\)\")",
-      "Bash(node -e \"require\\('./models/Post.js'\\); require\\('./controllers/postController.js'\\); require\\('./controllers/userController.js'\\); require\\('./routes/posts.js'\\); require\\('./routes/users.js'\\); console.log\\('backend OK'\\)\")",
-      "Bash(npm install *)",
       "Bash(git commit -m ' *)",
-      "Bash(git push *)"
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" \"https://frontend-pearl-one-59.vercel.app/profile\")",
+      "Bash(curl -s \"https://frontend-pearl-one-59.vercel.app\")"
     ]
   }
 }

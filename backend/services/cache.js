@@ -66,9 +66,19 @@ function setMemoryCache(key, value, ttl) {
     expiresAt: Date.now() + ttl * 1000,
   });
 
+  // Evict expired entries and enforce size limit
   if (memoryCache.size > 1000) {
-    const oldest = memoryCache.keys().next().value;
-    memoryCache.delete(oldest);
+    const now = Date.now();
+    for (const [k, item] of memoryCache.entries()) {
+      if (now > item.expiresAt) {
+        memoryCache.delete(k);
+      }
+    }
+    // If still over limit, remove oldest entries
+    while (memoryCache.size > 900) {
+      const oldest = memoryCache.keys().next().value;
+      memoryCache.delete(oldest);
+    }
   }
 }
 

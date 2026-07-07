@@ -3,6 +3,16 @@ const FriendRequest = require('../models/FriendRequest');
 const { isUserOnline } = require('../socket');
 const { hasId } = require('../utils/id');
 
+const stripHtml = (str) => {
+  if (typeof str !== 'string') return str;
+  return str.replace(/<[^>]*>/g, '').trim();
+};
+
+const sanitizeTextField = (str, maxLength = 200) => {
+  if (typeof str !== 'string') return '';
+  return stripHtml(str).substring(0, maxLength);
+};
+
 exports.getUserOnlineStatus = async (req, res) => {
   try {
     const targetUser = await User.findById(req.params.id).select('activeStatus lastSeen privacy');
@@ -350,6 +360,16 @@ exports.updateProfile = async (req, res) => {
     allowedFields.forEach(field => {
       if (req.body[field] !== undefined) updates[field] = req.body[field];
     });
+
+    // Sanitize text fields to prevent XSS
+    if (updates.bio !== undefined) updates.bio = sanitizeTextField(updates.bio, 200);
+    if (updates.location !== undefined) updates.location = sanitizeTextField(updates.location, 200);
+    if (updates.website !== undefined) updates.website = sanitizeTextField(updates.website, 200);
+    if (updates.education !== undefined) updates.education = sanitizeTextField(updates.education, 200);
+    if (updates.work !== undefined) updates.work = sanitizeTextField(updates.work, 200);
+    if (updates.hometown !== undefined) updates.hometown = sanitizeTextField(updates.hometown, 200);
+    if (updates.currentCity !== undefined) updates.currentCity = sanitizeTextField(updates.currentCity, 200);
+    if (updates.name !== undefined) updates.name = sanitizeTextField(updates.name, 50);
 
     // Only allow cloudinary URLs for photos
     const cloudinaryPattern = /^https:\/\/res\.cloudinary\.com\//;
@@ -812,11 +832,15 @@ exports.toggleFollow = async (req, res) => {
     const isFollowing = currentUser.following.some(id => id.toString() === userId);
 
     if (isFollowing) {
-      currentUser.following.pull(userId);
-      targetUser.followers.pull(req.user._id);
+      await Promise.all([
+        User.findByIdAndUpdate(req.user._id, { $pull: { following: userId } }),
+        User.findByIdAndUpdate(userId, { $pull: { followers: req.user._id } }),
+      ]);
     } else {
-      currentUser.following.push(userId);
-      targetUser.followers.push(req.user._id);
+      await Promise.all([
+        User.findByIdAndUpdate(req.user._id, { $addToSet: { following: userId } }),
+        User.findByIdAndUpdate(userId, { $addToSet: { followers: req.user._id } }),
+      ]);
 
       // Notify
       const Notification = require('../models/Notification');
@@ -835,15 +859,13 @@ exports.toggleFollow = async (req, res) => {
     }
 
     if (targetUser.monetization?.isCreator) {
-      targetUser.monetization.followerCount = targetUser.followers.length;
+      await User.findByIdAndUpdate(userId, { 'monetization.followerCount': isFollowing ? targetUser.followers.length - 1 : targetUser.followers.length + 1 });
     }
 
-    await currentUser.save();
-    await targetUser.save();
-
+    const updatedTarget = await User.findById(userId).select('followers');
     res.json({
       isFollowing: !isFollowing,
-      followerCount: targetUser.followers.length,
+      followerCount: updatedTarget.followers.length,
     });
   } catch (error) {
     res.status(500).json({ message: 'Server error' });

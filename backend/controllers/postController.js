@@ -637,11 +637,23 @@ exports.getPublicPost = async (req, res) => {
       return res.status(403).json({ message: 'Post is not public' });
     }
 
+    // Get actual reaction and comment counts
+    const Reaction = require('../models/Reaction');
+    const Comment = require('../models/Comment');
+
+    const [reactionResult, commentCount] = await Promise.all([
+      Reaction.aggregate([
+        { $match: { targetType: 'Post', targetId: post._id } },
+        { $group: { _id: '$targetId', count: { $sum: 1 } } }
+      ]),
+      Comment.countDocuments({ post: post._id }),
+    ]);
+
     res.json({
       post: {
         ...post.toObject(),
-        likeCount: post.reactions?.length || 0,
-        commentCount: post.comments?.length || 0,
+        likeCount: reactionResult[0]?.count || 0,
+        commentCount,
       },
     });
   } catch (error) {

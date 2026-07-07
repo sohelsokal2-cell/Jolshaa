@@ -5,6 +5,10 @@ const isOperator = (value) => {
   return Object.keys(value).some(key => key.startsWith('$'));
 };
 
+const isPrototypePollutionAttempt = (key) => {
+  return key === '__proto__' || key === 'constructor' || key === 'prototype';
+};
+
 const sanitizeValue = (value) => {
   if (value === null || value === undefined) return value;
   if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
@@ -22,6 +26,9 @@ const sanitizeValue = (value) => {
     }
     const sanitized = {};
     for (const [key, val] of Object.entries(value)) {
+      if (isPrototypePollutionAttempt(key)) {
+        throw new Error(`Invalid key: ${key} is not allowed`);
+      }
       sanitized[key] = sanitizeValue(val);
     }
     return sanitized;
@@ -33,6 +40,9 @@ const sanitizeQuery = (obj) => {
   if (!obj || typeof obj !== 'object') return obj;
   const sanitized = {};
   for (const [key, value] of Object.entries(obj)) {
+    if (isPrototypePollutionAttempt(key)) {
+      throw new Error(`Invalid parameter: ${key} is not allowed`);
+    }
     if (isOperator(value)) {
       throw new Error(`Invalid query parameter: ${key} contains operator`);
     }

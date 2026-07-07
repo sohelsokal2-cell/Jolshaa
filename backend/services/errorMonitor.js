@@ -70,10 +70,9 @@ const errorHandler = (err, req, res, next) => {
   });
 
   const statusCode = err.statusCode || 500;
-  const isProd = process.env.NODE_ENV === 'production';
+  // In production, never expose internals; in development, still sanitize
   res.status(statusCode).json({
-    message: isProd && statusCode === 500 ? 'Internal server error' : (err.message || 'Internal server error'),
-    ...(!isProd && { stack: err.stack }),
+    message: statusCode === 500 ? 'Internal server error' : (err.message || 'Internal server error'),
   });
 };
 

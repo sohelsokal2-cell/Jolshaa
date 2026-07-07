@@ -412,10 +412,15 @@ exports.getPermissionChangeLog = async (req, res) => {
 exports.adminResetPassword = async (req, res) => {
   try {
     const { userId } = req.params;
-    const { newPassword } = req.body;
+    const { newPassword, confirmReset } = req.body;
 
     if (!newPassword || newPassword.length < 8) {
       return res.status(400).json({ message: 'Password must be at least 8 characters' });
+    }
+
+    // Require explicit confirmation
+    if (confirmReset !== true) {
+      return res.status(400).json({ message: 'Must set confirmReset: true to reset password' });
     }
 
     const user = await User.findById(userId);
@@ -423,6 +428,7 @@ exports.adminResetPassword = async (req, res) => {
 
     user.password = newPassword;
     user.sessions = [];
+    user.tokenVersion = (user.tokenVersion || 0) + 1;
     await user.save();
 
     await logAction(req.user._id, 'security.password.admin_reset', {

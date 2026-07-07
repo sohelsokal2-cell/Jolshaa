@@ -7,6 +7,7 @@ import { LanguageProvider } from './context/LanguageContext';
 import { FestivalThemeProvider } from './context/FestivalThemeContext';
 import { ToastProvider } from './components/ui/Toast';
 import ProtectedRoute from './components/ProtectedRoute';
+import ErrorBoundary from './components/ErrorBoundary';
 import Signup from './pages/Signup';
 import Login from './pages/Login';
 import Landing from './pages/Landing';
@@ -67,7 +68,7 @@ import ResetPassword from './pages/ResetPassword';
 
 const PublicRoute = ({ children }) => {
   const { user, loading } = useAuth();
-  if (loading) return null;
+  if (loading) return <div className="flex items-center justify-center h-screen"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div></div>;
   return user ? <Navigate to="/feed" replace /> : children;
 };
 
@@ -145,21 +146,23 @@ const AppContent = () => {
 
 function App() {
   return (
-    <DarkModeProvider>
-      <FestivalThemeProvider>
-        <LanguageProvider>
-          <DataSaverProvider>
-            <AuthProvider>
-              <SocketProvider>
-                <ToastProvider>
-                  <AppContent />
-                </ToastProvider>
-              </SocketProvider>
-            </AuthProvider>
-          </DataSaverProvider>
-        </LanguageProvider>
-      </FestivalThemeProvider>
-    </DarkModeProvider>
+    <ErrorBoundary>
+      <DarkModeProvider>
+        <FestivalThemeProvider>
+          <LanguageProvider>
+            <DataSaverProvider>
+              <AuthProvider>
+                <SocketProvider>
+                  <ToastProvider>
+                    <AppContent />
+                  </ToastProvider>
+                </SocketProvider>
+              </AuthProvider>
+            </DataSaverProvider>
+          </LanguageProvider>
+        </FestivalThemeProvider>
+      </DarkModeProvider>
+    </ErrorBoundary>
   );
 }
 

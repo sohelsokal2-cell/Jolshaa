@@ -219,7 +219,7 @@ const initSocket = (httpServer) => {
         const messageData = {
           conversation: conversationId,
           sender: userId,
-          text: text || '',
+          text: text ? String(text).substring(0, 2000) : '',
           media: media || null,
           mediaType: mediaType || null,
           replyTo: replyTo || null,

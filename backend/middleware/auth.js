@@ -34,6 +34,11 @@ const protect = async (req, res, next) => {
       return res.status(401).json({ message: 'Not authorized, user not found' });
     }
 
+    // Check token version — invalidates all tokens when sessions are revoked
+    if (decoded.v !== undefined && decoded.v !== (req.user.tokenVersion || 0)) {
+      return res.status(401).json({ message: 'Session invalidated, please login again' });
+    }
+
     if (req.user.isBanned) {
       return res.status(403).json({ message: 'Account banned', banned: true, bannedAt: req.user.bannedAt, bannedReason: req.user.bannedReason });
     }
@@ -64,7 +69,7 @@ const isBlockedBy = async (req, res, next) => {
 
     next();
   } catch (error) {
-    next();
+    return res.status(500).json({ message: 'Server error checking block status' });
   }
 };
 

@@ -15,6 +15,7 @@ const { loadMaintenanceMode, maintenanceCheck } = require('./middleware/maintena
 const { initFirebase } = require('./services/pushNotification');
 const { setupCallSignaling } = require('./services/callService');
 const { sanitizeQuery } = require('./utils/mongoSanitize');
+const { csrfProtection } = require('./middleware/csrf');
 
 dotenv.config();
 
@@ -68,6 +69,7 @@ app.use((req, res, next) => {
 app.use(generalLimiter);
 app.use(performanceMonitor);
 app.use(maintenanceCheck);
+app.use(csrfProtection);
 
 app.use('/api/auth', authLimiter, require('./routes/auth'));
 app.use('/api/users', require('./routes/users'));
