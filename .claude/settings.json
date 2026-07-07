@@ -16,7 +16,12 @@
       "Bash(CI=true npx --no-install eslint src/pages/Para.js src/components/DataSaverImage.js src/components/WhyAmISeeingThisModal.js src/components/MediaCarousel.js src/components/PostCard.js)",
       "Bash(node -e ' *)",
       "Bash(NODE_ENV=development BABEL_ENV=development node -e ' *)",
-      "Bash(grep -nE \"^#{1,3} |^PART |^Part |^## Part\" PRODUCT_STRATEGY.md)"
+      "Bash(grep -nE \"^#{1,3} |^PART |^Part |^## Part\" PRODUCT_STRATEGY.md)",
+      "Bash(node -e \"require\\('./models/Review.js'\\); require\\('./controllers/reviewController.js'\\); require\\('./routes/reviews.js'\\); console.log\\('backend OK'\\)\")",
+      "Bash(node -e \"require\\('./models/User.js'\\); require\\('./controllers/userController.js'\\); require\\('./routes/users.js'\\); console.log\\('backend OK'\\)\")",
+      "Bash(node -e \"require\\('./models/Post.js'\\); require\\('./controllers/postController.js'\\); require\\('./controllers/userController.js'\\); require\\('./routes/posts.js'\\); require\\('./routes/users.js'\\); console.log\\('backend OK'\\)\")",
+      "Bash(npm install *)",
+      "Bash(git commit -m ' *)"
     ]
   }
 }
