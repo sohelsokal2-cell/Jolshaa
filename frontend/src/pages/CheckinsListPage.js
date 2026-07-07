@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import API from '../api/axios';
-import Avatar from './ui/Avatar';
-import Layout from './layout/Layout';
+import Avatar from '../components/ui/Avatar';
+import Layout from '../components/layout/Layout';
 
 const CheckinsListPage = () => {
   const { id } = useParams();
