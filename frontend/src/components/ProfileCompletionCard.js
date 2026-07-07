@@ -104,7 +104,7 @@ const ProfileCompletionCard = () => {
           {completion.missingLabels.map((item) => (
             <button
               key={item.key}
-              onClick={() => navigate('/settings')}
+              onClick={() => navigate('/edit-profile')}
               className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium bg-jolshaa-surface-container text-jolshaa-on-surface-variant rounded-full border border-jolshaa-outline-variant hover:bg-jolshaa-surface-container-low hover:border-jolshaa-teal hover:text-jolshaa-teal transition-colors"
             >
               <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
