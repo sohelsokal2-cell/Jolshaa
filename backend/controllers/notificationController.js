@@ -12,7 +12,9 @@ exports.getNotifications = async (req, res) => {
       .limit(limit)
       .populate('sender', 'name profilePhoto')
       .populate('relatedPost', 'text')
-      .populate('relatedConversation', 'groupName isGroup');
+      .populate('relatedComment', 'text post')
+      .populate('relatedConversation', 'groupName isGroup')
+      .populate('relatedEvent', 'title');
 
     const total = await Notification.countDocuments({ recipient: req.user._id });
     const unreadCount = await Notification.countDocuments({

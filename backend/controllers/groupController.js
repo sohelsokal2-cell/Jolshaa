@@ -49,8 +49,10 @@ exports.createGroup = async (req, res) => {
       rules: parsedRules
     });
 
-    await group.populate('creator', 'name profilePhoto');
-    await group.populate('admins', 'name profilePhoto');
+    await group.populate([
+      { path: 'creator', select: 'name profilePhoto' },
+      { path: 'admins', select: 'name profilePhoto' }
+    ]);
 
     res.status(201).json(group);
   } catch (error) {
@@ -105,7 +107,7 @@ exports.getGroup = async (req, res) => {
       .populate('admins', 'name profilePhoto')
       .populate('moderators', 'name profilePhoto')
       .populate('members', 'name profilePhoto')
-      .populate('pinnedPost');
+      .populate({ path: 'pinnedPost', populate: { path: 'author', select: 'name profilePhoto' } });
 
     if (!group) return res.status(404).json({ message: 'Group not found' });
 
@@ -127,8 +129,6 @@ exports.getGroup = async (req, res) => {
         myReaction: pMyReaction?.type || null
       };
       pinnedPostData.commentCount = pComments;
-      const author = await require('../models/User').findById(group.pinnedPost.author).select('name profilePhoto');
-      pinnedPostData.author = author;
     }
 
     res.json({
@@ -171,9 +171,11 @@ exports.updateGroup = async (req, res) => {
     }
 
     await group.save();
-    await group.populate('creator', 'name profilePhoto');
-    await group.populate('admins', 'name profilePhoto');
-    await group.populate('moderators', 'name profilePhoto');
+    await group.populate([
+      { path: 'creator', select: 'name profilePhoto' },
+      { path: 'admins', select: 'name profilePhoto' },
+      { path: 'moderators', select: 'name profilePhoto' }
+    ]);
 
     res.json(group);
   } catch (error) {

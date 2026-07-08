@@ -66,6 +66,10 @@ const AdminPanel = () => {
         {activeTab === 'stories' && <StoriesModerationTab />}
         {activeTab === 'reels' && <ReelsModerationTab />}
         {activeTab === 'listings' && <ListingsModerationTab />}
+        {activeTab === 'notes' && <NotesModerationTab />}
+        {activeTab === 'polls' && <PollsModerationTab />}
+        {activeTab === 'qa' && <QAModerationTab />}
+        {activeTab === 'help-requests' && <HelpRequestsModerationTab />}
         {activeTab === 'bulk' && <BulkActionsTab />}
         {activeTab === 'factcheck' && <FactCheckReviewTab />}
         {activeTab === 'verification' && <VerificationTab />}
@@ -1696,8 +1700,323 @@ const ListingsModerationTab = () => {
   );
 };
 
-// ============================================================
-// REPORTS & SAFETY TABS
+const NotesModerationTab = () => {
+  const [notes, setNotes] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState('');
+
+  const fetchNotes = async () => {
+    setLoading(true);
+    try {
+      const params = filter ? `?status=${filter}` : '';
+      const res = await API.get(`/admin/moderation/notes${params}`);
+      setNotes(res.data.notes);
+    } catch (err) { console.error('Failed'); } finally { setLoading(false); }
+  };
+
+  useEffect(() => { fetchNotes(); }, [filter]);
+
+  const handleAction = async (id, action) => {
+    try {
+      const res = await API.put(`/admin/moderation/notes/${id}/${action}`);
+      setNotes(prev => prev.map(n => n._id === id ? res.data.note : n));
+    } catch (err) { alert('Failed'); }
+  };
+
+  const handleDelete = async (id) => {
+    if (!window.confirm('Delete this note permanently?')) return;
+    try {
+      await API.delete(`/admin/moderation/notes/${id}`);
+      setNotes(prev => prev.filter(n => n._id !== id));
+    } catch (err) { alert('Failed'); }
+  };
+
+  return (
+    <div className="space-y-4">
+      <div>
+        <h1 className="text-2xl font-bold font-display text-jolshaa-on-surface">Notes Moderation</h1>
+        <p className="text-sm text-jolshaa-on-surface-variant mt-1">Review and moderate user notes</p>
+      </div>
+      <div className="flex gap-2">
+        {['', 'flagged', 'hidden'].map(f => (
+          <Button key={f} variant={filter === f ? 'primary' : 'secondary'} size="sm" onClick={() => setFilter(f)}>
+            {f || 'All'}
+          </Button>
+        ))}
+      </div>
+      {loading ? <div className="text-center py-8 text-jolshaa-on-surface-variant">Loading...</div> : notes.length === 0 ? (
+        <div className="text-center py-12 text-jolshaa-on-surface-variant">No notes found</div>
+      ) : (
+        <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
+          {notes.map(n => (
+            <Card key={n._id}>
+              {n.coverImage && (
+                <div className="aspect-video bg-jolshaa-surface-container-low rounded-lg mb-2 overflow-hidden">
+                  <img src={n.coverImage} alt={n.title} className="w-full h-full object-cover" />
+                </div>
+              )}
+              <div className="flex items-center justify-between mb-1">
+                <span className="text-sm font-medium text-jolshaa-on-surface">{n.title}</span>
+                <div className="flex gap-1">
+                  {n.isFlagged && <Badge variant="danger" size="xs">Flagged</Badge>}
+                  {n.isHidden && <Badge variant="warning" size="xs">Hidden</Badge>}
+                </div>
+              </div>
+              <p className="text-xs text-jolshaa-on-surface-variant line-clamp-2">{n.content}</p>
+              <div className="flex items-center gap-2 mt-1">
+                <Avatar src={n.author?.profilePhoto} alt={n.author?.name} size="xs" />
+                <span className="text-xs text-jolshaa-on-surface-variant">{n.author?.name}</span>
+              </div>
+              <div className="flex gap-1 mt-2">
+                <Button size="xs" variant="ghost" className="flex-1" onClick={() => handleAction(n._id, n.isFlagged ? 'approve' : 'flag')}>{n.isFlagged ? 'Approve' : 'Flag'}</Button>
+                <Button size="xs" variant="ghost" className="flex-1" onClick={() => handleAction(n._id, 'hide')}>{n.isHidden ? 'Unhide' : 'Hide'}</Button>
+                <Button size="xs" variant="danger" className="flex-1" onClick={() => handleDelete(n._id)}>Delete</Button>
+              </div>
+            </Card>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
+const PollsModerationTab = () => {
+  const [polls, setPolls] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState('');
+
+  const fetchPolls = async () => {
+    setLoading(true);
+    try {
+      const params = filter ? `?status=${filter}` : '';
+      const res = await API.get(`/admin/moderation/polls${params}`);
+      setPolls(res.data.polls);
+    } catch (err) { console.error('Failed'); } finally { setLoading(false); }
+  };
+
+  useEffect(() => { fetchPolls(); }, [filter]);
+
+  const handleAction = async (id, action) => {
+    try {
+      const res = await API.put(`/admin/moderation/polls/${id}/${action}`);
+      setPolls(prev => prev.map(p => p._id === id ? res.data.poll : p));
+    } catch (err) { alert('Failed'); }
+  };
+
+  const handleDelete = async (id) => {
+    if (!window.confirm('Delete this poll permanently?')) return;
+    try {
+      await API.delete(`/admin/moderation/polls/${id}`);
+      setPolls(prev => prev.filter(p => p._id !== id));
+    } catch (err) { alert('Failed'); }
+  };
+
+  return (
+    <div className="space-y-4">
+      <div>
+        <h1 className="text-2xl font-bold font-display text-jolshaa-on-surface">Polls Moderation</h1>
+        <p className="text-sm text-jolshaa-on-surface-variant mt-1">Review and moderate user polls</p>
+      </div>
+      <div className="flex gap-2">
+        {['', 'flagged', 'hidden'].map(f => (
+          <Button key={f} variant={filter === f ? 'primary' : 'secondary'} size="sm" onClick={() => setFilter(f)}>
+            {f || 'All'}
+          </Button>
+        ))}
+      </div>
+      {loading ? <div className="text-center py-8 text-jolshaa-on-surface-variant">Loading...</div> : polls.length === 0 ? (
+        <div className="text-center py-12 text-jolshaa-on-surface-variant">No polls found</div>
+      ) : (
+        <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
+          {polls.map(p => (
+            <Card key={p._id}>
+              <div className="flex items-center justify-between mb-1">
+                <span className="text-sm font-medium text-jolshaa-on-surface">{p.question || 'Poll'}</span>
+                <div className="flex gap-1">
+                  {p.isFlagged && <Badge variant="danger" size="xs">Flagged</Badge>}
+                  {p.isHidden && <Badge variant="warning" size="xs">Hidden</Badge>}
+                </div>
+              </div>
+              {p.options?.length > 0 && (
+                <div className="space-y-1 mt-2">
+                  {p.options.map((opt, i) => (
+                    <div key={i} className="text-xs text-jolshaa-on-surface-variant bg-jolshaa-surface-container-low rounded px-2 py-1">{opt.text}</div>
+                  ))}
+                </div>
+              )}
+              <div className="flex items-center gap-2 mt-2">
+                <Avatar src={p.author?.profilePhoto} alt={p.author?.name} size="xs" />
+                <span className="text-xs text-jolshaa-on-surface-variant">{p.author?.name}</span>
+              </div>
+              <div className="flex gap-1 mt-2">
+                <Button size="xs" variant="ghost" className="flex-1" onClick={() => handleAction(p._id, p.isFlagged ? 'approve' : 'flag')}>{p.isFlagged ? 'Approve' : 'Flag'}</Button>
+                <Button size="xs" variant="ghost" className="flex-1" onClick={() => handleAction(p._id, 'hide')}>{p.isHidden ? 'Unhide' : 'Hide'}</Button>
+                <Button size="xs" variant="danger" className="flex-1" onClick={() => handleDelete(p._id)}>Delete</Button>
+              </div>
+            </Card>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
+const QAModerationTab = () => {
+  const [qas, setQas] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState('');
+
+  const fetchQAs = async () => {
+    setLoading(true);
+    try {
+      const params = filter ? `?status=${filter}` : '';
+      const res = await API.get(`/admin/moderation/qa${params}`);
+      setQas(res.data.qa);
+    } catch (err) { console.error('Failed'); } finally { setLoading(false); }
+  };
+
+  useEffect(() => { fetchQAs(); }, [filter]);
+
+  const handleAction = async (id, action) => {
+    try {
+      const res = await API.put(`/admin/moderation/qa/${id}/${action}`);
+      setQas(prev => prev.map(q => q._id === id ? res.data.qa : q));
+    } catch (err) { alert('Failed'); }
+  };
+
+  const handleDelete = async (id) => {
+    if (!window.confirm('Delete this Q&A permanently?')) return;
+    try {
+      await API.delete(`/admin/moderation/qa/${id}`);
+      setQas(prev => prev.filter(q => q._id !== id));
+    } catch (err) { alert('Failed'); }
+  };
+
+  return (
+    <div className="space-y-4">
+      <div>
+        <h1 className="text-2xl font-bold font-display text-jolshaa-on-surface">Q&A Moderation</h1>
+        <p className="text-sm text-jolshaa-on-surface-variant mt-1">Review and moderate Q&A content</p>
+      </div>
+      <div className="flex gap-2">
+        {['', 'flagged', 'hidden'].map(f => (
+          <Button key={f} variant={filter === f ? 'primary' : 'secondary'} size="sm" onClick={() => setFilter(f)}>
+            {f || 'All'}
+          </Button>
+        ))}
+      </div>
+      {loading ? <div className="text-center py-8 text-jolshaa-on-surface-variant">Loading...</div> : qas.length === 0 ? (
+        <div className="text-center py-12 text-jolshaa-on-surface-variant">No Q&A found</div>
+      ) : (
+        <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
+          {qas.map(q => (
+            <Card key={q._id}>
+              <div className="flex items-center justify-between mb-1">
+                <span className="text-sm font-medium text-jolshaa-on-surface">{q.question || 'Q&A'}</span>
+                <div className="flex gap-1">
+                  {q.isFlagged && <Badge variant="danger" size="xs">Flagged</Badge>}
+                  {q.isHidden && <Badge variant="warning" size="xs">Hidden</Badge>}
+                </div>
+              </div>
+              {q.answer && (
+                <p className="text-xs text-jolshaa-on-surface-variant line-clamp-2 mt-1">{q.answer}</p>
+              )}
+              <div className="flex items-center gap-2 mt-2">
+                <Avatar src={q.author?.profilePhoto} alt={q.author?.name} size="xs" />
+                <span className="text-xs text-jolshaa-on-surface-variant">{q.author?.name}</span>
+              </div>
+              <div className="flex gap-1 mt-2">
+                <Button size="xs" variant="ghost" className="flex-1" onClick={() => handleAction(q._id, q.isFlagged ? 'approve' : 'flag')}>{q.isFlagged ? 'Approve' : 'Flag'}</Button>
+                <Button size="xs" variant="ghost" className="flex-1" onClick={() => handleAction(q._id, 'hide')}>{q.isHidden ? 'Unhide' : 'Hide'}</Button>
+                <Button size="xs" variant="danger" className="flex-1" onClick={() => handleDelete(q._id)}>Delete</Button>
+              </div>
+            </Card>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
+const HelpRequestsModerationTab = () => {
+  const [requests, setRequests] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState('');
+
+  const fetchRequests = async () => {
+    setLoading(true);
+    try {
+      const params = filter ? `?status=${filter}` : '';
+      const res = await API.get(`/admin/moderation/help-requests${params}`);
+      setRequests(res.data.helpRequests);
+    } catch (err) { console.error('Failed'); } finally { setLoading(false); }
+  };
+
+  useEffect(() => { fetchRequests(); }, [filter]);
+
+  const handleAction = async (id, action) => {
+    try {
+      const res = await API.put(`/admin/moderation/help-requests/${id}/${action}`);
+      setRequests(prev => prev.map(r => r._id === id ? res.data.helpRequest : r));
+    } catch (err) { alert('Failed'); }
+  };
+
+  const handleDelete = async (id) => {
+    if (!window.confirm('Delete this help request permanently?')) return;
+    try {
+      await API.delete(`/admin/moderation/help-requests/${id}`);
+      setRequests(prev => prev.filter(r => r._id !== id));
+    } catch (err) { alert('Failed'); }
+  };
+
+  const urgencyColors = { immediate: 'danger', within_hours: 'warning', within_days: 'neutral' };
+
+  return (
+    <div className="space-y-4">
+      <div>
+        <h1 className="text-2xl font-bold font-display text-jolshaa-on-surface">Help Requests Moderation</h1>
+        <p className="text-sm text-jolshaa-on-surface-variant mt-1">Review and moderate help requests</p>
+      </div>
+      <div className="flex gap-2">
+        {['', 'flagged', 'hidden'].map(f => (
+          <Button key={f} variant={filter === f ? 'primary' : 'secondary'} size="sm" onClick={() => setFilter(f)}>
+            {f || 'All'}
+          </Button>
+        ))}
+      </div>
+      {loading ? <div className="text-center py-8 text-jolshaa-on-surface-variant">Loading...</div> : requests.length === 0 ? (
+        <div className="text-center py-12 text-jolshaa-on-surface-variant">No help requests found</div>
+      ) : (
+        <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
+          {requests.map(r => (
+            <Card key={r._id}>
+              <div className="flex items-center justify-between mb-1">
+                <span className="text-sm font-medium text-jolshaa-on-surface">{r.title}</span>
+                <div className="flex gap-1">
+                  {r.isFlagged && <Badge variant="danger" size="xs">Flagged</Badge>}
+                  {r.isHidden && <Badge variant="warning" size="xs">Hidden</Badge>}
+                  {r.urgency && <Badge variant={urgencyColors[r.urgency] || 'neutral'} size="xs">{r.urgency}</Badge>}
+                </div>
+              </div>
+              <p className="text-xs text-jolshaa-on-surface-variant line-clamp-2">{r.description}</p>
+              <div className="flex items-center gap-2 mt-2">
+                <Avatar src={r.requester?.profilePhoto} alt={r.requester?.name} size="xs" />
+                <span className="text-xs text-jolshaa-on-surface-variant">{r.requester?.name}</span>
+                {r.helpType && <Badge variant="primary" size="xs">{r.helpType}</Badge>}
+              </div>
+              <div className="flex gap-1 mt-2">
+                <Button size="xs" variant="ghost" className="flex-1" onClick={() => handleAction(r._id, r.isFlagged ? 'approve' : 'flag')}>{r.isFlagged ? 'Approve' : 'Flag'}</Button>
+                <Button size="xs" variant="ghost" className="flex-1" onClick={() => handleAction(r._id, 'hide')}>{r.isHidden ? 'Unhide' : 'Hide'}</Button>
+                <Button size="xs" variant="danger" className="flex-1" onClick={() => handleDelete(r._id)}>Delete</Button>
+              </div>
+            </Card>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
 // ============================================================
 
 // --- Safety Dashboard ---

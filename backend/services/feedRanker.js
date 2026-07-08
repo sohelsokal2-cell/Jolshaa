@@ -4,8 +4,8 @@ const Comment = require('../models/Comment');
 const User = require('../models/User');
 
 class FeedRanker {
-  static async rankFeed(userId, posts) {
-    const user = await User.findById(userId)
+  static async rankFeed(userId, posts, existingUser = null) {
+    const user = existingUser || await User.findById(userId)
       .select('friends groups following')
       .lean();
 
@@ -89,7 +89,7 @@ class FeedRanker {
     const skip = (page - 1) * limit;
 
     const user = await User.findById(userId)
-      .select('blockedUsers friends')
+      .select('blockedUsers friends groups following')
       .lean();
 
     const blockedIds = user.blockedUsers || [];
@@ -114,7 +114,7 @@ class FeedRanker {
       .lean();
 
     const allPosts = [...friendsPosts, ...otherPosts];
-    const ranked = await this.rankFeed(userId, allPosts);
+    const ranked = await this.rankFeed(userId, allPosts, user);
 
     const paginated = ranked.slice(skip, skip + limit);
     const total = allPosts.length;
